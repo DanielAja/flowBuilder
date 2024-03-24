@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi-Screen Web App</title>
+    <style>
+      .screen {
+        display: none;
+      }
+      .active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="javascript.js"></script>
+    <div id="homeScreen" class="screen">
+      <h1>Flow Builder</h1>
+
+      <button onclick="changeScreen('buildScreen')">Build A Flow</button>
+      <button onclick="changeScreen('flowScreen')">Flow!</button>
+    </div>
+
+    <div id="buildScreen" class="screen active">
+      <h1>Build A Flow!</h1>
+
+      <input type="text" id="title" placeholder="Title" />
+      <input type="text" id="description" placeholder="Description" />
+      <input type="text" id="duration" placeholder="Full Duration" />
+
+      <br />
+      <div id="asanaList"></div>
+
+      <script src="asanas.js"></script>
+      <script>
+        // Assuming the asanas are stored in an array called 'asanas'
+        for (let i = 0; i < asanas.length; i++) {
+          const asana = asanas[i];
+          const button = document.createElement("button");
+          button.textContent = asana.name;
+          button.onclick = function () {
+            selectAsana(asana);
+          };
+          document.getElementById("asanaList").appendChild(button);
+          // print the asanas
+          console.log(asana);
+        }
+      </script>
+
+      <table id="flowTable">
+        <tr>
+          <th>Reorder</th>
+          <th>Asana</th>
+          <th>Duration</th>
+          <th>Remove</th>
+        </tr>
+      </table>
+
+      <script>
+        function selectAsana(asana) {
+          var table = document.getElementById("flowTable");
+          var row = table.insertRow(-1);
+          var reorderCell = row.insertCell(0);
+          var asanaCell = row.insertCell(1);
+          var durationCell = row.insertCell(2);
+          var removeCell = row.insertCell(3);
+
+          reorderCell.innerHTML =
+            "<button onclick='reorderPose(this)'>Reorder</button>";
+          asanaCell.innerHTML = asana.name;
+          durationCell.innerHTML =
+            "<input type='number' id='durationInput' placeholder='Duration' />";
+          removeCell.innerHTML =
+            "<button onclick='removePose(this)'>Remove</button>";
+        }
+      </script>
+
+      <button onclick="saveFlow()">Save Flow</button>
+
+      <br />
+
+      <button onclick="changeScreen('homeScreen')">Home</button>
+      <button onclick="changeScreen('flowScreen')">Flow!</button>
+    </div>
+
+    <div id="flowScreen" class="screen">
+      <h1>Flow</h1>
+      <button onclick="changeScreen('buildScreen')">Build A Flow</button>
+    </div>
+  </body>
+</html>
