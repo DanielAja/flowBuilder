@@ -15,19 +15,21 @@
   </head>
   <body>
     <script src="javascript.js"></script>
-    <div id="homeScreen" class="screen">
+    <div id="homeScreen" class="screen active">
       <h1>Flow Builder</h1>
 
-      <button onclick="changeScreen('buildScreen')">Build A Flow</button>
-      <button onclick="changeScreen('flowScreen')">Flow!</button>
+      <button onclick="changeScreen('buildScreen'); ">Build A Flow</button>
+
+      <h2>Saved Flows</h2>
+      <ul id="savedFlowsList"></ul>
     </div>
 
-    <div id="buildScreen" class="screen active">
+    <div id="buildScreen" class="screen">
       <h1>Build A Flow!</h1>
 
       <input type="text" id="title" placeholder="Title" />
       <input type="text" id="description" placeholder="Description" />
-      <input type="text" id="duration" placeholder="Full Duration" />
+      <span id="flowTime"></span>
 
       <br />
       <div id="asanaList"></div>
@@ -50,43 +52,25 @@
 
       <table id="flowTable">
         <tr>
+          <th>number</th>
           <th>Reorder</th>
           <th>Asana</th>
           <th>Duration</th>
+          <th>Side</th>
           <th>Remove</th>
         </tr>
       </table>
-
-      <script>
-        function selectAsana(asana) {
-          var table = document.getElementById("flowTable");
-          var row = table.insertRow(-1);
-          var reorderCell = row.insertCell(0);
-          var asanaCell = row.insertCell(1);
-          var durationCell = row.insertCell(2);
-          var removeCell = row.insertCell(3);
-
-          reorderCell.innerHTML =
-            "<button onclick='reorderPose(this)'>Reorder</button>";
-          asanaCell.innerHTML = asana.name;
-          durationCell.innerHTML =
-            "<input type='number' id='durationInput' placeholder='Duration' />";
-          removeCell.innerHTML =
-            "<button onclick='removePose(this)'>Remove</button>";
-        }
-      </script>
 
       <button onclick="saveFlow()">Save Flow</button>
 
       <br />
 
       <button onclick="changeScreen('homeScreen')">Home</button>
-      <button onclick="changeScreen('flowScreen')">Flow!</button>
     </div>
 
     <div id="flowScreen" class="screen">
-      <h1>Flow</h1>
-      <button onclick="changeScreen('buildScreen')">Build A Flow</button>
+      <h1 id="flowTitle">Flow!</h1>
+      <span id="currentAsana"> </span>
     </div>
   </body>
 </html>
