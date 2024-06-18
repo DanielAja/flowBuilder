@@ -415,25 +415,45 @@ function getFlow(flows_, flowID) {
     let updateTime = d.getTime();
     console.log(updateTime);
   
-    // Recursive function to perform asanas sequentially
-    function performAsana() {
-      if (currentAsanaIndex < asanas_.length) {
-        let asana_ = asanas_[currentAsanaIndex];
-        console.log(flows_);
-        console.log(`Performing asana:`);
-        console.log(asana_);
-        updateAsanaDisplay(asana_);
-  
-        currentAsanaIndex++;
-  
-        // Wait for the specified duration before performing the next asana
-        setTimeout(performAsana, asana_.duration * 1000);
-      } else {
-        // All asanas have been performed
-        viewFlowDetails(flows[flowIndex]);
-        endFlow();
-      }
+   // Recursive function to perform asanas sequentially
+  function performAsana() {
+    if (currentAsanaIndex < asanas_.length) {
+      let asana_ = asanas_[currentAsanaIndex];
+      console.log(flows_);
+      console.log(`Performing asana:`);
+      console.log(asana_);
+      updateAsanaDisplay(asana_);
+
+      // Update the countdown timer
+      updateCountdownTimer(asana_.duration);
+
+      currentAsanaIndex++;
+
+      // Wait for the specified duration before performing the next asana
+      setTimeout(performAsana, asana_.duration * 1000);
+    } else {
+      // All asanas have been performed
+      viewFlowDetails(flows[flowIndex]);
+      endFlow();
     }
+  }
+
+    // Function to update the countdown timer
+  function updateCountdownTimer(duration) {
+    let countdownElement = document.getElementById('countdown');
+    let remainingTime = duration;
+
+    countdownElement.innerText = remainingTime;
+
+    let countdownInterval = setInterval(() => {
+      remainingTime--;
+      if (remainingTime!=0) countdownElement.innerText = remainingTime;
+
+      if (remainingTime <= 1) {
+        clearInterval(countdownInterval);
+      }
+    }, 1000);
+  }
   
     // Start performing asanas
     performAsana();
@@ -449,6 +469,10 @@ function updateAsanaDisplay(asana) {
 }
 
 function endFlow() {
+  let countdownElement = document.getElementById('countdown');
+
+    countdownElement.innerText = '';
+
     console.log("Flow completed");
     document.getElementById("currentAsana").innerHTML = 
     '<h1> End of Flow </h1>' +
