@@ -178,74 +178,90 @@ editingFlow = new Flow();
   }
 
   editMode=false;
-function saveFlow() {
-  flow = editingFlow;
-  flow.name = document.getElementById('title').value;
-  flow.description = document.getElementById('description').value;
-  // flow.peakPose = document.getElementById('peakPose').value;
-
-  // Retrieve the values entered in the title
-  const title = document.getElementById('title').value;
-
-  // Iterate over the rows in the flowTable and extract the asana name and duration for each row
-  const flowTable = document.getElementById('flowTable');
-  const rows = flowTable.getElementsByTagName('tr');
-
-  //if there are no flows, or there is no title
-  if (flow.asanas.length === 0) {
-    alert('Please add asanas to the flow before saving');
-    return;
-  }
-  if (!title) {
-    alert('Please enter a title for the flow before saving');
-    return;
-  }
-
-  // for (let i = 1; i < rows.length; i++) {
-  //   asanaDuration = parseInt(rows[i].cells[3].children[0].value);
-  //   console.log(asanaDuration);
-  //   console.log(flow);
-  //   flow.asanas[i - 1].setDuriation(asanaDuration);
-  // }
-  console.log(editingFlow);
-  if (editMode)
-  {
-    flow.time = calculateTotalDuration(flow);
-  } else 
-  {
-    flow.calculateTotalDuration();
-  }
   
-
-  // Store the Flow instance in local storage
-  const flows = JSON.parse(localStorage.getItem('flows')) || [];
-
-  //if flowID ialready exists, update the flow
-  for (i = 0; i < flows.length; i++) {
-    if (flows[i].flowID === flow.flowID) {
-      flows[i] = flow;
-      deleteFlow(flow.flowID);
-      break;
+  function saveFlow() {
+    flow = editingFlow;
+    flow.name = document.getElementById('title').value;
+    flow.description = document.getElementById('description').value;
+    // flow.peakPose = document.getElementById('peakPose').value;
+  
+    // Retrieve the values entered in the title
+    const title = document.getElementById('title').value;
+  
+    // Iterate over the rows in the flowTable and extract the asana name and duration for each row
+    const flowTable = document.getElementById('flowTable');
+    const rows = flowTable.getElementsByTagName('tr');
+  
+    //if there are no flows, or there is no title
+    if (flow.asanas.length === 0) {
+      alert('Please add asanas to the flow before saving');
+      return;
     }
+    if (!title) {
+      alert('Please enter a title for the flow before saving');
+      return;
+    }
+  
+    // for (let i = 1; i < rows.length; i++) {
+    //   asanaDuration = parseInt(rows[i].cells[3].children[0].value);
+    //   console.log(asanaDuration);
+    //   console.log(flow);
+    //   flow.asanas[i - 1].setDuriation(asanaDuration);
+    // }
+    console.log(editingFlow);
+    if (editMode) {
+      flow.time = calculateTotalDuration(flow);
+    } else {
+      flow.calculateTotalDuration();
+    }
+  
+    // Get the existing flows from local storage or create an empty array
+    const flows = getFlows();
+  
+    //if flowID already exists, update the flow
+    let flowIndex = -1;
+    for (i = 0; i < flows.length; i++) {
+      if (flows[i].flowID === flow.flowID) {
+        flowIndex = i;
+        break;
+      }
+    }
+  
+    if (flowIndex !== -1) {
+      // Update the existing flow
+      flows[flowIndex] = flow;
+    } else {
+      // Add the new flow to the array
+      flows.push(flow);
+    }
+  
+    localStorage.setItem('flows', JSON.stringify(flows));
+    console.log('Flow saved successfully');
+    console.log(flow);
+    editingFlow = flow;
+  
+    // Refresh the display of flows
+    displayFlows();
   }
- 
-
-  localStorage.setItem('flows', JSON.stringify(flows));
-  console.log('Flow saved successfully');
-  console.log(flow);
-  editingFlow = flow;
-}
 
 let flows = Array();
 //get saved flows from local storage
+// function getFlows() {
+//   if (flows.length <= 0){
+//       var flows_ = localStorage.getItem('flows');
+//       if (flows_) {
+//           flows = JSON.parse(flows_);
+//       }
+//   }
+//   return flows;
+// }
 function getFlows() {
-  if (flows.length <= 0){
-      var flows_ = localStorage.getItem('flows');
-      if (flows_) {
-          flows = JSON.parse(flows_);
-      }
+  var flows_ = localStorage.getItem('flows');
+  if (flows_) {
+    return JSON.parse(flows_);
+  } else {
+    return [];
   }
-  return flows;
 }
 
   function appendFlow(flow) {
