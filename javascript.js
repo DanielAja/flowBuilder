@@ -1,18 +1,22 @@
 //class for yogaAsana
 class YogaAsana {
-    constructor(name, image, description, difficulty, tags, transitionsAsana) {
+    constructor(name, side, image, description, difficulty, tags, transitionsAsana) {
         this.name = name;
         this.image = image;
         this.description = description;
         this.difficulty = difficulty;
         this.tags = tags;
         this.transitionsAsana = transitionsAsana;
-        this.side = "Left";
+        this.side = side;
         this.duration = 0;
     }
     setDuriation(duration) {
         this.duration = duration;
     }
+
+    setSide(side) {
+      this.side = side;
+  }
 };
 
 //Class for Flow
@@ -107,8 +111,25 @@ editingFlow = new Flow();
           asanaCell.innerHTML = asana.name;
           durationCell.innerHTML =
             "<input type='number' id='durationInput' placeholder='Duration' value='3' onchange='updateFlowDuration("+index+")'/>";
-          sideCell.innerHTML =
-            "<input type='text' id='sideInput' placeholder='Side' />";
+            
+            let sideDropdown = '';
+            if (asana.side === "Center") {
+              sideDropdown = `
+                <select>
+                  <option value="Center" selected>Center</option>
+                </select>
+              `;
+            } else {
+              sideDropdown = `
+                <select>
+                <option value="Right">Right</option>
+                  <option value="Left">Left</option>
+                </select>
+              `;
+            }
+
+            sideCell.innerHTML = sideDropdown;
+
           removeCell.innerHTML =
             "<button onclick='removePose(this)'>Remove</button>";
             
@@ -178,7 +199,7 @@ editingFlow = new Flow();
   }
 
   editMode=false;
-  
+
   function saveFlow() {
     flow = editingFlow;
     flow.name = document.getElementById('title').value;
@@ -502,16 +523,37 @@ function editFlow(flowID) {
     </tr>
   `;
 
+  let sideDropdown = '';
+    
+
   for (let i = 0; i < editingFlow.asanas.length; i++) {
     const asana = editingFlow.asanas[i];
     const row = table.insertRow(-1);
+    let sideDropdown = '';
+    if (asana.side === "Center") {
+      sideDropdown = `
+        <select>
+          <option value="Center" selected>Center</option>
+        </select>
+      `;
+    } else {
+      sideDropdown = `
+        <select>
+        <option value="Right">Right</option>
+          <option value="Left">Left</option>
+        
+        </select>
+      `;
+    }
     row.innerHTML = `
       <td><span class="row-number">${i + 1}</span></td>
       <td><button onclick="reorderPose(this)">Reorder</button></td>
       <td>${asana.name}</td>
-      <td><input type="number" value="${asana.duration}" onchange="updateFlowDuration()"/></td>
-      <td><input type="text" value="${asana.side}"/></td>
-      <td><button onclick="removePose(this)">Remove</button></td>
+      <td><input type="number" value="${asana.duration}" onchange="updateFlowDuration()"/></td>`
+      +sideDropdown+
+     
+
+      `<td><button onclick="removePose(this)">Remove</button></td>
     `;
   }
 
