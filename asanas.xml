@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<asanas>
+  <asana>
+    <name>Downward Facing Dog</name>
+    <side>Center</side>
+    <image>images/downward-facing-dog.jpg</image>
+    <description>Downward Facing Dog is a standing pose that tones the legs and arms, while stretching them. It is a great pose for beginners.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Plank</transition>
+      <transition>Cobra</transition>
+    </transitions>
+  </asana>
+  
+  <asana>
+    <name>Tree Pose</name>
+    <side>Right</side>
+    <image>images/tree-pose.jpg</image>
+    <description>Tree Pose is a standing pose that improves balance and concentration. It is a great pose for beginners.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Warrior 3</transition>
+    </transitions>
+  </asana>
+  
+  <asana>
+    <name>Warrior 2</name>
+    <side>Right</side>
+    <image>images/warrior-2.jpg</image>
+    <description>Warrior 2 is a standing pose that strengthens the legs and opens the hips. It is a great pose for beginners.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Triangle Pose</transition>
+    </transitions>
+  </asana>
+  
+  <asana>
+    <name>Triangle Pose</name>
+    <side>Right</side>
+    <image>images/triangle-pose.jpg</image>
+    <description>Triangle Pose is a standing pose that stretches the legs and opens the hips. It is a great pose for beginners.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior 2</transition>
+      <transition>Half Moon Pose</transition>
+    </transitions>
+  </asana>
+  
+  <asana>
+    <name>Plank</name>
+    <side>Center</side>
+    <image>images/plank.jpg</image>
+    <description>Plank is a core pose that strengthens the arms and abs. It is a great pose for beginners.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Core</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Downward Facing Dog</transition>
+      <transition>Chaturanga</transition>
+    </transitions>
+  </asana>
+  
+  <asana>
+    <name>Chaturanga</name>
+    <side>Center</side>
+    <image>images/chaturanga.jpg</image>
+    <description>Chaturanga is a core pose that strengthens the arms and abs. It is a great pose for beginners.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Core</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <tag>Plank</tag>
+      <tag>Upward Facing Dog</tag>
+    </transitions>
+  </asana>
+  
+  <asana>
+    <name>Upward Facing Dog</name>
+    <side>Center</side>
+    <image>images/upward-facing-dog.jpg</image>
+    <description>Upward Facing Dog is a core pose that strengthens the arms and abs. It is a great pose for beginners.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Core</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Chaturanga</transition>
+      <transition>Downward Facing Dog</transition>
+    </transitions>
+  </asana>
+</asanas>

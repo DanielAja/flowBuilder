@@ -1,0 +1,207 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+header {
+  background-color: #ff8c00;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
+  color: #fff;
+  font-size: 32px;
+  font-weight: normal;
+}
+
+.build-flow-btn {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+main {
+  padding: 20px;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.flow-list {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.flow-date {
+  background-color: #f0f0f0;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flow-date h3 {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.flow-count {
+  color: #888;
+  font-size: 14px;
+}
+
+.flow-items {
+  padding: 10px 0;
+}
+
+.flow-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.flow-item:last-child {
+  border-bottom: none;
+}
+
+.flow-info h4 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.flow-description {
+  color: #888;
+  font-size: 14px;
+}
+
+.flow-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.flow-btn {
+  background-color: #fff;
+  border: 1px solid #333;
+  color: #333;
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.edit-btn,
+.delete-btn {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.edit-btn::after {
+  content: "✎";
+}
+
+.delete-btn::after {
+  content: "🗑";
+}
+
+/* Styles for other screens */
+.screen {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+
+#buildScreen,
+#flowScreen {
+  padding: 20px;
+}
+
+input[type="text"],
+input[type="number"] {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th,
+td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ccc;
+}
+
+th {
+  background-color: #f0f0f0;
+}
+
+#countdown {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff8c00;
+  margin-top: 20px;
+}
+
+#asanaList {
+  margin-bottom: 20px;
+}
+
+#asanaList button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .build-flow-btn {
+    margin-top: 10px;
+  }
+
+  .flow-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .flow-actions {
+    margin-top: 10px;
+  }
+}
