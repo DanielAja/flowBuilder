@@ -285,6 +285,7 @@ function clearBuildAFlow() {
 
 function playFlow(flowID) {
     changeScreen('flowScreen');
+    resetFlowScreen();  // Reset the flow screen before starting the flow
     const flows = getFlows();
     const flow = flows.find(f => f.flowID === flowID);
     let currentAsanaIndex = 0;
@@ -344,22 +345,44 @@ function updateCountdownTimer(duration, asanaName, callback) {
     requestAnimationFrame(update);
 }
 
+function resetFlowScreen() {
+    const flowContent = document.querySelector('.flow-content');
+    flowContent.innerHTML = `
+        <div id="currentAsana"></div>
+        <div class="countdown-container">
+            <svg class="countdown-svg" viewBox="0 0 100 100">
+                <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
+                <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent" stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7" stroke-dashoffset="0"></circle>
+            </svg>
+            <div id="countdown"></div>
+        </div>
+    `;
+}
+
 
 function endFlow() {
     const flowContent = document.querySelector('.flow-content');
+    const countdownElement = document.getElementById('countdown');
+    const countdownCircle = document.getElementById('countdown-circle');
     
-    // Remove all existing content
-    flowContent.innerHTML = '';
+    // Clear the countdown text
+    countdownElement.innerText = '';
     
-    // Create and append new elements
+    // Reset the circle to full
+    countdownCircle.style.strokeDashoffset = 0;
+    
+    // Create completion message
     const completeMessage = document.createElement('h2');
     completeMessage.textContent = 'Flow Complete!';
+    completeMessage.className = 'complete-message';
     
+    // Create return home button
     const homeButton = document.createElement('button');
     homeButton.textContent = 'Return Home';
     homeButton.className = 'home-btn';
     homeButton.onclick = () => changeScreen('homeScreen');
     
+    // Add new elements
     flowContent.appendChild(completeMessage);
     flowContent.appendChild(homeButton);
 }
