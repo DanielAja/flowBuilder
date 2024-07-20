@@ -284,8 +284,8 @@ function clearBuildAFlow() {
 }
 
 function playFlow(flowID) {
+    paused = false
     changeScreen('flowScreen');
-    resetFlowScreen();  // Reset the flow screen before starting the flow
     const flows = getFlows();
     const flow = flows.find(f => f.flowID === flowID);
     let currentAsanaIndex = 0;
@@ -304,14 +304,15 @@ function playFlow(flowID) {
 
     performAsana();
 }
-
+var paused = false;
+var lastUpdateTime;
 function updateCountdownTimer(duration, asanaName, callback) {
     const countdownElement = document.getElementById('countdown');
     const countdownCircle = document.getElementById('countdown-circle');
     const currentAsanaElement = document.getElementById("currentAsana");
     const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
     let remainingTime = duration;
-    let lastUpdateTime = Date.now();
+    lastUpdateTime = Date.now();
 
     countdownCircle.style.strokeDasharray = circumference;
     countdownCircle.style.strokeDashoffset = 0;
@@ -320,45 +321,44 @@ function updateCountdownTimer(duration, asanaName, callback) {
     countdownElement.innerText = displayFlowDuration(remainingTime);
 
     function update() {
-        const now = Date.now();
-        const deltaTime = (now - lastUpdateTime) / 1000; // Convert to seconds
-        lastUpdateTime = now;
+        if (!paused) {
+            const now = Date.now();
+            const deltaTime = (now - lastUpdateTime) / 1000; // Convert to seconds
+            lastUpdateTime = now;
+            remainingTime -= deltaTime;
 
-        remainingTime -= deltaTime;
+            if (remainingTime <= 0) {
+                countdownElement.innerText = '';
+                countdownCircle.style.strokeDashoffset = circumference;
+                cancelAnimationFrame(animationFrameId);
+                callback();
+                return;
+            }
 
-        if (remainingTime <= 0) {
-            countdownElement.innerText = '';
-            countdownCircle.style.strokeDashoffset = circumference;
-            callback();
-            return;
+            const percentage = (1 - (remainingTime / duration)) * 100;
+            const offset = circumference - (percentage / 100) * circumference;
+            countdownCircle.style.strokeDashoffset = offset;
+            countdownElement.innerText = displayFlowDuration(Math.ceil(remainingTime));
         }
-
-        const percentage = (1 - (remainingTime / duration)) * 100;
-        const offset = circumference - (percentage / 100) * circumference;
-        countdownCircle.style.strokeDashoffset = offset;
-
-        countdownElement.innerText = displayFlowDuration(Math.ceil(remainingTime));
-
-        requestAnimationFrame(update);
+        animationFrameId = requestAnimationFrame(update);
     }
 
-    requestAnimationFrame(update);
+    animationFrameId = requestAnimationFrame(update);
 }
 
-function resetFlowScreen() {
-    const flowContent = document.querySelector('.flow-content');
-    flowContent.innerHTML = `
-        <div id="currentAsana"></div>
-        <div class="countdown-container">
-            <svg class="countdown-svg" viewBox="0 0 100 100">
-                <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
-                <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent" stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7" stroke-dashoffset="0"></circle>
-            </svg>
-            <div id="countdown"></div>
-        </div>
-    `;
+function togglePause() {
+    const pauseButton = document.querySelector('.pause-btn');
+    paused = !paused;
+    if (paused) {
+        pauseButton.textContent = "▶️";
+        pauseButton.title = "Resume";
+        
+    } else {
+        pauseButton.textContent = "⏸️";
+        lastUpdateTime = Date.now();
+        pauseButton.title = "Pause";
+    }
 }
-
 
 function endFlow() {
     const flowContent = document.querySelector('.flow-content');

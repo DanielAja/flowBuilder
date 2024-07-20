@@ -54,7 +54,7 @@
       </button>
     </div>
 
-    <div id="flowScreen" class="screen">
+    <div id="flowScreen" class="screen active">
       <div class="flow-content">
         <div id="currentAsana"></div>
         <div class="countdown-container">
@@ -66,7 +66,7 @@
               fill="transparent"
               stroke="#ddd"
               stroke-width="10"
-            />
+            ></circle>
             <circle
               id="countdown-circle"
               r="45"
@@ -77,9 +77,12 @@
               stroke-width="10"
               stroke-dasharray="282.7"
               stroke-dashoffset="0"
-            />
+            ></circle>
           </svg>
           <div id="countdown"></div>
+        </div>
+        <div class="pause-button-container">
+          <button class="pause-btn" onclick="togglePause()">⏸️</button>
         </div>
       </div>
     </div>
