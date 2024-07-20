@@ -142,6 +142,10 @@ function saveFlow() {
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
 
+    if (!editingFlow) {
+        editingFlow = new Flow();
+    }
+
     if (editingFlow.asanas.length === 0) {
         alert('Please add asanas to the flow before saving');
         return;
@@ -156,17 +160,28 @@ function saveFlow() {
     editingFlow.calculateTotalDuration();
 
     const flows = getFlows();
-    const flowIndex = flows.findIndex(f => f.flowID === editingFlow.flowID);
-
-    if (flowIndex !== -1) {
-        flows[flowIndex] = editingFlow;
+    
+    if (editMode) {
+        // Update existing flow
+        const index = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
+        if (index !== -1) {
+            flows[index] = editingFlow;
+        } else {
+            console.error('Flow not found for editing');
+            return;
+        }
     } else {
+        // Add new flow
         flows.push(editingFlow);
     }
 
     saveFlows(flows);
     displayFlows();
     changeScreen('homeScreen');
+    
+    // Reset editing state
+    editingFlow = null;
+    editMode = false;
 }
 
 function displayFlows() {
@@ -206,7 +221,7 @@ function deleteFlow(flowID) {
 function editFlow(flowID) {
     changeScreen('buildScreen');
     const flows = getFlows();
-    editingFlow = flows.find(flow => flow.flowID === flowID);
+    editingFlow = Object.assign(new Flow(), flows.find(flow => flow.flowID === flowID));
     editMode = true;
 
     document.getElementById('title').value = editingFlow.name;

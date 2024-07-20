@@ -8,6 +8,7 @@
   </head>
   <body>
     <div class="orange-bar"></div>
+
     <div id="homeScreen" class="screen active">
       <header>
         <h1>flow builder</h1>
@@ -15,16 +16,17 @@
           BUILD A FLOW
         </button>
       </header>
+
       <main>
         <h2 class="past-flows">Past Flows</h2>
         <div class="white-section"></div>
         <div class="flow-list">
           <div class="flow-date">
             <h3>Today, Thu July 04</h3>
-            <div class="flow-count">3 flows</div>
+            <span class="flow-count">3 flows</span>
           </div>
-          <div class="flow-items" id="savedFlowsList">
-            <!-- Flow items will be dynamically inserted here -->
+          <div id="savedFlowsList" class="flow-items">
+            <!-- Saved flows will be populated here -->
           </div>
         </div>
       </main>
@@ -32,9 +34,9 @@
 
     <div id="buildScreen" class="screen">
       <h1>Build A Flow!</h1>
-      <input type="text" id="title" placeholder="Title" />
-      <input type="text" id="description" placeholder="Description" />
-      <span id="flowTime"></span>
+      <input type="text" id="title" placeholder="Flow Title" />
+      <textarea id="description" placeholder="Flow Description"></textarea>
+      <p id="flowTime">0 seconds</p>
       <div id="asanaList"></div>
       <table id="flowTable">
         <tr>
@@ -46,8 +48,10 @@
           <th>Remove</th>
         </tr>
       </table>
-      <button onclick="saveFlow()">Save Flow</button>
-      <button onclick="changeScreen('homeScreen')">Home</button>
+      <button onclick="saveFlow()" class="save-flow-btn">Save Flow</button>
+      <button onclick="changeScreen('homeScreen')" class="home-btn">
+        Home
+      </button>
     </div>
 
     <div id="flowScreen" class="screen">
@@ -55,6 +59,7 @@
       <div id="currentAsana"></div>
       <div id="countdown"></div>
     </div>
-    <script type="module" src="main.js"></script>
+
+    <script src="main.js"></script>
   </body>
 </html>
