@@ -346,16 +346,22 @@ function updateCountdownTimer(duration, asanaName, callback) {
 
 
 function endFlow() {
-    const countdownElement = document.getElementById('countdown');
-    const countdownCircle = document.getElementById('countdown-circle');
-    const currentAsanaElement = document.getElementById("currentAsana");
-
-    countdownElement.innerText = '';
-    countdownCircle.style.strokeDashoffset = 2 * Math.PI * 45;
-    currentAsanaElement.innerHTML = `
-        <h2>Flow Complete!</h2>
-        <button onclick="changeScreen('homeScreen')" class="home-btn">Return Home</button>
-    `;
+    const flowContent = document.querySelector('.flow-content');
+    
+    // Remove all existing content
+    flowContent.innerHTML = '';
+    
+    // Create and append new elements
+    const completeMessage = document.createElement('h2');
+    completeMessage.textContent = 'Flow Complete!';
+    
+    const homeButton = document.createElement('button');
+    homeButton.textContent = 'Return Home';
+    homeButton.className = 'home-btn';
+    homeButton.onclick = () => changeScreen('homeScreen');
+    
+    flowContent.appendChild(completeMessage);
+    flowContent.appendChild(homeButton);
 }
 
 function updateDate() {
