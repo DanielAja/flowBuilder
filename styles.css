@@ -172,9 +172,19 @@ main {
   display: block;
 }
 
-#buildScreen,
-#flowScreen {
+#buildScreen {
   padding: 20px;
+}
+
+#flowScreen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.flow-content {
+  text-align: center;
 }
 
 input[type="text"],
@@ -204,10 +214,34 @@ th {
 }
 
 #countdown {
-  font-size: 24px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
   font-weight: bold;
-  color: #ff8c00;
-  margin-top: 20px;
+}
+
+.countdown-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.countdown-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+#countdown-circle {
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+#currentAsana {
+  font-size: 36px;
+  margin-bottom: 20px;
 }
 
 #asanaList {

@@ -292,10 +292,10 @@ function playFlow(flowID) {
     function performAsana() {
         if (currentAsanaIndex < flow.asanas.length) {
             const asana = flow.asanas[currentAsanaIndex];
-            updateAsanaDisplay(asana);
-            updateCountdownTimer(asana.duration);
-            currentAsanaIndex++;
-            setTimeout(performAsana, asana.duration * 1000);
+            updateCountdownTimer(asana.duration, asana.name, () => {
+                currentAsanaIndex++;
+                performAsana();
+            });
         } else {
             endFlow();
         }
@@ -304,22 +304,57 @@ function playFlow(flowID) {
     performAsana();
 }
 
-function updateCountdownTimer(duration) {
+function updateCountdownTimer(duration, asanaName, callback) {
     const countdownElement = document.getElementById('countdown');
+    const countdownCircle = document.getElementById('countdown-circle');
+    const currentAsanaElement = document.getElementById("currentAsana");
+    const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
     let remainingTime = duration;
+    let lastUpdateTime = Date.now();
 
-    const countdownInterval = setInterval(() => {
-        remainingTime--;
-        if (remainingTime !== 0) countdownElement.innerText = remainingTime;
-        if (remainingTime <= 1) clearInterval(countdownInterval);
-    }, 1000);
+    countdownCircle.style.strokeDasharray = circumference;
+    countdownCircle.style.strokeDashoffset = 0;
+    
+    currentAsanaElement.innerHTML = `<h2>${asanaName}</h2>`;
+    countdownElement.innerText = displayFlowDuration(remainingTime);
+
+    function update() {
+        const now = Date.now();
+        const deltaTime = (now - lastUpdateTime) / 1000; // Convert to seconds
+        lastUpdateTime = now;
+
+        remainingTime -= deltaTime;
+
+        if (remainingTime <= 0) {
+            countdownElement.innerText = '';
+            countdownCircle.style.strokeDashoffset = circumference;
+            callback();
+            return;
+        }
+
+        const percentage = (1 - (remainingTime / duration)) * 100;
+        const offset = circumference - (percentage / 100) * circumference;
+        countdownCircle.style.strokeDashoffset = offset;
+
+        countdownElement.innerText = displayFlowDuration(Math.ceil(remainingTime));
+
+        requestAnimationFrame(update);
+    }
+
+    requestAnimationFrame(update);
 }
 
+
 function endFlow() {
-    document.getElementById('countdown').innerText = '';
-    document.getElementById("currentAsana").innerHTML = `
-        <h1>End of Flow</h1>
-        <button onclick="changeScreen('homeScreen')">Go Back</button>
+    const countdownElement = document.getElementById('countdown');
+    const countdownCircle = document.getElementById('countdown-circle');
+    const currentAsanaElement = document.getElementById("currentAsana");
+
+    countdownElement.innerText = '';
+    countdownCircle.style.strokeDashoffset = 2 * Math.PI * 45;
+    currentAsanaElement.innerHTML = `
+        <h2>Flow Complete!</h2>
+        <button onclick="changeScreen('homeScreen')" class="home-btn">Return Home</button>
     `;
 }
 
@@ -331,20 +366,16 @@ function updateDate() {
 }
 
 function displayFlowDuration(duration) {
-    let mins = Math.floor(duration/60);
-    let sec = duration - mins*60;
-    var retString = "";
-    var tmp = "";
+    duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
+    let mins = Math.floor(duration / 60);
+    let sec = duration % 60;
+    let retString = "";
+    let tmp = "";
     if (mins > 0)
-        retString += mins.toString() +  "min";
-    if (sec > 0)
-    {
-        if (mins > 0) tmp = ", ";
-        tmp += sec.toString() + "sec";
-    }
-       
-
-    return retString + tmp;
+        retString += mins.toString() + "min";
+    if (sec > 0 || mins === 0)
+        tmp = sec.toString().padStart(2, '0') + "s";
+    return (retString + " " + tmp).trim();
 }
 
 // Function to fetch and parse the XML file
