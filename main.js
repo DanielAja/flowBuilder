@@ -206,7 +206,7 @@ function displayFlows() {
         flowItem.innerHTML = `
             <div class="flow-info">
                 <h4>${flow.name}</h4>
-                <p class="flow-description">(${flow.time}mins) ${flow.description}</p>
+                <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description}</p>
             </div>
             <div class="flow-actions">
                 <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
@@ -328,6 +328,23 @@ function updateDate() {
     const options = { weekday: 'short', month: 'short', day: 'numeric' };
     const today = new Date();
     dateElement.textContent = `Today, ${today.toLocaleDateString('en-US', options)}`;
+}
+
+function displayFlowDuration(duration) {
+    let mins = Math.floor(duration/60);
+    let sec = duration - mins*60;
+    var retString = "";
+    var tmp = "";
+    if (mins > 0)
+        retString += mins.toString() +  "min";
+    if (sec > 0)
+    {
+        if (mins > 0) tmp = ", ";
+        tmp += sec.toString() + "sec";
+    }
+       
+
+    return retString + tmp;
 }
 
 // Function to fetch and parse the XML file
