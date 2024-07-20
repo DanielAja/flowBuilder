@@ -46,7 +46,8 @@ class Flow {
     }
 
     calculateTotalDuration() {
-        this.time = this.asanas.reduce((sum, asana) => sum + (parseInt(asana.duration) || 0), 0);
+        const durationInputs = document.querySelectorAll('#flowTable input[type="number"]');
+        this.time = Array.from(durationInputs).reduce((sum, input) => sum + (parseInt(input.value) || 0), 0);
         return this.time;
     }
 
@@ -79,8 +80,9 @@ function updateRowNumbers() {
 }
 
 function updateFlowDuration() {
-    const totalDuration = editingFlow.calculateTotalDuration();
-    document.getElementById('flowTime').textContent = `${totalDuration} seconds`;
+   
+        const totalDuration = editingFlow.calculateTotalDuration();
+        document.getElementById('flowTime').textContent = `${totalDuration} seconds`;
 }
 
 function updateAsanaDisplay(asana) {
@@ -111,11 +113,14 @@ function selectAsana(asana) {
         <td>${index}</td>
         <td><button onclick="reorderPose(this)">Reorder</button></td>
         <td>${asana.name}</td>
-        <td><input type="number" value="3" onchange="updateFlowDuration(${index})"/></td>
+        <td><input type="number" value="3" onchange="updateFlowDuration()"/></td>
         <td>${createSideDropdown(asana.side)}</td>
         <td><button onclick="removePose(this)">Remove</button></td>
     `;
 
+    if (!editingFlow) {
+        editingFlow = new Flow();
+    }
     editingFlow.addAsana(asana);
     updateFlowDuration();
 }
@@ -158,6 +163,12 @@ function saveFlow() {
     editingFlow.name = title;
     editingFlow.description = description;
     editingFlow.calculateTotalDuration();
+
+    // Update asana durations from input fields
+    const durationInputs = document.querySelectorAll('#flowTable input[type="number"]');
+    durationInputs.forEach((input, index) => {
+        editingFlow.asanas[index].duration = parseInt(input.value) || 0;
+    });
 
     const flows = getFlows();
     
