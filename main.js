@@ -308,7 +308,7 @@ function playFlow(flowID) {
         if (currentAsanaIndex < editingFlow.asanas.length) {
             const asana = editingFlow.asanas[currentAsanaIndex];
             const duration = updateAsanaDisplay(asana);
-            updateCountdownTimer(duration, () => {
+            updateCountdownTimer(duration, asana.name, () => {
                 currentAsanaIndex++;
                 performAsana();
             });
@@ -324,7 +324,7 @@ var lastUpdateTime;
 function updateCountdownTimer(duration, asanaName, callback) {
     const countdownElement = document.getElementById('countdown');
     const countdownCircle = document.getElementById('countdown-circle');
-    const currentAsanaElement = document.getElementById("currentAsana");
+    const asanaNameElement = document.getElementById("asanaName");
     const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
     let remainingTime = duration;
     lastUpdateTime = Date.now();
@@ -332,7 +332,9 @@ function updateCountdownTimer(duration, asanaName, callback) {
     countdownCircle.style.strokeDasharray = circumference;
     countdownCircle.style.strokeDashoffset = 0;
     
-    currentAsanaElement.innerHTML = `<h2>${asanaName}</h2>`;
+    if (asanaNameElement) {
+        asanaNameElement.textContent = asanaName;
+    }
     countdownElement.innerText = displayFlowDuration(remainingTime);
 
     function update() {
@@ -358,9 +360,8 @@ function updateCountdownTimer(duration, asanaName, callback) {
         animationFrameId = requestAnimationFrame(update);
     }
 
-    animationFrameId = requestAnimationFrame(update);
+    let animationFrameId = requestAnimationFrame(update);
 }
-
 function togglePause() {
     const pauseButton = document.querySelector('.pause-btn');
     paused = !paused;
