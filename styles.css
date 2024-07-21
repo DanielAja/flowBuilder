@@ -261,16 +261,53 @@ h1 {
 .flow-content {
   position: relative;
   min-height: 400px; /* Adjust as needed */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.asana-image-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
+.flow-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 15%;
+  left: 0;
+  right: 0;
+  padding: 0 20px;
+}
+
+.complete-message {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+.home-btn {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 .countdown-container {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 75px;
+  height: 75px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .flow-footer {
@@ -304,6 +341,10 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  text-align: right;
+  /* position: absolute; */
+  /* right: 3px !important; */
+  /* bottom: 20%; */
 }
 
 .coming-up p {
@@ -321,6 +362,10 @@ h1 {
   height: 50px;
   object-fit: cover;
   border-radius: 25px;
+  align-self: flex-end;
+  margin-top: 10px;
+  position: absolute;
+  right: 0;
 }
 
 @media screen and (max-width: 768px) {

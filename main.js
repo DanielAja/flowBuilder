@@ -96,13 +96,15 @@ function updateAsanaDisplay(asana) {
     if (nextAsana) {
         document.getElementById("nextAsanaName").textContent = nextAsana.name;
         document.getElementById("nextAsanaImage").src = nextAsana.image;
-        comingUpSection.style.display = "block";
     } else {
-        comingUpSection.style.display = "none";
+        document.getElementById("nextAsanaName").textContent = "End of flow";
+        document.getElementById("nextAsanaImage").src = ""; // You might want to use a placeholder image here
     }
+    comingUpSection.style.display = "block";
 
     return asana.duration;
 }
+
 
 // Screen management
 function changeScreen(screenId) {
@@ -304,6 +306,15 @@ function playFlow(flowID) {
     editingFlow = flows.find(f => f.flowID === flowID);
     currentAsanaIndex = 0;
   
+    // Reset the display of elements that might have been hidden/changed
+    const pauseButton = document.querySelector('.pause-btn');
+    pauseButton.style.display = 'inline-block';
+    pauseButton.disabled = false;
+    pauseButton.style.opacity = '1';
+    
+    const asanaImageContainer = document.querySelector('.asana-image-container');
+    asanaImageContainer.innerHTML = `<img id="asanaImage" src="" alt="Asana pose" />`;
+  
     function performAsana() {
         if (currentAsanaIndex < editingFlow.asanas.length) {
             const asana = editingFlow.asanas[currentAsanaIndex];
@@ -377,31 +388,36 @@ function togglePause() {
 }
 
 function endFlow() {
-    const flowContent = document.querySelector('.flow-content');
+    const asanaImageContainer = document.querySelector('.asana-image-container');
+    const countdownContainer = document.querySelector('.countdown-container');
+    const comingUpSection = document.querySelector('.coming-up');
+    
+    // Clear the countdown text and reset the circle
     const countdownElement = document.getElementById('countdown');
     const countdownCircle = document.getElementById('countdown-circle');
-    
-    // Clear the countdown text
     countdownElement.innerText = '';
-    
-    // Reset the circle to full
     countdownCircle.style.strokeDashoffset = 0;
     
-    // Create completion message
-    const completeMessage = document.createElement('h2');
-    completeMessage.textContent = 'Flow Complete!';
-    completeMessage.className = 'complete-message';
+    // Keep the pause button visible but disable it
+    const pauseButton = document.querySelector('.pause-btn');
+    pauseButton.disabled = true;
+    pauseButton.style.opacity = '0.5';
     
-    // Create return home button
-    const homeButton = document.createElement('button');
-    homeButton.textContent = 'Return Home';
-    homeButton.className = 'home-btn';
-    homeButton.onclick = () => changeScreen('homeScreen');
+    // Clear and update the asana image container
+    asanaImageContainer.innerHTML = `
+        <h2 class="complete-message">Flow Complete!</h2>
+        <button class="home-btn" onclick="changeScreen('homeScreen')">Return Home</button>
+    `;
     
-    // Add new elements
-    flowContent.appendChild(completeMessage);
-    flowContent.appendChild(homeButton);
+    // Keep the countdown container and coming up section visible
+    countdownContainer.style.display = 'block';
+    comingUpSection.style.display = 'block';
+    
+    // Update the coming up section to show "End of flow"
+    document.getElementById("nextAsanaName").textContent = "End of flow";
+    document.getElementById("nextAsanaImage").src = ""; // You might want to use a placeholder image here
 }
+
 
 function updateDate() {
     const dateElement = document.querySelector('.flow-date h3');
