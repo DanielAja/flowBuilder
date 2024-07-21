@@ -86,7 +86,21 @@ function updateFlowDuration() {
 }
 
 function updateAsanaDisplay(asana) {
-    document.getElementById("currentAsana").innerHTML = `<h1>${asana.name}</h1>`;
+    document.getElementById("asanaName").textContent = asana.name;
+    document.getElementById("asanaSide").textContent = asana.side;
+    document.getElementById("asanaImage").src = asana.image;
+    
+    // Update next asana info
+    const nextAsana = editingFlow.asanas[currentAsanaIndex + 1];
+    const comingUpSection = document.querySelector(".coming-up");
+    if (nextAsana) {
+        document.getElementById("nextAsanaName").textContent = nextAsana.name;
+        document.getElementById("nextAsanaImage").src = nextAsana.image;
+        comingUpSection.style.display = "block";
+    } else {
+        comingUpSection.style.display = "none";
+    }
+
     return asana.duration;
 }
 
@@ -284,16 +298,17 @@ function clearBuildAFlow() {
 }
 
 function playFlow(flowID) {
-    paused = false
+    paused = false;
     changeScreen('flowScreen');
     const flows = getFlows();
-    const flow = flows.find(f => f.flowID === flowID);
-    let currentAsanaIndex = 0;
-
+    editingFlow = flows.find(f => f.flowID === flowID);
+    currentAsanaIndex = 0;
+  
     function performAsana() {
-        if (currentAsanaIndex < flow.asanas.length) {
-            const asana = flow.asanas[currentAsanaIndex];
-            updateCountdownTimer(asana.duration, asana.name, () => {
+        if (currentAsanaIndex < editingFlow.asanas.length) {
+            const asana = editingFlow.asanas[currentAsanaIndex];
+            const duration = updateAsanaDisplay(asana);
+            updateCountdownTimer(duration, () => {
                 currentAsanaIndex++;
                 performAsana();
             });
@@ -301,7 +316,7 @@ function playFlow(flowID) {
             endFlow();
         }
     }
-
+  
     performAsana();
 }
 var paused = false;

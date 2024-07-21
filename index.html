@@ -54,37 +54,52 @@
       </button>
     </div>
 
-    <div id="flowScreen" class="screen active">
+    <div id="flowScreen" class="screen">
+      <div class="flow-header">
+        <h1 id="asanaName">Warrior II</h1>
+        <p id="asanaSide">left</p>
+      </div>
       <div class="flow-content">
-        <div id="currentAsana"></div>
-        <div class="countdown-container">
-          <svg class="countdown-svg" viewBox="0 0 100 100">
-            <circle
-              r="45"
-              cx="50"
-              cy="50"
-              fill="transparent"
-              stroke="#ddd"
-              stroke-width="10"
-            ></circle>
-            <circle
-              id="countdown-circle"
-              r="45"
-              cx="50"
-              cy="50"
-              fill="transparent"
-              stroke="#ff8c00"
-              stroke-width="10"
-              stroke-dasharray="282.7"
-              stroke-dashoffset="0"
-            ></circle>
-          </svg>
-          <div id="countdown"></div>
-        </div>
-        <div class="pause-button-container">
+        <img id="asanaImage" src="images/warrior-2.png" alt="Asana pose" />
+
+        <div class="flow-footer">
           <button class="pause-btn" onclick="togglePause()">⏸️</button>
+          <div class="countdown-container">
+            <svg class="countdown-svg" viewBox="0 0 100 100">
+              <circle
+                r="45"
+                cx="50"
+                cy="50"
+                fill="transparent"
+                stroke="#ddd"
+                stroke-width="10"
+              ></circle>
+              <circle
+                id="countdown-circle"
+                r="45"
+                cx="50"
+                cy="50"
+                fill="transparent"
+                stroke="#ff8c00"
+                stroke-width="10"
+                stroke-dasharray="282.7"
+                stroke-dashoffset="0"
+              ></circle>
+            </svg>
+            <div id="countdown">7s</div>
+          </div>
+          <div class="coming-up">
+            <p>Coming Up:</p>
+            <p id="nextAsanaName">Triangle</p>
+            <img
+              id="nextAsanaImage"
+              src="images/triangle-pose.png"
+              alt="Next asana pose"
+            />
+          </div>
         </div>
       </div>
+      <button class="close-btn" onclick="changeScreen('homeScreen')">X</button>
     </div>
 
     <script src="main.js"></script>
