@@ -86,25 +86,42 @@ function updateFlowDuration() {
 }
 
 function updateAsanaDisplay(asana) {
-    document.getElementById("asanaName").textContent = asana.name;
-    document.getElementById("asanaSide").textContent = asana.side;
-    document.getElementById("asanaImage").src = asana.image;
+    const asanaNameElement = document.getElementById("asanaName");
+    const asanaSideElement = document.getElementById("asanaSide");
+    const asanaImageElement = document.getElementById("asanaImage");
+    const nextAsanaNameElement = document.getElementById("nextAsanaName");
+    const nextAsanaImageElement = document.getElementById("nextAsanaImage");
+    const comingUpSection = document.querySelector(".coming-up");
+
+    if (asanaNameElement) asanaNameElement.textContent = asana.name;
+    if (asanaSideElement) asanaSideElement.textContent = asana.side;
+    if (asanaImageElement) {
+        asanaImageElement.src = asana.image;
+        asanaImageElement.alt = `${asana.name} pose`;
+    }
     
     // Update next asana info
     const nextAsana = editingFlow.asanas[currentAsanaIndex + 1];
-    const comingUpSection = document.querySelector(".coming-up");
     if (nextAsana) {
-        document.getElementById("nextAsanaName").textContent = nextAsana.name;
-        document.getElementById("nextAsanaImage").src = nextAsana.image;
+        if (nextAsanaNameElement) nextAsanaNameElement.textContent = nextAsana.name;
+        if (nextAsanaImageElement) {
+            nextAsanaImageElement.src = nextAsana.image;
+            nextAsanaImageElement.alt = `${nextAsana.name} pose`;
+        }
     } else {
-        document.getElementById("nextAsanaName").textContent = "End of flow";
-        document.getElementById("nextAsanaImage").src = ""; // You might want to use a placeholder image here
+        if (nextAsanaNameElement) nextAsanaNameElement.textContent = "End of flow";
+        if (nextAsanaImageElement) {
+            nextAsanaImageElement.src = "path/to/end-of-flow-image.png"; // Replace with actual path
+            nextAsanaImageElement.alt = "End of flow";
+        }
     }
-    comingUpSection.style.display = "block";
+    if (comingUpSection) comingUpSection.style.display = "block";
+
+    console.log('Current Asana:', asana.name, 'Image:', asana.image);
+    console.log('Next Asana:', nextAsana ? nextAsana.name : 'End of flow', 'Image:', nextAsana ? nextAsana.image : 'End of flow image');
 
     return asana.duration;
 }
-
 
 // Screen management
 function changeScreen(screenId) {
@@ -308,12 +325,16 @@ function playFlow(flowID) {
   
     // Reset the display of elements that might have been hidden/changed
     const pauseButton = document.querySelector('.pause-btn');
-    pauseButton.style.display = 'inline-block';
-    pauseButton.disabled = false;
-    pauseButton.style.opacity = '1';
+    if (pauseButton) {
+        pauseButton.style.display = 'inline-block';
+        pauseButton.disabled = false;
+        pauseButton.style.opacity = '1';
+    }
     
     const asanaImageContainer = document.querySelector('.asana-image-container');
-    asanaImageContainer.innerHTML = `<img id="asanaImage" src="" alt="Asana pose" />`;
+    if (asanaImageContainer) {
+        asanaImageContainer.innerHTML = `<img id="asanaImage" src="" alt="Asana pose" />`;
+    }
   
     function performAsana() {
         if (currentAsanaIndex < editingFlow.asanas.length) {
@@ -395,29 +416,37 @@ function endFlow() {
     // Clear the countdown text and reset the circle
     const countdownElement = document.getElementById('countdown');
     const countdownCircle = document.getElementById('countdown-circle');
-    countdownElement.innerText = '';
-    countdownCircle.style.strokeDashoffset = 0;
+    if (countdownElement) countdownElement.innerText = '';
+    if (countdownCircle) countdownCircle.style.strokeDashoffset = 0;
     
     // Keep the pause button visible but disable it
     const pauseButton = document.querySelector('.pause-btn');
-    pauseButton.disabled = true;
-    pauseButton.style.opacity = '0.5';
+    if (pauseButton) {
+        pauseButton.disabled = true;
+        pauseButton.style.opacity = '0.5';
+    }
     
     // Clear and update the asana image container
-    asanaImageContainer.innerHTML = `
-        <h2 class="complete-message">Flow Complete!</h2>
-        <button class="home-btn" onclick="changeScreen('homeScreen')">Return Home</button>
-    `;
+    if (asanaImageContainer) {
+        asanaImageContainer.innerHTML = `
+            <h2 class="complete-message">Flow Complete!</h2>
+            <button class="home-btn" onclick="changeScreen('homeScreen')">Return Home</button>
+        `;
+    }
     
     // Keep the countdown container and coming up section visible
-    countdownContainer.style.display = 'block';
-    comingUpSection.style.display = 'block';
+    if (countdownContainer) countdownContainer.style.display = 'block';
+    if (comingUpSection) comingUpSection.style.display = 'block';
     
     // Update the coming up section to show "End of flow"
-    document.getElementById("nextAsanaName").textContent = "End of flow";
-    document.getElementById("nextAsanaImage").src = ""; // You might want to use a placeholder image here
+    const nextAsanaNameElement = document.getElementById("nextAsanaName");
+    const nextAsanaImageElement = document.getElementById("nextAsanaImage");
+    if (nextAsanaNameElement) nextAsanaNameElement.textContent = "End of flow";
+    if (nextAsanaImageElement) {
+        nextAsanaImageElement.src = "path/to/end-of-flow-image.png"; // Replace with actual path
+        nextAsanaImageElement.alt = "End of flow";
+    }
 }
-
 
 function updateDate() {
     const dateElement = document.querySelector('.flow-date h3');

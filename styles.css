@@ -196,11 +196,11 @@ h1 {
 
 #asanaImage {
   /* position: absolute; */
-  top: 80px; /* Adjust this value to move it closer to or further from the top */
+  /* top: 80px; Adjust this value to move it closer to or further from the top */
   left: 50%;
-  transform: translateY(-25%);
-  width: 300px;
-  height: 300px;
+  transform: translateY(-40%);
+  width: 27rem;
+  height: 27rem;
   object-fit: contain;
   z-index: 0;
   user-select: none; /* Makes the image unselectable */
@@ -281,10 +281,10 @@ h1 {
   justify-content: space-between;
   align-items: flex-end;
   position: absolute;
-  bottom: 15%;
+  bottom: 25%;
   left: 0;
   right: 0;
-  padding: 0 20px;
+  padding: 20px;
 }
 
 .complete-message {
@@ -344,7 +344,7 @@ h1 {
   text-align: right;
   /* position: absolute; */
   /* right: 3px !important; */
-  /* bottom: 20%; */
+  /* top: 0; */
 }
 
 .coming-up p {
@@ -364,8 +364,8 @@ h1 {
   border-radius: 25px;
   align-self: flex-end;
   margin-top: 10px;
-  position: absolute;
-  right: 0;
+  /* position: absolute; */
+  /* right: 0; */
 }
 
 @media screen and (max-width: 768px) {
