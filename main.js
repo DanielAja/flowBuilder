@@ -429,7 +429,6 @@ function endFlow() {
     // Clear and update the asana image container
     if (asanaImageContainer) {
         asanaImageContainer.innerHTML = `
-            <h2 class="complete-message">Flow Complete!</h2>
             <button class="home-btn" onclick="changeScreen('homeScreen')">Return Home</button>
         `;
     }
