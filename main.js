@@ -648,10 +648,18 @@ function playFlow(flowID) {
 
 function startCountdownTimer(duration) {
     const countdownElement = document.getElementById('countdown');
-    if (!countdownElement) return;
+    const countdownCircle = document.getElementById('countdown-circle');
+    if (!countdownElement || !countdownCircle) return;
     
     let timeLeft = duration;
     countdownElement.textContent = displayFlowDuration(timeLeft);
+    
+    // Calculate the circle circumference (2 * PI * radius)
+    const circumference = 2 * Math.PI * 45; // The circle has r=45
+    countdownCircle.style.strokeDasharray = circumference;
+    
+    // Reset the countdown animation
+    countdownCircle.style.strokeDashoffset = "0";
     
     if (animationFrameId) {
         clearTimeout(animationFrameId);
@@ -662,6 +670,10 @@ function startCountdownTimer(duration) {
             timeLeft -= 1;
             countdownElement.textContent = displayFlowDuration(timeLeft);
             
+            // Update the circle animation - offset increases as time decreases
+            const dashOffset = circumference * (timeLeft / duration);
+            countdownCircle.style.strokeDashoffset = circumference - dashOffset;
+            
             if (timeLeft <= 0) {
                 // Move to next asana
                 currentAsanaIndex++;
@@ -669,6 +681,10 @@ function startCountdownTimer(duration) {
                     const nextAsana = editingFlow.asanas[currentAsanaIndex];
                     const nextDuration = updateAsanaDisplay(nextAsana);
                     timeLeft = nextDuration;
+                    
+                    // Reset the circle animation for the next pose
+                    countdownCircle.style.strokeDasharray = circumference;
+                    countdownCircle.style.strokeDashoffset = "0";
                 } else {
                     // End of flow
                     countdownElement.textContent = 'End';
