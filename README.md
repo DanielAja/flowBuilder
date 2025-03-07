@@ -2,6 +2,10 @@
 
 A web application for creating and practicing custom yoga flows.
 
+## Demo
+
+Try the live demo: [https://danielaja.github.io/flowBuilder/](https://danielaja.github.io/flowBuilder/)
+
 ## Features
 
 - Create and save custom yoga flows
