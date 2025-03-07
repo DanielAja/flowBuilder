@@ -953,6 +953,25 @@ function startCountdownTimer(duration) {
     animationFrameId = setTimeout(updateTimer, 1000);
 }
 
+function endFlow() {
+    // Show a confirmation message
+    if (confirm('Are you sure you want to end this flow?')) {
+        // If the flow has a lastFlowed timestamp, keep it
+        // Since the user is manually ending the flow, we consider it "completed"
+        const flows = getFlows();
+        const flowIndex = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
+        
+        if (flowIndex !== -1) {
+            // Only update if the flow was already saved
+            flows[flowIndex].lastFlowed = new Date().toISOString();
+            saveFlows(flows);
+        }
+        
+        // Return to home screen
+        changeScreen('homeScreen');
+    }
+}
+
 function togglePause() {
     // Check if the flow is already complete (timer turned into home button)
     const flowComplete = document.querySelector('.countdown-container.flow-complete');
