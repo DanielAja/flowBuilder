@@ -1077,6 +1077,13 @@ h1 {
   box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.03);
 }
 
+.left-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
 .flow-actions {
   position: fixed;
   bottom: 20px;
@@ -1115,6 +1122,34 @@ h1 {
   position: relative;
 }
 
+.speech-btn-flow {
+  width: 60px !important;
+  height: 60px;
+  border-radius: 50% !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 !important;
+  transition: all 0.3s ease;
+  background: linear-gradient(145deg, #4CAF50, #3e8e41) !important;
+}
+
+.speech-btn-flow:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.speech-btn-flow.speech-disabled {
+  background: linear-gradient(145deg, #999, #777) !important;
+}
+
+.speech-btn-flow svg {
+  width: 28px !important;
+  height: 28px !important;
+  margin-right: 0 !important;
+}
+
 #flowScreen .speech-btn::after {
   content: "";
   position: absolute;
@@ -1126,6 +1161,13 @@ h1 {
   border-radius: 50%;
   border: 2px solid white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.speech-btn-flow::after {
+  top: -5px !important;
+  right: -5px !important;
+  width: 18px !important;
+  height: 18px !important;
 }
 
 #flowScreen .speech-btn.speech-disabled {

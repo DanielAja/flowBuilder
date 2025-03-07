@@ -192,9 +192,11 @@ function speakAsanaName(name, side) {
         speechSynthesis.cancel();
     }
     
-    // Add visual feedback to the speech button
+    // Add visual feedback to both speech buttons
     const speechBtn = document.getElementById('speech-toggle');
+    const speechFlowBtn = document.getElementById('speech-toggle-flow');
     if (speechBtn) speechBtn.classList.add('speaking');
+    if (speechFlowBtn) speechFlowBtn.classList.add('speaking');
     
     // Create text to speak - include side only if it's Left or Right
     let textToSpeak = name;
@@ -211,10 +213,12 @@ function speakAsanaName(name, side) {
     // Add event listeners for speech events
     speechUtterance.onend = function() {
         if (speechBtn) speechBtn.classList.remove('speaking');
+        if (speechFlowBtn) speechFlowBtn.classList.remove('speaking');
     };
     
     speechUtterance.onerror = function() {
         if (speechBtn) speechBtn.classList.remove('speaking');
+        if (speechFlowBtn) speechFlowBtn.classList.remove('speaking');
         console.error('Speech synthesis error');
     };
     
@@ -721,7 +725,8 @@ function playFlow(flowID) {
     // Initialize the practice screen
     changeScreen('flowScreen');
     
-    // Initialize speech button state
+    // Initialize both speech button states
+    // 1. Bottom speech toggle button
     const speechToggleBtn = document.getElementById('speech-toggle');
     if (speechToggleBtn) {
         const buttonLabel = speechToggleBtn.querySelector('span');
@@ -734,6 +739,18 @@ function playFlow(flowID) {
             speechToggleBtn.classList.add('speech-disabled');
             speechToggleBtn.title = "Voice guidance is off - Click to turn on";
             if (buttonLabel) buttonLabel.textContent = "Voice Off";
+        }
+    }
+    
+    // 2. Flow screen speech toggle button
+    const speechToggleFlowBtn = document.getElementById('speech-toggle-flow');
+    if (speechToggleFlowBtn) {
+        if (speechEnabled) {
+            speechToggleFlowBtn.classList.remove('speech-disabled');
+            speechToggleFlowBtn.title = "Voice guidance is on - Click to turn off";
+        } else {
+            speechToggleFlowBtn.classList.add('speech-disabled');
+            speechToggleFlowBtn.title = "Voice guidance is off - Click to turn on";
         }
     }
     
@@ -863,30 +880,48 @@ function togglePause() {
 function toggleSpeech() {
     speechEnabled = !speechEnabled;
     
-    // Update button state
+    // Update both button states
     const speechToggleBtn = document.getElementById('speech-toggle');
-    if (speechToggleBtn) {
-        const buttonLabel = speechToggleBtn.querySelector('span');
-        
-        if (speechEnabled) {
+    const speechToggleFlowBtn = document.getElementById('speech-toggle-flow');
+    
+    if (speechEnabled) {
+        // Update main speech toggle button
+        if (speechToggleBtn) {
+            const buttonLabel = speechToggleBtn.querySelector('span');
             speechToggleBtn.classList.remove('speech-disabled');
             speechToggleBtn.title = "Voice guidance is on - Click to turn off";
             if (buttonLabel) buttonLabel.textContent = "Voice On";
-            
-            // Speak the current pose if not paused
-            if (!paused && editingFlow.asanas && editingFlow.asanas[currentAsanaIndex]) {
-                const asana = editingFlow.asanas[currentAsanaIndex];
-                speakAsanaName(asana.name, asana.side);
-            }
-        } else {
+        }
+        
+        // Update flow screen speech toggle button
+        if (speechToggleFlowBtn) {
+            speechToggleFlowBtn.classList.remove('speech-disabled');
+            speechToggleFlowBtn.title = "Voice guidance is on - Click to turn off";
+        }
+        
+        // Speak the current pose if not paused
+        if (!paused && editingFlow.asanas && editingFlow.asanas[currentAsanaIndex]) {
+            const asana = editingFlow.asanas[currentAsanaIndex];
+            speakAsanaName(asana.name, asana.side);
+        }
+    } else {
+        // Update main speech toggle button
+        if (speechToggleBtn) {
+            const buttonLabel = speechToggleBtn.querySelector('span');
             speechToggleBtn.classList.add('speech-disabled');
             speechToggleBtn.title = "Voice guidance is off - Click to turn on";
             if (buttonLabel) buttonLabel.textContent = "Voice Off";
-            
-            // Stop any current speech
-            if (speechSynthesis.speaking) {
-                speechSynthesis.cancel();
-            }
+        }
+        
+        // Update flow screen speech toggle button
+        if (speechToggleFlowBtn) {
+            speechToggleFlowBtn.classList.add('speech-disabled');
+            speechToggleFlowBtn.title = "Voice guidance is off - Click to turn on";
+        }
+        
+        // Stop any current speech
+        if (speechSynthesis.speaking) {
+            speechSynthesis.cancel();
         }
     }
 }
