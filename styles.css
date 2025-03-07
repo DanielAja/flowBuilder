@@ -1176,6 +1176,46 @@ h1 {
   /* right: 0; */
 }
 
+/* Styles for recommended poses */
+.asana-item.recommended {
+  border: 3px solid #ff8c00;
+  background-color: #fff4e6;
+  position: relative;
+  transform: scale(1.05);
+  z-index: 5;
+  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2);
+}
+
+.asana-item.recommended::after {
+  content: "RECOMMENDED";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ff8c00;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.asana-item.recommended.highlight {
+  animation: recommend-highlight 1.5s ease-in-out;
+}
+
+@keyframes recommend-highlight {
+  0% { transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2); }
+  25% { transform: scale(1.12); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4); }
+  50% { transform: scale(1.12); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6); }
+  75% { transform: scale(1.12); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4); }
+  100% { transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2); }
+}
+
 @media screen and (max-width: 768px) {
   header {
     flex-direction: column;
@@ -1201,7 +1241,6 @@ h1 {
   }
 
   .flow-item::after {
-    width: 90%;
     width: 90%;
   }
 }

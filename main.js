@@ -332,6 +332,9 @@ function selectAsana(asana) {
     updateFlowDuration();
     
     console.log(`Added asana: ${asana.name} to the flow. Current asanas:`, editingFlow.asanas);
+    
+    // Refresh the asana list to update recommended poses based on the last added pose
+    populateAsanaList();
 }
 
 // Function to create a side dropdown menu
@@ -489,6 +492,9 @@ function removePose(button) {
     // Update UI
     updateRowNumbers();
     updateFlowDuration();
+    
+    // Refresh the asana list to update recommended poses
+    populateAsanaList();
 }
 
 function saveFlow() {
@@ -802,6 +808,29 @@ async function loadAsanasFromXML() {
     }
 }
 
+// Function to get recommended poses based on the last pose in the flow
+function getRecommendedPoses() {
+    if (!editingFlow || !editingFlow.asanas || editingFlow.asanas.length === 0) {
+        return [];
+    }
+    
+    const lastAsana = editingFlow.asanas[editingFlow.asanas.length - 1];
+    if (!lastAsana || !lastAsana.transitionsAsana) {
+        return [];
+    }
+    
+    // Get transition asana names
+    const transitionNames = lastAsana.transitionsAsana;
+    
+    // Find matching asanas
+    const matches = asanas.filter(asana => 
+        transitionNames.includes(asana.name)
+    );
+    
+    // Return only one recommendation (the first match)
+    return matches.length > 0 ? [matches[0]] : [];
+}
+
 // Populate the asana list with loaded asanas
 function populateAsanaList() {
     console.log('Populating asana list with asanas:', asanas.length);
@@ -820,10 +849,45 @@ function populateAsanaList() {
         return;
     }
     
-    // Create asana elements
-    asanas.forEach(asana => {
+    // Check if we have recommended poses
+    const recommendedPoses = getRecommendedPoses();
+    const hasRecommendations = recommendedPoses.length > 0;
+    
+    // If we have recommendations, add animation but don't reposition
+    if (hasRecommendations) {
+        // Wait for elements to be created before animating
+        setTimeout(() => {
+            // Add a brief animation to the recommended pose
+            const recommendedEl = document.querySelector('.asana-item.recommended');
+            if (recommendedEl) {
+                // Scroll to make the recommendation visible
+                const recoBounds = recommendedEl.getBoundingClientRect();
+                const containerBounds = asanaList.getBoundingClientRect();
+                
+                // Only scroll if the recommended pose is not fully visible
+                if (recoBounds.left < containerBounds.left || recoBounds.right > containerBounds.right) {
+                    recommendedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+                
+                // Highlight it
+                recommendedEl.classList.add('highlight');
+                setTimeout(() => recommendedEl.classList.remove('highlight'), 1500);
+            }
+        }, 100);
+    }
+    
+    // Use original order - don't reorder poses
+    let posesList = [...asanas];
+    
+    posesList.forEach((asana, index) => {
         const asanaElement = document.createElement('div');
         asanaElement.className = 'asana-item';
+        
+        // Add recommended class if this is a recommended pose
+        if (recommendedPoses.some(reco => reco.name === asana.name)) {
+            asanaElement.classList.add('recommended');
+        }
+        
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
         
@@ -850,6 +914,9 @@ function populateAsanaList() {
     });
     
     console.log('Asana list populated with', asanas.length, 'asanas');
+    if (hasRecommendations) {
+        console.log('Recommended poses:', recommendedPoses.map(p => p.name).join(', '));
+    }
 }
 
 // Scrolling functions for the asana list
@@ -1080,6 +1147,9 @@ function handleDrop(e) {
         if (editMode) {
             autoSaveFlow();
         }
+        
+        // Refresh the recommended poses based on the new last pose
+        populateAsanaList();
     } catch (error) {
         console.error('Error during drag and drop operation:', error);
     }
