@@ -159,19 +159,31 @@ function updateAsanaDisplay(asana) {
     // Update next asana info
     const nextAsana = editingFlow.asanas[currentAsanaIndex + 1];
     if (nextAsana) {
+        // Show the upcoming pose
         if (nextAsanaNameElement) nextAsanaNameElement.textContent = nextAsana.name;
         if (nextAsanaImageElement) {
             nextAsanaImageElement.src = nextAsana.image;
             nextAsanaImageElement.alt = `${nextAsana.name} pose`;
         }
+        if (comingUpSection) comingUpSection.style.display = "block";
     } else {
-        if (nextAsanaNameElement) nextAsanaNameElement.textContent = "End of flow";
-        if (nextAsanaImageElement) {
-            nextAsanaImageElement.src = "images/downward-facing-dog.png"; // Use a default image
-            nextAsanaImageElement.alt = "End of flow";
+        // Show a message about completing the flow
+        const isLastPose = currentAsanaIndex === editingFlow.asanas.length - 1;
+        if (isLastPose) {
+            if (nextAsanaNameElement) nextAsanaNameElement.textContent = "Final pose";
+            if (nextAsanaImageElement) {
+                nextAsanaImageElement.style.display = "none"; // Hide the image
+            }
+            if (comingUpSection) {
+                const firstText = comingUpSection.querySelector("p:first-child");
+                if (firstText) firstText.textContent = "Up Next:";
+                comingUpSection.style.display = "block";
+            }
+        } else {
+            // Hide the coming up section when we're at the end of the flow
+            if (comingUpSection) comingUpSection.style.display = "none";
         }
     }
-    if (comingUpSection) comingUpSection.style.display = "block";
     
     // Speak the name of the asana if speech is enabled
     if (speechEnabled && !paused) {
