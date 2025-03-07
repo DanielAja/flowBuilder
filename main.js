@@ -647,6 +647,12 @@ function playFlow(flowID) {
         const asana = editingFlow.asanas[currentAsanaIndex];
         const duration = updateAsanaDisplay(asana);
         
+        // Set the proper pause button icon
+        const pauseBtn = document.querySelector('.pause-btn');
+        if (pauseBtn) {
+            pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+        }
+        
         // Make sure the countdown container has the proper SVG structure
         const countdownContainer = document.querySelector('.countdown-container');
         if (countdownContainer) {
@@ -740,7 +746,12 @@ function togglePause() {
     paused = !paused;
     const pauseBtn = document.querySelector('.pause-btn');
     if (pauseBtn) {
-        pauseBtn.textContent = paused ? "▶️" : "⏸️";
+        // Use better-looking icons
+        if (paused) {
+            pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+        } else {
+            pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+        }
     }
 }
 
