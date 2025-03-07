@@ -201,10 +201,12 @@ h1 {
   max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
+  padding-bottom: 100px; /* Add padding for the sticky buttons */
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative; /* For absolute positioning of the save indicator */
+  min-height: 100vh; /* Ensure there's enough room for scrolling */
 }
 
 /* Build Screen Title */
@@ -334,17 +336,14 @@ h1 {
 }
 
 .drag-drop-hint {
-  color: #333;
+  color: #888;
   font-size: 14px;
-  font-weight: bold;
+  font-style: italic;
   margin-top: 15px;
   margin-bottom: 20px;
   text-align: center;
   width: 100%;
-  padding: 12px;
-  border: 1px dashed #ff8c00;
-  border-radius: 8px;
-  background-color: #fff8f0;
+  padding: 10px;
 }
 
 #asanaList {
@@ -545,6 +544,10 @@ h1 {
   justify-content: center;
   width: 100%;
   align-items: center;
+  position: sticky;
+  bottom: 20px;
+  z-index: 100;
+  padding: 10px;
 }
 
 /* Auto-save message */
@@ -1022,6 +1025,17 @@ h1 {
   right: 0;
   padding: 20px;
   margin-top: 25px;
+}
+
+.flow-actions {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+  z-index: 100;
 }
 
 .home-btn {
