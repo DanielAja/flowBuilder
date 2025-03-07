@@ -1,15 +1,51 @@
 // Utility functions
 function generateUniqueID() {
-    return Math.random().toString(36).substr(2, 9);
+    try {
+        return Math.random().toString(36).substr(2, 9);
+    } catch (error) {
+        console.error('Error generating unique ID:', error);
+        return Date.now().toString(36); // Fallback
+    }
 }
 
 function getFlows() {
-    const flows = localStorage.getItem('flows');
-    return flows ? JSON.parse(flows) : [];
+    try {
+        const flowsJson = localStorage.getItem('flows');
+        console.log('Raw flow data from localStorage:', flowsJson);
+        
+        if (!flowsJson) {
+            console.log('No flows found in localStorage');
+            return [];
+        }
+        
+        const flows = JSON.parse(flowsJson);
+        console.log('Parsed flows:', flows);
+        
+        if (!Array.isArray(flows)) {
+            console.error('Flows is not an array:', flows);
+            return [];
+        }
+        
+        return flows;
+    } catch (error) {
+        console.error('Error getting flows from localStorage:', error);
+        return [];
+    }
 }
 
 function saveFlows(flows) {
-    localStorage.setItem('flows', JSON.stringify(flows));
+    try {
+        if (!Array.isArray(flows)) {
+            console.error('Cannot save flows: not an array', flows);
+            return;
+        }
+        
+        const flowsJson = JSON.stringify(flows);
+        localStorage.setItem('flows', flowsJson);
+        console.log('Saved flows to localStorage:', flowsJson);
+    } catch (error) {
+        console.error('Error saving flows to localStorage:', error);
+    }
 }
 
 // YogaAsana class definition
@@ -22,7 +58,7 @@ class YogaAsana {
         this.difficulty = difficulty;
         this.tags = tags;
         this.transitionsAsana = transitionsAsana;
-        this.duration = 0;
+        this.duration = 30; // Default duration of 30 seconds
     }
 
     setDuration(duration) {
@@ -46,8 +82,12 @@ class Flow {
     }
 
     calculateTotalDuration() {
-        const durationInputs = document.querySelectorAll('#flowTable .duration-wrapper input[type="number"]');
-        this.time = Array.from(durationInputs).reduce((sum, input) => sum + (parseInt(input.value) || 0), 0);
+        if (this.asanas.length === 0) {
+            this.time = 0;
+            return 0;
+        }
+        
+        this.time = this.asanas.reduce((total, asana) => total + (asana.duration || 0), 0);
         return this.time;
     }
 
@@ -70,36 +110,23 @@ let editMode = false;
 let currentScreenId = 'homeScreen';
 let asanas = [];
 let dragSource = null;
+let currentAsanaIndex = 0;
+let isReversed = false;
+let paused = false;
+let lastUpdateTime = 0;
+let animationFrameId = null;
 
-// UI update functions
-function updateRowNumbers() {
-    const table = document.getElementById("flowTable");
-    Array.from(table.rows).slice(1).forEach((row, index) => {
-        row.cells[0].innerHTML = index + 1;
-        row.cells[3].children[0].setAttribute("onchange", `updateFlowDuration(${index + 1})`);
-        
-        // Add drag attributes for every row
-        row.setAttribute("draggable", "true");
-        row.setAttribute("data-index", index);
-    });
-}
-
-function updateFlowDuration() {
-    // Check for empty values and set to 3 seconds
-    const durationInputs = document.querySelectorAll('#flowTable .duration-wrapper input[type="number"]');
-    durationInputs.forEach(input => {
-        if (input.value === '' || parseInt(input.value) === 0) {
-            input.value = 3;
-        }
-    });
-
-    const totalDuration = editingFlow.calculateTotalDuration();
-    document.getElementById('flowTime').textContent = `${totalDuration} seconds`;
-    
-    // Auto-save if in edit mode
-    if (editMode) {
-        autoSaveFlow();
-    }
+function displayFlowDuration(duration) {
+    duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
+    let mins = Math.floor(duration / 60);
+    let sec = duration % 60;
+    let retString = "";
+    let tmp = "";
+    if (mins > 0)
+        retString += mins.toString() + "min";
+    if (sec > 0 || mins === 0)
+        tmp = sec.toString().padStart(2, '0') + "s";
+    return (retString + " " + tmp).trim();
 }
 
 function updateAsanaDisplay(asana) {
@@ -135,7 +162,7 @@ function updateAsanaDisplay(asana) {
     } else {
         if (nextAsanaNameElement) nextAsanaNameElement.textContent = "End of flow";
         if (nextAsanaImageElement) {
-            nextAsanaImageElement.src = "path/to/end-of-flow-image.png"; // Replace with actual path
+            nextAsanaImageElement.src = "images/downward-facing-dog.png"; // Use a default image
             nextAsanaImageElement.alt = "End of flow";
         }
     }
@@ -147,10 +174,46 @@ function updateAsanaDisplay(asana) {
     return asana.duration;
 }
 
+// Function to clear the build flow screen
+function clearBuildAFlow() {
+    // Reset form fields
+    const titleInput = document.getElementById('title');
+    const descriptionInput = document.getElementById('description');
+    if (titleInput) titleInput.value = '';
+    if (descriptionInput) descriptionInput.value = '';
+    
+    // Clear flow table
+    const table = document.getElementById('flowTable');
+    if (table) {
+        // Clear existing rows except header
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
+    }
+    
+    // Reset flow duration
+    const flowTime = document.getElementById('flowTime');
+    if (flowTime) {
+        flowTime.textContent = '0 seconds';
+    }
+    
+    // Create a new flow
+    editingFlow = new Flow();
+    editMode = false;
+}
+
 // Screen management
 function changeScreen(screenId) {
+    console.log(`Changing screen to: ${screenId}`);
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-    document.getElementById(screenId).classList.add('active');
+    const targetScreen = document.getElementById(screenId);
+    
+    if (!targetScreen) {
+        console.error(`Screen with ID ${screenId} not found`);
+        return;
+    }
+    
+    targetScreen.classList.add('active');
     currentScreenId = screenId;
 
     if (screenId === 'homeScreen') {
@@ -160,9 +223,68 @@ function changeScreen(screenId) {
     }
 }
 
+// Function to start a new flow from the home screen
+function startNewFlow() {
+    console.log('Starting new flow...');
+    
+    // Create a new flow object
+    editingFlow = new Flow();
+    editMode = false;
+    
+    // Switch to build screen
+    console.log('Switching to build screen...');
+    changeScreen('buildScreen');
+    
+    // Reset form fields after switching screen
+    setTimeout(() => {
+        console.log('Resetting form fields...');
+        const titleInput = document.getElementById('title');
+        const descriptionInput = document.getElementById('description');
+        if (titleInput) {
+            console.log('Found title input, clearing...');
+            titleInput.value = '';
+        } else {
+            console.error('Title input not found');
+        }
+        
+        if (descriptionInput) {
+            console.log('Found description input, clearing...');
+            descriptionInput.value = '';
+        } else {
+            console.error('Description input not found');
+        }
+        
+        // Clear flow table
+        const table = document.getElementById('flowTable');
+        if (table) {
+            console.log('Found flow table, clearing rows...');
+            // Clear existing rows except header
+            while (table.rows.length > 1) {
+                table.deleteRow(1);
+            }
+        } else {
+            console.error('Flow table not found');
+        }
+        
+        // Reset flow duration
+        const flowTime = document.getElementById('flowTime');
+        if (flowTime) {
+            console.log('Resetting flow duration display...');
+            flowTime.textContent = '0 seconds';
+        } else {
+            console.error('Flow time element not found');
+        }
+    }, 100);
+}
+
 // Flow management
 function selectAsana(asana) {
     const table = document.getElementById("flowTable");
+    if (!table) {
+        console.error("Flow table not found");
+        return;
+    }
+    
     const row = table.insertRow(-1);
     const index = table.rows.length - 1;
 
@@ -179,7 +301,7 @@ function selectAsana(asana) {
         </td>
         <td>
             <div class="duration-wrapper">
-                <input type="number" value="3" min="1" max="300" onchange="updateFlowDuration()"/>
+                <input type="number" value="30" min="1" max="300" onchange="updateFlowDuration()"/>
                 <span class="duration-unit">s</span>
             </div>
         </td>
@@ -191,14 +313,24 @@ function selectAsana(asana) {
     row.setAttribute("draggable", "true");
     row.setAttribute("data-index", index - 1); // Adjust index for 0-based array
 
-    const newAsana = { ...asana, duration: 3 }; // Create a new object with duration
+    const newAsana = new YogaAsana(
+        asana.name,
+        asana.side,
+        asana.image,
+        asana.description,
+        asana.difficulty,
+        [...asana.tags || []],
+        [...asana.transitionsAsana || []]
+    );
+    newAsana.setDuration(30); // Default 30 seconds
+    
     editingFlow.addAsana(newAsana);
     updateFlowDuration();
+    
+    console.log(`Added asana: ${asana.name} to the flow. Current asanas:`, editingFlow.asanas);
 }
 
-// This function is replaced by the updated createSideDropdown function below
-
-
+// Function to create a side dropdown menu
 function createSideDropdown(side) {
     if (side === "Center") {
         return '<select class="side-select" onchange="updateAsanaImageOrientation(this)"><option value="Center" selected>Center</option></select>';
@@ -237,11 +369,57 @@ function updateAsanaImageOrientation(selectElement) {
     }
 }
 
+// UI update functions
+function updateRowNumbers() {
+    const table = document.getElementById("flowTable");
+    if (!table) return;
+    
+    Array.from(table.rows).slice(1).forEach((row, index) => {
+        row.cells[0].innerHTML = index + 1;
+        
+        // Add drag attributes for every row
+        row.setAttribute("draggable", "true");
+        row.setAttribute("data-index", index);
+    });
+}
+
+function updateFlowDuration() {
+    // Check for empty values and set to 30 seconds
+    const durationInputs = document.querySelectorAll('#flowTable .duration-wrapper input[type="number"]');
+    durationInputs.forEach(input => {
+        if (input.value === '' || parseInt(input.value) === 0) {
+            input.value = 30;
+        }
+    });
+
+    // Update durations in the flow object
+    const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
+    rows.forEach((row, index) => {
+        if (index < editingFlow.asanas.length) {
+            const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
+            if (durationInput) {
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 30;
+            }
+        }
+    });
+
+    const totalDuration = editingFlow.calculateTotalDuration();
+    const flowTime = document.getElementById('flowTime');
+    if (flowTime) {
+        flowTime.textContent = `${totalDuration} seconds`;
+    }
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
 // Function to automatically save flow changes
 function autoSaveFlow() {
     // Get current values from form
-    const title = document.getElementById('title').value;
-    const description = document.getElementById('description').value;
+    const title = document.getElementById('title')?.value;
+    const description = document.getElementById('description')?.value;
     
     // Require at least a title
     if (!title || editingFlow.asanas.length === 0) {
@@ -253,27 +431,13 @@ function autoSaveFlow() {
     editingFlow.description = description;
     editingFlow.calculateTotalDuration();
     
-    // Update asana durations and sides from input fields
-    const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
-    rows.forEach((row, index) => {
-        if (index < editingFlow.asanas.length) {
-            const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
-            const sideSelect = row.querySelector('select.side-select');
-            
-            if (durationInput && sideSelect) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 3; // Default to 3
-                editingFlow.asanas[index].side = sideSelect.value;
-            }
-        }
-    });
-    
     // Get existing flows
     const flows = getFlows();
     
     // Find and update existing flow
     const flowIndex = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
     if (flowIndex !== -1) {
-        flows[flowIndex] = editingFlow;
+        flows[flowIndex] = { ...editingFlow };
         saveFlows(flows);
         
         // Show a brief save indicator
@@ -291,7 +455,7 @@ function showSaveIndicator() {
         indicator = document.createElement('div');
         indicator.id = 'save-indicator';
         indicator.textContent = 'Changes saved';
-        document.querySelector('.build-content').appendChild(indicator);
+        document.querySelector('.build-content')?.appendChild(indicator);
     }
     
     // Show the indicator
@@ -304,25 +468,28 @@ function showSaveIndicator() {
 }
 
 function removePose(button) {
-    const row = button.parentNode.parentNode;
+    const row = button.closest('tr');
+    if (!row) return;
+    
     const table = document.getElementById("flowTable");
+    if (!table) return;
+    
     const rowIndex = row.rowIndex;
-
-    table.deleteRow(rowIndex);
+    
+    // Remove from array
     editingFlow.asanas.splice(rowIndex - 1, 1);
+    
+    // Remove from UI
+    table.deleteRow(rowIndex);
+    
+    // Update UI
     updateRowNumbers();
     updateFlowDuration();
-    
-    // Auto-save if in edit mode (will be triggered by updateFlowDuration)
 }
 
 function saveFlow() {
-    const title = document.getElementById('title').value;
-    const description = document.getElementById('description').value;
-
-    if (!editingFlow) {
-        editingFlow = new Flow();
-    }
+    const title = document.getElementById('title')?.value;
+    const description = document.getElementById('description')?.value;
 
     if (!editingFlow) {
         editingFlow = new Flow();
@@ -344,670 +511,416 @@ function saveFlow() {
     // Update asana durations and sides from input fields
     const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
     rows.forEach((row, index) => {
-        const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
-        const sideSelect = row.querySelector('select.side-select');
-        
-        editingFlow.asanas[index].duration = parseInt(durationInput.value) || 0;
-        editingFlow.asanas[index].side = sideSelect.value;
+        if (index < editingFlow.asanas.length) {
+            const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
+            const sideSelect = row.querySelector('select.side-select');
+            
+            if (durationInput && sideSelect) {
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 30;
+                editingFlow.asanas[index].side = sideSelect.value;
+            }
+        }
     });
 
+    // Get existing flows from storage
     const flows = getFlows();
+    console.log('Current flows before save:', flows);
     
     if (editMode) {
         // Update existing flow
         const index = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
         if (index !== -1) {
-            flows[index] = editingFlow;
-        } else {
-            console.error('Flow not found for editing');
-            return;
-        }
-    
-    if (editMode) {
-        // Update existing flow
-        const index = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
-        if (index !== -1) {
-            flows[index] = editingFlow;
+            flows[index] = { ...editingFlow };
+            console.log('Updated flow at index', index);
         } else {
             console.error('Flow not found for editing');
             return;
         }
     } else {
         // Add new flow
-        // Add new flow
-        flows.push(editingFlow);
+        const flowToSave = { ...editingFlow };
+        flows.push(flowToSave);
+        console.log('Added new flow with ID:', flowToSave.flowID);
     }
 
+    // Save flows back to storage
     saveFlows(flows);
+    console.log('Saved flows:', flows);
+    
+    // Update UI
     displayFlows();
     changeScreen('homeScreen');
     
     // Reset editing state
-    editingFlow = null;
-    editMode = false;
-    
-    // Reset editing state
-    editingFlow = null;
+    editingFlow = new Flow();
     editMode = false;
 }
 
 function displayFlows() {
     const flows = getFlows();
+    console.log('Displaying flows:', flows); // Debug log
+    
     const flowList = document.getElementById('savedFlowsList');
+    
+    if (!flowList) {
+        console.error("Element with ID 'savedFlowsList' not found");
+        return;
+    }
+    
     flowList.innerHTML = '';
 
-    flows.forEach(flow => {
-        const flowItem = document.createElement('div');
-        flowItem.className = 'flow-item';
-        flowItem.innerHTML = `
-            <div class="flow-info">
-                <h4>${flow.name}</h4>
-                <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description}</p>
-                <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description}</p>
-            </div>
-            <div class="flow-actions">
-                <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
-                <button class="edit-btn" onclick="editFlow('${flow.flowID}')"></button>
-                <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')"></button>
-            </div>
-        `;
-        flowList.appendChild(flowItem);
-    });
+    if (flows.length === 0) {
+        console.log('No flows available');
+        flowList.innerHTML = '<div class="empty-message">No flows available. Create your first flow!</div>';
+    } else {
+        console.log(`Adding ${flows.length} flows to the list`);
+        flows.forEach(flow => {
+            const flowItem = document.createElement('div');
+            flowItem.className = 'flow-item';
+            flowItem.innerHTML = `
+                <div class="flow-info">
+                    <h4>${flow.name}</h4>
+                    <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description || ''}</p>
+                </div>
+                <div class="flow-actions">
+                    <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
+                    <button class="edit-btn" onclick="editFlow('${flow.flowID}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')">Delete</button>
+                </div>
+            `;
+            flowList.appendChild(flowItem);
+        });
+    }
 
     // Update flow count
     const flowCount = document.querySelector('.flow-count');
-    flowCount.textContent = `${flows.length} flow${flows.length !== 1 ? 's' : ''}`;
+    if (flowCount) {
+        flowCount.textContent = `${flows.length} flow${flows.length !== 1 ? 's' : ''}`;
+    }
 }
 
 function deleteFlow(flowID) {
-    let flows = getFlows();
-    flows = flows.filter(flow => flow.flowID !== flowID);
-    saveFlows(flows);
-    displayFlows();
-}
-
-// This function is no longer used since we've removed the reorder buttons
-// We're keeping it as a placeholder since it might be referenced elsewhere
-function reorderPose(element) {
-    // Functionality now handled by drag and drop
-}
-
-function editFlow(flowID) {
-    changeScreen('buildScreen');
-    const flows = getFlows();
-    editingFlow = Object.assign(new Flow(), flows.find(flow => flow.flowID === flowID));
-    editingFlow = Object.assign(new Flow(), flows.find(flow => flow.flowID === flowID));
-    editMode = true;
-
-    document.getElementById('title').value = editingFlow.name;
-    document.getElementById('description').value = editingFlow.description;
-
-    const table = document.getElementById('flowTable');
-    table.innerHTML = `
-        <tr>
-            <th>Number</th>
-            <th>Asana</th>
-            <th>Duration</th>
-            <th>Side</th>
-            <th>Remove</th>
-        </tr>
-    `;
-
-    editingFlow.asanas.forEach((asana, index) => {
-        // Create initial transform style based on side
-        const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
-        
-        const row = table.insertRow(-1);
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>
-                <div class="table-asana">
-                    <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
-                    <span>${asana.name}</span>
-                </div>
-            </td>
-            <td>
-                <div class="duration-wrapper">
-                    <input type="number" value="${asana.duration}" min="1" max="300" onchange="updateFlowDuration()"/>
-                    <span class="duration-unit">s</span>
-                </div>
-            </td>
-            <td>${createSideDropdown(asana.side)}</td>
-            <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
-        `;
-        
-        // Make the row draggable
-        row.setAttribute("draggable", "true");
-        row.setAttribute("data-index", index);
-    });
-
-    // Hide the save button and show auto-save message
-    const buildActions = document.querySelector('.build-actions');
-    if (buildActions) {
-        const saveBtn = buildActions.querySelector('.save-flow-btn');
-        if (saveBtn) {
-            saveBtn.style.display = 'none';
-        }
-        
-        // Add auto-save message if not present
-        if (!document.getElementById('auto-save-message')) {
-            const autoSaveMsg = document.createElement('div');
-            autoSaveMsg.id = 'auto-save-message';
-            autoSaveMsg.textContent = 'Changes save automatically';
-            autoSaveMsg.className = 'auto-save-message';
-            buildActions.appendChild(autoSaveMsg);
-        }
+    if (confirm('Are you sure you want to delete this flow?')) {
+        let flows = getFlows();
+        flows = flows.filter(flow => flow.flowID !== flowID);
+        saveFlows(flows);
+        displayFlows();
     }
-
-    updateFlowDuration();
 }
-
-
-function clearBuildAFlow() {
-    document.getElementById('title').value = '';
-    document.getElementById('description').value = '';
-    document.getElementById('flowTime').textContent = '0 seconds';
-    document.getElementById('flowTable').innerHTML = `
-        <tr>
-            <th>Number</th>
-            <th>Asana</th>
-            <th>Duration</th>
-            <th>Side</th>
-            <th>Remove</th>
-        </tr>
-    `;
-    editingFlow = new Flow();
-    editMode = false;
-    
-    // Show the save button again and remove auto-save message
-    const buildActions = document.querySelector('.build-actions');
-    if (buildActions) {
-        const saveBtn = buildActions.querySelector('.save-flow-btn');
-        if (saveBtn) {
-            saveBtn.style.display = 'inline-block';
-        }
-        
-        // Remove auto-save message if present
-        const autoSaveMsg = document.getElementById('auto-save-message');
-        if (autoSaveMsg) {
-            autoSaveMsg.remove();
-        }
-    }
-    
-    // Update scroll buttons visibility after clearing
-    setTimeout(updateScrollButtons, 100);
-}
-
-let animationFrameId;
 
 function playFlow(flowID) {
-    paused = false;
-    paused = false;
-    changeScreen('flowScreen');
     const flows = getFlows();
-    editingFlow = flows.find(f => f.flowID === flowID);
-    currentAsanaIndex = 0;
-  
-    // Reset the display of elements that might have been hidden/changed
-    const pauseButton = document.querySelector('.pause-btn');
-    if (pauseButton) {
-        pauseButton.style.display = 'inline-block';
-        pauseButton.disabled = false;
-        pauseButton.style.opacity = '1';
+    const flowToPlay = flows.find(flow => flow.flowID === flowID);
+    
+    if (!flowToPlay) {
+        console.error(`Flow with ID ${flowID} not found`);
+        return;
     }
     
-    const asanaImageContainer = document.querySelector('.asana-image-container');
-    if (asanaImageContainer) {
-        asanaImageContainer.innerHTML = `<img id="asanaImage" src="" alt="Asana pose" />`;
-    }
-  
-  
-    performAsana();
-}
-
-function performAsana() {
-    if (currentAsanaIndex < editingFlow.asanas.length) {
+    // Set up the flow for practice
+    editingFlow = new Flow();
+    Object.assign(editingFlow, flowToPlay);
+    currentAsanaIndex = 0;
+    paused = false;
+    
+    // Initialize the practice screen
+    changeScreen('flowScreen');
+    
+    // Start the flow if it has asanas
+    if (editingFlow.asanas && editingFlow.asanas.length > 0) {
         const asana = editingFlow.asanas[currentAsanaIndex];
         const duration = updateAsanaDisplay(asana);
-        updateCountdownTimer(duration, asana.name, () => {
-            currentAsanaIndex++;
-            performAsana();
-        });
-    } else {
-        endFlow();
+        
+        // Set up the countdown timer
+        startCountdownTimer(duration);
     }
 }
-var paused = false;
-var lastUpdateTime;
-function updateCountdownTimer(duration, asanaName, callback) {
+
+function startCountdownTimer(duration) {
     const countdownElement = document.getElementById('countdown');
-    const countdownCircle = document.getElementById('countdown-circle');
-    const asanaNameElement = document.getElementById("asanaName");
-    const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
-    const countdownCircle = document.getElementById('countdown-circle');
-    const asanaNameElement = document.getElementById("asanaName");
-    const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
-    let remainingTime = duration;
-    lastUpdateTime = Date.now();
-
-    // Reset the circle and countdown at the start of each asana
-    countdownCircle.style.strokeDasharray = circumference;
-    countdownCircle.style.strokeDashoffset = 0;
+    if (!countdownElement) return;
     
-    if (asanaNameElement) {
-        asanaNameElement.textContent = asanaName;
-    }
-    countdownElement.innerText = displayFlowDuration(remainingTime);
-
-    // Cancel any existing animation frame
+    let timeLeft = duration;
+    countdownElement.textContent = displayFlowDuration(timeLeft);
+    
     if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
+        clearTimeout(animationFrameId);
     }
-
-    function update() {
+    
+    const updateTimer = () => {
         if (!paused) {
-            const now = Date.now();
-            const deltaTime = (now - lastUpdateTime) / 1000; // Convert to seconds
-            lastUpdateTime = now;
-            remainingTime -= deltaTime;
-
-            if (remainingTime <= 0) {
-                countdownElement.innerText = '';
-                countdownCircle.style.strokeDashoffset = circumference;
-                cancelAnimationFrame(animationFrameId);
-                callback();
-                return;
+            timeLeft -= 1;
+            countdownElement.textContent = displayFlowDuration(timeLeft);
+            
+            if (timeLeft <= 0) {
+                // Move to next asana
+                currentAsanaIndex++;
+                if (currentAsanaIndex < editingFlow.asanas.length) {
+                    const nextAsana = editingFlow.asanas[currentAsanaIndex];
+                    const nextDuration = updateAsanaDisplay(nextAsana);
+                    timeLeft = nextDuration;
+                } else {
+                    // End of flow
+                    countdownElement.textContent = 'End';
+                    return;
+                }
             }
-
-            const percentage = (1 - (remainingTime / duration)) * 100;
-            const offset = circumference - (percentage / 100) * circumference;
-            countdownCircle.style.strokeDashoffset = offset;
-            countdownElement.innerText = displayFlowDuration(Math.ceil(remainingTime));
         }
-        animationFrameId = requestAnimationFrame(update);
-    }
-
-    animationFrameId = requestAnimationFrame(update);
+        
+        animationFrameId = setTimeout(updateTimer, 1000);
+    };
+    
+    animationFrameId = setTimeout(updateTimer, 1000);
 }
 
 function togglePause() {
-    const pauseButton = document.querySelector('.pause-btn');
     paused = !paused;
-    if (paused) {
-        pauseButton.textContent = "▶️";
-        pauseButton.title = "Resume";
+    const pauseBtn = document.querySelector('.pause-btn');
+    if (pauseBtn) {
+        pauseBtn.textContent = paused ? "▶️" : "⏸️";
+    }
+}
+
+function editFlow(flowID) {
+    const flows = getFlows();
+    const flowToEdit = flows.find(flow => flow.flowID === flowID);
+    
+    if (!flowToEdit) {
+        console.error(`Flow with ID ${flowID} not found`);
+        return;
+    }
+    
+    // Create a deep copy of the flow
+    editingFlow = new Flow();
+    Object.assign(editingFlow, flowToEdit);
+    editMode = true;
+    
+    // Switch to build screen
+    changeScreen('buildScreen');
+    
+    // Update form fields with flow data
+    const titleInput = document.getElementById('title');
+    const descriptionInput = document.getElementById('description');
+    
+    if (titleInput) titleInput.value = editingFlow.name || '';
+    if (descriptionInput) descriptionInput.value = editingFlow.description || '';
+    
+    // Clear and populate the flow table
+    const table = document.getElementById('flowTable');
+    if (table) {
+        // Clear existing rows except header
+        while (table.rows.length > 1) {
+            table.deleteRow(1);
+        }
         
-    } else {
-        pauseButton.textContent = "⏸️";
-        lastUpdateTime = Date.now();
-        pauseButton.title = "Pause";
+        // Add rows for each asana
+        if (editingFlow.asanas && editingFlow.asanas.length > 0) {
+            editingFlow.asanas.forEach(asana => {
+                if (!asana) return;
+                
+                // Create transform style based on side
+                const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
+                
+                const row = table.insertRow(-1);
+                row.innerHTML = `
+                    <td></td> <!-- Will be updated by updateRowNumbers -->
+                    <td>
+                        <div class="table-asana">
+                            <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
+                            <span>${asana.name}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="duration-wrapper">
+                            <input type="number" value="${asana.duration || 30}" min="1" max="300" onchange="updateFlowDuration()"/>
+                            <span class="duration-unit">s</span>
+                        </div>
+                    </td>
+                    <td>${createSideDropdown(asana.side)}</td>
+                    <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
+                `;
+            });
+            
+            // Update row numbers and flow duration
+            updateRowNumbers();
+            updateFlowDuration();
+        }
     }
 }
 
-function endFlow() {
-    const asanaImageContainer = document.querySelector('.asana-image-container');
-    const countdownContainer = document.querySelector('.countdown-container');
-    const comingUpSection = document.querySelector('.coming-up');
-    
-    // Clear the countdown text and reset the circle
-    const countdownElement = document.getElementById('countdown');
-    const countdownCircle = document.getElementById('countdown-circle');
-    if (countdownElement) countdownElement.innerText = '';
-    if (countdownCircle) countdownCircle.style.strokeDashoffset = 0;
-    
-    // Cancel any ongoing animation
-    if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-    }
-    
-    // Keep the pause button visible but disable it
-    const pauseButton = document.querySelector('.pause-btn');
-    if (pauseButton) {
-        pauseButton.disabled = true;
-        pauseButton.style.opacity = '0.5';
-    }
-    
-    // Clear and update the asana image container
-    if (asanaImageContainer) {
-        asanaImageContainer.innerHTML = `
-            <button class="home-btn" onclick="changeScreen('homeScreen')">Return Home</button>
-        `;
-    }
-    
-    // Keep the countdown container and coming up section visible
-    if (countdownContainer) countdownContainer.style.display = 'block';
-    if (comingUpSection) comingUpSection.style.display = 'block';
-    
-    // Update the coming up section to show "End of flow"
-    const nextAsanaNameElement = document.getElementById("nextAsanaName");
-    const nextAsanaImageElement = document.getElementById("nextAsanaImage");
-    if (nextAsanaNameElement) nextAsanaNameElement.textContent = "End of flow";
-    if (nextAsanaImageElement) {
-        nextAsanaImageElement.src = "path/to/end-of-flow-image.png"; // Replace with actual path
-        nextAsanaImageElement.alt = "End of flow";
-    }
-}
-
+// Function to update the date display
 function updateDate() {
     const dateElement = document.querySelector('.flow-date h3');
-    const options = { weekday: 'short', month: 'short', day: 'numeric' };
-    const today = new Date();
-    dateElement.textContent = `Today, ${today.toLocaleDateString('en-US', options)}`;
+    if (dateElement) {
+        const options = { weekday: 'short', month: 'short', day: 'numeric' };
+        const today = new Date();
+        dateElement.textContent = `Today, ${today.toLocaleDateString('en-US', options)}`;
+    }
 }
 
-function displayFlowDuration(duration) {
-    duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
-    let mins = Math.floor(duration / 60);
-    let sec = duration % 60;
-    let retString = "";
-    let tmp = "";
-    if (mins > 0)
-        retString += mins.toString() + "min";
-    if (sec > 0 || mins === 0)
-        tmp = sec.toString().padStart(2, '0') + "s";
-    return (retString + " " + tmp).trim();
-}
-
-function displayFlowDuration(duration) {
-    duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
-    let mins = Math.floor(duration / 60);
-    let sec = duration % 60;
-    let retString = "";
-    let tmp = "";
-    if (mins > 0)
-        retString += mins.toString() + "min";
-    if (sec > 0 || mins === 0)
-        tmp = sec.toString().padStart(2, '0') + "s";
-    return (retString + " " + tmp).trim();
-}
-
-// Function to fetch and parse the XML file
+// XML Processing functions
 async function fetchAndParseXML(url) {
-    const response = await fetch(url);
-    const xmlString = await response.text();
-    const parser = new DOMParser();
-    return parser.parseFromString(xmlString, 'text/xml');
-}
-
-// Function to create a YogaAsana object from an XML element
-function createYogaAsanaFromXML(asanaElement) {
-    const name = asanaElement.querySelector('name').textContent;
-    const side = asanaElement.querySelector('side').textContent;
-    const image = asanaElement.querySelector('image').textContent;
-    const description = asanaElement.querySelector('description').textContent;
-    const difficulty = asanaElement.querySelector('difficulty').textContent;
-    const tags = Array.from(asanaElement.querySelectorAll('tags tag')).map(tag => tag.textContent);
-    const transitions = Array.from(asanaElement.querySelectorAll('transitions transition')).map(transition => transition.textContent);
-
-    return new YogaAsana(name, side, image, description, difficulty, tags, transitions);
+    try {
+        console.log(`Fetching XML from: ${url}`);
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+            throw new Error(`Failed to load XML: ${response.status} ${response.statusText}`);
+        }
+        
+        const xmlString = await response.text();
+        console.log(`XML string length: ${xmlString.length}`);
+        
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
+        
+        // Check for parsing errors
+        const parseError = xmlDoc.querySelector('parsererror');
+        if (parseError) {
+            console.error('XML parsing error:', parseError.textContent);
+            throw new Error('XML parsing error');
+        }
+        
+        return xmlDoc;
+    } catch (error) {
+        console.error('Error in fetchAndParseXML:', error);
+        throw error;
+    }
 }
 
 // Main function to load asanas from XML
 async function loadAsanasFromXML() {
     try {
-        const xmlDoc = await fetchAndParseXML('asanas.xml');
-        const asanaElements = xmlDoc.querySelectorAll('asana');
+        // Use the correct path to the XML file - the file is in the flowBuilder directory
+        const xmlDoc = await fetchAndParseXML('./asanas.xml');
         
-        asanas = Array.from(asanaElements).map(createYogaAsanaFromXML);
+        // Debug the XML structure
+        console.log('XML document loaded:', xmlDoc);
+        
+        const asanaElements = xmlDoc.getElementsByTagName('asana');
+        console.log('Found asana elements:', asanaElements.length);
+        
+        asanas = [];
+        for (let i = 0; i < asanaElements.length; i++) {
+            // Log each asana element before processing
+            console.log(`Processing asana element ${i}:`, asanaElements[i].outerHTML);
+            
+            try {
+                // The XML uses <n> for name instead of <name>
+                const nameElement = asanaElements[i].getElementsByTagName('n')[0];
+                const sideElement = asanaElements[i].getElementsByTagName('side')[0];
+                const imageElement = asanaElements[i].getElementsByTagName('image')[0];
+                const descriptionElement = asanaElements[i].getElementsByTagName('description')[0];
+                const difficultyElement = asanaElements[i].getElementsByTagName('difficulty')[0];
+                
+                if (!nameElement) {
+                    console.error('Name element not found in XML:', asanaElements[i]);
+                    continue;
+                }
+                
+                const name = nameElement.textContent;
+                const side = sideElement ? sideElement.textContent : 'Center';
+                const image = imageElement ? imageElement.textContent : '';
+                const description = descriptionElement ? descriptionElement.textContent : '';
+                const difficulty = difficultyElement ? difficultyElement.textContent : 'Beginner';
+                
+                // Get tags if they exist
+                const tags = [];
+                const tagsElement = asanaElements[i].getElementsByTagName('tags')[0];
+                if (tagsElement) {
+                    const tagElements = tagsElement.getElementsByTagName('tag');
+                    for (let j = 0; j < tagElements.length; j++) {
+                        tags.push(tagElements[j].textContent);
+                    }
+                }
+                
+                // Get transitions if they exist
+                const transitions = [];
+                const transitionsElement = asanaElements[i].getElementsByTagName('transitions')[0];
+                if (transitionsElement) {
+                    const transitionElements = transitionsElement.getElementsByTagName('transition');
+                    for (let j = 0; j < transitionElements.length; j++) {
+                        transitions.push(transitionElements[j].textContent);
+                    }
+                }
+        
+                console.log(`Created asana: ${name} with transitions:`, transitions);
+                const asana = new YogaAsana(name, side, image, description, difficulty, tags, transitions);
+                asanas.push(asana);
+            } catch (error) {
+                console.error('Error creating asana from XML:', error, asanaElements[i]);
+            }
+        }
         
         console.log('Asanas loaded:', asanas);
-        populateAsanaList();
+        if (asanas.length === 0) {
+            console.error('No asanas were loaded successfully');
+        } else {
+            populateAsanaList();
+        }
     } catch (error) {
         console.error('Error loading asanas:', error);
         asanas = [];
     }
 }
 
-// Populate asana list
+// Populate the asana list with loaded asanas
 function populateAsanaList() {
     const asanaList = document.getElementById('asanaList');
-    asanaList.innerHTML = ''; // Clear existing asanas
+    if (!asanaList) {
+        console.error("Asana list element not found");
+        return;
+    }
+    
+    asanaList.innerHTML = '';
+    
+    // Show loading message if no asanas yet
+    if (asanas.length === 0) {
+        asanaList.innerHTML = '<div class="loading-message">Loading asanas...</div>';
+        return;
+    }
+    
+    // Create asana elements
     asanas.forEach(asana => {
-        const button = document.createElement('button');
-        button.textContent = asana.name;
-        button.className = 'asana-btn';
-        button.onclick = () => selectAsana(asana);
+        const asanaElement = document.createElement('div');
+        asanaElement.className = 'asana-item';
+        asanaElement.draggable = true;
+        asanaElement.setAttribute('data-name', asana.name);
         
-        // Create an image preview
-        const img = document.createElement('img');
-        img.src = asana.image;
-        img.alt = asana.name;
-        img.className = 'asana-preview';
+        // Add event listener for click
+        asanaElement.addEventListener('click', () => selectAsana(asana));
         
-        // Apply transform for left-side poses
-        if (asana.side === "Left") {
-            img.style.transform = 'scaleX(-1)';
-        }
+        // Create image element
+        const asanaImage = document.createElement('img');
+        asanaImage.src = asana.image;
+        asanaImage.alt = asana.name;
         
-        // Create container for asana button
-        const asanaContainer = document.createElement('div');
-        asanaContainer.className = 'asana-container';
-        asanaContainer.appendChild(img);
-        asanaContainer.appendChild(button);
+        // Create name label
+        const asanaName = document.createElement('p');
+        asanaName.textContent = asana.name;
         
-        asanaList.appendChild(asanaContainer);
+        // Append elements
+        asanaElement.appendChild(asanaImage);
+        asanaElement.appendChild(asanaName);
+        
+        // Add to list
+        asanaList.appendChild(asanaElement);
     });
-    
-    // Update scroll buttons visibility after populating
-    setTimeout(updateScrollButtons, 100);
-}
-
-// Drag and drop functions
-function initDragAndDrop() {
-    const flowTable = document.getElementById('flowTable');
-    
-    // Event delegation for drag events on the flow table
-    flowTable.addEventListener('dragstart', handleDragStart);
-    flowTable.addEventListener('dragover', handleDragOver);
-    flowTable.addEventListener('dragleave', handleDragLeave);
-    flowTable.addEventListener('drop', handleDrop);
-    flowTable.addEventListener('dragend', handleDragEnd);
-}
-
-function handleDragStart(e) {
-    const row = e.target.closest('tr');
-    if (!row || row.rowIndex === 0) return; // Ignore drag on header row
-    
-    dragSource = row;
-    row.classList.add('dragging');
-    
-    // Set data transfer
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', row.dataset.index);
-    
-    // Set a custom drag image (optional)
-    const dragImage = row.querySelector('.table-asana-img');
-    if (dragImage) {
-        e.dataTransfer.setDragImage(dragImage, 20, 20);
-    }
-}
-
-function handleDragOver(e) {
-    e.preventDefault(); // Necessary to allow dropping
-    
-    const row = e.target.closest('tr');
-    if (!row || row.rowIndex === 0) return; // Don't allow dropping on header
-    
-    // Add visual feedback
-    const allRows = Array.from(document.querySelectorAll('#flowTable tr:not(:first-child)'));
-    allRows.forEach(r => r.classList.remove('drop-target'));
-    
-    row.classList.add('drop-target');
-    e.dataTransfer.dropEffect = 'move';
-}
-
-function handleDragLeave(e) {
-    const row = e.target.closest('tr');
-    if (row) {
-        row.classList.remove('drop-target');
-    }
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    
-    const dropTarget = e.target.closest('tr');
-    if (!dropTarget || dropTarget.rowIndex === 0 || !dragSource) return;
-    
-    // Get source and target indices
-    const sourceIndex = parseInt(dragSource.dataset.index);
-    const targetIndex = parseInt(dropTarget.dataset.index);
-    
-    if (sourceIndex === targetIndex) return;
-    
-    // Update the asanas array in the editingFlow
-    const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
-    editingFlow.asanas.splice(targetIndex, 0, movedAsana);
-    
-    // Rebuild the table rows
-    rebuildFlowTable();
-    
-    // Remove visual cues
-    dropTarget.classList.remove('drop-target');
-    
-    // Auto-save if in edit mode
-    if (editMode) {
-        autoSaveFlow();
-    }
-}
-
-function handleDragEnd() {
-    // Clean up
-    document.querySelectorAll('#flowTable tr').forEach(row => {
-        row.classList.remove('dragging', 'drop-target');
-    });
-    dragSource = null;
-}
-
-function rebuildFlowTable() {
-    const table = document.getElementById('flowTable');
-    
-    // Save the header row
-    const headerRow = table.rows[0];
-    
-    // Clear the table except for the header
-    while (table.rows.length > 1) {
-        table.deleteRow(1);
-    }
-    
-    // Rebuild the table with the updated asanas array
-    editingFlow.asanas.forEach((asana, index) => {
-        // Create initial transform style based on side
-        const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
-        
-        const row = table.insertRow(-1);
-        row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>
-                <div class="table-asana">
-                    <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
-                    <span>${asana.name}</span>
-                </div>
-            </td>
-            <td>
-                <div class="duration-wrapper">
-                    <input type="number" value="${asana.duration}" min="1" max="300" onchange="updateFlowDuration(${index + 1})"/>
-                    <span class="duration-unit">s</span>
-                </div>
-            </td>
-            <td>${createSideDropdown(asana.side)}</td>
-            <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
-        `;
-    });
-    
-    // Update row numbers and attributes
-    updateRowNumbers();
 }
 
 // Initialize the app
-async function initializeApp() {
-    await loadAsanasFromXML();
-    displayFlows();
-    updateDate();
-    initDragAndDrop();
-    initScrollButtons();
-    initAutoSaveListeners();
+function initializeApp() {
+    loadAsanasFromXML()
+        .then(() => {
+            displayFlows();
+            updateDate();
+            
+            console.log('App initialized successfully');
+        })
+        .catch(error => {
+            console.error('Failed to initialize app:', error);
+        });
 }
 
-// Function to initialize the scroll buttons visibility and add scroll event listener
-function initScrollButtons() {
-    const asanaList = document.getElementById('asanaList');
-    if (!asanaList) return;
-    
-    // Initial update of button visibility
-    updateScrollButtons();
-    
-    // Add scroll event listener to update button visibility during scrolling
-    asanaList.addEventListener('scroll', updateScrollButtons);
-    
-    // Also update on window resize in case container size changes
-    window.addEventListener('resize', updateScrollButtons);
-}
-
-// Set up auto-save for form fields when in edit mode
-function initAutoSaveListeners() {
-    const titleInput = document.getElementById('title');
-    const descriptionInput = document.getElementById('description');
-    
-    titleInput.addEventListener('input', function() {
-        if (editMode) {
-            // Small delay to avoid saving while still typing
-            clearTimeout(titleInput.saveTimeout);
-            titleInput.saveTimeout = setTimeout(autoSaveFlow, 500);
-        }
-    });
-    
-    descriptionInput.addEventListener('input', function() {
-        if (editMode) {
-            // Small delay to avoid saving while still typing
-            clearTimeout(descriptionInput.saveTimeout);
-            descriptionInput.saveTimeout = setTimeout(autoSaveFlow, 500);
-        }
-    });
-}
-
-// Function to update scroll button visibility based on scroll position
-function updateScrollButtons() {
-    const asanaList = document.getElementById('asanaList');
-    const leftBtn = document.querySelector('.scroll-left');
-    const rightBtn = document.querySelector('.scroll-right');
-    
-    if (!asanaList || !leftBtn || !rightBtn) return;
-    
-    // Show/hide left button based on scroll position
-    leftBtn.style.display = asanaList.scrollLeft > 10 ? 'flex' : 'none';
-    
-    // Show/hide right button based on whether there's more content to scroll
-    const isScrollable = asanaList.scrollWidth > asanaList.clientWidth;
-    const reachedEnd = Math.abs(asanaList.scrollWidth - asanaList.clientWidth - asanaList.scrollLeft) < 10;
-    
-    rightBtn.style.display = (isScrollable && !reachedEnd) ? 'flex' : 'none';
-}
-
-// Start the app
-window.onload = initializeApp;
-
-// Function to scroll the asana list horizontally
-function scrollAsanaList(scrollAmount) {
-    const asanaList = document.getElementById('asanaList');
-    if (!asanaList) return;
-    
-    // Smooth scroll
-    asanaList.scrollBy({
-        left: scrollAmount,
-        behavior: 'smooth'
-    });
-}
-
-// Expose necessary functions to the global scope for HTML event handlers
-window.selectAsana = selectAsana;
-window.removePose = removePose;
-window.saveFlow = saveFlow;
-window.playFlow = playFlow;
-window.editFlow = editFlow;
-window.deleteFlow = deleteFlow;
-window.changeScreen = changeScreen;
-window.clearBuildAFlow = clearBuildAFlow;
-window.reorderPose = reorderPose;
-window.updateAsanaImageOrientation = updateAsanaImageOrientation;
-window.scrollAsanaList = scrollAsanaList;
+// Add event listener to initialize the app when the DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeApp);
