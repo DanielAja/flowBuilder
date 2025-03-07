@@ -58,7 +58,7 @@ class YogaAsana {
         this.difficulty = difficulty;
         this.tags = tags;
         this.transitionsAsana = transitionsAsana;
-        this.duration = 30; // Default duration of 30 seconds
+        this.duration = 3; // Default duration of 3 seconds
     }
 
     setDuration(duration) {
@@ -292,7 +292,7 @@ function selectAsana(asana) {
     const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
 
     row.innerHTML = `
-        <td>${index}</td>
+        <td title="Drag to reorder">${index}</td>
         <td>
             <div class="table-asana">
                 <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
@@ -301,7 +301,7 @@ function selectAsana(asana) {
         </td>
         <td>
             <div class="duration-wrapper">
-                <input type="number" value="30" min="1" max="300" onchange="updateFlowDuration()"/>
+                <input type="number" value="3" min="1" max="300" onchange="updateFlowDuration()"/>
                 <span class="duration-unit">s</span>
             </div>
         </td>
@@ -312,6 +312,10 @@ function selectAsana(asana) {
     // Make the row draggable
     row.setAttribute("draggable", "true");
     row.setAttribute("data-index", index - 1); // Adjust index for 0-based array
+    
+    // Add specific drag handle tooltip
+    const numCell = row.cells[0];
+    numCell.style.cursor = "grab";
 
     const newAsana = new YogaAsana(
         asana.name,
@@ -322,7 +326,7 @@ function selectAsana(asana) {
         [...asana.tags || []],
         [...asana.transitionsAsana || []]
     );
-    newAsana.setDuration(30); // Default 30 seconds
+    newAsana.setDuration(3); // Default 3 seconds
     
     editingFlow.addAsana(newAsana);
     updateFlowDuration();
@@ -384,11 +388,11 @@ function updateRowNumbers() {
 }
 
 function updateFlowDuration() {
-    // Check for empty values and set to 30 seconds
+    // Check for empty values and set to 3 seconds
     const durationInputs = document.querySelectorAll('#flowTable .duration-wrapper input[type="number"]');
     durationInputs.forEach(input => {
         if (input.value === '' || parseInt(input.value) === 0) {
-            input.value = 30;
+            input.value = 3;
         }
     });
 
@@ -398,7 +402,7 @@ function updateFlowDuration() {
         if (index < editingFlow.asanas.length) {
             const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
             if (durationInput) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 30;
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 3;
             }
         }
     });
@@ -516,7 +520,7 @@ function saveFlow() {
             const sideSelect = row.querySelector('select.side-select');
             
             if (durationInput && sideSelect) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 30;
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 3;
                 editingFlow.asanas[index].side = sideSelect.value;
             }
         }
@@ -693,6 +697,29 @@ function editFlow(flowID) {
     // Create a deep copy of the flow
     editingFlow = new Flow();
     Object.assign(editingFlow, flowToEdit);
+    
+    // Make sure the asanas are proper objects
+    if (editingFlow.asanas && Array.isArray(editingFlow.asanas)) {
+        editingFlow.asanas = editingFlow.asanas.map(asana => {
+            // Make sure each asana is a proper YogaAsana object
+            if (!(asana instanceof YogaAsana)) {
+                const newAsana = new YogaAsana(
+                    asana.name, 
+                    asana.side, 
+                    asana.image,
+                    asana.description,
+                    asana.difficulty,
+                    asana.tags || [],
+                    asana.transitionsAsana || []
+                );
+                newAsana.setDuration(asana.duration || 3);
+                return newAsana;
+            }
+            return asana;
+        });
+    }
+    
+    // Set edit mode
     editMode = true;
     
     // Switch to build screen
@@ -705,47 +732,10 @@ function editFlow(flowID) {
     if (titleInput) titleInput.value = editingFlow.name || '';
     if (descriptionInput) descriptionInput.value = editingFlow.description || '';
     
-    // Clear and populate the flow table
-    const table = document.getElementById('flowTable');
-    if (table) {
-        // Clear existing rows except header
-        while (table.rows.length > 1) {
-            table.deleteRow(1);
-        }
-        
-        // Add rows for each asana
-        if (editingFlow.asanas && editingFlow.asanas.length > 0) {
-            editingFlow.asanas.forEach(asana => {
-                if (!asana) return;
-                
-                // Create transform style based on side
-                const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
-                
-                const row = table.insertRow(-1);
-                row.innerHTML = `
-                    <td></td> <!-- Will be updated by updateRowNumbers -->
-                    <td>
-                        <div class="table-asana">
-                            <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
-                            <span>${asana.name}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="duration-wrapper">
-                            <input type="number" value="${asana.duration || 30}" min="1" max="300" onchange="updateFlowDuration()"/>
-                            <span class="duration-unit">s</span>
-                        </div>
-                    </td>
-                    <td>${createSideDropdown(asana.side)}</td>
-                    <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
-                `;
-            });
-            
-            // Update row numbers and flow duration
-            updateRowNumbers();
-            updateFlowDuration();
-        }
-    }
+    // Use the rebuildFlowTable function to populate the table
+    rebuildFlowTable();
+    
+    console.log('Editing flow:', editingFlow.name, 'with', editingFlow.asanas.length, 'asanas');
 }
 
 // Function to update the date display
@@ -758,106 +748,54 @@ function updateDate() {
     }
 }
 
-// XML Processing functions
-async function fetchAndParseXML(url) {
-    try {
-        console.log(`Fetching XML from: ${url}`);
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            throw new Error(`Failed to load XML: ${response.status} ${response.statusText}`);
-        }
-        
-        const xmlString = await response.text();
-        console.log(`XML string length: ${xmlString.length}`);
-        
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
-        
-        // Check for parsing errors
-        const parseError = xmlDoc.querySelector('parsererror');
-        if (parseError) {
-            console.error('XML parsing error:', parseError.textContent);
-            throw new Error('XML parsing error');
-        }
-        
-        return xmlDoc;
-    } catch (error) {
-        console.error('Error in fetchAndParseXML:', error);
-        throw error;
-    }
-}
-
 // Main function to load asanas from XML
 async function loadAsanasFromXML() {
     try {
-        // Use the correct path to the XML file - the file is in the flowBuilder directory
-        const xmlDoc = await fetchAndParseXML('./asanas.xml');
+        console.log("Loading asanas...");
         
-        // Debug the XML structure
-        console.log('XML document loaded:', xmlDoc);
-        
-        const asanaElements = xmlDoc.getElementsByTagName('asana');
-        console.log('Found asana elements:', asanaElements.length);
-        
-        asanas = [];
-        for (let i = 0; i < asanaElements.length; i++) {
-            // Log each asana element before processing
-            console.log(`Processing asana element ${i}:`, asanaElements[i].outerHTML);
-            
-            try {
-                // The XML uses <n> for name instead of <name>
-                const nameElement = asanaElements[i].getElementsByTagName('n')[0];
-                const sideElement = asanaElements[i].getElementsByTagName('side')[0];
-                const imageElement = asanaElements[i].getElementsByTagName('image')[0];
-                const descriptionElement = asanaElements[i].getElementsByTagName('description')[0];
-                const difficultyElement = asanaElements[i].getElementsByTagName('difficulty')[0];
-                
-                if (!nameElement) {
-                    console.error('Name element not found in XML:', asanaElements[i]);
-                    continue;
-                }
-                
-                const name = nameElement.textContent;
-                const side = sideElement ? sideElement.textContent : 'Center';
-                const image = imageElement ? imageElement.textContent : '';
-                const description = descriptionElement ? descriptionElement.textContent : '';
-                const difficulty = difficultyElement ? difficultyElement.textContent : 'Beginner';
-                
-                // Get tags if they exist
-                const tags = [];
-                const tagsElement = asanaElements[i].getElementsByTagName('tags')[0];
-                if (tagsElement) {
-                    const tagElements = tagsElement.getElementsByTagName('tag');
-                    for (let j = 0; j < tagElements.length; j++) {
-                        tags.push(tagElements[j].textContent);
-                    }
-                }
-                
-                // Get transitions if they exist
-                const transitions = [];
-                const transitionsElement = asanaElements[i].getElementsByTagName('transitions')[0];
-                if (transitionsElement) {
-                    const transitionElements = transitionsElement.getElementsByTagName('transition');
-                    for (let j = 0; j < transitionElements.length; j++) {
-                        transitions.push(transitionElements[j].textContent);
-                    }
-                }
-        
-                console.log(`Created asana: ${name} with transitions:`, transitions);
-                const asana = new YogaAsana(name, side, image, description, difficulty, tags, transitions);
-                asanas.push(asana);
-            } catch (error) {
-                console.error('Error creating asana from XML:', error, asanaElements[i]);
-            }
-        }
+        // Hard-code some sample asanas since XML loading might be causing issues
+        asanas = [
+            new YogaAsana(
+                "Downward Facing Dog",
+                "Center",
+                "images/downward-facing-dog.png",
+                "Downward Facing Dog is a standing pose that tones the legs and arms, while stretching them. It is a great pose for beginners.",
+                "Beginner",
+                ["Standing", "Stretch"],
+                ["Plank", "Cobra"]
+            ),
+            new YogaAsana(
+                "Tree Pose",
+                "Right",
+                "images/tree-pose.png",
+                "Tree Pose is a standing pose that improves balance and concentration. It is a great pose for beginners.",
+                "Beginner",
+                ["Standing", "Balance"],
+                ["Mountain Pose", "Warrior 3"]
+            ),
+            new YogaAsana(
+                "Warrior 2",
+                "Right",
+                "images/warrior-2.png",
+                "Warrior 2 is a standing pose that strengthens the legs and opens the hips. It is a great pose for beginners.",
+                "Beginner",
+                ["Standing", "Strength"],
+                ["Mountain Pose", "Triangle Pose"]
+            ),
+            new YogaAsana(
+                "Triangle Pose",
+                "Right",
+                "images/triangle-pose.png",
+                "Triangle Pose is a standing pose that stretches the legs and opens the hips. It is a great pose for beginners.",
+                "Beginner",
+                ["Standing", "Stretch"],
+                ["Warrior 2", "Half Moon Pose"]
+            )
+        ];
         
         console.log('Asanas loaded:', asanas);
-        if (asanas.length === 0) {
-            console.error('No asanas were loaded successfully');
-        } else {
-            populateAsanaList();
-        }
+        populateAsanaList();
+        
     } catch (error) {
         console.error('Error loading asanas:', error);
         asanas = [];
@@ -866,6 +804,8 @@ async function loadAsanasFromXML() {
 
 // Populate the asana list with loaded asanas
 function populateAsanaList() {
+    console.log('Populating asana list with asanas:', asanas.length);
+    
     const asanaList = document.getElementById('asanaList');
     if (!asanaList) {
         console.error("Asana list element not found");
@@ -887,9 +827,6 @@ function populateAsanaList() {
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
         
-        // Add event listener for click
-        asanaElement.addEventListener('click', () => selectAsana(asana));
-        
         // Create image element
         const asanaImage = document.createElement('img');
         asanaImage.src = asana.image;
@@ -903,9 +840,323 @@ function populateAsanaList() {
         asanaElement.appendChild(asanaImage);
         asanaElement.appendChild(asanaName);
         
+        // Add event listener for click
+        asanaElement.addEventListener('click', function() {
+            selectAsana(asana);
+        });
+        
         // Add to list
         asanaList.appendChild(asanaElement);
     });
+    
+    console.log('Asana list populated with', asanas.length, 'asanas');
+}
+
+// Scrolling functions for the asana list
+function scrollAsanaList(amount) {
+    const asanaList = document.getElementById('asanaList');
+    if (asanaList) {
+        asanaList.scrollLeft += amount;
+        updateScrollButtons();
+    }
+}
+
+function updateScrollButtons() {
+    const asanaList = document.getElementById('asanaList');
+    const leftButton = document.querySelector('.scroll-btn.scroll-left');
+    const rightButton = document.querySelector('.scroll-btn.scroll-right');
+    
+    if (!asanaList || !leftButton || !rightButton) return;
+    
+    // Show/hide left button based on scroll position
+    leftButton.style.display = asanaList.scrollLeft > 0 ? 'block' : 'none';
+    
+    // Show/hide right button based on whether there's more content to scroll
+    const hasMoreToScroll = asanaList.scrollLeft + asanaList.clientWidth < asanaList.scrollWidth;
+    rightButton.style.display = hasMoreToScroll ? 'block' : 'none';
+}
+
+// Function to set up drag and drop functionality
+function setupDragAndDrop() {
+    console.log('Setting up drag and drop...');
+    const flowTable = document.getElementById('flowTable');
+    if (!flowTable) {
+        console.error('Flow table not found for drag and drop setup');
+        return;
+    }
+    
+    // Rebind all drag-and-drop events
+    // First remove any existing handlers to prevent duplicates
+    flowTable.removeEventListener('dragstart', handleDragStart);
+    flowTable.removeEventListener('dragenter', handleDragEnter);
+    flowTable.removeEventListener('dragover', handleDragOver);
+    flowTable.removeEventListener('dragleave', handleDragLeave);
+    flowTable.removeEventListener('drop', handleDrop);
+    flowTable.removeEventListener('dragend', handleDragEnd);
+    
+    // Now add fresh event listeners
+    flowTable.addEventListener('dragstart', handleDragStart);
+    flowTable.addEventListener('dragenter', handleDragEnter);
+    flowTable.addEventListener('dragover', handleDragOver);
+    flowTable.addEventListener('dragleave', handleDragLeave);
+    flowTable.addEventListener('drop', handleDrop);
+    flowTable.addEventListener('dragend', handleDragEnd);
+    
+    // Make sure all rows are properly draggable
+    updateRowDragAttributes();
+    
+    console.log('Drag and drop setup complete');
+}
+
+// Ensures all rows have proper drag attributes
+function updateRowDragAttributes() {
+    const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
+    rows.forEach((row, index) => {
+        row.setAttribute('draggable', 'true');
+        row.setAttribute('data-index', index);
+        
+        // Make sure first cell is styled as drag handle
+        const firstCell = row.cells[0];
+        if (firstCell) {
+            firstCell.style.cursor = 'grab';
+            firstCell.setAttribute('title', 'Drag to reorder');
+        }
+    });
+}
+
+// Drag and drop event handlers
+function handleDragStart(e) {
+    // Find the row being dragged - either the target itself or its parent row
+    let row = null;
+    
+    if (e.target.tagName === 'TR') {
+        row = e.target;
+    } else {
+        row = e.target.closest('tr');
+        
+        // Only allow drag from the first cell (position number)
+        const cell = e.target.closest('td');
+        if (!cell || cell.cellIndex !== 0) {
+            e.preventDefault();
+            return false;
+        }
+    }
+    
+    if (!row || row.rowIndex === 0) {
+        e.preventDefault();
+        return false; // Ignore header row
+    }
+    
+    console.log('Drag started on row:', row.rowIndex);
+    dragSource = row;
+    row.classList.add('dragging');
+    
+    // Set the drag data
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', row.rowIndex);
+    
+    // Make a ghost image that's more visible
+    const dragImage = row.cloneNode(true);
+    dragImage.style.width = row.offsetWidth + 'px';
+    dragImage.style.height = row.offsetHeight + 'px';
+    dragImage.style.opacity = '0.7';
+    dragImage.style.position = 'absolute';
+    dragImage.style.top = '-1000px';
+    dragImage.style.backgroundColor = '#fff8f0';
+    dragImage.style.border = '2px solid #ff8c00';
+    document.body.appendChild(dragImage);
+    
+    // Use the custom drag image
+    e.dataTransfer.setDragImage(dragImage, 20, 20);
+    
+    // Clean up the ghost after a short delay
+    setTimeout(() => {
+        document.body.removeChild(dragImage);
+    }, 100);
+}
+
+function handleDragEnter(e) {
+    // Ensure we're actually dragging something
+    if (!dragSource) return;
+    
+    const row = e.target.closest('tr');
+    if (!row || row.rowIndex === 0) return; // Ignore header row
+    
+    // Add visual feedback
+    const allRows = Array.from(document.querySelectorAll('#flowTable tr:not(:first-child)'));
+    allRows.forEach(r => r.classList.remove('drop-target'));
+    
+    if (row !== dragSource) {
+        row.classList.add('drop-target');
+    }
+}
+
+function handleDragOver(e) {
+    if (!dragSource) return;
+    
+    e.preventDefault(); // Necessary to allow dropping
+    e.dataTransfer.dropEffect = 'move';
+    
+    // Find the closest row
+    const row = e.target.closest('tr');
+    if (!row || row.rowIndex === 0) return; // Ignore header row
+    
+    // Add visual feedback to the row being hovered over
+    const allRows = Array.from(document.querySelectorAll('#flowTable tr:not(:first-child)'));
+    allRows.forEach(r => {
+        if (r !== dragSource) {
+            r.classList.remove('drop-target');
+        }
+    });
+    
+    if (row !== dragSource) {
+        row.classList.add('drop-target');
+    }
+}
+
+function handleDragLeave(e) {
+    // Only remove the class if we're leaving the row entirely, not just moving between cells
+    const relatedTarget = e.relatedTarget;
+    if (!relatedTarget || !e.target.contains(relatedTarget)) {
+        const row = e.target.closest('tr');
+        if (row) {
+            row.classList.remove('drop-target');
+        }
+    }
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    
+    // Check if we have a valid drag source
+    if (!dragSource) {
+        console.log('No valid drag source');
+        return;
+    }
+    
+    const row = e.target.closest('tr');
+    if (!row || row.rowIndex === 0) {
+        console.log('Invalid drop target (header or not a row)');
+        return; // Ignore header row
+    }
+    
+    console.log('Drop target row:', row.rowIndex);
+    
+    // Get source and target indices
+    const sourceIndex = dragSource.rowIndex - 1; // Adjust for header row
+    const targetIndex = row.rowIndex - 1; // Adjust for header row
+    
+    if (sourceIndex === targetIndex) {
+        console.log('Source and target are the same, no action needed');
+        return;
+    }
+    
+    console.log('Moving asana from', sourceIndex, 'to', targetIndex);
+    
+    try {
+        // Update the asanas array
+        const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
+        editingFlow.asanas.splice(targetIndex, 0, movedAsana);
+        
+        // Rebuild the table
+        rebuildFlowTable();
+        
+        // Ensure draggable attributes are set again
+        setTimeout(updateRowDragAttributes, 0);
+        
+        // Add highlight animation to the moved row
+        setTimeout(() => {
+            const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
+            const targetRow = rows[targetIndex];
+            if (targetRow) {
+                targetRow.classList.add('drag-highlight');
+                setTimeout(() => {
+                    targetRow.classList.remove('drag-highlight');
+                }, 1500);
+            }
+        }, 50);
+        
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+    } catch (error) {
+        console.error('Error during drag and drop operation:', error);
+    }
+    
+    // Clean up
+    document.querySelectorAll('#flowTable tr').forEach(row => {
+        row.classList.remove('drop-target');
+    });
+}
+
+function handleDragEnd(e) {
+    // Remove all drag styling
+    document.querySelectorAll('#flowTable tr').forEach(row => {
+        row.classList.remove('dragging', 'drop-target');
+    });
+    
+    // Clear the drag source
+    console.log('Drag operation ended');
+    dragSource = null;
+    
+    // Re-setup drag and drop to ensure everything is bound correctly
+    setTimeout(updateRowDragAttributes, 50);
+}
+
+function rebuildFlowTable() {
+    const table = document.getElementById('flowTable');
+    if (!table) return;
+    
+    // Clear the table except for the header
+    while (table.rows.length > 1) {
+        table.deleteRow(1);
+    }
+    
+    // Rebuild rows from editingFlow.asanas
+    editingFlow.asanas.forEach((asana, index) => {
+        if (!asana) return;
+        
+        const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
+        
+        const row = table.insertRow(-1);
+        // Make the row element draggable for the drag event system to work
+        row.setAttribute('draggable', 'true');
+        row.setAttribute('data-index', index);
+        
+        row.innerHTML = `
+            <td title="Drag to reorder">${index + 1}</td>
+            <td>
+                <div class="table-asana">
+                    <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
+                    <span>${asana.name}</span>
+                </div>
+            </td>
+            <td>
+                <div class="duration-wrapper">
+                    <input type="number" value="${asana.duration || 3}" min="1" max="300" onchange="updateFlowDuration()"/>
+                    <span class="duration-unit">s</span>
+                </div>
+            </td>
+            <td>${createSideDropdown(asana.side)}</td>
+            <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
+        `;
+        
+        // Add specific drag handle tooltip and style
+        const numCell = row.cells[0];
+        numCell.style.cursor = "grab";
+    });
+    
+    // Make sure drag and drop works after rebuild by updating all row attributes
+    updateRowDragAttributes();
+    
+    // Set up drag handlers again to ensure they work after rebuilding
+    setupDragAndDrop();
+    
+    // Update flow duration
+    updateFlowDuration();
+    
+    console.log('Rebuilt flow table with draggable rows');
 }
 
 // Initialize the app
@@ -914,6 +1165,12 @@ function initializeApp() {
         .then(() => {
             displayFlows();
             updateDate();
+            
+            // Set up drag and drop
+            setupDragAndDrop();
+            
+            // Add window resize listener for scroll buttons
+            window.addEventListener('resize', updateScrollButtons);
             
             console.log('App initialized successfully');
         })

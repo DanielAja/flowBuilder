@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <asanas>
-  <asana>ReRe
+  <asana>
     <name>Downward Facing Dog</name>
     <side>Center</side>
     <image>images/downward-facing-dog.png</image>
@@ -91,8 +91,8 @@
       <tag>Strength</tag>
     </tags>
     <transitions>
-      <tag>Plank</tag>
-      <tag>Upward Facing Dog</tag>
+      <transition>Plank</transition>
+      <transition>Upward Facing Dog</transition>
     </transitions>
   </asana>
   

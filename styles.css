@@ -143,21 +143,38 @@ h1 {
   background-color: #333;
   color: #fff;
   border: none;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.edit-btn {
+  background-color: #333;
+}
+
+.delete-btn {
+  background-color: #333;
+}
+
+.edit-btn:hover, .delete-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .edit-btn::after {
   content: "✎";
+  font-size: 18px;
 }
 
 .delete-btn::after {
   content: "🗑";
+  font-size: 18px;
 }
 
 .screen {
@@ -317,15 +334,17 @@ h1 {
 }
 
 .drag-drop-hint {
-  color: #666;
+  color: #333;
   font-size: 14px;
-  font-style: italic;
-  margin-top: 10px;
+  font-weight: bold;
+  margin-top: 15px;
   margin-bottom: 20px;
   text-align: center;
   width: 100%;
-  padding: 10px;
-  border-top: 1px dashed #ccc;
+  padding: 12px;
+  border: 1px dashed #ff8c00;
+  border-radius: 8px;
+  background-color: #fff8f0;
 }
 
 #asanaList {
@@ -343,6 +362,7 @@ h1 {
   scrollbar-width: thin;
   scrollbar-color: #ff8c00 #f0f0f0;
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  min-height: 150px;
 }
 
 /* Styling the scrollbar for webkit browsers */
@@ -406,6 +426,19 @@ h1 {
   font-weight: 500;
   color: #666;
   width: 60px;
+  position: relative;
+  padding-left: 25px; /* Make room for the drag handle */
+  background-color: #f9f9f9;
+  border-right: 1px solid #eee;
+  transition: all 0.2s ease;
+  border-radius: 8px 0 0 8px;
+  box-shadow: inset 1px 0 3px rgba(255, 140, 0, 0.1);
+}
+
+#flowTable td:nth-child(1):hover {
+  background-color: #fff4e6;
+  cursor: grab;
+  color: #ff8c00;
 }
 
 #flowTable td:nth-child(3) { /* Duration column */
@@ -425,28 +458,78 @@ h1 {
 
 /* Drag and Drop styling */
 #flowTable tr[draggable] {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* First cell (number column) as drag handle */
+#flowTable tr[draggable] td:first-child {
   cursor: grab;
-  transition: background-color 0.3s;
+  position: relative;
+}
+
+#flowTable tr[draggable] td:first-child::before {
+  content: ":::";
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #aaa;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  letter-spacing: -1px;
+}
+
+#flowTable tr[draggable] td:first-child:hover::before {
+  color: #ff8c00;
+  cursor: grab;
 }
 
 #flowTable tr.dragging {
-  opacity: 0.6;
-  background-color: #f9f9f9;
+  opacity: 0.7;
+  background-color: #fff8f0;
   cursor: grabbing;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: scale(1.01);
+  z-index: 10;
+  border-left: 3px solid #ff8c00;
+}
+
+#flowTable tr.dragging td:first-child {
+  background-color: #fff4e6;
+  color: #ff8c00;
+  font-weight: bold;
 }
 
 #flowTable tr.drop-target {
-  border-top: 2px solid #ff8c00;
+  border-top: 3px solid #ff8c00;
+  border-bottom: 3px solid #ff8c00;
   background-color: rgba(255, 140, 0, 0.1);
+  transform: scale(1.01);
+  box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+  transition: all 0.15s ease-in-out;
 }
 
 #flowTable tr.drop-target td {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+#flowTable tr.drop-target td:first-child {
+  background-color: #fff4e6;
+  color: #ff8c00;
+  font-weight: bold;
+}
+
+#flowTable tr.drop-target td:first-child::before {
+  color: #ff8c00;
+  transform: translateY(-50%) scale(1.2);
 }
 
 #flowTable tr.drag-highlight {
-  animation: pulse 1s ease-in-out;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
@@ -511,6 +594,59 @@ h1 {
   background-color: #555;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.asana-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5px;
+  min-width: 120px;
+  flex-shrink: 0; /* Prevent containers from shrinking */
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 10px;
+  transition: all 0.3s ease;
+  background-color: #f9f9f9;
+  border: 2px solid transparent;
+}
+
+.asana-item:hover {
+  background-color: #fff4e6;
+  border-color: #ff8c00;
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2);
+}
+
+.asana-item img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 10px;
+  border-radius: 50%;
+  background-color: white;
+  padding: 5px;
+  border: 1px solid #eee;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.asana-item:hover img {
+  transform: scale(1.1);
+  border-color: #ff8c00;
+}
+
+.asana-item p {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  margin: 0;
+  transition: all 0.3s ease;
+}
+
+.asana-item:hover p {
+  color: #ff8c00;
 }
 
 .asana-container {
