@@ -184,10 +184,17 @@ function updateAsanaDisplay(asana) {
 
 // Function to speak the asana name
 function speakAsanaName(name, side) {
+    // Don't do anything if speech is disabled
+    if (!speechEnabled) return;
+    
     // Cancel any ongoing speech
     if (speechSynthesis.speaking) {
         speechSynthesis.cancel();
     }
+    
+    // Add visual feedback to the speech button
+    const speechBtn = document.getElementById('speech-toggle');
+    if (speechBtn) speechBtn.classList.add('speaking');
     
     // Create text to speak - include side only if it's Left or Right
     let textToSpeak = name;
@@ -200,6 +207,16 @@ function speakAsanaName(name, side) {
     speechUtterance.rate = 0.9; // Slightly slower for better clarity
     speechUtterance.pitch = 1;
     speechUtterance.volume = 1;
+    
+    // Add event listeners for speech events
+    speechUtterance.onend = function() {
+        if (speechBtn) speechBtn.classList.remove('speaking');
+    };
+    
+    speechUtterance.onerror = function() {
+        if (speechBtn) speechBtn.classList.remove('speaking');
+        console.error('Speech synthesis error');
+    };
     
     // Find a good voice (prefer female voice if available)
     let voices = speechSynthesis.getVoices();
@@ -216,8 +233,24 @@ function speakAsanaName(name, side) {
         }
     }
     
-    // Speak the text
-    speechSynthesis.speak(speechUtterance);
+    // Handle the case when voices might not be loaded yet
+    if (voices.length === 0) {
+        speechSynthesis.onvoiceschanged = function() {
+            voices = speechSynthesis.getVoices();
+            let preferredVoice = voices.find(v => v.lang.includes('en') && v.name.includes('Female'));
+            if (!preferredVoice) preferredVoice = voices.find(v => v.lang.includes('en'));
+            if (!preferredVoice && voices.length > 0) preferredVoice = voices[0];
+            
+            if (preferredVoice) {
+                speechUtterance.voice = preferredVoice;
+                // Re-speak after voices are loaded
+                speechSynthesis.speak(speechUtterance);
+            }
+        };
+    } else {
+        // Speak the text if voices are already loaded
+        speechSynthesis.speak(speechUtterance);
+    }
 }
 
 // Function to clear the build flow screen
@@ -691,12 +724,16 @@ function playFlow(flowID) {
     // Initialize speech button state
     const speechToggleBtn = document.getElementById('speech-toggle');
     if (speechToggleBtn) {
+        const buttonLabel = speechToggleBtn.querySelector('span');
+        
         if (speechEnabled) {
             speechToggleBtn.classList.remove('speech-disabled');
             speechToggleBtn.title = "Voice guidance is on - Click to turn off";
+            if (buttonLabel) buttonLabel.textContent = "Voice On";
         } else {
             speechToggleBtn.classList.add('speech-disabled');
             speechToggleBtn.title = "Voice guidance is off - Click to turn on";
+            if (buttonLabel) buttonLabel.textContent = "Voice Off";
         }
     }
     
@@ -829,9 +866,12 @@ function toggleSpeech() {
     // Update button state
     const speechToggleBtn = document.getElementById('speech-toggle');
     if (speechToggleBtn) {
+        const buttonLabel = speechToggleBtn.querySelector('span');
+        
         if (speechEnabled) {
             speechToggleBtn.classList.remove('speech-disabled');
             speechToggleBtn.title = "Voice guidance is on - Click to turn off";
+            if (buttonLabel) buttonLabel.textContent = "Voice On";
             
             // Speak the current pose if not paused
             if (!paused && editingFlow.asanas && editingFlow.asanas[currentAsanaIndex]) {
@@ -841,6 +881,7 @@ function toggleSpeech() {
         } else {
             speechToggleBtn.classList.add('speech-disabled');
             speechToggleBtn.title = "Voice guidance is off - Click to turn on";
+            if (buttonLabel) buttonLabel.textContent = "Voice Off";
             
             // Stop any current speech
             if (speechSynthesis.speaking) {

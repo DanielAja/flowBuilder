@@ -1110,13 +1110,31 @@ h1 {
 }
 
 #flowScreen .speech-btn {
-  background-color: #555;
+  background-color: #4CAF50;
   width: 130px;
+  position: relative;
+}
+
+#flowScreen .speech-btn::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background-color: #4CAF50;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 #flowScreen .speech-btn.speech-disabled {
   background-color: #888;
   color: rgba(255, 255, 255, 0.8);
+}
+
+#flowScreen .speech-btn.speech-disabled::after {
+  background-color: #f44336;
 }
 
 #flowScreen .speech-btn svg {
@@ -1125,7 +1143,44 @@ h1 {
 }
 
 #flowScreen .speech-btn.speech-disabled .speech-on {
+  position: relative;
+}
+
+#flowScreen .speech-btn.speech-disabled .speech-on::before {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 2px;
+  background-color: currentColor;
   transform: rotate(45deg);
+  left: 0;
+  top: 11px;
+}
+
+#flowScreen .speech-btn:hover {
+  background-color: #3e8e41;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+#flowScreen .speech-btn.speaking {
+  animation: speaking-pulse 1.5s infinite ease-in-out;
+}
+
+#flowScreen .speech-btn.speaking::after {
+  animation: speaking-dot-pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes speaking-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
+@keyframes speaking-dot-pulse {
+  0% { transform: scale(1); background-color: #4CAF50; }
+  50% { transform: scale(1.2); background-color: #ff8c00; }
+  100% { transform: scale(1); background-color: #4CAF50; }
 }
 
 #flowScreen .home-btn:hover {
