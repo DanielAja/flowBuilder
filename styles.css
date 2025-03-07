@@ -296,6 +296,54 @@ h1 {
   margin-bottom: 20px;
 }
 
+.asana-section-title {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.asana-category-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px;
+  padding: 0 20px;
+}
+
+.category-btn {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.category-btn:hover {
+  background-color: #e0e0e0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  color: #333;
+}
+
+.category-btn.active {
+  background-color: #ff8c00;
+  color: white;
+  font-weight: 600;
+}
+
+.category-btn.active:hover {
+  background-color: #e67e00;
+}
+
 .asana-scroll-container {
   position: relative;
   display: flex;
@@ -604,14 +652,15 @@ h1 {
   flex-direction: column;
   align-items: center;
   margin: 5px;
-  min-width: 120px;
+  min-width: 130px;
   flex-shrink: 0; /* Prevent containers from shrinking */
   cursor: pointer;
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
   transition: all 0.3s ease;
   background-color: #f9f9f9;
   border: 2px solid transparent;
+  position: relative;
 }
 
 .asana-item:hover {
@@ -622,8 +671,8 @@ h1 {
 }
 
 .asana-item img {
-  width: 80px;
-  height: 80px;
+  width: 85px;
+  height: 85px;
   object-fit: contain;
   margin-bottom: 10px;
   border-radius: 50%;
@@ -646,10 +695,53 @@ h1 {
   text-align: center;
   margin: 0;
   transition: all 0.3s ease;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .asana-item:hover p {
   color: #ff8c00;
+}
+
+.difficulty-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 0 8px 0 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.difficulty-badge.beginner {
+  background-color: #8bc34a;
+  color: white;
+}
+
+.difficulty-badge.intermediate {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.difficulty-badge.advanced {
+  background-color: #f44336;
+  color: white;
+}
+
+.no-matches {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  margin: 10px auto;
+  width: 100%;
 }
 
 .asana-container {

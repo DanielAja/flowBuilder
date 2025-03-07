@@ -994,9 +994,69 @@ function updateDate() {
 // Main function to load asanas from XML
 async function loadAsanasFromXML() {
     try {
-        console.log("Loading asanas...");
+        console.log("Loading asanas from XML...");
         
-        // Hard-code some sample asanas since XML loading might be causing issues
+        // Fetch the XML file
+        const response = await fetch('asanas.xml');
+        const xmlText = await response.text();
+        
+        // Parse XML
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+        
+        // Get all asana elements
+        const asanaElements = xmlDoc.getElementsByTagName('asana');
+        console.log(`Found ${asanaElements.length} asanas in XML`);
+        
+        // Clear existing asanas
+        asanas = [];
+        
+        // Process each asana
+        for (let i = 0; i < asanaElements.length; i++) {
+            const asanaElem = asanaElements[i];
+            
+            // Extract basic info
+            const name = asanaElem.getElementsByTagName('n')[0]?.textContent || 'Unknown Pose';
+            const side = asanaElem.getElementsByTagName('side')[0]?.textContent || 'Center';
+            const image = asanaElem.getElementsByTagName('image')[0]?.textContent || 'images/default-pose.png';
+            const description = asanaElem.getElementsByTagName('description')[0]?.textContent || '';
+            const difficulty = asanaElem.getElementsByTagName('difficulty')[0]?.textContent || 'Beginner';
+            
+            // Extract tags
+            const tagElements = asanaElem.getElementsByTagName('tag');
+            const tags = [];
+            for (let j = 0; j < tagElements.length; j++) {
+                tags.push(tagElements[j].textContent);
+            }
+            
+            // Extract transitions
+            const transitionElements = asanaElem.getElementsByTagName('transition');
+            const transitions = [];
+            for (let j = 0; j < transitionElements.length; j++) {
+                transitions.push(transitionElements[j].textContent);
+            }
+            
+            // Create asana object
+            const asana = new YogaAsana(
+                name,
+                side,
+                image,
+                description,
+                difficulty,
+                tags,
+                transitions
+            );
+            
+            // Add to asanas array
+            asanas.push(asana);
+        }
+        
+        console.log('Successfully loaded asanas from XML:', asanas.length);
+        populateAsanaList();
+        
+    } catch (error) {
+        console.error('Error loading asanas from XML:', error);
+        // Fallback to default asanas if XML loading fails
         asanas = [
             new YogaAsana(
                 "Downward Facing Dog",
@@ -1035,13 +1095,8 @@ async function loadAsanasFromXML() {
                 ["Warrior 2", "Half Moon Pose"]
             )
         ];
-        
-        console.log('Asanas loaded:', asanas);
+        console.log('Loaded fallback asanas');
         populateAsanaList();
-        
-    } catch (error) {
-        console.error('Error loading asanas:', error);
-        asanas = [];
     }
 }
 
@@ -1068,6 +1123,28 @@ function getRecommendedPoses() {
     return matches.length > 0 ? [matches[0]] : [];
 }
 
+// Track current filter
+let currentFilter = 'all';
+
+// Filter asanas based on category
+function filterAsanas(category) {
+    console.log(`Filtering asanas by category: ${category}`);
+    currentFilter = category;
+    
+    // Update active button
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    categoryButtons.forEach(button => {
+        if (button.textContent.includes(category === 'all' ? 'All Poses' : category)) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+    
+    // Repopulate the list with the filter
+    populateAsanaList();
+}
+
 // Populate the asana list with loaded asanas
 function populateAsanaList() {
     console.log('Populating asana list with asanas:', asanas.length);
@@ -1089,6 +1166,22 @@ function populateAsanaList() {
     // Check if we have recommended poses
     const recommendedPoses = getRecommendedPoses();
     const hasRecommendations = recommendedPoses.length > 0;
+    
+    // Filter poses based on current category
+    let posesList = [...asanas];
+    if (currentFilter !== 'all') {
+        posesList = posesList.filter(asana => {
+            return asana.tags && asana.tags.some(tag => 
+                tag.toLowerCase().includes(currentFilter.toLowerCase())
+            );
+        });
+    }
+    
+    // If no poses match the filter
+    if (posesList.length === 0) {
+        asanaList.innerHTML = `<div class="no-matches">No poses found in the "${currentFilter}" category</div>`;
+        return;
+    }
     
     // If we have recommendations, add animation but don't reposition
     if (hasRecommendations) {
@@ -1113,9 +1206,7 @@ function populateAsanaList() {
         }, 100);
     }
     
-    // Use original order - don't reorder poses
-    let posesList = [...asanas];
-    
+    // Create and add elements for each pose
     posesList.forEach((asana, index) => {
         const asanaElement = document.createElement('div');
         asanaElement.className = 'asana-item';
@@ -1128,6 +1219,11 @@ function populateAsanaList() {
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
         
+        // Create difficulty badge
+        const difficultyBadge = document.createElement('span');
+        difficultyBadge.className = `difficulty-badge ${asana.difficulty.toLowerCase()}`;
+        difficultyBadge.textContent = asana.difficulty;
+        
         // Create image element
         const asanaImage = document.createElement('img');
         asanaImage.src = asana.image;
@@ -1138,6 +1234,7 @@ function populateAsanaList() {
         asanaName.textContent = asana.name;
         
         // Append elements
+        asanaElement.appendChild(difficultyBadge);
         asanaElement.appendChild(asanaImage);
         asanaElement.appendChild(asanaName);
         
@@ -1150,10 +1247,13 @@ function populateAsanaList() {
         asanaList.appendChild(asanaElement);
     });
     
-    console.log('Asana list populated with', asanas.length, 'asanas');
+    console.log('Asana list populated with', posesList.length, 'asanas');
     if (hasRecommendations) {
         console.log('Recommended poses:', recommendedPoses.map(p => p.name).join(', '));
     }
+    
+    // Update scroll buttons visibility
+    updateScrollButtons();
 }
 
 // Scrolling functions for the asana list

@@ -49,6 +49,16 @@
         </div>
         
         <div class="asana-selection">
+          <h3 class="asana-section-title">Select poses for your flow</h3>
+          <div class="asana-category-buttons">
+            <button class="category-btn active" onclick="filterAsanas('all')">All Poses</button>
+            <button class="category-btn" onclick="filterAsanas('Standing')">Standing</button>
+            <button class="category-btn" onclick="filterAsanas('Seated')">Seated</button>
+            <button class="category-btn" onclick="filterAsanas('Backbend')">Backbends</button>
+            <button class="category-btn" onclick="filterAsanas('Balance')">Balance</button>
+            <button class="category-btn" onclick="filterAsanas('Stretch')">Stretches</button>
+            <button class="category-btn" onclick="filterAsanas('Strength')">Strength</button>
+          </div>
           <div class="asana-scroll-container">
             <button class="scroll-btn scroll-left" onclick="scrollAsanaList(-300)">◀</button>
             <div id="asanaList"></div>
