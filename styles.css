@@ -41,14 +41,9 @@ h1 {
   font-weight: bold;
 }
 
-main {
-  /* padding: 20px; */
-}
-
 .past-flows {
   color: #000;
   font-size: 24px;
-  /* margin-bottom: 20px; */
   padding: 10px 20px;
   border-top: 2px solid #e0e0e0;
   border-bottom: 2px solid #e0e0e0;
@@ -125,6 +120,7 @@ main {
   color: #888;
   font-size: 14px;
 }
+
 .flow-actions {
   display: flex;
   gap: 10px;
@@ -163,60 +159,741 @@ main {
   content: "🗑";
 }
 
-/* Styles for other screens */
 .screen {
-  display: none;
+  display: none !important;
 }
 
 .active {
-  display: block;
+  display: block !important;
 }
 
-#buildScreen,
-#flowScreen {
-  padding: 20px;
+#buildScreen {
+  padding: 0;
+  background-color: #f0f0f0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-input[type="text"],
-input[type="number"] {
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-bottom: 10px;
-}
-
-table {
+.build-content {
   width: 100%;
-  border-collapse: collapse;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative; /* For absolute positioning of the save indicator */
+}
+
+/* Build Screen Title */
+.build-title {
+  color: #000;
+  font-size: 48px;
+  font-weight: 100;
+  letter-spacing: 0.2rem;
+  margin: 10px 0 20px 0;
+  text-align: center;
+  width: 100%;
+}
+
+/* Auto-save indicator */
+#save-indicator {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+#save-indicator.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.build-form {
+  width: 90%;
+  max-width: 800px;
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#buildScreen input, 
+#buildScreen textarea {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#buildScreen textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.flow-duration {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.flow-duration label {
+  font-weight: bold;
+  color: #333;
+}
+
+#flowTime {
+  font-size: 18px;
+  color: #ff8c00;
+  font-weight: bold;
+  margin: 0;
+}
+
+.asana-selection, .flow-sequence {
+  width: 95%;
+  max-width: 1000px;
   margin-bottom: 20px;
 }
 
-th,
-td {
+.asana-scroll-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 15px 0;
+}
+
+.scroll-btn {
+  position: absolute;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  font-size: 16px;
+  display: none; /* Hidden by default, will be shown via JS when needed */
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.scroll-btn:hover {
+  background-color: #e67e00;
+  transform: scale(1.1);
+}
+
+.scroll-left {
+  left: -18px;
+}
+
+.scroll-right {
+  right: -18px;
+}
+
+.drag-drop-hint {
+  color: #666;
+  font-size: 14px;
+  font-style: italic;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  width: 100%;
   padding: 10px;
-  text-align: left;
-  border-bottom: 1px solid #ccc;
-}
-
-th {
-  background-color: #f0f0f0;
-}
-
-#countdown {
-  font-size: 24px;
-  font-weight: bold;
-  color: #ff8c00;
-  margin-top: 20px;
+  border-top: 1px dashed #ccc;
 }
 
 #asanaList {
-  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  gap: 15px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  scrollbar-width: thin;
+  scrollbar-color: #ff8c00 #f0f0f0;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
-#asanaList button {
-  margin-right: 10px;
-  margin-bottom: 10px;
+/* Styling the scrollbar for webkit browsers */
+#asanaList::-webkit-scrollbar {
+  height: 8px;
+}
+
+#asanaList::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+#asanaList::-webkit-scrollbar-thumb {
+  background-color: #ff8c00;
+  border-radius: 4px;
+}
+
+/* Add padding to last item to ensure scrolling works properly */
+#asanaList .asana-container:last-child {
+  padding-right: 20px;
+}
+
+#flowTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px auto;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#flowTable th {
+  background-color: #333;
+  color: #fff;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Match header text alignment with cell alignment */
+#flowTable th:nth-child(1) { text-align: center; }
+#flowTable th:nth-child(3) { text-align: center; }
+#flowTable th:nth-child(4) { text-align: center; }
+#flowTable th:nth-child(5) { text-align: center; }
+
+#flowTable td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+
+#flowTable tr:last-child td {
+  border-bottom: none;
+}
+
+/* Column-specific styling */
+#flowTable td:nth-child(1) { /* Number column */
+  text-align: center;
+  font-weight: 500;
+  color: #666;
+  width: 60px;
+}
+
+#flowTable td:nth-child(3) { /* Duration column */
+  text-align: center;
+  width: 120px;
+}
+
+#flowTable td:nth-child(4) { /* Side column */
+  width: 120px;
+  text-align: center;
+}
+
+#flowTable td:nth-child(5) { /* Remove column */
+  width: 80px;
+  text-align: center;
+}
+
+/* Drag and Drop styling */
+#flowTable tr[draggable] {
+  cursor: grab;
+  transition: background-color 0.3s;
+}
+
+#flowTable tr.dragging {
+  opacity: 0.6;
+  background-color: #f9f9f9;
+  cursor: grabbing;
+}
+
+#flowTable tr.drop-target {
+  border-top: 2px solid #ff8c00;
+  background-color: rgba(255, 140, 0, 0.1);
+}
+
+#flowTable tr.drop-target td {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#flowTable tr.drag-highlight {
+  animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+  0% { background-color: rgba(255, 140, 0, 0); }
+  50% { background-color: rgba(255, 140, 0, 0.2); }
+  100% { background-color: rgba(255, 140, 0, 0); }
+}
+
+.build-actions {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+}
+
+/* Auto-save message */
+.auto-save-message {
+  color: #666;
+  font-size: 14px;
+  font-style: italic;
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  border: 1px dashed #ccc;
+}
+
+.save-flow-btn {
+  background-color: #ff8c00;
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.save-flow-btn:hover {
+  background-color: #e67e00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+#buildScreen .home-btn {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#buildScreen .home-btn:hover {
+  background-color: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.asana-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5px;
+  min-width: 120px;
+  flex-shrink: 0; /* Prevent containers from shrinking */
+}
+
+.asana-preview {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.asana-container:hover .asana-preview {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-color: #ff8c00;
+}
+
+.asana-btn {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 15px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  width: 100%;
+  text-align: center;
+}
+
+.asana-btn:hover {
+  background-color: #ff8c00;
+}
+
+.table-asana {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.table-asana-img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 1px solid #e0e0e0;
+}
+
+.table-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+}
+
+.reorder-btn {
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.remove-btn {
+  background-color: #ff6b6b;
+  color: white;
+}
+
+#flowTable select.side-select {
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+  background-color: #f8f8f8;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#flowTable select.side-select:hover {
+  border-color: #ccc;
+  background-color: #f0f0f0;
+}
+
+#flowTable select.side-select:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+}
+
+/* Special styling for different sides */
+#flowTable select.side-select option[value="Left"] {
+  background-color: #e8f4ff;
+}
+
+#flowTable select.side-select option[value="Right"] {
+  background-color: #fff0e8;
+}
+
+#flowTable select.side-select option[value="Center"] {
+  background-color: #f0f0f0;
+}
+
+#flowTable input[type="number"] {
+  width: 80px;
+  padding: 10px 15px;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  background-color: #f8f8f8;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  -moz-appearance: textfield; /* Hide the spinner on Firefox */
+}
+
+#flowTable input[type="number"]::-webkit-inner-spin-button, 
+#flowTable input[type="number"]::-webkit-outer-spin-button { 
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#flowTable input[type="number"]:hover {
+  border-color: #ccc;
+  background-color: #f0f0f0;
+}
+
+#flowTable input[type="number"]:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+}
+
+/* Duration wrapper and unit styling */
+.duration-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.duration-unit {
+  position: absolute;
+  right: 15px;
+  color: #999;
+  font-weight: 500;
+  pointer-events: none; /* Make sure the unit doesn't interfere with the input */
+}
+
+/* Make sure there's room for the unit */
+#flowTable .duration-wrapper input[type="number"] {
+  padding-right: 25px;
+}
+
+#flowScreen {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.flow-header {
+  background-color: rgb(0, 0, 0, 0);
+  color: rgb(62, 62, 62);
+  padding: 20px;
+  text-align: center;
+  z-index: 3;
+}
+
+.flow-header h1 {
+  margin: 0;
+  font-size: 3.5rem;
+}
+
+.flow-header p {
+  margin: 5px 0 0;
+  font-size: 18px;
+  z-index: 3;
+}
+
+#asanaImage {
+  position: relative;
+  padding: 15px;
+  padding-top: 35px;
+  /* top: 80px; Adjust this value to move it closer to or further from the top */
+  /* left: 50%; */
+  transform: translateY(-5%);
+  width: 100%;
+  max-width: 75vw;
+  max-height: 75vh;
+  /* height: 300px; */
+  object-fit: contain;
+  z-index: 0;
+  user-select: none; /* Makes the image unselectable */
+  pointer-events: none; /* Prevents the image from interfering with mouse events */
+}
+
+.countdown-svg {
+  transform: rotate(-90deg);
+  width: 100%;
+  height: 100%;
+}
+
+#countdown-circle {
+  transition: stroke-dashoffset 0.1s linear;
+  position: absolute;
+}
+
+#countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.close-btn {
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border: 2px solid #888;
+  border-radius: 50%;
+  color: #888;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  padding: 0;
+  line-height: 1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.close-btn:focus {
+  outline: none;
+}
+
+.flow-content {
+  position: relative;
+  min-height: 400px; /* Adjust as needed */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.asana-image-container {
+  width: 100%;
+  height: 60vh;
+  /* flex: 1; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* overflow: hidden; */
+}
+
+.flow-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 25%;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  margin-top: 25px;
+}
+
+.home-btn {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.countdown-container {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flow-footer {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 20px;
+}
+
+.pause-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #888;
+  border-radius: 50%;
+  color: #333;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.coming-up {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  /* position: absolute; */
+  /* right: 3px !important; */
+  /* top: 0; */
+}
+
+.coming-up p {
+  margin: 0;
+  text-align: right;
+}
+
+#nextAsanaName {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#nextAsanaImage {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 25px;
+  align-self: flex-end;
+  margin-top: 10px;
+  /* position: absolute; */
+  /* right: 0; */
 }
 
 @media screen and (max-width: 768px) {
@@ -244,6 +921,6 @@ th {
   }
 
   .flow-item::after {
-    width: 90%; /* Adjust the border width for smaller screens */
+    width: 90%;
   }
 }

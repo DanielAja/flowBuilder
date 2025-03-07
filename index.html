@@ -8,6 +8,7 @@
   </head>
   <body>
     <div class="orange-bar"></div>
+
     <div id="homeScreen" class="screen active">
       <header>
         <h1>flow builder</h1>
@@ -15,46 +16,116 @@
           BUILD A FLOW
         </button>
       </header>
+
       <main>
         <h2 class="past-flows">Past Flows</h2>
         <div class="white-section"></div>
         <div class="flow-list">
           <div class="flow-date">
             <h3>Today, Thu July 04</h3>
-            <div class="flow-count">3 flows</div>
+            <span class="flow-count">3 flows</span>
           </div>
-          <div class="flow-items" id="savedFlowsList">
-            <!-- Flow items will be dynamically inserted here -->
+          <div id="savedFlowsList" class="flow-items">
+            <!-- Saved flows will be populated here -->
           </div>
         </div>
       </main>
     </div>
 
     <div id="buildScreen" class="screen">
-      <h1>Build A Flow!</h1>
-      <input type="text" id="title" placeholder="Title" />
-      <input type="text" id="description" placeholder="Description" />
-      <span id="flowTime"></span>
-      <div id="asanaList"></div>
-      <table id="flowTable">
-        <tr>
-          <th>Number</th>
-          <th>Reorder</th>
-          <th>Asana</th>
-          <th>Duration</th>
-          <th>Side</th>
-          <th>Remove</th>
-        </tr>
-      </table>
-      <button onclick="saveFlow()">Save Flow</button>
-      <button onclick="changeScreen('homeScreen')">Home</button>
+      <div class="orange-bar"></div>
+      
+      <div class="build-content">
+        <h1 class="build-title">build a flow</h1>
+        <div class="build-form">
+          <input type="text" id="title" placeholder="Flow Title" />
+          <textarea id="description" placeholder="Flow Description"></textarea>
+          <div class="flow-duration">
+            <label>Total Duration:</label>
+            <p id="flowTime">0 seconds</p>
+          </div>
+        </div>
+        
+        <div class="asana-selection">
+          <div class="asana-scroll-container">
+            <button class="scroll-btn scroll-left" onclick="scrollAsanaList(-300)">◀</button>
+            <div id="asanaList"></div>
+            <button class="scroll-btn scroll-right" onclick="scrollAsanaList(300)">▶</button>
+          </div>
+        </div>
+        
+        <div class="flow-sequence">
+          <table id="flowTable">
+            <tr>
+              <th>Number</th>
+              <th>Asana</th>
+              <th>Duration</th>
+              <th>Side</th>
+              <th>Remove</th>
+            </tr>
+          </table>
+        </div>
+        
+        <div class="build-actions">
+          <button onclick="saveFlow()" class="save-flow-btn">Save Flow</button>
+          <button onclick="changeScreen('homeScreen')" class="home-btn">
+            Back to Home
+          </button>
+        </div>
+        
+        <p class="drag-drop-hint">Drag and drop poses to reorder your sequence</p>
+      </div>
     </div>
 
     <div id="flowScreen" class="screen">
-      <h1 id="flowTitle">Flow!</h1>
-      <div id="currentAsana"></div>
-      <div id="countdown"></div>
+      <div class="flow-header">
+        <h1 id="asanaName">Warrior II</h1>
+        <p id="asanaSide">left</p>
+      </div>
+      <div class="flow-content">
+        <div class="asana-image-container">
+          <img id="asanaImage" src="images/warrior-2.png" alt="Asana pose" />
+        </div>
+        <div class="flow-controls">
+          <button class="pause-btn" onclick="togglePause()">⏸️</button>
+          <div class="countdown-container">
+            <svg class="countdown-svg" viewBox="0 0 100 100">
+              <circle
+                r="45"
+                cx="50"
+                cy="50"
+                fill="transparent"
+                stroke="#ddd"
+                stroke-width="10"
+              ></circle>
+              <circle
+                id="countdown-circle"
+                r="45"
+                cx="50"
+                cy="50"
+                fill="transparent"
+                stroke="#ff8c00"
+                stroke-width="10"
+                stroke-dasharray="282.7"
+                stroke-dashoffset="0"
+              ></circle>
+            </svg>
+            <div id="countdown">7s</div>
+          </div>
+          <div class="coming-up">
+            <p>Coming Up:</p>
+            <p id="nextAsanaName">Triangle</p>
+            <img
+              id="nextAsanaImage"
+              src="images/triangle-pose.png"
+              alt="Next asana pose"
+            />
+          </div>
+        </div>
+      </div>
+      <button class="close-btn" onclick="changeScreen('homeScreen')">X</button>
     </div>
-    <script type="module" src="main.js"></script>
+
+    <script src="main.js"></script>
   </body>
 </html>
