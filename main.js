@@ -633,6 +633,12 @@ function playFlow(flowID) {
     currentAsanaIndex = 0;
     paused = false;
     
+    // Reset any existing flow complete states
+    const existingCompleteContainer = document.querySelector('.countdown-container.flow-complete');
+    if (existingCompleteContainer) {
+        existingCompleteContainer.classList.remove('flow-complete');
+    }
+    
     // Initialize the practice screen
     changeScreen('flowScreen');
     
@@ -640,6 +646,20 @@ function playFlow(flowID) {
     if (editingFlow.asanas && editingFlow.asanas.length > 0) {
         const asana = editingFlow.asanas[currentAsanaIndex];
         const duration = updateAsanaDisplay(asana);
+        
+        // Make sure the countdown container has the proper SVG structure
+        const countdownContainer = document.querySelector('.countdown-container');
+        if (countdownContainer) {
+            countdownContainer.innerHTML = `
+                <svg class="countdown-svg" viewBox="0 0 100 100">
+                    <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
+                    <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent" 
+                            stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7" 
+                            stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
+                </svg>
+                <div id="countdown">${displayFlowDuration(duration)}</div>
+            `;
+        }
         
         // Set up the countdown timer
         startCountdownTimer(duration);
@@ -686,8 +706,17 @@ function startCountdownTimer(duration) {
                     countdownCircle.style.strokeDasharray = circumference;
                     countdownCircle.style.strokeDashoffset = "0";
                 } else {
-                    // End of flow
-                    countdownElement.textContent = 'End';
+                    // End of flow - transform timer into a home button
+                    const countdownContainer = document.querySelector('.countdown-container');
+                    if (countdownContainer) {
+                        // Replace the countdown with a home button
+                        countdownContainer.innerHTML = `
+                            <button class="timer-home-btn" onclick="changeScreen('homeScreen')">
+                                <span>Home</span>
+                            </button>
+                        `;
+                        countdownContainer.classList.add('flow-complete');
+                    }
                     return;
                 }
             }
@@ -700,6 +729,14 @@ function startCountdownTimer(duration) {
 }
 
 function togglePause() {
+    // Check if the flow is already complete (timer turned into home button)
+    const flowComplete = document.querySelector('.countdown-container.flow-complete');
+    if (flowComplete) {
+        // If flow is complete, just go back to home
+        changeScreen('homeScreen');
+        return;
+    }
+    
     paused = !paused;
     const pauseBtn = document.querySelector('.pause-btn');
     if (pauseBtn) {
