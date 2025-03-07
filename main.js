@@ -115,6 +115,9 @@ let isReversed = false;
 let paused = false;
 let lastUpdateTime = 0;
 let animationFrameId = null;
+let speechEnabled = true; // Default to speech enabled
+let speechSynthesis = window.speechSynthesis;
+let speechUtterance = null;
 
 function displayFlowDuration(duration) {
     duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
@@ -167,11 +170,54 @@ function updateAsanaDisplay(asana) {
         }
     }
     if (comingUpSection) comingUpSection.style.display = "block";
+    
+    // Speak the name of the asana if speech is enabled
+    if (speechEnabled && !paused) {
+        speakAsanaName(asana.name, asana.side);
+    }
 
     console.log('Current Asana:', asana.name, 'Image:', asana.image);
     console.log('Next Asana:', nextAsana ? nextAsana.name : 'End of flow', 'Image:', nextAsana ? nextAsana.image : 'End of flow image');
 
     return asana.duration;
+}
+
+// Function to speak the asana name
+function speakAsanaName(name, side) {
+    // Cancel any ongoing speech
+    if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+    }
+    
+    // Create text to speak - include side only if it's Left or Right
+    let textToSpeak = name;
+    if (side && (side.toLowerCase() === 'left' || side.toLowerCase() === 'right')) {
+        textToSpeak += `, ${side} side`;
+    }
+    
+    // Create and configure utterance
+    speechUtterance = new SpeechSynthesisUtterance(textToSpeak);
+    speechUtterance.rate = 0.9; // Slightly slower for better clarity
+    speechUtterance.pitch = 1;
+    speechUtterance.volume = 1;
+    
+    // Find a good voice (prefer female voice if available)
+    let voices = speechSynthesis.getVoices();
+    if (voices.length > 0) {
+        // Look for English female voice
+        let preferredVoice = voices.find(v => v.lang.includes('en') && v.name.includes('Female'));
+        // If no female English voice, try any English voice
+        if (!preferredVoice) preferredVoice = voices.find(v => v.lang.includes('en'));
+        // If still no match, use the first available voice
+        if (!preferredVoice) preferredVoice = voices[0];
+        
+        if (preferredVoice) {
+            speechUtterance.voice = preferredVoice;
+        }
+    }
+    
+    // Speak the text
+    speechSynthesis.speak(speechUtterance);
 }
 
 // Function to clear the build flow screen
@@ -642,6 +688,18 @@ function playFlow(flowID) {
     // Initialize the practice screen
     changeScreen('flowScreen');
     
+    // Initialize speech button state
+    const speechToggleBtn = document.getElementById('speech-toggle');
+    if (speechToggleBtn) {
+        if (speechEnabled) {
+            speechToggleBtn.classList.remove('speech-disabled');
+            speechToggleBtn.title = "Voice guidance is on - Click to turn off";
+        } else {
+            speechToggleBtn.classList.add('speech-disabled');
+            speechToggleBtn.title = "Voice guidance is off - Click to turn on";
+        }
+    }
+    
     // Start the flow if it has asanas
     if (editingFlow.asanas && editingFlow.asanas.length > 0) {
         const asana = editingFlow.asanas[currentAsanaIndex];
@@ -749,8 +807,45 @@ function togglePause() {
         // Use better-looking icons
         if (paused) {
             pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+            
+            // Pause speech if it's currently speaking
+            if (speechSynthesis.speaking) {
+                speechSynthesis.pause();
+            }
         } else {
             pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+            
+            // Resume speech if it was paused
+            if (speechSynthesis.paused) {
+                speechSynthesis.resume();
+            }
+        }
+    }
+}
+
+function toggleSpeech() {
+    speechEnabled = !speechEnabled;
+    
+    // Update button state
+    const speechToggleBtn = document.getElementById('speech-toggle');
+    if (speechToggleBtn) {
+        if (speechEnabled) {
+            speechToggleBtn.classList.remove('speech-disabled');
+            speechToggleBtn.title = "Voice guidance is on - Click to turn off";
+            
+            // Speak the current pose if not paused
+            if (!paused && editingFlow.asanas && editingFlow.asanas[currentAsanaIndex]) {
+                const asana = editingFlow.asanas[currentAsanaIndex];
+                speakAsanaName(asana.name, asana.side);
+            }
+        } else {
+            speechToggleBtn.classList.add('speech-disabled');
+            speechToggleBtn.title = "Voice guidance is off - Click to turn on";
+            
+            // Stop any current speech
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
         }
     }
 }

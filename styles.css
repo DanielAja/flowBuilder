@@ -1088,7 +1088,8 @@ h1 {
   z-index: 100;
 }
 
-#flowScreen .home-btn {
+#flowScreen .home-btn, 
+#flowScreen .speech-btn {
   padding: 12px 25px;
   font-size: 16px;
   background-color: #333;
@@ -1102,6 +1103,29 @@ h1 {
   letter-spacing: 0.05em;
   position: relative;
   overflow: hidden;
+  margin: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#flowScreen .speech-btn {
+  background-color: #555;
+  width: 130px;
+}
+
+#flowScreen .speech-btn.speech-disabled {
+  background-color: #888;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#flowScreen .speech-btn svg {
+  margin-right: 8px;
+  transition: all 0.3s ease;
+}
+
+#flowScreen .speech-btn.speech-disabled .speech-on {
+  transform: rotate(45deg);
 }
 
 #flowScreen .home-btn:hover {
