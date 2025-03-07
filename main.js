@@ -115,7 +115,7 @@ let isReversed = false;
 let paused = false;
 let lastUpdateTime = 0;
 let animationFrameId = null;
-let speechEnabled = true; // Default to speech enabled
+let speechEnabled = false; // Default to speech disabled
 let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
 
@@ -734,11 +734,11 @@ function playFlow(flowID) {
         if (speechEnabled) {
             speechToggleBtn.classList.remove('speech-disabled');
             speechToggleBtn.title = "Voice guidance is on - Click to turn off";
-            if (buttonLabel) buttonLabel.textContent = "Voice On";
+            if (buttonLabel) buttonLabel.textContent = "Sound: ON";
         } else {
             speechToggleBtn.classList.add('speech-disabled');
             speechToggleBtn.title = "Voice guidance is off - Click to turn on";
-            if (buttonLabel) buttonLabel.textContent = "Voice Off";
+            if (buttonLabel) buttonLabel.textContent = "Sound: OFF";
         }
     }
     
@@ -890,7 +890,7 @@ function toggleSpeech() {
             const buttonLabel = speechToggleBtn.querySelector('span');
             speechToggleBtn.classList.remove('speech-disabled');
             speechToggleBtn.title = "Voice guidance is on - Click to turn off";
-            if (buttonLabel) buttonLabel.textContent = "Voice On";
+            if (buttonLabel) buttonLabel.textContent = "Sound: ON";
         }
         
         // Update flow screen speech toggle button
@@ -910,7 +910,7 @@ function toggleSpeech() {
             const buttonLabel = speechToggleBtn.querySelector('span');
             speechToggleBtn.classList.add('speech-disabled');
             speechToggleBtn.title = "Voice guidance is off - Click to turn on";
-            if (buttonLabel) buttonLabel.textContent = "Voice Off";
+            if (buttonLabel) buttonLabel.textContent = "Sound: OFF";
         }
         
         // Update flow screen speech toggle button

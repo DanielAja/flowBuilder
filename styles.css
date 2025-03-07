@@ -1116,8 +1116,12 @@ h1 {
   justify-content: center;
 }
 
+#flowScreen .home-btn {
+  background-color: #333;
+}
+
 #flowScreen .speech-btn {
-  background-color: #4CAF50;
+  background-color: #333;
   width: 130px;
   position: relative;
 }
@@ -1132,42 +1136,71 @@ h1 {
   align-items: center;
   padding: 0 !important;
   transition: all 0.3s ease;
-  background: linear-gradient(145deg, #4CAF50, #3e8e41) !important;
+  background: white !important;
+  border: 2px solid #000;
+  position: relative;
+  overflow: hidden;
 }
 
 .speech-btn-flow:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  background: #f8f8f8 !important;
+  border-color: #333;
+}
+
+.speech-btn-flow:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1), inset 0 2px 3px rgba(0, 0, 0, 0.1);
+  background: #eee !important;
+  border-color: #000;
 }
 
 .speech-btn-flow.speech-disabled {
-  background: linear-gradient(145deg, #999, #777) !important;
+  background: #ddd !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: #999;
+}
+
+/* Removed - no longer needed as we've removed the indicator */
+
+.speech-btn-flow::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.speech-btn-flow:hover::before {
+  opacity: 1;
 }
 
 .speech-btn-flow svg {
   width: 28px !important;
   height: 28px !important;
   margin-right: 0 !important;
+  stroke: #000 !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
+.speech-btn-flow.speech-disabled svg {
+  stroke: #666 !important;
+}
+
+/* Removed semi-circle indicator */
 #flowScreen .speech-btn::after {
-  content: "";
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 24px;
-  height: 24px;
-  background-color: #4CAF50;
-  border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: none;
 }
 
+/* Removed semi-circle indicator */
 .speech-btn-flow::after {
-  top: -5px !important;
-  right: -5px !important;
-  width: 18px !important;
-  height: 18px !important;
+  display: none;
 }
 
 #flowScreen .speech-btn.speech-disabled {
@@ -1175,9 +1208,7 @@ h1 {
   color: rgba(255, 255, 255, 0.8);
 }
 
-#flowScreen .speech-btn.speech-disabled::after {
-  background-color: #f44336;
-}
+/* Removed - no longer needed as we've removed the indicator */
 
 #flowScreen .speech-btn svg {
   margin-right: 8px;
@@ -1200,30 +1231,24 @@ h1 {
 }
 
 #flowScreen .speech-btn:hover {
-  background-color: #3e8e41;
+  background-color: #444;
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
 }
 
 #flowScreen .speech-btn.speaking {
   animation: speaking-pulse 1.5s infinite ease-in-out;
 }
 
-#flowScreen .speech-btn.speaking::after {
-  animation: speaking-dot-pulse 1.5s infinite ease-in-out;
-}
+/* Removed animation for the indicator dot */
 
 @keyframes speaking-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.6); }
-  70% { box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.6); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
 }
 
-@keyframes speaking-dot-pulse {
-  0% { transform: scale(1); background-color: #4CAF50; }
-  50% { transform: scale(1.2); background-color: #ff8c00; }
-  100% { transform: scale(1); background-color: #4CAF50; }
-}
+/* Removed speaking-dot-pulse animation */
 
 #flowScreen .home-btn:hover {
   background-color: #222;
@@ -1417,35 +1442,34 @@ h1 {
 }
 
 .pause-btn {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #ffffff, #f0f0f0);
-  border: none;
-  color: #333;
+  background: white;
+  border: 2px solid #000;
+  color: #000;
   font-size: 30px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), inset 0 -2px 5px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
   position: relative;
   z-index: 20;
   overflow: hidden;
 }
 
 .pause-btn svg {
-  width: 35px;
-  height: 35px;
-  stroke: #333;
+  width: 28px;
+  height: 28px;
+  stroke: #000;
   stroke-width: 2;
   transition: all 0.3s ease;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
 }
 
 .pause-btn:hover svg {
-  stroke: #ff8c00;
   transform: scale(1.1);
 }
 
@@ -1456,15 +1480,17 @@ h1 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at center, rgba(255, 140, 0, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(0, 0, 0, 0.05) 0%, transparent 70%);
   border-radius: 50%;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
 
 .pause-btn:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2), inset 0 -2px 5px rgba(0, 0, 0, 0.05);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  background: #f8f8f8;
+  border-color: #333;
 }
 
 .pause-btn:hover::before {
@@ -1474,34 +1500,22 @@ h1 {
 .pause-btn:active {
   transform: translateY(1px) scale(0.98);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1), inset 0 2px 3px rgba(0, 0, 0, 0.1);
-}
-
-.pause-btn::after {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  right: -6px;
-  bottom: -6px;
-  border-radius: 50%;
-  border: 2px solid #ff8c00;
-  opacity: 0.5;
-  z-index: -1;
-  animation: pulse-border 2s infinite ease-in-out;
+  background: #eee;
+  border-color: #000;
 }
 
 @keyframes pulse-border {
   0% {
     transform: scale(1);
-    opacity: 0.5;
+    opacity: 0.3;
   }
   50% {
     transform: scale(1.05);
-    opacity: 0.3;
+    opacity: 0.1;
   }
   100% {
     transform: scale(1);
-    opacity: 0.5;
+    opacity: 0.3;
   }
 }
 
