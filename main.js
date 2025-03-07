@@ -584,8 +584,8 @@ function displayFlows() {
                 </div>
                 <div class="flow-actions">
                     <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
-                    <button class="edit-btn" onclick="editFlow('${flow.flowID}')">Edit</button>
-                    <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')">Delete</button>
+                    <button class="edit-btn" onclick="editFlow('${flow.flowID}')"></button>
+                    <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')"></button>
                 </div>
             `;
             flowList.appendChild(flowItem);
