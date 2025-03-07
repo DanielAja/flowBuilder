@@ -1482,7 +1482,7 @@ h1 {
 
 .pause-btn:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2), 0 0 0 5px rgba(0, 0, 0, 0.05);
   background: #f8f8f8 !important;
   border-color: #333;
 }
@@ -1496,6 +1496,17 @@ h1 {
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1), inset 0 2px 3px rgba(0, 0, 0, 0.1);
   background: #eee !important;
   border-color: #000;
+}
+
+.pause-btn.paused {
+  background-color: #ddd !important;
+  border-color: #999;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: #999;
+}
+
+.pause-btn.paused svg {
+  stroke: #666 !important;
 }
 
 @keyframes pulse-border {

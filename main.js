@@ -861,6 +861,7 @@ function togglePause() {
         // Use better-looking icons
         if (paused) {
             pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+            pauseBtn.classList.add('paused');
             
             // Pause speech if it's currently speaking
             if (speechSynthesis.speaking) {
@@ -868,6 +869,7 @@ function togglePause() {
             }
         } else {
             pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+            pauseBtn.classList.remove('paused');
             
             // Resume speech if it was paused
             if (speechSynthesis.paused) {
