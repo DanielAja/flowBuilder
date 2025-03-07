@@ -79,6 +79,8 @@ class Flow {
         this.peakPose = peakPose;
         this.asanas = [];
         this.flowID = generateUniqueID();
+        this.lastEdited = new Date().toISOString();
+        this.lastFlowed = null; // Will be set when flow is practiced
     }
 
     calculateTotalDuration() {
@@ -623,6 +625,9 @@ function saveFlow() {
     editingFlow.name = title;
     editingFlow.description = description;
     editingFlow.calculateTotalDuration();
+    
+    // Update lastEdited timestamp
+    editingFlow.lastEdited = new Date().toISOString();
 
     // Update asana durations and sides from input fields
     const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
@@ -646,7 +651,12 @@ function saveFlow() {
         // Update existing flow
         const index = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
         if (index !== -1) {
+            // Preserve lastFlowed timestamp if it exists
+            const lastFlowed = flows[index].lastFlowed;
             flows[index] = { ...editingFlow };
+            if (lastFlowed) {
+                flows[index].lastFlowed = lastFlowed;
+            }
             console.log('Updated flow at index', index);
         } else {
             console.error('Flow not found for editing');
@@ -672,9 +682,45 @@ function saveFlow() {
     editMode = false;
 }
 
+// Helper function to format relative time
+function formatRelativeTime(dateString) {
+    if (!dateString) return 'Never';
+    
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffMinutes < 1) return 'Just now';
+    if (diffMinutes < 60) return `${diffMinutes}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 30) return `${diffDays}d ago`;
+    
+    // For older dates, return the actual date
+    return date.toLocaleDateString();
+}
+
 function displayFlows() {
-    const flows = getFlows();
-    console.log('Displaying flows:', flows); // Debug log
+    let flows = getFlows();
+    console.log('Raw flows:', flows); // Debug log
+    
+    // Sort flows by lastFlowed (most recent first)
+    flows.sort((a, b) => {
+        // First priority: lastFlowed (those with null lastFlowed go to the bottom)
+        if (a.lastFlowed && !b.lastFlowed) return -1;
+        if (!a.lastFlowed && b.lastFlowed) return 1;
+        if (a.lastFlowed && b.lastFlowed) {
+            const timeComparison = new Date(b.lastFlowed) - new Date(a.lastFlowed);
+            if (timeComparison !== 0) return timeComparison;
+        }
+        
+        // Second priority: lastEdited
+        return new Date(b.lastEdited) - new Date(a.lastEdited);
+    });
+    
+    console.log('Sorted flows:', flows); // Debug log
     
     const flowList = document.getElementById('savedFlowsList');
     
@@ -693,10 +739,30 @@ function displayFlows() {
         flows.forEach(flow => {
             const flowItem = document.createElement('div');
             flowItem.className = 'flow-item';
+            
+            // Add 'recent' class if practiced in the last 24 hours
+            if (flow.lastFlowed) {
+                const lastFlowedDate = new Date(flow.lastFlowed);
+                const now = new Date();
+                const diffHours = (now - lastFlowedDate) / (1000 * 60 * 60);
+                
+                if (diffHours < 24) {
+                    flowItem.classList.add('recent');
+                }
+            }
+            
+            // Format timestamps for display
+            const lastFlowedText = formatRelativeTime(flow.lastFlowed);
+            const lastEditedText = formatRelativeTime(flow.lastEdited);
+            
             flowItem.innerHTML = `
                 <div class="flow-info">
                     <h4>${flow.name}</h4>
                     <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description || ''}</p>
+                    <div class="flow-timestamps">
+                        <span class="timestamp ${flow.lastFlowed ? 'active' : ''}">Last flowed: ${lastFlowedText}</span>
+                        <span class="timestamp">Last edited: ${lastEditedText}</span>
+                    </div>
                 </div>
                 <div class="flow-actions">
                     <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
@@ -726,18 +792,24 @@ function deleteFlow(flowID) {
 
 function playFlow(flowID) {
     const flows = getFlows();
-    const flowToPlay = flows.find(flow => flow.flowID === flowID);
+    const flowIndex = flows.findIndex(flow => flow.flowID === flowID);
     
-    if (!flowToPlay) {
+    if (flowIndex === -1) {
         console.error(`Flow with ID ${flowID} not found`);
         return;
     }
+    
+    const flowToPlay = flows[flowIndex];
     
     // Set up the flow for practice
     editingFlow = new Flow();
     Object.assign(editingFlow, flowToPlay);
     currentAsanaIndex = 0;
     paused = false;
+    
+    // Update lastFlowed timestamp in the original flows array
+    flows[flowIndex].lastFlowed = new Date().toISOString();
+    saveFlows(flows); // Save the updated timestamp
     
     // Reset any existing flow complete states
     const existingCompleteContainer = document.querySelector('.countdown-container.flow-complete');
