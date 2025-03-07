@@ -58,7 +58,7 @@ class YogaAsana {
         this.difficulty = difficulty;
         this.tags = tags;
         this.transitionsAsana = transitionsAsana;
-        this.duration = 3; // Default duration of 3 seconds
+        this.duration = 7; // Default duration of 7 seconds
     }
 
     setDuration(duration) {
@@ -390,7 +390,7 @@ function selectAsana(asana) {
         </td>
         <td>
             <div class="duration-wrapper">
-                <input type="number" value="3" min="1" max="300" onchange="updateFlowDuration()"/>
+                <input type="number" value="7" min="1" max="300" onchange="updateFlowDuration()"/>
                 <span class="duration-unit">s</span>
             </div>
         </td>
@@ -415,7 +415,7 @@ function selectAsana(asana) {
         [...asana.tags || []],
         [...asana.transitionsAsana || []]
     );
-    newAsana.setDuration(3); // Default 3 seconds
+    newAsana.setDuration(7); // Default 7 seconds
     
     editingFlow.addAsana(newAsana);
     updateFlowDuration();
@@ -499,11 +499,11 @@ function updateRowNumbers() {
 }
 
 function updateFlowDuration() {
-    // Check for empty values and set to 3 seconds
+    // Check for empty values and set to 7 seconds
     const durationInputs = document.querySelectorAll('#flowTable .duration-wrapper input[type="number"]');
     durationInputs.forEach(input => {
         if (input.value === '' || parseInt(input.value) === 0) {
-            input.value = 3;
+            input.value = 7;
         }
     });
 
@@ -513,7 +513,7 @@ function updateFlowDuration() {
         if (index < editingFlow.asanas.length) {
             const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
             if (durationInput) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 3;
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 7;
             }
         }
     });
@@ -637,7 +637,7 @@ function saveFlow() {
             const sideSelect = row.querySelector('select.side-select');
             
             if (durationInput && sideSelect) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 3;
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 7;
                 editingFlow.asanas[index].side = sideSelect.value;
             }
         }
@@ -733,7 +733,7 @@ function displayFlows() {
 
     if (flows.length === 0) {
         console.log('No flows available');
-        flowList.innerHTML = '<div class="empty-message">No flows available. Create your first flow!</div>';
+        flowList.innerHTML = '<div class="empty-message"><p>No flows available.</p><button class="primary-btn" onclick="startNewFlow()">Build your first flow</button></div>';
     } else {
         console.log(`Adding ${flows.length} flows to the list`);
         flows.forEach(flow => {
@@ -1050,7 +1050,7 @@ function editFlow(flowID) {
                     asana.tags || [],
                     asana.transitionsAsana || []
                 );
-                newAsana.setDuration(asana.duration || 3);
+                newAsana.setDuration(asana.duration || 7);
                 return newAsana;
             }
             return asana;
