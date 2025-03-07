@@ -575,13 +575,24 @@ h1 {
   transform: translateY(-50%) scale(1.2);
 }
 
-#flowTable tr.drag-highlight {
+#flowTable tr.drag-highlight, #flowTable tr.highlight-added {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes pulse {
   0% { background-color: rgba(255, 140, 0, 0); }
   50% { background-color: rgba(255, 140, 0, 0.2); }
+  100% { background-color: rgba(255, 140, 0, 0); }
+}
+
+#flowTable tr.highlight-added {
+  animation: highlight-row 1.5s ease-in-out;
+}
+
+@keyframes highlight-row {
+  0% { background-color: rgba(255, 140, 0, 0); }
+  40% { background-color: rgba(255, 140, 0, 0.3); }
+  60% { background-color: rgba(255, 140, 0, 0.3); }
   100% { background-color: rgba(255, 140, 0, 0); }
 }
 

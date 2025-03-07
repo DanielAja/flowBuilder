@@ -362,6 +362,10 @@ function startNewFlow() {
 
 // Flow management
 function selectAsana(asana) {
+    // Save current scroll position of the asana list
+    const asanaList = document.getElementById('asanaList');
+    const scrollPosition = asanaList ? asanaList.scrollLeft : 0;
+    
     const table = document.getElementById("flowTable");
     if (!table) {
         console.error("Flow table not found");
@@ -418,6 +422,25 @@ function selectAsana(asana) {
     
     // Refresh the asana list to update recommended poses based on the last added pose
     populateAsanaList();
+    
+    // Restore scroll position after refreshing the list
+    if (asanaList) {
+        setTimeout(() => {
+            asanaList.scrollLeft = scrollPosition;
+        }, 10);
+    }
+    
+    // Add visual feedback on the table
+    row.classList.add('highlight-added');
+    setTimeout(() => {
+        row.classList.remove('highlight-added');
+    }, 1500);
+    
+    // Scroll to the table if it's not visible
+    const flowSequence = document.querySelector('.flow-sequence');
+    if (flowSequence) {
+        flowSequence.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 }
 
 // Function to create a side dropdown menu
@@ -1129,6 +1152,12 @@ let currentFilter = 'all';
 // Filter asanas based on category
 function filterAsanas(category) {
     console.log(`Filtering asanas by category: ${category}`);
+    
+    // Save current scroll position
+    const asanaList = document.getElementById('asanaList');
+    const scrollPosition = asanaList ? asanaList.scrollLeft : 0;
+    
+    // Update filter
     currentFilter = category;
     
     // Update active button
@@ -1143,6 +1172,13 @@ function filterAsanas(category) {
     
     // Repopulate the list with the filter
     populateAsanaList();
+    
+    // Restore scroll position after filtering
+    if (asanaList) {
+        setTimeout(() => {
+            asanaList.scrollLeft = scrollPosition;
+        }, 10);
+    }
 }
 
 // Populate the asana list with loaded asanas
