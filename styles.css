@@ -121,6 +121,7 @@ h1 {
   font-size: 14px;
 }
 
+
 .flow-actions {
   display: flex;
   gap: 10px;
@@ -161,9 +162,11 @@ h1 {
 
 .screen {
   display: none !important;
+  display: none !important;
 }
 
 .active {
+  display: block !important;
   display: block !important;
 }
 
@@ -751,6 +754,10 @@ h1 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   font-size: 24px;
   font-weight: bold;
 }
@@ -777,6 +784,68 @@ h1 {
   transition: all 0.3s ease;
 }
 
+.close-btn {
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border: 2px solid #888;
+  border-radius: 50%;
+  color: #888;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+  padding: 0;
+  line-height: 1;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background-color: #f0f0f0;
+  transform: scale(1.1);
+}
+
+.close-btn:focus {
+  outline: none;
+}
+
+.flow-content {
+  position: relative;
+  min-height: 400px; /* Adjust as needed */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.asana-image-container {
+  width: 100%;
+  height: 60vh;
+  /* flex: 1; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* overflow: hidden; */
+}
+
+.flow-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: absolute;
+  bottom: 25%;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  margin-top: 25px;
 .close-btn:hover {
   background-color: #f0f0f0;
   transform: scale(1.1);
@@ -894,6 +963,81 @@ h1 {
   margin-top: 10px;
   /* position: absolute; */
   /* right: 0; */
+.home-btn {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.countdown-container {
+  position: relative;
+  width: 75px;
+  height: 75px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flow-footer {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 20px;
+}
+
+.pause-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #888;
+  border-radius: 50%;
+  color: #333;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.coming-up {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  /* position: absolute; */
+  /* right: 3px !important; */
+  /* top: 0; */
+}
+
+.coming-up p {
+  margin: 0;
+  text-align: right;
+}
+
+#nextAsanaName {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#nextAsanaImage {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 25px;
+  align-self: flex-end;
+  margin-top: 10px;
+  /* position: absolute; */
+  /* right: 0; */
 }
 
 @media screen and (max-width: 768px) {
@@ -921,6 +1065,7 @@ h1 {
   }
 
   .flow-item::after {
+    width: 90%;
     width: 90%;
   }
 }

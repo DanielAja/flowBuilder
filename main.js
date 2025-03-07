@@ -324,6 +324,10 @@ function saveFlow() {
         editingFlow = new Flow();
     }
 
+    if (!editingFlow) {
+        editingFlow = new Flow();
+    }
+
     if (editingFlow.asanas.length === 0) {
         alert('Please add asanas to the flow before saving');
         return;
@@ -358,7 +362,18 @@ function saveFlow() {
             console.error('Flow not found for editing');
             return;
         }
+    
+    if (editMode) {
+        // Update existing flow
+        const index = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
+        if (index !== -1) {
+            flows[index] = editingFlow;
+        } else {
+            console.error('Flow not found for editing');
+            return;
+        }
     } else {
+        // Add new flow
         // Add new flow
         flows.push(editingFlow);
     }
@@ -366,6 +381,10 @@ function saveFlow() {
     saveFlows(flows);
     displayFlows();
     changeScreen('homeScreen');
+    
+    // Reset editing state
+    editingFlow = null;
+    editMode = false;
     
     // Reset editing state
     editingFlow = null;
@@ -383,6 +402,7 @@ function displayFlows() {
         flowItem.innerHTML = `
             <div class="flow-info">
                 <h4>${flow.name}</h4>
+                <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description}</p>
                 <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description}</p>
             </div>
             <div class="flow-actions">
@@ -415,6 +435,7 @@ function reorderPose(element) {
 function editFlow(flowID) {
     changeScreen('buildScreen');
     const flows = getFlows();
+    editingFlow = Object.assign(new Flow(), flows.find(flow => flow.flowID === flowID));
     editingFlow = Object.assign(new Flow(), flows.find(flow => flow.flowID === flowID));
     editMode = true;
 
@@ -521,6 +542,7 @@ let animationFrameId;
 
 function playFlow(flowID) {
     paused = false;
+    paused = false;
     changeScreen('flowScreen');
     const flows = getFlows();
     editingFlow = flows.find(f => f.flowID === flowID);
@@ -538,6 +560,7 @@ function playFlow(flowID) {
     if (asanaImageContainer) {
         asanaImageContainer.innerHTML = `<img id="asanaImage" src="" alt="Asana pose" />`;
     }
+  
   
     performAsana();
 }
@@ -558,6 +581,9 @@ var paused = false;
 var lastUpdateTime;
 function updateCountdownTimer(duration, asanaName, callback) {
     const countdownElement = document.getElementById('countdown');
+    const countdownCircle = document.getElementById('countdown-circle');
+    const asanaNameElement = document.getElementById("asanaName");
+    const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
     const countdownCircle = document.getElementById('countdown-circle');
     const asanaNameElement = document.getElementById("asanaName");
     const circumference = 2 * Math.PI * 45; // 45 is the radius of the circle
@@ -667,6 +693,19 @@ function updateDate() {
     const options = { weekday: 'short', month: 'short', day: 'numeric' };
     const today = new Date();
     dateElement.textContent = `Today, ${today.toLocaleDateString('en-US', options)}`;
+}
+
+function displayFlowDuration(duration) {
+    duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
+    let mins = Math.floor(duration / 60);
+    let sec = duration % 60;
+    let retString = "";
+    let tmp = "";
+    if (mins > 0)
+        retString += mins.toString() + "min";
+    if (sec > 0 || mins === 0)
+        tmp = sec.toString().padStart(2, '0') + "s";
+    return (retString + " " + tmp).trim();
 }
 
 function displayFlowDuration(duration) {
