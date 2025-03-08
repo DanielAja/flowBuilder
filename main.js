@@ -123,15 +123,25 @@ let speechUtterance = null;
 
 function displayFlowDuration(duration) {
     duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
-    let mins = Math.floor(duration / 60);
+    let hrs = Math.floor(duration / 3600);
+    let mins = Math.floor((duration % 3600) / 60);
     let sec = duration % 60;
-    let retString = "";
-    let tmp = "";
-    if (mins > 0)
-        retString += mins.toString() + "min";
-    if (sec > 0 || mins === 0)
-        tmp = sec.toString().padStart(2, '0') + "s";
-    return (retString + " " + tmp).trim();
+    
+    let parts = [];
+    
+    if (hrs > 0) {
+        parts.push(hrs.toString() + "h");
+    }
+    
+    if (mins > 0 || (hrs > 0 && sec > 0)) {
+        parts.push(mins.toString() + "min");
+    }
+    
+    if (sec > 0 || (hrs === 0 && mins === 0)) {
+        parts.push(sec.toString().padStart(2, '0') + "s");
+    }
+    
+    return parts.join(" ");
 }
 
 function updateAsanaDisplay(asana) {
@@ -291,7 +301,7 @@ function clearBuildAFlow() {
     // Reset flow duration
     const flowTime = document.getElementById('flowTime');
     if (flowTime) {
-        flowTime.textContent = '0 seconds';
+        flowTime.textContent = displayFlowDuration(0);
     }
     
     // Create a new flow
@@ -384,7 +394,7 @@ function startNewFlow() {
         const flowTime = document.getElementById('flowTime');
         if (flowTime) {
             console.log('Resetting flow duration display...');
-            flowTime.textContent = '0 seconds';
+            flowTime.textContent = displayFlowDuration(0);
         } else {
             console.error('Flow time element not found');
         }
@@ -547,7 +557,7 @@ function updateFlowDuration() {
     const totalDuration = editingFlow.calculateTotalDuration();
     const flowTime = document.getElementById('flowTime');
     if (flowTime) {
-        flowTime.textContent = `${totalDuration} seconds`;
+        flowTime.textContent = displayFlowDuration(totalDuration);
     }
     
     // Auto-save if in edit mode

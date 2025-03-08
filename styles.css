@@ -352,9 +352,9 @@ h1 {
 .category-btn {
   background-color: #f0f0f0;
   border: none;
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 15px;
+  font-size: 12px;
   cursor: pointer;
   font-weight: 500;
   color: #666;
@@ -390,13 +390,13 @@ h1 {
 .scroll-btn {
   position: absolute;
   z-index: 2;
-  width: 36px;
-  height: 36px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background-color: #ff8c00;
   color: white;
   border: none;
-  font-size: 16px;
+  font-size: 12px;
   display: none; /* Hidden by default, will be shown via JS when needed */
   align-items: center;
   justify-content: center;
@@ -686,15 +686,15 @@ h1 {
 
 .build-actions {
   display: flex;
-  gap: 15px;
-  margin: 20px 0;
+  gap: 10px;
+  margin: 15px 0;
   justify-content: center;
   width: 100%;
   align-items: center;
   position: sticky;
-  bottom: 20px;
+  bottom: 15px;
   z-index: 100;
-  padding: 10px;
+  padding: 8px;
 }
 
 /* Auto-save message */
@@ -712,9 +712,9 @@ h1 {
   background-color: #ff8c00;
   color: #fff;
   border: none;
-  padding: 12px 30px;
-  border-radius: 25px;
-  font-size: 16px;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
@@ -731,9 +731,9 @@ h1 {
   background-color: #333;
   color: #fff;
   border: none;
-  padding: 12px 30px;
-  border-radius: 25px;
-  font-size: 16px;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
   cursor: pointer;
   font-weight: bold;
   transition: all 0.3s;
@@ -946,15 +946,15 @@ h1 {
 }
 
 .table-btn {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 14px;
   border: none;
 }
 
@@ -970,11 +970,11 @@ h1 {
 }
 
 #flowTable select.side-select {
-  padding: 10px 15px;
-  border-radius: 20px;
+  padding: 6px 10px;
+  border-radius: 15px;
   border: 1px solid #e0e0e0;
   background-color: #f8f8f8;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: #333;
   appearance: none;
@@ -982,12 +982,12 @@ h1 {
   -moz-appearance: none;
   background-image: url("data:image/svg+xml;utf8,<svg fill='%23333' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
   background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 16px;
-  padding-right: 30px;
+  background-position: right 6px center;
+  background-size: 14px;
+  padding-right: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 100px;
+  min-width: 80px;
   text-align: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -1017,12 +1017,12 @@ h1 {
 }
 
 #flowTable input[type="number"] {
-  width: 80px;
-  padding: 10px 15px;
-  border-radius: 20px;
+  width: 60px;
+  padding: 6px 10px;
+  border-radius: 15px;
   border: 1px solid #e0e0e0;
   text-align: center;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: #333;
   background-color: #f8f8f8;
@@ -1057,15 +1057,16 @@ h1 {
 
 .duration-unit {
   position: absolute;
-  right: 15px;
+  right: 12px;
   color: #999;
   font-weight: 500;
+  font-size: 12px;
   pointer-events: none; /* Make sure the unit doesn't interfere with the input */
 }
 
 /* Make sure there's room for the unit */
 #flowTable .duration-wrapper input[type="number"] {
-  padding-right: 25px;
+  padding-right: 20px;
 }
 
 #flowScreen {
