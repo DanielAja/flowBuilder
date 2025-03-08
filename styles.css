@@ -491,22 +491,54 @@ h1 {
   text-align: center; 
   position: relative;
   transition: all 0.3s ease;
+  background: linear-gradient(to bottom, #444 0%, #333 100%);
+  cursor: pointer;
+  border-radius: 8px 0 0 0;
+  padding: 12px 30px 12px 15px;
+  user-select: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 #flowTable th:nth-child(1):hover { 
-  background-color: #444;
+  background: linear-gradient(to bottom, #555 0%, #444 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 10px rgba(255, 140, 0, 0.2);
+}
+
+#flowTable th:nth-child(1):active {
+  background: linear-gradient(to bottom, #333 0%, #444 100%);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.2);
 }
 
 #flowTable th:nth-child(1)::after { 
-  content: "⇵";
+  content: "▲"; /* Default to up arrow */
   position: absolute;
-  right: 8px;
-  opacity: 0.6;
-  font-size: 12px;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.8;
+  font-size: 14px;
+  color: #ff8c00;
+  font-weight: bold;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
 }
 
 #flowTable th:nth-child(1):hover::after { 
   opacity: 1;
+  transform: translateY(-50%) scale(1.2);
+  text-shadow: 0 0 5px rgba(255, 140, 0, 0.5);
+}
+
+/* Style for when showing descending indicator */
+#flowTable th:nth-child(1).descending::after {
+  content: "▼";
+  color: #ff8c00;
+}
+
+/* Style for when showing ascending indicator */
+#flowTable th:nth-child(1).ascending::after {
+  content: "▲";
+  color: #ff8c00;
 }
 
 #flowTable th:nth-child(3) { text-align: center; }
@@ -1845,6 +1877,58 @@ h1 {
   50% { transform: scale(1.12); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6); }
   75% { transform: scale(1.12); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4); }
   100% { transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2); }
+}
+
+/* Highlight effect for sorting */
+#flowTable th:nth-child(1).highlight-sort {
+  animation: highlight-sort 1s ease;
+}
+
+@keyframes highlight-sort {
+  0% { background: linear-gradient(to bottom, #444 0%, #333 100%); }
+  25% { background: linear-gradient(to bottom, #ff8c00 0%, #e67e00 100%); }
+  75% { background: linear-gradient(to bottom, #ff8c00 0%, #e67e00 100%); }
+  100% { background: linear-gradient(to bottom, #444 0%, #333 100%); }
+}
+
+/* Toast notification styles */
+.toast-notification {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background-color: rgba(51, 51, 51, 0.9);
+  color: white;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  opacity: 0;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-left: 3px solid #ff8c00;
+  border-right: 3px solid #ff8c00;
+}
+
+.toast-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast-notification span {
+  display: flex;
+  align-items: center;
+}
+
+.toast-notification span::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: #ff8c00;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 @media screen and (max-width: 768px) {

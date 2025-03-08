@@ -315,8 +315,25 @@ function changeScreen(screenId) {
 
     if (screenId === 'homeScreen') {
         displayFlows();
-    } else if (screenId === 'buildScreen' && !editMode) {
-        clearBuildAFlow();
+    } else if (screenId === 'buildScreen') {
+        if (!editMode) {
+            clearBuildAFlow();
+        }
+        
+        // Initialize the sort indicator when switching to build screen
+        setTimeout(() => {
+            const tableHeader = document.querySelector('#flowTable th:first-child');
+            if (tableHeader) {
+                // Clear any existing classes first
+                tableHeader.classList.remove('ascending', 'descending');
+                
+                // Set initial class based on tableInDescendingOrder
+                tableHeader.classList.add(tableInDescendingOrder ? 'descending' : 'ascending');
+                tableHeader.title = tableInDescendingOrder 
+                    ? 'Sorted by largest number first - Click to reverse'
+                    : 'Sorted by smallest number first - Click to reverse';
+            }
+        }, 100); // Short delay to ensure DOM is ready
     }
 }
 
@@ -482,8 +499,8 @@ function updateAsanaImageOrientation(selectElement) {
     }
 }
 
-// Track whether table is in descending order
-let tableInDescendingOrder = false;
+// Track whether table is in descending order (initialized to true so the first click sorts ascending)
+let tableInDescendingOrder = true;
 
 // UI update functions
 function updateRowNumbers() {
@@ -1148,20 +1165,64 @@ function sortTableByLargestNumber() {
 function updateSortIndicator() {
     const tableHeader = document.querySelector('#flowTable th:first-child');
     if (tableHeader) {
+        // Clear any existing classes first
+        tableHeader.classList.remove('ascending', 'descending');
+        
         if (tableInDescendingOrder) {
-            tableHeader.innerHTML = 'Number ▼';
+            // Add descending class and update header content
+            tableHeader.classList.add('descending');
+            tableHeader.innerHTML = 'Number';
             tableHeader.title = 'Sorted by largest number first - Click to reverse';
+            
+            // Show a brief animated toast notification
+            showToastNotification('Sorted: Largest First');
         } else {
-            tableHeader.innerHTML = 'Number ▲';
+            // Add ascending class and update header content
+            tableHeader.classList.add('ascending');
+            tableHeader.innerHTML = 'Number';
             tableHeader.title = 'Sorted by smallest number first - Click to reverse';
+            
+            // Show a brief animated toast notification
+            showToastNotification('Sorted: Smallest First');
         }
         
-        // Reset header text after 3 seconds
+        // Add a highlighting effect
+        tableHeader.classList.add('highlight-sort');
         setTimeout(() => {
-            tableHeader.innerHTML = 'Number';
-            tableHeader.title = 'Click to sort by largest number first';
-        }, 3000);
+            tableHeader.classList.remove('highlight-sort');
+        }, 1000);
     }
+}
+
+// Function to show a toast notification
+function showToastNotification(message) {
+    // Check if a toast already exists and remove it
+    const existingToast = document.getElementById('sort-toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    // Create a new toast element
+    const toast = document.createElement('div');
+    toast.id = 'sort-toast';
+    toast.className = 'toast-notification';
+    toast.innerHTML = `<span>${message}</span>`;
+    
+    // Add to the document
+    document.body.appendChild(toast);
+    
+    // Trigger animation by adding show class after a brief delay
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    // Remove the toast after animation completes
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            toast.remove();
+        }, 500);
+    }, 2500);
 }
 
 // Function to update the date display
@@ -1782,6 +1843,18 @@ function initializeApp() {
             
             // Add window resize listener for scroll buttons
             window.addEventListener('resize', updateScrollButtons);
+            
+            // Initialize the sort indicator to show the up arrow
+            setTimeout(() => {
+                const tableHeader = document.querySelector('#flowTable th:first-child');
+                if (tableHeader) {
+                    // Set initial class based on tableInDescendingOrder
+                    tableHeader.classList.add(tableInDescendingOrder ? 'descending' : 'ascending');
+                    tableHeader.title = tableInDescendingOrder 
+                        ? 'Sorted by largest number first - Click to reverse'
+                        : 'Sorted by smallest number first - Click to reverse';
+                }
+            }, 500); // Short delay to ensure DOM is ready
             
             console.log('App initialized successfully');
         })
