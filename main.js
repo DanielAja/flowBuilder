@@ -386,38 +386,7 @@ function selectAsana(asana) {
         return;
     }
     
-    const row = table.insertRow(-1);
-    const index = table.rows.length - 1;
-
-    // Create initial transform style based on side
-    const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
-
-    row.innerHTML = `
-        <td title="Drag to reorder">${index}</td>
-        <td>
-            <div class="table-asana">
-                <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
-                <span>${asana.name}</span>
-            </div>
-        </td>
-        <td>
-            <div class="duration-wrapper">
-                <input type="number" value="7" min="1" max="300" onchange="updateFlowDuration()"/>
-                <span class="duration-unit">s</span>
-            </div>
-        </td>
-        <td>${createSideDropdown(asana.side)}</td>
-        <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
-    `;
-    
-    // Make the row draggable
-    row.setAttribute("draggable", "true");
-    row.setAttribute("data-index", index - 1); // Adjust index for 0-based array
-    
-    // Add specific drag handle tooltip
-    const numCell = row.cells[0];
-    numCell.style.cursor = "grab";
-
+    // Create the new asana object
     const newAsana = new YogaAsana(
         asana.name,
         asana.side,
@@ -429,7 +398,22 @@ function selectAsana(asana) {
     );
     newAsana.setDuration(7); // Default 7 seconds
     
-    editingFlow.addAsana(newAsana);
+    // Add to the beginning or end of the array based on sort order
+    if (tableInDescendingOrder) {
+        // If in descending order, add to the beginning
+        editingFlow.asanas.unshift(newAsana);
+    } else {
+        // If in ascending order, add to the end
+        editingFlow.addAsana(newAsana);
+    }
+    
+    // Rebuild the table to ensure proper order and numbering
+    rebuildFlowTable();
+    
+    // The new row will be either the first or last depending on sort order
+    let rowIndex = tableInDescendingOrder ? 1 : table.rows.length - 1;
+    let row = table.rows[rowIndex];
+    
     updateFlowDuration();
     
     console.log(`Added asana: ${asana.name} to the flow. Current asanas:`, editingFlow.asanas);
@@ -444,11 +428,13 @@ function selectAsana(asana) {
         }, 10);
     }
     
-    // Add visual feedback on the table
-    row.classList.add('highlight-added');
-    setTimeout(() => {
-        row.classList.remove('highlight-added');
-    }, 1500);
+    // Add visual feedback on the table (only if we found the row)
+    if (row) {
+        row.classList.add('highlight-added');
+        setTimeout(() => {
+            row.classList.remove('highlight-added');
+        }, 1500);
+    }
     
     // Scroll to the table if it's not visible
     const flowSequence = document.querySelector('.flow-sequence');
@@ -496,13 +482,24 @@ function updateAsanaImageOrientation(selectElement) {
     }
 }
 
+// Track whether table is in descending order
+let tableInDescendingOrder = false;
+
 // UI update functions
 function updateRowNumbers() {
     const table = document.getElementById("flowTable");
     if (!table) return;
     
-    Array.from(table.rows).slice(1).forEach((row, index) => {
-        row.cells[0].innerHTML = index + 1;
+    const rows = Array.from(table.rows).slice(1);
+    const totalRows = rows.length;
+    
+    rows.forEach((row, index) => {
+        // If in descending order, number from highest to lowest
+        if (tableInDescendingOrder) {
+            row.cells[0].innerHTML = totalRows - index;
+        } else {
+            row.cells[0].innerHTML = index + 1;
+        }
         
         // Add drag attributes for every row
         row.setAttribute("draggable", "true");
@@ -603,14 +600,24 @@ function removePose(button) {
     
     const rowIndex = row.rowIndex;
     
-    // Remove from array
-    editingFlow.asanas.splice(rowIndex - 1, 1);
+    // Get the data-index attribute to find the actual array index
+    const dataIndex = parseInt(row.getAttribute('data-index'));
     
-    // Remove from UI
-    table.deleteRow(rowIndex);
+    // If data-index is valid, use it to remove from array
+    if (!isNaN(dataIndex) && dataIndex >= 0 && dataIndex < editingFlow.asanas.length) {
+        editingFlow.asanas.splice(dataIndex, 1);
+    } else {
+        // Fallback to using row index if data-index is invalid
+        const arrayIndex = rowIndex - 1;
+        if (arrayIndex >= 0 && arrayIndex < editingFlow.asanas.length) {
+            editingFlow.asanas.splice(arrayIndex, 1);
+        }
+    }
     
-    // Update UI
-    updateRowNumbers();
+    // Rebuild the entire table to ensure proper order and numbering
+    rebuildFlowTable();
+    
+    // Update flow duration
     updateFlowDuration();
     
     // Refresh the asana list to update recommended poses
@@ -1105,6 +1112,56 @@ function editFlow(flowID) {
     rebuildFlowTable();
     
     console.log('Editing flow:', editingFlow.name, 'with', editingFlow.asanas.length, 'asanas');
+}
+
+// Function to toggle the table sort order
+function sortTableByLargestNumber() {
+    const table = document.getElementById('flowTable');
+    if (!table) return;
+    
+    // Toggle the sort order
+    tableInDescendingOrder = !tableInDescendingOrder;
+    
+    // Get all rows except the header
+    const rows = Array.from(table.rows).slice(1);
+    const totalRows = rows.length;
+    
+    // Keep a copy of the original asanas array
+    const originalAsanas = [...editingFlow.asanas];
+    
+    // Reverse the asanas array
+    editingFlow.asanas = originalAsanas.slice().reverse();
+    
+    // Rebuild the table
+    rebuildFlowTable();
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+    
+    // Update visual indication that the table has been sorted
+    updateSortIndicator();
+}
+
+// Function to update the sort indicator in the table header
+function updateSortIndicator() {
+    const tableHeader = document.querySelector('#flowTable th:first-child');
+    if (tableHeader) {
+        if (tableInDescendingOrder) {
+            tableHeader.innerHTML = 'Number ▼';
+            tableHeader.title = 'Sorted by largest number first - Click to reverse';
+        } else {
+            tableHeader.innerHTML = 'Number ▲';
+            tableHeader.title = 'Sorted by smallest number first - Click to reverse';
+        }
+        
+        // Reset header text after 3 seconds
+        setTimeout(() => {
+            tableHeader.innerHTML = 'Number';
+            tableHeader.title = 'Click to sort by largest number first';
+        }, 3000);
+    }
 }
 
 // Function to update the date display
@@ -1670,8 +1727,16 @@ function rebuildFlowTable() {
         row.setAttribute('draggable', 'true');
         row.setAttribute('data-index', index);
         
+        // Determine row number based on current sort order
+        let rowNumber;
+        if (tableInDescendingOrder) {
+            rowNumber = editingFlow.asanas.length - index;
+        } else {
+            rowNumber = index + 1;
+        }
+        
         row.innerHTML = `
-            <td title="Drag to reorder">${index + 1}</td>
+            <td title="Drag to reorder">${rowNumber}</td>
             <td>
                 <div class="table-asana">
                     <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
