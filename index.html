@@ -50,6 +50,13 @@
         
         <div class="asana-selection">
           <h3 class="asana-section-title">Select poses for your flow</h3>
+          <div class="language-toggle-container">
+            <label class="toggle-label">Sanskrit Names</label>
+            <label class="switch">
+              <input type="checkbox" id="sanskrit-toggle-build">
+              <span class="slider round"></span>
+            </label>
+          </div>
           <div class="asana-category-buttons">
             <button class="category-btn active" onclick="filterAsanas('all')">All Poses</button>
             <button class="category-btn" onclick="filterAsanas('Standing')">Standing</button>
@@ -167,6 +174,13 @@
           </svg>
           <span>Sound: OFF</span>
         </button>
+        <div class="language-toggle-flow">
+          <label class="toggle-label">Sanskrit</label>
+          <label class="switch">
+            <input type="checkbox" id="sanskrit-toggle-flow">
+            <span class="slider round"></span>
+          </label>
+        </div>
         <button onclick="changeScreen('homeScreen')" class="home-btn">
           Back to Home
         </button>

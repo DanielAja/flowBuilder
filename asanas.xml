@@ -4,6 +4,7 @@
   <!-- Beginner Foundation Poses -->
   <asana>
     <n>Mountain Pose</n>
+    <sanskrit>Tadasana</sanskrit>
     <side>Center</side>
     <image>images/mountain-pose.png</image>
     <description>Mountain Pose establishes proper alignment and foundation. It's a fundamental pose for building awareness.</description>
@@ -20,6 +21,7 @@
 
   <asana>
     <n>Table Top</n>
+    <sanskrit>Bharmanasana</sanskrit>
     <side>Center</side>
     <image>images/table-top.png</image>
     <description>Table Top is a neutral position on hands and knees with a flat back. It's a foundation pose for many sequences and transitions.</description>
@@ -36,6 +38,7 @@
 
   <asana>
     <n>Staff Pose</n>
+    <sanskrit>Dandasana</sanskrit>
     <side>Center</side>
     <image>images/staff-pose.png</image>
     <description>Staff Pose establishes proper seated alignment. It strengthens the core and improves posture.</description>
@@ -54,6 +57,7 @@
   <!-- Beginner Standing Poses -->
   <asana>
     <n>Chair Pose</n>
+    <sanskrit>Utkatasana</sanskrit>
     <side>Center</side>
     <image>images/chair-pose.png</image>
     <description>Chair Pose builds heat and strength in the legs and core. It's a powerful pose that builds endurance.</description>
@@ -70,6 +74,7 @@
 
   <asana>
     <n>Chair Twist</n>
+    <sanskrit>Parivrtta Utkatasana</sanskrit>
     <side>Right</side>
     <image>images/chair-twist.png</image>
     <description>Chair Twist combines the strength-building aspects of Chair Pose with a spinal twist. The hands can meet in prayer position or extend in opposite directions.</description>
@@ -86,6 +91,7 @@
 
   <asana>
     <n>Warrior 1</n>
+    <sanskrit>Virabhadrasana I</sanskrit>
     <side>Right</side>
     <image>images/warrior-1.png</image>
     <description>Warrior 1 strengthens the legs and core while opening the chest and shoulders. It builds stability and concentration.</description>
@@ -102,6 +108,7 @@
 
   <asana>
     <n>Warrior 2</n>
+    <sanskrit>Virabhadrasana II</sanskrit>
     <side>Right</side>
     <image>images/warrior-2.png</image>
     <description>Warrior 2 is a standing pose that strengthens the legs and opens the hips. It is a great pose for beginners.</description>
@@ -118,6 +125,7 @@
 
   <asana>
     <n>Triangle Pose</n>
+    <sanskrit>Trikonasana</sanskrit>
     <side>Right</side>
     <image>images/triangle-pose.png</image>
     <description>Triangle Pose is a standing pose that stretches the legs and opens the hips. It is a great pose for beginners.</description>
@@ -134,6 +142,7 @@
 
   <asana>
     <n>Tree Pose</n>
+    <sanskrit>Vrksasana</sanskrit>
     <side>Right</side>
     <image>images/tree-pose.png</image>
     <description>Tree Pose is a standing pose that improves balance and concentration. It is a great pose for beginners.</description>
@@ -150,6 +159,7 @@
 
   <asana>
     <n>Forward Fold</n>
+    <sanskrit>Uttanasana</sanskrit>
     <side>Center</side>
     <image>images/forward-fold.png</image>
     <description>Forward Fold stretches the hamstrings and back. It's calming and brings fresh blood to the brain.</description>
@@ -166,6 +176,7 @@
 
   <asana>
     <n>Half Forward Fold</n>
+    <sanskrit>Ardha Uttanasana</sanskrit>
     <side>Center</side>
     <image>images/half-forward-fold.png</image>
     <description>Half Forward Fold lengthens the spine and stretches the hamstrings. It's a transitional pose in Sun Salutations.</description>
@@ -182,6 +193,7 @@
 
   <asana>
     <n>Wide-Legged Forward Fold</n>
+    <sanskrit>Prasarita Padottanasana</sanskrit>
     <side>Center</side>
     <image>images/wide-legged-forward-fold.png</image>
     <description>Wide-Legged Forward Fold stretches the inner and back legs while creating space in the spine. It calms the mind and relieves mild back tension.</description>
@@ -198,6 +210,7 @@
 
   <asana>
     <n>Garland Pose</n>
+    <sanskrit>Malasana</sanskrit>
     <side>Center</side>
     <image>images/garland-pose.png</image>
     <description>Garland Pose (Malasana) is a deep squat that opens the hips and groin. Heels are grounded if possible with hands in prayer at heart center.</description>
@@ -215,6 +228,7 @@
   <!-- Intermediate Standing Poses -->
   <asana>
     <n>Warrior 3</n>
+    <sanskrit>Virabhadrasana III</sanskrit>
     <side>Right</side>
     <image>images/warrior-3.png</image>
     <description>Warrior 3 is a balancing pose that strengthens the legs and core while improving focus and coordination.</description>
@@ -231,6 +245,7 @@
 
   <asana>
     <n>Half Moon Pose</n>
+    <sanskrit>Ardha Chandrasana</sanskrit>
     <side>Right</side>
     <image>images/half-moon-pose.png</image>
     <description>Half Moon Pose challenges balance while strengthening the legs and core. It also opens the hips and chest.</description>
@@ -247,6 +262,7 @@
 
   <asana>
     <n>Revolved Triangle Pose</n>
+    <sanskrit>Parivrtta Trikonasana</sanskrit>
     <side>Right</side>
     <image>images/revolved-triangle-pose.png</image>
     <description>Revolved Triangle Pose combines stretch and twist. It improves balance and detoxifies the body.</description>
@@ -263,6 +279,7 @@
 
   <asana>
     <n>Revolved Chair Pose</n>
+    <sanskrit>Parivrtta Utkatasana</sanskrit>
     <side>Right</side>
     <image>images/revolved-chair-pose.png</image>
     <description>Revolved Chair Pose combines strength and twist. It improves digestion and detoxifies the organs.</description>
@@ -279,6 +296,7 @@
 
   <asana>
     <n>Eagle Pose</n>
+    <sanskrit>Garudasana</sanskrit>
     <side>Right</side>
     <image>images/eagle-pose.png</image>
     <description>Eagle Pose improves balance and concentration. It stretches the shoulders and upper back while strengthening the legs.</description>
@@ -295,6 +313,7 @@
 
   <asana>
     <n>Extended Side Angle</n>
+    <sanskrit>Utthita Parsvakonasana</sanskrit>
     <side>Right</side>
     <image>images/extended-side-angle.png</image>
     <description>Extended Side Angle deeply stretches the sides of the body while strengthening the legs. The bottom arm extends along the ground or rests on the leg.</description>
@@ -311,6 +330,7 @@
 
   <asana>
     <n>Reverse Warrior</n>
+    <sanskrit>Viparita Virabhadrasana</sanskrit>
     <side>Right</side>
     <image>images/reverse-warrior.png</image>
     <description>Reverse Warrior creates a side bend while in Warrior 2 stance. The front arm reaches up and back while the back arm slides down the back leg.</description>
@@ -327,6 +347,7 @@
 
   <asana>
     <n>Standing Split</n>
+    <sanskrit>Urdhva Prasarita Eka Padasana</sanskrit>
     <side>Right</side>
     <image>images/standing-split.png</image>
     <description>Standing Split challenges balance and hamstring flexibility. From a forward fold, one leg lifts toward the ceiling while hands stay on the ground for support.</description>
@@ -377,6 +398,7 @@
   <!-- Beginner Seated and Floor Poses -->
   <asana>
     <n>Easy Pose</n>
+    <sanskrit>Sukhasana</sanskrit>
     <side>Center</side>
     <image>images/easy-pose.png</image>
     <description>Easy Pose is a comfortable seated position for meditation and breathing exercises. It helps calm the mind.</description>
@@ -393,6 +415,7 @@
 
   <asana>
     <n>Seated Forward Fold</n>
+    <sanskrit>Paschimottanasana</sanskrit>
     <side>Center</side>
     <image>images/seated-forward-fold.png</image>
     <description>Seated Forward Fold deeply stretches the hamstrings and back. It's calming and cooling for the nervous system.</description>
@@ -409,6 +432,7 @@
 
   <asana>
     <n>Butterfly Pose</n>
+    <sanskrit>Baddha Konasana</sanskrit>
     <side>Center</side>
     <image>images/butterfly-pose.png</image>
     <description>Butterfly Pose opens the hips and inner thighs. It's a gentle pose that can be modified for all levels.</description>
@@ -441,6 +465,7 @@
 
   <asana>
     <n>Child's Pose</n>
+    <sanskrit>Balasana</sanskrit>
     <side>Center</side>
     <image>images/childs-pose.png</image>
     <description>Child's Pose is a resting pose that gently stretches the hips, thighs, and lower back. It's perfect for beginners and as a resting position.</description>
@@ -457,6 +482,7 @@
 
   <asana>
     <n>Corpse Pose</n>
+    <sanskrit>Savasana</sanskrit>
     <side>Center</side>
     <image>images/corpse-pose.png</image>
     <description>Corpse Pose is the ultimate relaxation pose. It allows the body to integrate the benefits of practice.</description>
@@ -669,6 +695,7 @@
   <!-- Beginner Core Poses -->
   <asana>
     <n>Plank</n>
+    <sanskrit>Phalakasana</sanskrit>
     <side>Center</side>
     <image>images/plank.png</image>
     <description>Plank is a core pose that strengthens the arms and abs. It is a great pose for beginners.</description>
@@ -685,6 +712,7 @@
 
   <asana>
     <n>Low Plank</n>
+    <sanskrit>Chaturanga Dandasana</sanskrit>
     <side>Center</side>
     <image>images/chaturanga.png</image>
     <description>Low Plank (Chaturanga) is a core pose that strengthens the arms and abs. It is a great pose for beginners.</description>
@@ -785,6 +813,7 @@
   <!-- Beginner Backbends -->
   <asana>
     <n>Cobra Pose</n>
+    <sanskrit>Bhujangasana</sanskrit>
     <side>Center</side>
     <image>images/cobra-pose.png</image>
     <description>Cobra Pose strengthens the spine while opening the chest and shoulders. It's a gentle backbend suitable for most practitioners.</description>
@@ -801,6 +830,7 @@
 
   <asana>
     <n>Upward Facing Dog</n>
+    <sanskrit>Urdhva Mukha Svanasana</sanskrit>
     <side>Center</side>
     <image>images/upward-facing-dog.png</image>
     <description>Upward Facing Dog is a core pose that strengthens the arms and abs. It is a great pose for beginners.</description>
@@ -933,6 +963,7 @@
   <!-- Beginner Inversions -->
   <asana>
     <n>Downward Facing Dog</n>
+    <sanskrit>Adho Mukha Svanasana</sanskrit>
     <side>Center</side>
     <image>images/downward-facing-dog.png</image>
     <description>Downward Facing Dog is a standing pose that tones the legs and arms, while stretching them. It is a great pose for beginners.</description>

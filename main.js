@@ -50,8 +50,9 @@ function saveFlows(flows) {
 
 // YogaAsana class definition
 class YogaAsana {
-    constructor(name, side, image, description, difficulty, tags, transitionsAsana) {
+    constructor(name, side, image, description, difficulty, tags, transitionsAsana, sanskrit = "") {
         this.name = name;
+        this.sanskrit = sanskrit;
         this.side = side;
         this.image = image;
         this.description = description;
@@ -67,6 +68,11 @@ class YogaAsana {
 
     setSide(side) {
         this.side = side;
+    }
+
+    // Get the display name based on language preference
+    getDisplayName(useSanskrit = false) {
+        return useSanskrit && this.sanskrit ? this.sanskrit : this.name;
     }
 }
 
@@ -120,6 +126,7 @@ let animationFrameId = null;
 let speechEnabled = false; // Default to speech disabled
 let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
+let useSanskritNames = false; // Default to English names
 
 function displayFlowDuration(duration) {
     duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
@@ -152,7 +159,16 @@ function updateAsanaDisplay(asana) {
     const nextAsanaImageElement = document.getElementById("nextAsanaImage");
     const comingUpSection = document.querySelector(".coming-up");
 
-    if (asanaNameElement) asanaNameElement.textContent = asana.name;
+    // Use the displayName based on the toggle setting
+    if (asanaNameElement) {
+        // Handle cases where getDisplayName might not exist
+        if (typeof asana.getDisplayName === 'function') {
+            asanaNameElement.textContent = asana.getDisplayName(useSanskritNames);
+        } else {
+            // Fallback to using name or sanskrit based on toggle
+            asanaNameElement.textContent = useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
+        }
+    }
     if (asanaSideElement) asanaSideElement.textContent = asana.side;
     if (asanaImageElement) {
         asanaImageElement.src = asana.image;
@@ -170,7 +186,15 @@ function updateAsanaDisplay(asana) {
     const nextAsana = editingFlow.asanas[currentAsanaIndex + 1];
     if (nextAsana) {
         // Show the upcoming pose
-        if (nextAsanaNameElement) nextAsanaNameElement.textContent = nextAsana.name;
+        if (nextAsanaNameElement) {
+            // Handle cases where getDisplayName might not exist
+            if (typeof nextAsana.getDisplayName === 'function') {
+                nextAsanaNameElement.textContent = nextAsana.getDisplayName(useSanskritNames);
+            } else {
+                // Fallback to using name or sanskrit based on toggle
+                nextAsanaNameElement.textContent = useSanskritNames && nextAsana.sanskrit ? nextAsana.sanskrit : nextAsana.name;
+            }
+        }
         if (nextAsanaImageElement) {
             nextAsanaImageElement.src = nextAsana.image;
             nextAsanaImageElement.alt = `${nextAsana.name} pose`;
@@ -197,17 +221,18 @@ function updateAsanaDisplay(asana) {
     
     // Speak the name of the asana if speech is enabled
     if (speechEnabled && !paused) {
-        speakAsanaName(asana.name, asana.side);
+        speakAsanaName(asana.name, asana.side, asana.sanskrit);
     }
 
-    console.log('Current Asana:', asana.name, 'Image:', asana.image);
+    console.log('Current Asana:', asana.name, 'Image:', asana.image, 'Duration:', asana.duration);
     console.log('Next Asana:', nextAsana ? nextAsana.name : 'End of flow', 'Image:', nextAsana ? nextAsana.image : 'End of flow image');
 
-    return asana.duration;
+    // Ensure we return a valid numeric duration
+    return asana.duration || 7; // Default to 7 seconds if not set
 }
 
 // Function to speak the asana name
-function speakAsanaName(name, side) {
+function speakAsanaName(name, side, sanskrit = "") {
     // Don't do anything if speech is disabled
     if (!speechEnabled) return;
     
@@ -224,6 +249,12 @@ function speakAsanaName(name, side) {
     
     // Create text to speak - include side only if it's Left or Right
     let textToSpeak = name;
+    
+    // Add Sanskrit pronunciation if enabled and available
+    if (useSanskritNames && sanskrit) {
+        textToSpeak = sanskrit;
+    }
+    
     if (side && (side.toLowerCase() === 'left' || side.toLowerCase() === 'right')) {
         textToSpeak += `, ${side} side`;
     }
@@ -330,6 +361,12 @@ function changeScreen(screenId) {
             clearBuildAFlow();
         }
         
+        // Sync the Sanskrit toggle state
+        const sanskritToggle = document.getElementById('sanskrit-toggle-build');
+        if (sanskritToggle) {
+            sanskritToggle.checked = useSanskritNames;
+        }
+        
         // Initialize the sort indicator when switching to build screen
         setTimeout(() => {
             const tableHeader = document.querySelector('#flowTable th:first-child');
@@ -344,6 +381,12 @@ function changeScreen(screenId) {
                     : 'Sorted by smallest number first - Click to reverse';
             }
         }, 100); // Short delay to ensure DOM is ready
+    } else if (screenId === 'flowScreen') {
+        // Sync the Sanskrit toggle state
+        const sanskritToggle = document.getElementById('sanskrit-toggle-flow');
+        if (sanskritToggle) {
+            sanskritToggle.checked = useSanskritNames;
+        }
     }
 }
 
@@ -421,7 +464,8 @@ function selectAsana(asana) {
         asana.description,
         asana.difficulty,
         [...asana.tags || []],
-        [...asana.transitionsAsana || []]
+        [...asana.transitionsAsana || []],
+        asana.sanskrit
     );
     newAsana.setDuration(7); // Default 7 seconds
     
@@ -850,6 +894,32 @@ function playFlow(flowID) {
     // Set up the flow for practice
     editingFlow = new Flow();
     Object.assign(editingFlow, flowToPlay);
+    
+    // Ensure all asanas have proper methods by creating proper YogaAsana instances
+    if (editingFlow.asanas && Array.isArray(editingFlow.asanas)) {
+        console.log("Converting flow asanas to YogaAsana instances");
+        editingFlow.asanas = editingFlow.asanas.map(asana => {
+            // Check if asana is already a proper YogaAsana instance
+            if (asana instanceof YogaAsana && typeof asana.getDisplayName === 'function') {
+                return asana;
+            }
+            
+            // Create a new YogaAsana instance
+            const newAsana = new YogaAsana(
+                asana.name, 
+                asana.side, 
+                asana.image,
+                asana.description,
+                asana.difficulty,
+                asana.tags || [],
+                asana.transitionsAsana || [],
+                asana.sanskrit || ""
+            );
+            newAsana.setDuration(asana.duration || 7);
+            return newAsana;
+        });
+    }
+    
     currentAsanaIndex = 0;
     paused = false;
     
@@ -883,6 +953,12 @@ function playFlow(flowID) {
         }
     }
     
+    // Initialize Sanskrit toggle
+    const sanskritToggle = document.getElementById('sanskrit-toggle-flow');
+    if (sanskritToggle) {
+        sanskritToggle.checked = useSanskritNames;
+    }
+    
     // 2. Flow screen speech toggle button
     const speechToggleFlowBtn = document.getElementById('speech-toggle-flow');
     if (speechToggleFlowBtn) {
@@ -897,18 +973,34 @@ function playFlow(flowID) {
     
     // Start the flow if it has asanas
     if (editingFlow.asanas && editingFlow.asanas.length > 0) {
+        console.log("Starting flow with asanas:", editingFlow.asanas.length);
+        
+        // Reset current asana index and pause state
+        currentAsanaIndex = 0;
+        paused = false;
+        
+        // Get the first asana
         const asana = editingFlow.asanas[currentAsanaIndex];
+        console.log("First asana:", asana.name, "Duration:", asana.duration);
+        
+        // Update the display and get the duration
         const duration = updateAsanaDisplay(asana);
+        console.log("Display updated, duration:", duration);
         
         // Set the proper pause button icon
         const pauseBtn = document.querySelector('.pause-btn');
         if (pauseBtn) {
             pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+            pauseBtn.classList.remove('paused');
+            pauseBtn.title = "Pause flow";
         }
         
         // Make sure the countdown container has the proper SVG structure
         const countdownContainer = document.querySelector('.countdown-container');
         if (countdownContainer) {
+            // Remove flow-complete class if it exists
+            countdownContainer.classList.remove('flow-complete');
+            
             countdownContainer.innerHTML = `
                 <svg class="countdown-svg" viewBox="0 0 100 100">
                     <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
@@ -920,16 +1012,41 @@ function playFlow(flowID) {
             `;
         }
         
-        // Set up the countdown timer
-        startCountdownTimer(duration);
+        // Clear any existing animation frame/timer
+        if (animationFrameId) {
+            clearTimeout(animationFrameId);
+            animationFrameId = null;
+        }
+        
+        // Set up the countdown timer with a slight delay to ensure the DOM is ready
+        setTimeout(() => {
+            console.log("Starting countdown timer for first asana");
+            startCountdownTimer(duration);
+        }, 100);
+    } else {
+        console.warn("No asanas in the flow to start!");
     }
 }
 
 function startCountdownTimer(duration) {
+    console.log("Starting countdown timer with duration:", duration);
     const countdownElement = document.getElementById('countdown');
     const countdownCircle = document.getElementById('countdown-circle');
-    if (!countdownElement || !countdownCircle) return;
+    if (!countdownElement || !countdownCircle) {
+        console.error("Countdown elements not found");
+        return;
+    }
     
+    // Make sure we have a valid duration
+    if (!duration || isNaN(duration) || duration <= 0) {
+        duration = 7; // Default to 7 seconds if invalid
+        console.warn("Invalid duration, using default of 7 seconds");
+    }
+    
+    // Reset the pause state when starting a new timer
+    paused = false;
+    
+    // Initialize time left
     let timeLeft = duration;
     countdownElement.textContent = displayFlowDuration(timeLeft);
     
@@ -940,31 +1057,49 @@ function startCountdownTimer(duration) {
     // Reset the countdown animation
     countdownCircle.style.strokeDashoffset = "0";
     
+    // Clear any existing timer
     if (animationFrameId) {
+        console.log("Clearing existing timer");
         clearTimeout(animationFrameId);
+        animationFrameId = null;
     }
     
-    const updateTimer = () => {
+    // Update timer function
+    const updateTimer = function() {
+        // Only decrement if not paused
         if (!paused) {
             timeLeft -= 1;
-            countdownElement.textContent = displayFlowDuration(timeLeft);
+            console.log("Time left:", timeLeft);
+            
+            // Update the display
+            if (countdownElement) {
+                countdownElement.textContent = displayFlowDuration(timeLeft);
+            }
             
             // Update the circle animation - offset increases as time decreases
-            const dashOffset = circumference * (timeLeft / duration);
-            countdownCircle.style.strokeDashoffset = circumference - dashOffset;
+            if (countdownCircle) {
+                const dashOffset = circumference * (timeLeft / duration);
+                countdownCircle.style.strokeDashoffset = circumference - dashOffset;
+            }
             
+            // Check if time is up
             if (timeLeft <= 0) {
+                console.log("Time up! Moving to next asana");
                 // Move to next asana
                 currentAsanaIndex++;
                 if (currentAsanaIndex < editingFlow.asanas.length) {
                     const nextAsana = editingFlow.asanas[currentAsanaIndex];
+                    console.log("Next asana:", nextAsana.name);
                     const nextDuration = updateAsanaDisplay(nextAsana);
                     timeLeft = nextDuration;
                     
                     // Reset the circle animation for the next pose
-                    countdownCircle.style.strokeDasharray = circumference;
-                    countdownCircle.style.strokeDashoffset = "0";
+                    if (countdownCircle) {
+                        countdownCircle.style.strokeDasharray = circumference;
+                        countdownCircle.style.strokeDashoffset = "0";
+                    }
                 } else {
+                    console.log("End of flow reached!");
                     // End of flow - transform timer into a home button
                     const countdownContainer = document.querySelector('.countdown-container');
                     if (countdownContainer) {
@@ -976,15 +1111,18 @@ function startCountdownTimer(duration) {
                         `;
                         countdownContainer.classList.add('flow-complete');
                     }
-                    return;
+                    return; // Exit the timer loop at the end of the flow
                 }
             }
         }
         
+        // Schedule the next update
         animationFrameId = setTimeout(updateTimer, 1000);
     };
     
-    animationFrameId = setTimeout(updateTimer, 1000);
+    // Start the timer immediately with first update
+    console.log("Starting timer with first update");
+    updateTimer();
 }
 
 function endFlow() {
@@ -1007,33 +1145,66 @@ function endFlow() {
 }
 
 function togglePause() {
+    console.log("Toggle pause called. Current state:", paused);
+    
     // Check if the flow is already complete (timer turned into home button)
     const flowComplete = document.querySelector('.countdown-container.flow-complete');
     if (flowComplete) {
+        console.log("Flow is complete, returning to home screen");
         // If flow is complete, just go back to home
         changeScreen('homeScreen');
         return;
     }
     
+    // Toggle pause state
     paused = !paused;
+    console.log("New pause state:", paused);
+    
+    // Update pause button appearance
     const pauseBtn = document.querySelector('.pause-btn');
     if (pauseBtn) {
-        // Use better-looking icons
         if (paused) {
+            // Change to play icon when paused
             pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
             pauseBtn.classList.add('paused');
+            pauseBtn.title = "Resume flow";
             
             // Pause speech if it's currently speaking
             if (speechSynthesis.speaking) {
+                console.log("Pausing speech synthesis");
                 speechSynthesis.pause();
             }
         } else {
+            // Change to pause icon when playing
             pauseBtn.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
             pauseBtn.classList.remove('paused');
+            pauseBtn.title = "Pause flow";
             
             // Resume speech if it was paused
             if (speechSynthesis.paused) {
+                console.log("Resuming speech synthesis");
                 speechSynthesis.resume();
+            }
+            
+            // If timer was paused and there's no active timer, restart it
+            if (!animationFrameId && editingFlow.asanas && currentAsanaIndex < editingFlow.asanas.length) {
+                console.log("Restarting timer after pause");
+                const asana = editingFlow.asanas[currentAsanaIndex];
+                // Use the displayed time value if available
+                const countdownElement = document.getElementById('countdown');
+                const timeText = countdownElement ? countdownElement.textContent : null;
+                let remainingDuration = asana.duration;
+                
+                if (timeText) {
+                    // Parse the displayed time to get remaining seconds
+                    const matches = timeText.match(/(\d+)s/);
+                    if (matches && matches[1]) {
+                        remainingDuration = parseInt(matches[1]);
+                    }
+                }
+                
+                // Restart with the current remaining time
+                startCountdownTimer(remainingDuration);
             }
         }
     }
@@ -1113,7 +1284,8 @@ function editFlow(flowID) {
                     asana.description,
                     asana.difficulty,
                     asana.tags || [],
-                    asana.transitionsAsana || []
+                    asana.transitionsAsana || [],
+                    asana.sanskrit || ""
                 );
                 newAsana.setDuration(asana.duration || 7);
                 return newAsana;
@@ -1134,6 +1306,26 @@ function editFlow(flowID) {
     
     if (titleInput) titleInput.value = editingFlow.name || '';
     if (descriptionInput) descriptionInput.value = editingFlow.description || '';
+    
+    // Ensure all asanas have getDisplayName method
+    editingFlow.asanas = editingFlow.asanas.map(asana => {
+        // If asana is not already a YogaAsana instance with the method
+        if (!asana.getDisplayName) {
+            const newAsana = new YogaAsana(
+                asana.name, 
+                asana.side, 
+                asana.image,
+                asana.description,
+                asana.difficulty,
+                asana.tags || [],
+                asana.transitionsAsana || [],
+                asana.sanskrit || ""
+            );
+            newAsana.setDuration(asana.duration || 7);
+            return newAsana;
+        }
+        return asana;
+    });
     
     // Use the rebuildFlowTable function to populate the table
     rebuildFlowTable();
@@ -1271,6 +1463,7 @@ async function loadAsanasFromXML() {
             
             // Extract basic info
             const name = asanaElem.getElementsByTagName('n')[0]?.textContent || 'Unknown Pose';
+            const sanskrit = asanaElem.getElementsByTagName('sanskrit')[0]?.textContent || '';
             const side = asanaElem.getElementsByTagName('side')[0]?.textContent || 'Center';
             const image = asanaElem.getElementsByTagName('image')[0]?.textContent || 'images/default-pose.png';
             const description = asanaElem.getElementsByTagName('description')[0]?.textContent || '';
@@ -1298,7 +1491,8 @@ async function loadAsanasFromXML() {
                 description,
                 difficulty,
                 tags,
-                transitions
+                transitions,
+                sanskrit
             );
             
             // Add to asanas array
@@ -1319,7 +1513,8 @@ async function loadAsanasFromXML() {
                 "Downward Facing Dog is a standing pose that tones the legs and arms, while stretching them. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Stretch"],
-                ["Plank", "Cobra"]
+                ["Plank", "Cobra"],
+                "Adho Mukha Svanasana"
             ),
             new YogaAsana(
                 "Tree Pose",
@@ -1328,7 +1523,8 @@ async function loadAsanasFromXML() {
                 "Tree Pose is a standing pose that improves balance and concentration. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Balance"],
-                ["Mountain Pose", "Warrior 3"]
+                ["Mountain Pose", "Warrior 3"],
+                "Vrksasana"
             ),
             new YogaAsana(
                 "Warrior 2",
@@ -1337,7 +1533,8 @@ async function loadAsanasFromXML() {
                 "Warrior 2 is a standing pose that strengthens the legs and opens the hips. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Strength"],
-                ["Mountain Pose", "Triangle Pose"]
+                ["Mountain Pose", "Triangle Pose"],
+                "Virabhadrasana II"
             ),
             new YogaAsana(
                 "Triangle Pose",
@@ -1346,7 +1543,8 @@ async function loadAsanasFromXML() {
                 "Triangle Pose is a standing pose that stretches the legs and opens the hips. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Stretch"],
-                ["Warrior 2", "Half Moon Pose"]
+                ["Warrior 2", "Half Moon Pose"],
+                "Trikonasana"
             )
         ];
         console.log('Loaded fallback asanas');
@@ -1496,9 +1694,15 @@ function populateAsanaList() {
         asanaImage.src = asana.image;
         asanaImage.alt = asana.name;
         
-        // Create name label
+        // Create name label - use Sanskrit if toggled
         const asanaName = document.createElement('p');
-        asanaName.textContent = asana.name;
+        
+        // Check if getDisplayName exists, otherwise use direct property
+        if (typeof asana.getDisplayName === 'function') {
+            asanaName.textContent = asana.getDisplayName(useSanskritNames);
+        } else {
+            asanaName.textContent = useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
+        }
         
         // Append elements
         asanaElement.appendChild(difficultyBadge);
@@ -1811,7 +2015,9 @@ function rebuildFlowTable() {
             <td>
                 <div class="table-asana">
                     <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
-                    <span>${asana.name}</span>
+                    <span>${typeof asana.getDisplayName === 'function' ? 
+                            asana.getDisplayName(useSanskritNames) : 
+                            (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
                 </div>
             </td>
             <td>
@@ -1841,6 +2047,75 @@ function rebuildFlowTable() {
     console.log('Rebuilt flow table with draggable rows');
 }
 
+// Function to toggle Sanskrit names
+function toggleSanskritNames(event) {
+    console.log("Toggle Sanskrit Names called");
+    const buildToggle = document.getElementById('sanskrit-toggle-build');
+    const flowToggle = document.getElementById('sanskrit-toggle-flow');
+    
+    // Determine which toggle was changed directly from the event
+    let sourceToggle = event ? event.target : null;
+    
+    if (!sourceToggle) {
+        // If no event, try to determine from active element
+        sourceToggle = document.activeElement === buildToggle ? buildToggle : 
+                        document.activeElement === flowToggle ? flowToggle : buildToggle;
+    }
+    
+    // Sync both toggles to match the source toggle
+    if (buildToggle && flowToggle && sourceToggle) {
+        if (sourceToggle === buildToggle) {
+            flowToggle.checked = buildToggle.checked;
+        } else {
+            buildToggle.checked = flowToggle.checked;
+        }
+    }
+    
+    // Update the global state
+    useSanskritNames = sourceToggle ? sourceToggle.checked : false;
+    console.log("Sanskrit names toggled to:", useSanskritNames);
+    
+    // Update UI elements that display pose names
+    updateAsanaDisplayNames();
+    
+    // Repopulate the asana list to show the updated names
+    if (currentScreenId === 'buildScreen') {
+        populateAsanaList();
+        
+        // Force rebuild of the flow table
+        if (editingFlow && editingFlow.asanas && editingFlow.asanas.length > 0) {
+            rebuildFlowTable();
+        }
+    }
+    
+    // If in flow screen, update the current asana display
+    if (currentScreenId === 'flowScreen' && editingFlow.asanas && editingFlow.asanas.length > 0) {
+        updateAsanaDisplay(editingFlow.asanas[currentAsanaIndex]);
+    }
+    
+    // Show a brief notification about the language change
+    const message = useSanskritNames ? 'Showing Sanskrit Names' : 'Showing English Names';
+    showToastNotification(message);
+}
+
+// Function to update displayed asana names throughout the UI
+function updateAsanaDisplayNames() {
+    // Update flow table if on build screen
+    const flowTable = document.getElementById('flowTable');
+    if (flowTable && flowTable.rows.length > 1) {
+        // Skip header row (0) and update all asana names
+        for (let i = 1; i < flowTable.rows.length; i++) {
+            const row = flowTable.rows[i];
+            const asanaCell = row.cells[1]; // Asana name cell
+            if (asanaCell && asanaCell.querySelector('.table-asana span') && i-1 < editingFlow.asanas.length) {
+                const asana = editingFlow.asanas[i-1];
+                const nameSpan = asanaCell.querySelector('.table-asana span');
+                nameSpan.textContent = asana.getDisplayName(useSanskritNames);
+            }
+        }
+    }
+}
+
 // Initialize the app
 function initializeApp() {
     loadAsanasFromXML()
@@ -1853,6 +2128,35 @@ function initializeApp() {
             
             // Add window resize listener for scroll buttons
             window.addEventListener('resize', updateScrollButtons);
+            
+            // Initialize toggle buttons for Sanskrit names
+            const buildToggle = document.getElementById('sanskrit-toggle-build');
+            const flowToggle = document.getElementById('sanskrit-toggle-flow');
+            
+            // Set initial state and add direct event listeners
+            if (buildToggle) {
+                buildToggle.checked = useSanskritNames;
+                // Explicitly add event listener to handle changes
+                buildToggle.addEventListener('change', toggleSanskritNames);
+            }
+            
+            if (flowToggle) {
+                flowToggle.checked = useSanskritNames;
+                // Explicitly add event listener to handle changes
+                flowToggle.addEventListener('change', toggleSanskritNames);
+            }
+            
+            // Add a click handler to the document to handle toggle clicks differently
+            document.addEventListener('click', function(event) {
+                if (event.target.id === 'sanskrit-toggle-build' || 
+                    event.target.id === 'sanskrit-toggle-flow' ||
+                    event.target.closest('.switch')) {
+                    // Force update on next tick after the checkbox has changed state
+                    setTimeout(function() {
+                        toggleSanskritNames();
+                    }, 50);
+                }
+            });
             
             // Initialize the sort indicator to show the up arrow
             setTimeout(() => {
@@ -1874,4 +2178,7 @@ function initializeApp() {
 }
 
 // Add event listener to initialize the app when the DOM is loaded
-document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM Loaded - Initializing app with Sanskrit names:", useSanskritNames);
+    initializeApp();
+});
