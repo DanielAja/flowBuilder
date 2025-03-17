@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <asanas>
-  <!-- Basic Beginner Poses: Foundation -->
+  <!-- FOUNDATION POSES -->
+  <!-- Beginner Foundation Poses -->
   <asana>
     <n>Mountain Pose</n>
     <side>Center</side>
@@ -18,87 +19,39 @@
   </asana>
 
   <asana>
-    <n>Easy Pose</n>
+    <n>Table Top</n>
     <side>Center</side>
-    <image>images/easy-pose.png</image>
-    <description>Easy Pose is a comfortable seated position for meditation and breathing exercises. It helps calm the mind.</description>
+    <image>images/table-top.png</image>
+    <description>Table Top is a neutral position on hands and knees with a flat back. It's a foundation pose for many sequences and transitions.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Foundation</tag>
+      <tag>Core</tag>
+    </tags>
+    <transitions>
+      <transition>Cat Pose</transition>
+      <transition>Downward Facing Dog</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Staff Pose</n>
+    <side>Center</side>
+    <image>images/staff-pose.png</image>
+    <description>Staff Pose establishes proper seated alignment. It strengthens the core and improves posture.</description>
     <difficulty>Beginner</difficulty>
     <tags>
       <tag>Seated</tag>
-      <tag>Meditation</tag>
-    </tags>
-    <transitions>
-      <transition>Corpse Pose</transition>
-      <transition>Staff Pose</transition>
-    </transitions>
-  </asana>
-
-  <asana>
-    <n>Child's Pose</n>
-    <side>Center</side>
-    <image>images/childs-pose.png</image>
-    <description>Child's Pose is a resting pose that gently stretches the hips, thighs, and lower back. It's perfect for beginners and as a resting position.</description>
-    <difficulty>Beginner</difficulty>
-    <tags>
-      <tag>Resting</tag>
-      <tag>Stretch</tag>
-    </tags>
-    <transitions>
-      <transition>Downward Facing Dog</transition>
-      <transition>Table Top</transition>
-    </transitions>
-  </asana>
-
-  <asana>
-    <n>Corpse Pose</n>
-    <side>Center</side>
-    <image>images/corpse-pose.png</image>
-    <description>Corpse Pose is the ultimate relaxation pose. It allows the body to integrate the benefits of practice.</description>
-    <difficulty>Beginner</difficulty>
-    <tags>
-      <tag>Resting</tag>
-      <tag>Relaxation</tag>
+      <tag>Foundation</tag>
     </tags>
     <transitions>
       <transition>Easy Pose</transition>
-      <transition>Bridge Pose</transition>
+      <transition>Seated Forward Fold</transition>
     </transitions>
   </asana>
 
-  <!-- Standing Poses: Balance -->
-  <asana>
-    <n>Tree Pose</n>
-    <side>Right</side>
-    <image>images/tree-pose.png</image>
-    <description>Tree Pose is a standing pose that improves balance and concentration. It is a great pose for beginners.</description>
-    <difficulty>Beginner</difficulty>
-    <tags>
-      <tag>Standing</tag>
-      <tag>Balance</tag>
-    </tags>
-    <transitions>
-      <transition>Mountain Pose</transition>
-      <transition>Warrior 3</transition>
-    </transitions>
-  </asana>
-
-  <asana>
-    <n>Eagle Pose</n>
-    <side>Right</side>
-    <image>images/eagle-pose.png</image>
-    <description>Eagle Pose improves balance and concentration. It stretches the shoulders and upper back while strengthening the legs.</description>
-    <difficulty>Intermediate</difficulty>
-    <tags>
-      <tag>Balance</tag>
-      <tag>Twist</tag>
-    </tags>
-    <transitions>
-      <transition>Mountain Pose</transition>
-      <transition>Tree Pose</transition>
-    </transitions>
-  </asana>
-
-  <!-- Standing Poses: Strength -->
+  <!-- STANDING POSES -->
+  <!-- Beginner Standing Poses -->
   <asana>
     <n>Chair Pose</n>
     <side>Center</side>
@@ -112,6 +65,22 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Forward Fold</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Chair Twist</n>
+    <side>Right</side>
+    <image>images/chair-twist.png</image>
+    <description>Chair Twist combines the strength-building aspects of Chair Pose with a spinal twist. The hands can meet in prayer position or extend in opposite directions.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Twist</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Chair Pose</transition>
+      <transition>Mountain Pose</transition>
     </transitions>
   </asana>
 
@@ -148,23 +117,6 @@
   </asana>
 
   <asana>
-    <n>Warrior 3</n>
-    <side>Right</side>
-    <image>images/warrior-3.png</image>
-    <description>Warrior 3 is a balancing pose that strengthens the legs and core while improving focus and coordination.</description>
-    <difficulty>Intermediate</difficulty>
-    <tags>
-      <tag>Balance</tag>
-      <tag>Strength</tag>
-    </tags>
-    <transitions>
-      <transition>Warrior 1</transition>
-      <transition>Half Moon Pose</transition>
-    </transitions>
-  </asana>
-
-  <!-- Standing Poses: Flexibility -->
-  <asana>
     <n>Triangle Pose</n>
     <side>Right</side>
     <image>images/triangle-pose.png</image>
@@ -176,6 +128,103 @@
     </tags>
     <transitions>
       <transition>Warrior 2</transition>
+      <transition>Half Moon Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Tree Pose</n>
+    <side>Right</side>
+    <image>images/tree-pose.png</image>
+    <description>Tree Pose is a standing pose that improves balance and concentration. It is a great pose for beginners.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Warrior 3</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Forward Fold</n>
+    <side>Center</side>
+    <image>images/forward-fold.png</image>
+    <description>Forward Fold stretches the hamstrings and back. It's calming and brings fresh blood to the brain.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Half Forward Fold</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Half Forward Fold</n>
+    <side>Center</side>
+    <image>images/half-forward-fold.png</image>
+    <description>Half Forward Fold lengthens the spine and stretches the hamstrings. It's a transitional pose in Sun Salutations.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Forward Fold</transition>
+      <transition>Plank</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Wide-Legged Forward Fold</n>
+    <side>Center</side>
+    <image>images/wide-legged-forward-fold.png</image>
+    <description>Wide-Legged Forward Fold stretches the inner and back legs while creating space in the spine. It calms the mind and relieves mild back tension.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Stretch</tag>
+      <tag>Standing</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Triangle Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Garland Pose</n>
+    <side>Center</side>
+    <image>images/garland-pose.png</image>
+    <description>Garland Pose (Malasana) is a deep squat that opens the hips and groin. Heels are grounded if possible with hands in prayer at heart center.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Hip Opener</tag>
+      <tag>Grounding</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Forward Fold</transition>
+    </transitions>
+  </asana>
+
+  <!-- Intermediate Standing Poses -->
+  <asana>
+    <n>Warrior 3</n>
+    <side>Right</side>
+    <image>images/warrior-3.png</image>
+    <description>Warrior 3 is a balancing pose that strengthens the legs and core while improving focus and coordination.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior 1</transition>
       <transition>Half Moon Pose</transition>
     </transitions>
   </asana>
@@ -228,20 +277,117 @@
     </transitions>
   </asana>
 
-  <!-- Seated Poses -->
   <asana>
-    <n>Staff Pose</n>
+    <n>Eagle Pose</n>
+    <side>Right</side>
+    <image>images/eagle-pose.png</image>
+    <description>Eagle Pose improves balance and concentration. It stretches the shoulders and upper back while strengthening the legs.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Twist</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Tree Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Extended Side Angle</n>
+    <side>Right</side>
+    <image>images/extended-side-angle.png</image>
+    <description>Extended Side Angle deeply stretches the sides of the body while strengthening the legs. The bottom arm extends along the ground or rests on the leg.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Side Stretch</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior 2</transition>
+      <transition>Triangle Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Reverse Warrior</n>
+    <side>Right</side>
+    <image>images/reverse-warrior.png</image>
+    <description>Reverse Warrior creates a side bend while in Warrior 2 stance. The front arm reaches up and back while the back arm slides down the back leg.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Side Stretch</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior 2</transition>
+      <transition>Extended Side Angle</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Standing Split</n>
+    <side>Right</side>
+    <image>images/standing-split.png</image>
+    <description>Standing Split challenges balance and hamstring flexibility. From a forward fold, one leg lifts toward the ceiling while hands stay on the ground for support.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Forward Fold</transition>
+      <transition>Half Moon Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Dancer Pose</n>
+    <side>Right</side>
+    <image>images/dancer-pose.png</image>
+    <description>Dancer Pose combines balance, strength, and flexibility. Standing on one leg, the other foot is held behind while the free arm extends forward.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Backbend</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Tree Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Humble Warrior</n>
+    <side>Right</side>
+    <image>images/humble-warrior.png</image>
+    <description>Humble Warrior begins in Warrior 1 position with hands interlaced behind the back, folding forward inside the front leg. It deeply opens shoulders and hips.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Hip Opener</tag>
+      <tag>Shoulder Opener</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior 1</transition>
+      <transition>Standing Forward Fold</transition>
+    </transitions>
+  </asana>
+
+  <!-- SEATED AND FLOOR POSES -->
+  <!-- Beginner Seated and Floor Poses -->
+  <asana>
+    <n>Easy Pose</n>
     <side>Center</side>
-    <image>images/staff-pose.png</image>
-    <description>Staff Pose establishes proper seated alignment. It strengthens the core and improves posture.</description>
+    <image>images/easy-pose.png</image>
+    <description>Easy Pose is a comfortable seated position for meditation and breathing exercises. It helps calm the mind.</description>
     <difficulty>Beginner</difficulty>
     <tags>
       <tag>Seated</tag>
-      <tag>Foundation</tag>
+      <tag>Meditation</tag>
     </tags>
     <transitions>
-      <transition>Easy Pose</transition>
-      <transition>Seated Forward Fold</transition>
+      <transition>Corpse Pose</transition>
+      <transition>Staff Pose</transition>
     </transitions>
   </asana>
 
@@ -293,7 +439,135 @@
     </transitions>
   </asana>
 
-  <!-- Hip Openers -->
+  <asana>
+    <n>Child's Pose</n>
+    <side>Center</side>
+    <image>images/childs-pose.png</image>
+    <description>Child's Pose is a resting pose that gently stretches the hips, thighs, and lower back. It's perfect for beginners and as a resting position.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Resting</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Downward Facing Dog</transition>
+      <transition>Table Top</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Corpse Pose</n>
+    <side>Center</side>
+    <image>images/corpse-pose.png</image>
+    <description>Corpse Pose is the ultimate relaxation pose. It allows the body to integrate the benefits of practice.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Resting</tag>
+      <tag>Relaxation</tag>
+    </tags>
+    <transitions>
+      <transition>Easy Pose</transition>
+      <transition>Bridge Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Gate Pose</n>
+    <side>Right</side>
+    <image>images/gate-pose.png</image>
+    <description>Gate Pose is a kneeling side stretch that opens the side body, shoulders, and hips. One leg extends to the side while the arm overhead creates a lateral stretch.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Side Stretch</tag>
+      <tag>Kneeling</tag>
+    </tags>
+    <transitions>
+      <transition>Hero Pose</transition>
+      <transition>Child's Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Happy Baby</n>
+    <side>Center</side>
+    <image>images/happy-baby.png</image>
+    <description>Happy Baby opens the hips while lying on the back. Grab the outsides of the feet and gently pull knees toward armpits, creating a stretch in the inner groin.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Hip Opener</tag>
+      <tag>Relaxation</tag>
+    </tags>
+    <transitions>
+      <transition>Corpse Pose</transition>
+      <transition>Reclined Twist</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Half Lord of the Fishes</n>
+    <side>Right</side>
+    <image>images/half-lord-of-the-fishes.png</image>
+    <description>Half Lord of the Fishes is a seated spinal twist that improves digestion and mobility. One leg crosses over the extended leg with the opposite elbow outside the raised knee.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Twist</tag>
+      <tag>Seated</tag>
+    </tags>
+    <transitions>
+      <transition>Easy Pose</transition>
+      <transition>Staff Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Reclined Twist</n>
+    <side>Right</side>
+    <image>images/reclined-twist.png</image>
+    <description>Reclined Twist is performed lying on the back with knees falling to one side. It gently stretches the spine and opens the shoulders.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Twist</tag>
+      <tag>Relaxation</tag>
+    </tags>
+    <transitions>
+      <transition>Corpse Pose</transition>
+      <transition>Bridge Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Supine Twist</n>
+    <side>Right</side>
+    <image>images/supine-twist.png</image>
+    <description>Supine Twist is performed lying on the back with knees dropping to one side. Arms extend in a T-position for a gentle spinal rotation.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Twist</tag>
+      <tag>Relaxation</tag>
+    </tags>
+    <transitions>
+      <transition>Corpse Pose</transition>
+      <transition>Happy Baby</transition>
+    </transitions>
+  </asana>
+
+  <!-- Intermediate Seated and Floor Poses -->
+  <asana>
+    <n>Boat Pose</n>
+    <side>Center</side>
+    <image>images/boat-pose.png</image>
+    <description>Boat Pose strongly engages the core muscles. Balancing on the sit bones, legs and upper body lift to create a V-shape.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Core</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Staff Pose</transition>
+      <transition>Seated Forward Fold</transition>
+    </transitions>
+  </asana>
+
   <asana>
     <n>Pigeon Pose</n>
     <side>Right</side>
@@ -310,40 +584,89 @@
     </transitions>
   </asana>
 
-  <!-- Forward Folds -->
   <asana>
-    <n>Forward Fold</n>
-    <side>Center</side>
-    <image>images/forward-fold.png</image>
-    <description>Forward Fold stretches the hamstrings and back. It's calming and brings fresh blood to the brain.</description>
-    <difficulty>Beginner</difficulty>
+    <n>Half Pigeon</n>
+    <side>Right</side>
+    <image>images/half-pigeon.png</image>
+    <description>Half Pigeon is a deep hip opener with the front shin parallel to the front of the mat. The back leg extends behind while the upper body can fold forward over the front leg.</description>
+    <difficulty>Intermediate</difficulty>
     <tags>
-      <tag>Standing</tag>
+      <tag>Hip Opener</tag>
       <tag>Stretch</tag>
     </tags>
     <transitions>
-      <transition>Mountain Pose</transition>
-      <transition>Half Forward Fold</transition>
+      <transition>Downward Facing Dog</transition>
+      <transition>Thread the Needle</transition>
     </transitions>
   </asana>
 
   <asana>
-    <n>Half Forward Fold</n>
-    <side>Center</side>
-    <image>images/half-forward-fold.png</image>
-    <description>Half Forward Fold lengthens the spine and stretches the hamstrings. It's a transitional pose in Sun Salutations.</description>
-    <difficulty>Beginner</difficulty>
+    <n>Lizard Pose</n>
+    <side>Right</side>
+    <image>images/lizard-pose.png</image>
+    <description>Lizard Pose is a deep hip opener that stretches the hamstrings, hip flexors, and quadriceps. The front foot is stepped to the outer edge of the mat with forearms or hands on the floor.</description>
+    <difficulty>Intermediate</difficulty>
     <tags>
-      <tag>Standing</tag>
+      <tag>Hip Opener</tag>
       <tag>Stretch</tag>
     </tags>
     <transitions>
-      <transition>Forward Fold</transition>
-      <transition>Plank</transition>
+      <transition>Low Lunge</transition>
+      <transition>Downward Facing Dog</transition>
     </transitions>
   </asana>
 
-  <!-- Core Strengtheners -->
+  <!-- CAT-COW SEQUENCE -->
+  <asana>
+    <n>Cat Pose</n>
+    <side>Center</side>
+    <image>images/cat-pose.png</image>
+    <description>Cat Pose is performed on hands and knees, arching the back upward while tucking the chin to chest. It helps improve spinal flexibility and relieves back tension.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Stretch</tag>
+      <tag>Core</tag>
+    </tags>
+    <transitions>
+      <transition>Cow Pose</transition>
+      <transition>Child's Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Cow Pose</n>
+    <side>Center</side>
+    <image>images/cow-pose.png</image>
+    <description>Cow Pose is performed on hands and knees, dropping the belly down while lifting the chest and gaze. It gently stretches the front torso and neck.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Stretch</tag>
+      <tag>Backbend</tag>
+    </tags>
+    <transitions>
+      <transition>Cat Pose</transition>
+      <transition>Table Top</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Thread the Needle</n>
+    <side>Right</side>
+    <image>images/thread-the-needle.png</image>
+    <description>Thread the Needle begins in Table Top, then one arm threads under the body, creating a gentle twist in the spine. Great for releasing shoulder tension.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Twist</tag>
+      <tag>Shoulder Opener</tag>
+    </tags>
+    <transitions>
+      <transition>Table Top</transition>
+      <transition>Child's Pose</transition>
+    </transitions>
+  </asana>
+
+  <!-- CORE STRENGTHENING POSES -->
+  <!-- Beginner Core Poses -->
   <asana>
     <n>Plank</n>
     <side>Center</side>
@@ -356,15 +679,15 @@
     </tags>
     <transitions>
       <transition>Downward Facing Dog</transition>
-      <transition>Chaturanga</transition>
+      <transition>Low Plank</transition>
     </transitions>
   </asana>
 
   <asana>
-    <n>Chaturanga</n>
+    <n>Low Plank</n>
     <side>Center</side>
     <image>images/chaturanga.png</image>
-    <description>Chaturanga is a core pose that strengthens the arms and abs. It is a great pose for beginners.</description>
+    <description>Low Plank (Chaturanga) is a core pose that strengthens the arms and abs. It is a great pose for beginners.</description>
     <difficulty>Beginner</difficulty>
     <tags>
       <tag>Core</tag>
@@ -376,7 +699,90 @@
     </transitions>
   </asana>
 
-  <!-- Backbends -->
+  <asana>
+    <n>Forearm Plank</n>
+    <side>Center</side>
+    <image>images/forearm-plank.png</image>
+    <description>Forearm Plank strengthens the core, arms, and shoulders. The body remains in a straight line supported by forearms and toes.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Core</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Plank</transition>
+      <transition>Dolphin Pose</transition>
+    </transitions>
+  </asana>
+
+  <!-- Intermediate Core Poses -->
+  <asana>
+    <n>Side Plank</n>
+    <side>Right</side>
+    <image>images/side-plank.png</image>
+    <description>Side Plank strengthens the wrists, arms, and core while improving balance. The body forms a straight line supported by one arm with feet stacked or staggered.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Arm Balance</tag>
+      <tag>Core</tag>
+    </tags>
+    <transitions>
+      <transition>Plank</transition>
+      <transition>Wild Thing</transition>
+    </transitions>
+  </asana>
+
+  <!-- LUNGES -->
+  <asana>
+    <n>Low Lunge</n>
+    <side>Right</side>
+    <image>images/low-lunge.png</image>
+    <description>Low Lunge stretches the hip flexors and quadriceps while improving balance and stability. The back knee rests on the ground.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Hip Opener</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Downward Facing Dog</transition>
+      <transition>Warrior 1</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>High Lunge</n>
+    <side>Right</side>
+    <image>images/high-lunge.png</image>
+    <description>High Lunge strengthens the legs and core while stretching the hip flexors. The back knee is lifted off the ground, requiring more balance.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Strength</tag>
+      <tag>Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior 1</transition>
+      <transition>Plank</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Crescent Lunge</n>
+    <side>Right</side>
+    <image>images/crescent-lunge.png</image>
+    <description>Crescent Lunge is a variation of High Lunge with arms extended overhead. It builds strength and stability while opening the chest.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Strength</tag>
+      <tag>Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior 1</transition>
+      <transition>High Lunge</transition>
+    </transitions>
+  </asana>
+
+  <!-- BACKBENDS -->
+  <!-- Beginner Backbends -->
   <asana>
     <n>Cobra Pose</n>
     <side>Center</side>
@@ -404,24 +810,8 @@
       <tag>Strength</tag>
     </tags>
     <transitions>
-      <transition>Chaturanga</transition>
+      <transition>Low Plank</transition>
       <transition>Downward Facing Dog</transition>
-    </transitions>
-  </asana>
-
-  <asana>
-    <n>Bow Pose</n>
-    <side>Center</side>
-    <image>images/bow-pose.png</image>
-    <description>Bow Pose strengthens the back while opening the chest and shoulders. It stimulates the abdominal organs.</description>
-    <difficulty>Intermediate</difficulty>
-    <tags>
-      <tag>Backbend</tag>
-      <tag>Strength</tag>
-    </tags>
-    <transitions>
-      <transition>Cobra Pose</transition>
-      <transition>Child's Pose</transition>
     </transitions>
   </asana>
 
@@ -442,6 +832,23 @@
   </asana>
 
   <asana>
+    <n>Locust Pose</n>
+    <side>Center</side>
+    <image>images/locust-pose.png</image>
+    <description>Locust Pose strengthens the back muscles. Lying on the stomach, the chest, arms, and legs lift away from the floor.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Cobra Pose</transition>
+      <transition>Bow Pose</transition>
+    </transitions>
+  </asana>
+
+  <!-- Intermediate Backbends -->
+  <asana>
     <n>Camel Pose</n>
     <side>Center</side>
     <image>images/camel-pose.png</image>
@@ -454,6 +861,22 @@
     <transitions>
       <transition>Child's Pose</transition>
       <transition>Hero Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Bow Pose</n>
+    <side>Center</side>
+    <image>images/bow-pose.png</image>
+    <description>Bow Pose strengthens the back while opening the chest and shoulders. It stimulates the abdominal organs.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Cobra Pose</transition>
+      <transition>Child's Pose</transition>
     </transitions>
   </asana>
 
@@ -474,6 +897,23 @@
   </asana>
 
   <asana>
+    <n>Wild Thing</n>
+    <side>Right</side>
+    <image>images/wild-thing.png</image>
+    <description>Wild Thing is a playful heart opener that transitions from Downward Dog or Side Plank. One arm supports the body while the opposite leg and arm extend, creating a backbend.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Arm Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Downward Facing Dog</transition>
+      <transition>Side Plank</transition>
+    </transitions>
+  </asana>
+
+  <!-- Advanced Backbends -->
+  <asana>
     <n>Wheel Pose</n>
     <side>Center</side>
     <image>images/wheel-pose.png</image>
@@ -489,7 +929,8 @@
     </transitions>
   </asana>
 
-  <!-- Inversions -->
+  <!-- INVERSIONS -->
+  <!-- Beginner Inversions -->
   <asana>
     <n>Downward Facing Dog</n>
     <side>Center</side>
@@ -506,6 +947,7 @@
     </transitions>
   </asana>
 
+  <!-- Intermediate Inversions -->
   <asana>
     <n>Dolphin Pose</n>
     <side>Center</side>
@@ -518,22 +960,6 @@
     </tags>
     <transitions>
       <transition>Downward Facing Dog</transition>
-      <transition>Child's Pose</transition>
-    </transitions>
-  </asana>
-
-  <asana>
-    <n>Headstand</n>
-    <side>Center</side>
-    <image>images/headstand.png</image>
-    <description>Headstand improves circulation, balance, and focus. It's considered the king of all yoga poses.</description>
-    <difficulty>Advanced</difficulty>
-    <tags>
-      <tag>Inversion</tag>
-      <tag>Balance</tag>
-    </tags>
-    <transitions>
-      <transition>Dolphin Pose</transition>
       <transition>Child's Pose</transition>
     </transitions>
   </asana>
@@ -570,7 +996,23 @@
     </transitions>
   </asana>
 
-  <!-- Advanced Poses -->
+  <!-- Advanced Inversions and Arm Balances -->
+  <asana>
+    <n>Headstand</n>
+    <side>Center</side>
+    <image>images/headstand.png</image>
+    <description>Headstand improves circulation, balance, and focus. It's considered the king of all yoga poses.</description>
+    <difficulty>Advanced</difficulty>
+    <tags>
+      <tag>Inversion</tag>
+      <tag>Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Dolphin Pose</transition>
+      <transition>Child's Pose</transition>
+    </transitions>
+  </asana>
+
   <asana>
     <n>Crow Pose</n>
     <side>Center</side>
@@ -584,6 +1026,22 @@
     <transitions>
       <transition>Plank</transition>
       <transition>Chair Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Flying Pigeon</n>
+    <side>Right</side>
+    <image>images/flying-pigeon.png</image>
+    <description>Flying Pigeon is an advanced arm balance. One leg hooks over the upper arm while the other leg extends back, balancing on the hands.</description>
+    <difficulty>Advanced</difficulty>
+    <tags>
+      <tag>Arm Balance</tag>
+      <tag>Hip Opener</tag>
+    </tags>
+    <transitions>
+      <transition>Crow Pose</transition>
+      <transition>Tree Pose</transition>
     </transitions>
   </asana>
 </asanas>
