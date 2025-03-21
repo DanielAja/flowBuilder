@@ -174,6 +174,19 @@ function updateAsanaDisplay(asana) {
         asanaImageElement.src = asana.image;
         asanaImageElement.alt = `${asana.name} pose`;
         
+        // Add error handling for missing images
+        asanaImageElement.onerror = function() {
+            this.onerror = null;
+            this.src = '';
+            this.style.display = 'flex';
+            this.style.justifyContent = 'center';
+            this.style.alignItems = 'center';
+            this.style.background = '#f5f5f5';
+            this.style.fontSize = '50px';
+            this.innerText = '🧘‍♀️';
+            console.log(`Missing image for ${asana.name}`);
+        };
+        
         // Flip the image if the side is left
         if (asana.side.toLowerCase() === 'left') {
             asanaImageElement.style.transform = 'scaleX(-1)';
@@ -198,6 +211,19 @@ function updateAsanaDisplay(asana) {
         if (nextAsanaImageElement) {
             nextAsanaImageElement.src = nextAsana.image;
             nextAsanaImageElement.alt = `${nextAsana.name} pose`;
+            
+            // Add error handling for missing next pose images
+            nextAsanaImageElement.onerror = function() {
+                this.onerror = null;
+                this.src = '';
+                this.style.display = 'flex';
+                this.style.justifyContent = 'center';
+                this.style.alignItems = 'center';
+                this.style.background = '#f5f5f5';
+                this.style.fontSize = '40px';
+                this.innerText = '🧘‍♀️';
+                console.log(`Missing image for next pose: ${nextAsana.name}`);
+            };
         }
         if (comingUpSection) comingUpSection.style.display = "block";
     } else {
@@ -1694,6 +1720,21 @@ function populateAsanaList() {
         asanaImage.src = asana.image;
         asanaImage.alt = asana.name;
         
+        // Add error handling for missing images
+        asanaImage.onerror = function() {
+            this.onerror = null;
+            this.src = '';
+            this.style.display = 'flex';
+            this.style.justifyContent = 'center';
+            this.style.alignItems = 'center';
+            this.style.background = '#f5f5f5';
+            this.style.fontSize = '30px';
+            this.style.width = '120px';
+            this.style.height = '120px';
+            this.innerText = '🧘‍♀️';
+            console.log(`Missing image for ${asana.name} in asana list`);
+        };
+        
         // Create name label - use Sanskrit if toggled
         const asanaName = document.createElement('p');
         
@@ -2014,7 +2055,10 @@ function rebuildFlowTable() {
             <td title="Drag to reorder">${rowNumber}</td>
             <td>
                 <div class="table-asana">
-                    <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}">
+                    <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
+                         onerror="this.onerror=null; this.src=''; this.style.display='flex'; this.style.justifyContent='center'; 
+                         this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px'; 
+                         this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
                     <span>${typeof asana.getDisplayName === 'function' ? 
                             asana.getDisplayName(useSanskritNames) : 
                             (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
