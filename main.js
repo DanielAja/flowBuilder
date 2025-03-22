@@ -126,7 +126,7 @@ let animationFrameId = null;
 let speechEnabled = false; // Default to speech disabled
 let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
-let useSanskritNames = false; // Default to English names
+let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 
 function displayFlowDuration(duration) {
     duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
@@ -382,15 +382,21 @@ function changeScreen(screenId) {
 
     if (screenId === 'homeScreen') {
         displayFlows();
+        
+        // Hide the Sanskrit toggle when returning to home screen
+        const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
+        if (sanskritToggle) {
+            sanskritToggle.style.display = 'none';
+        }
     } else if (screenId === 'buildScreen') {
         if (!editMode) {
             clearBuildAFlow();
         }
         
-        // Sync the Sanskrit toggle state
-        const sanskritToggle = document.getElementById('sanskrit-toggle-build');
+        // Show the Sanskrit toggle on build screen
+        const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
         if (sanskritToggle) {
-            sanskritToggle.checked = useSanskritNames;
+            sanskritToggle.style.display = 'flex';
         }
         
         // Initialize the sort indicator when switching to build screen
@@ -408,10 +414,10 @@ function changeScreen(screenId) {
             }
         }, 100); // Short delay to ensure DOM is ready
     } else if (screenId === 'flowScreen') {
-        // Sync the Sanskrit toggle state
-        const sanskritToggle = document.getElementById('sanskrit-toggle-flow');
+        // Show the Sanskrit toggle on flow screen
+        const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
         if (sanskritToggle) {
-            sanskritToggle.checked = useSanskritNames;
+            sanskritToggle.style.display = 'flex';
         }
     }
 }
@@ -2094,8 +2100,8 @@ function rebuildFlowTable() {
 // Function to toggle Sanskrit names
 function toggleSanskritNames(event) {
     console.log("Toggle Sanskrit Names called");
+    const globalToggle = document.getElementById('sanskrit-toggle-global');
     const buildToggle = document.getElementById('sanskrit-toggle-build');
-    const flowToggle = document.getElementById('sanskrit-toggle-flow');
     
     // Determine which toggle was changed directly from the event
     let sourceToggle = event ? event.target : null;
@@ -2103,21 +2109,24 @@ function toggleSanskritNames(event) {
     if (!sourceToggle) {
         // If no event, try to determine from active element
         sourceToggle = document.activeElement === buildToggle ? buildToggle : 
-                        document.activeElement === flowToggle ? flowToggle : buildToggle;
+                        document.activeElement === globalToggle ? globalToggle : buildToggle;
     }
     
     // Sync both toggles to match the source toggle
-    if (buildToggle && flowToggle && sourceToggle) {
+    if (globalToggle && buildToggle && sourceToggle) {
         if (sourceToggle === buildToggle) {
-            flowToggle.checked = buildToggle.checked;
+            globalToggle.checked = buildToggle.checked;
         } else {
-            buildToggle.checked = flowToggle.checked;
+            buildToggle.checked = globalToggle.checked;
         }
     }
     
     // Update the global state
     useSanskritNames = sourceToggle ? sourceToggle.checked : false;
     console.log("Sanskrit names toggled to:", useSanskritNames);
+    
+    // Save to localStorage
+    localStorage.setItem('useSanskritNames', useSanskritNames);
     
     // Update UI elements that display pose names
     updateAsanaDisplayNames();
@@ -2174,33 +2183,21 @@ function initializeApp() {
             window.addEventListener('resize', updateScrollButtons);
             
             // Initialize toggle buttons for Sanskrit names
-            const buildToggle = document.getElementById('sanskrit-toggle-build');
-            const flowToggle = document.getElementById('sanskrit-toggle-flow');
+            const globalSanskritToggle = document.getElementById('sanskrit-toggle-global');
+            const buildSanskritToggle = document.getElementById('sanskrit-toggle-build');
             
-            // Set initial state and add direct event listeners
-            if (buildToggle) {
-                buildToggle.checked = useSanskritNames;
-                // Explicitly add event listener to handle changes
-                buildToggle.addEventListener('change', toggleSanskritNames);
+            // Set initial state
+            if (globalSanskritToggle) {
+                globalSanskritToggle.checked = useSanskritNames;
+                // Add event listener for global toggle
+                globalSanskritToggle.addEventListener('change', toggleSanskritNames);
             }
             
-            if (flowToggle) {
-                flowToggle.checked = useSanskritNames;
-                // Explicitly add event listener to handle changes
-                flowToggle.addEventListener('change', toggleSanskritNames);
+            if (buildSanskritToggle) {
+                buildSanskritToggle.checked = useSanskritNames;
+                // Add event listener for build toggle
+                buildSanskritToggle.addEventListener('change', toggleSanskritNames);
             }
-            
-            // Add a click handler to the document to handle toggle clicks differently
-            document.addEventListener('click', function(event) {
-                if (event.target.id === 'sanskrit-toggle-build' || 
-                    event.target.id === 'sanskrit-toggle-flow' ||
-                    event.target.closest('.switch')) {
-                    // Force update on next tick after the checkbox has changed state
-                    setTimeout(function() {
-                        toggleSanskritNames();
-                    }, 50);
-                }
-            });
             
             // Initialize the sort indicator to show the up arrow
             setTimeout(() => {
@@ -2219,6 +2216,12 @@ function initializeApp() {
         .catch(error => {
             console.error('Failed to initialize app:', error);
         });
+    
+    // Hide Sanskrit toggle on initial load (since we start on home screen)
+    const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
+    if (sanskritToggle) {
+        sanskritToggle.style.display = 'none';
+    }
 }
 
 // Add event listener to initialize the app when the DOM is loaded

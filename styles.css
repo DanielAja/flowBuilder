@@ -1078,40 +1078,49 @@ h1 {
   overflow: hidden;
 }
 
-#end-flow-btn {
+.flow-controls-global {
   position: fixed;
-  top: 15px;
-  right: 15px;
-  z-index: 100;
-  background: black;
-  color: white;
-  border: 2px solid white;
-  border-radius: 20px;
-  padding: 8px 15px;
-  font-size: 14px;
-  font-weight: bold;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.language-toggle-global {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#end-flow-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
 #end-flow-btn:hover {
-  background: #333;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 #end-flow-btn:active {
-  background: black;
   transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-#end-flow-btn svg {
-  stroke: white;
 }
 
 #flowScreen::before {
@@ -1221,28 +1230,6 @@ h1 {
   transition: all 0.3s ease;
 }
 
-.close-btn {
-  position: absolute;
-  top: 30px;
-  right: 10px;
-  width: 30px;
-  height: 30px;
-  background-color: white;
-  border: 2px solid #888;
-  border-radius: 50%;
-  color: #888;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 15px;
-  padding: 0;
-  line-height: 1;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-}
-
 .close-btn:hover {
   background-color: #f0f0f0;
   transform: scale(1.1);
@@ -1264,39 +1251,23 @@ h1 {
 
 /* Sanskrit Toggle Switch Styles */
 .language-toggle-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin-bottom: 15px;
-  padding: 8px 15px;
-  background-color: rgba(255, 140, 0, 0.1);
+  gap: 10px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
   border-radius: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.language-toggle-flow {
-  display: flex;
-  align-items: center;
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 5px 12px;
-  border-radius: 20px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  margin: 0 10px;
-  transition: all 0.3s ease;
-}
-
-.language-toggle-flow:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-
-.toggle-label {
-  margin-right: 10px;
+.language-toggle-container .toggle-label {
+  color: #333;
   font-size: 14px;
   font-weight: 500;
-  color: #333;
 }
 
 /* The toggle switch container */
@@ -1379,6 +1350,8 @@ input:checked + .slider:before {
   right: 0;
   padding: 20px;
   margin-top: 25px;
+}
+
 .close-btn:hover {
   background-color: #f0f0f0;
   transform: scale(1.1);
@@ -1778,14 +1751,6 @@ input:checked + .slider:before {
   margin-top: 10px;
   /* position: absolute; */
   /* right: 0; */
-.home-btn {
-  padding: 10px 20px;
-  font-size: 18px;
-  background-color: #ff8c00;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .countdown-container {
@@ -2055,4 +2020,37 @@ input:checked + .slider:before {
   .flow-item::after {
     width: 90%;
   }
+}
+
+.sanskrit-toggle-global {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sanskrit-toggle-global:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.sanskrit-toggle-global .toggle-label {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Ensure Sanskrit toggle is hidden on home screen */
+#homeScreen .sanskrit-toggle-global,
+#homeScreen .flow-controls-global {
+  display: none !important;
 }
