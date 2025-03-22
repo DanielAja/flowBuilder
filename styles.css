@@ -1603,3 +1603,37 @@ input:checked + .slider:before {
 #flowScreen > div.flow-actions > button.home-btn {
   display: none;
 }
+
+#flowScreen > div.flow-content > div.countdown-container.flow-complete > button > span {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  border: none;
+  background: #ff8c00;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#flowScreen > div.flow-content > div.countdown-container.flow-complete > button > span:hover {
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+#flowScreen > div.flow-content > div.countdown-container.flow-complete > button > span:active {
+  transform: translate(-50%, -50%) scale(0.95);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
