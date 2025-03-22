@@ -1458,11 +1458,19 @@ input:checked + .slider:before {
   background-color: white;
   padding: 5px;
   will-change: transform, opacity;
+  animation: float-next 5s ease-in-out infinite;
+}
+
+@keyframes float-next {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+  100% { transform: translateY(0px); }
 }
 
 #nextAsanaImage:hover {
   transform: scale(1.1);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  animation: none;
 }
 
 /* Styles for recommended poses */
