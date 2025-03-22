@@ -200,6 +200,11 @@ function updateAsanaDisplay(asana) {
     if (nextAsana) {
         // Show the upcoming pose
         if (nextAsanaNameElement) {
+            // Apply animation by resetting it
+            nextAsanaNameElement.style.animation = 'none';
+            nextAsanaNameElement.offsetHeight; // Trigger reflow
+            nextAsanaNameElement.style.animation = 'fade-in 0.6s ease-out';
+            
             // Handle cases where getDisplayName might not exist
             if (typeof nextAsana.getDisplayName === 'function') {
                 nextAsanaNameElement.textContent = nextAsana.getDisplayName(useSanskritNames);
@@ -209,6 +214,11 @@ function updateAsanaDisplay(asana) {
             }
         }
         if (nextAsanaImageElement) {
+            // Apply animation by resetting it
+            nextAsanaImageElement.style.animation = 'none';
+            nextAsanaImageElement.offsetHeight; // Trigger reflow
+            nextAsanaImageElement.style.animation = 'fade-in 0.6s ease-out';
+            
             nextAsanaImageElement.style.display = ""; // Reset display style to default
             nextAsanaImageElement.src = nextAsana.image;
             nextAsanaImageElement.alt = `${nextAsana.name} pose`;
@@ -226,7 +236,29 @@ function updateAsanaDisplay(asana) {
                 console.log(`Missing image for next pose: ${nextAsana.name}`);
             };
         }
-        if (comingUpSection) comingUpSection.style.display = "block";
+        if (comingUpSection) {
+            comingUpSection.style.display = "block";
+            // Reset the container animation as well
+            comingUpSection.style.animation = 'none';
+            comingUpSection.offsetHeight; // Trigger reflow
+            comingUpSection.style.animation = 'resize-container 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
+            
+            // Add specific height transition to animate the container resizing
+            const currentHeight = comingUpSection.offsetHeight;
+            comingUpSection.style.height = 'auto';
+            const autoHeight = comingUpSection.offsetHeight;
+            comingUpSection.style.height = currentHeight + 'px';
+            
+            // Force browser to recognize height change
+            setTimeout(() => {
+                comingUpSection.style.height = autoHeight + 'px';
+                
+                // Reset to auto after animation completes
+                setTimeout(() => {
+                    comingUpSection.style.height = 'auto';
+                }, 500);
+            }, 10);
+        }
     } else {
         // Show a message about completing the flow
         const isLastPose = currentAsanaIndex === editingFlow.asanas.length - 1;
