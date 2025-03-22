@@ -1245,23 +1245,13 @@ function togglePause() {
 function toggleSpeech() {
     speechEnabled = !speechEnabled;
     
-    // Update both button states
-    const speechToggleBtn = document.getElementById('speech-toggle');
-    const speechToggleFlowBtn = document.getElementById('speech-toggle-flow');
+    // Update global speech toggle
+    const speechToggleGlobal = document.getElementById('speech-toggle-global');
     
     if (speechEnabled) {
-        // Update main speech toggle button
-        if (speechToggleBtn) {
-            const buttonLabel = speechToggleBtn.querySelector('span');
-            speechToggleBtn.classList.remove('speech-disabled');
-            speechToggleBtn.title = "Voice guidance is on - Click to turn off";
-            if (buttonLabel) buttonLabel.textContent = "Sound: ON";
-        }
-        
-        // Update flow screen speech toggle button
-        if (speechToggleFlowBtn) {
-            speechToggleFlowBtn.classList.remove('speech-disabled');
-            speechToggleFlowBtn.title = "Voice guidance is on - Click to turn off";
+        // Update global speech toggle
+        if (speechToggleGlobal) {
+            speechToggleGlobal.checked = true;
         }
         
         // Speak the current pose if not paused
@@ -1283,6 +1273,11 @@ function toggleSpeech() {
             speechToggleFlowBtn.classList.add('speech-disabled');
             speechToggleFlowBtn.title = "Voice guidance is off - Click to turn on";
         }
+
+        // Update global speech toggle
+        if (speechToggleGlobal) {
+            speechToggleGlobal.checked = false;
+        }
         
         // Stop any current speech
         if (speechSynthesis.speaking) {
@@ -1290,6 +1285,18 @@ function toggleSpeech() {
         }
     }
 }
+
+// Add event listener for the global speech toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const speechToggleGlobal = document.getElementById('speech-toggle-global');
+    if (speechToggleGlobal) {
+        speechToggleGlobal.addEventListener('change', function() {
+            if (this.checked !== speechEnabled) {
+                toggleSpeech();
+            }
+        });
+    }
+});
 
 function editFlow(flowID) {
     const flows = getFlows();
