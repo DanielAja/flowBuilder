@@ -209,6 +209,7 @@ function updateAsanaDisplay(asana) {
             }
         }
         if (nextAsanaImageElement) {
+            nextAsanaImageElement.style.display = ""; // Reset display style to default
             nextAsanaImageElement.src = nextAsana.image;
             nextAsanaImageElement.alt = `${nextAsana.name} pose`;
             
