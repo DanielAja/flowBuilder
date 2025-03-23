@@ -512,6 +512,12 @@ function startNewFlow() {
         } else {
             console.error('Flow time element not found');
         }
+
+        // Clear recommended poses
+        const allPoses = document.querySelectorAll('.asana-item');
+        allPoses.forEach(pose => {
+            pose.classList.remove('recommended', 'highlight');
+        });
     }, 100);
 }
 
@@ -560,8 +566,8 @@ function selectAsana(asana) {
     
     console.log(`Added asana: ${asana.name} to the flow. Current asanas:`, editingFlow.asanas);
     
-    // Refresh the asana list to update recommended poses based on the last added pose
-    populateAsanaList();
+    // Update recommended poses based on the new last pose
+    updateRecommendedPoses();
     
     // Restore scroll position after refreshing the list
     if (asanaList) {
@@ -576,12 +582,6 @@ function selectAsana(asana) {
         setTimeout(() => {
             row.classList.remove('highlight-added');
         }, 1500);
-    }
-    
-    // Scroll to the table if it's not visible
-    const flowSequence = document.querySelector('.flow-sequence');
-    if (flowSequence) {
-        flowSequence.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
 
@@ -774,10 +774,15 @@ function saveFlow() {
         editingFlow = new Flow();
     }
 
+    // If there are no poses, just return home without saving
     if (editingFlow.asanas.length === 0) {
-        alert('Please add asanas to the flow before saving');
+        changeScreen('homeScreen');
+        editingFlow = new Flow();
+        editMode = false;
         return;
     }
+
+    // Require title only if there are poses
     if (!title) {
         alert('Please enter a title for the flow before saving');
         return;
@@ -1703,9 +1708,11 @@ function updateRecommendedPoses() {
     const recommendedPoses = getRecommendedPoses();
     const hasRecommendations = recommendedPoses.length > 0;
 
-    // Remove recommended class from all poses
+    // Remove recommended class and highlight from all poses
     const allPoses = document.querySelectorAll('.asana-item');
-    allPoses.forEach(pose => pose.classList.remove('recommended'));
+    allPoses.forEach(pose => {
+        pose.classList.remove('recommended', 'highlight');
+    });
 
     if (hasRecommendations) {
         // Add recommended class to matching poses
@@ -1831,9 +1838,6 @@ function populateAsanaList() {
     });
     
     console.log('Asana list populated with', posesList.length, 'asanas');
-    
-    // Update recommended poses after populating the list
-    updateRecommendedPoses();
 }
 
 // Scrolling functions for the asana list
