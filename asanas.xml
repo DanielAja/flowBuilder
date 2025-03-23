@@ -778,10 +778,10 @@
   </asana>
 
   <asana>
-    <n>High Lunge</n>
+    <n>Crescent Lunge</n>
     <side>Right</side>
-    <image>images/webp/high-lunge.webp</image>
-    <description>High Lunge strengthens the legs and core while stretching the hip flexors. The back knee is lifted off the ground, requiring more balance.</description>
+    <image>images/webp/crescent-lunge.webp</image>
+    <description>Crescent Lunge strengthens the legs and core while stretching the hip flexors. The back knee is lifted off the ground, requiring more balance.</description>
     <difficulty>Beginner</difficulty>
     <tags>
       <tag>Strength</tag>
@@ -794,10 +794,10 @@
   </asana>
 
   <asana>
-    <n>Crescent Lunge</n>
+    <n>Crescent Moon</n>
     <side>Right</side>
-    <image>images/webp/crescent-lunge.webp</image>
-    <description>Crescent Lunge is a variation of High Lunge with arms extended overhead. It builds strength and stability while opening the chest.</description>
+    <image>images/webp/crescent-moon.webp</image>
+    <description>Crescent Moon is a variation of Low Lunge with arms extended overhead. It builds strength and stability while opening the chest.</description>
     <difficulty>Beginner</difficulty>
     <tags>
       <tag>Strength</tag>
@@ -805,7 +805,7 @@
     </tags>
     <transitions>
       <transition>Warrior 1</transition>
-      <transition>High Lunge</transition>
+      <transition>Crescent Lunge</transition>
     </transitions>
   </asana>
 
