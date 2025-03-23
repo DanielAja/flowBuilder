@@ -58,7 +58,8 @@ class YogaAsana {
         this.description = description;
         this.difficulty = difficulty;
         this.tags = tags;
-        this.transitionsAsana = transitionsAsana;
+        // Ensure transitionsAsana is always an array
+        this.transitionsAsana = Array.isArray(transitionsAsana) ? transitionsAsana : [];
         this.duration = 7; // Default duration of 7 seconds
     }
 
@@ -73,6 +74,11 @@ class YogaAsana {
     // Get the display name based on language preference
     getDisplayName(useSanskrit = false) {
         return useSanskrit && this.sanskrit ? this.sanskrit : this.name;
+    }
+
+    // Get the transition poses
+    getTransitions() {
+        return this.transitionsAsana;
     }
 }
 
@@ -126,7 +132,7 @@ let animationFrameId = null;
 let speechEnabled = false; // Default to speech disabled
 let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
-let useSanskritNames = false; // Default to English names
+let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 
 function displayFlowDuration(duration) {
     duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
@@ -200,6 +206,11 @@ function updateAsanaDisplay(asana) {
     if (nextAsana) {
         // Show the upcoming pose
         if (nextAsanaNameElement) {
+            // Apply animation by resetting it
+            nextAsanaNameElement.style.animation = 'none';
+            nextAsanaNameElement.offsetHeight; // Trigger reflow
+            nextAsanaNameElement.style.animation = 'fade-in 0.6s ease-out';
+            
             // Handle cases where getDisplayName might not exist
             if (typeof nextAsana.getDisplayName === 'function') {
                 nextAsanaNameElement.textContent = nextAsana.getDisplayName(useSanskritNames);
@@ -209,6 +220,12 @@ function updateAsanaDisplay(asana) {
             }
         }
         if (nextAsanaImageElement) {
+            // Apply animation by resetting it
+            nextAsanaImageElement.style.animation = 'none';
+            nextAsanaImageElement.offsetHeight; // Trigger reflow
+            nextAsanaImageElement.style.animation = 'fade-in 0.6s ease-out';
+            
+            nextAsanaImageElement.style.display = ""; // Reset display style to default
             nextAsanaImageElement.src = nextAsana.image;
             nextAsanaImageElement.alt = `${nextAsana.name} pose`;
             
@@ -225,7 +242,29 @@ function updateAsanaDisplay(asana) {
                 console.log(`Missing image for next pose: ${nextAsana.name}`);
             };
         }
-        if (comingUpSection) comingUpSection.style.display = "block";
+        if (comingUpSection) {
+            comingUpSection.style.display = "block";
+            // Reset the container animation as well
+            comingUpSection.style.animation = 'none';
+            comingUpSection.offsetHeight; // Trigger reflow
+            comingUpSection.style.animation = 'resize-container 0.5s cubic-bezier(0.19, 1, 0.22, 1)';
+            
+            // Add specific height transition to animate the container resizing
+            const currentHeight = comingUpSection.offsetHeight;
+            comingUpSection.style.height = 'auto';
+            const autoHeight = comingUpSection.offsetHeight;
+            comingUpSection.style.height = currentHeight + 'px';
+            
+            // Force browser to recognize height change
+            setTimeout(() => {
+                comingUpSection.style.height = autoHeight + 'px';
+                
+                // Reset to auto after animation completes
+                setTimeout(() => {
+                    comingUpSection.style.height = 'auto';
+                }, 500);
+            }, 10);
+        }
     } else {
         // Show a message about completing the flow
         const isLastPose = currentAsanaIndex === editingFlow.asanas.length - 1;
@@ -382,15 +421,21 @@ function changeScreen(screenId) {
 
     if (screenId === 'homeScreen') {
         displayFlows();
+        
+        // Hide the Sanskrit toggle when returning to home screen
+        const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
+        if (sanskritToggle) {
+            sanskritToggle.style.display = 'none';
+        }
     } else if (screenId === 'buildScreen') {
         if (!editMode) {
             clearBuildAFlow();
         }
         
-        // Sync the Sanskrit toggle state
-        const sanskritToggle = document.getElementById('sanskrit-toggle-build');
+        // Show the Sanskrit toggle on build screen
+        const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
         if (sanskritToggle) {
-            sanskritToggle.checked = useSanskritNames;
+            sanskritToggle.style.display = 'flex';
         }
         
         // Initialize the sort indicator when switching to build screen
@@ -408,10 +453,10 @@ function changeScreen(screenId) {
             }
         }, 100); // Short delay to ensure DOM is ready
     } else if (screenId === 'flowScreen') {
-        // Sync the Sanskrit toggle state
-        const sanskritToggle = document.getElementById('sanskrit-toggle-flow');
+        // Show the Sanskrit toggle on flow screen
+        const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
         if (sanskritToggle) {
-            sanskritToggle.checked = useSanskritNames;
+            sanskritToggle.style.display = 'flex';
         }
     }
 }
@@ -467,6 +512,12 @@ function startNewFlow() {
         } else {
             console.error('Flow time element not found');
         }
+
+        // Clear recommended poses
+        const allPoses = document.querySelectorAll('.asana-item');
+        allPoses.forEach(pose => {
+            pose.classList.remove('recommended', 'highlight');
+        });
     }, 100);
 }
 
@@ -515,8 +566,8 @@ function selectAsana(asana) {
     
     console.log(`Added asana: ${asana.name} to the flow. Current asanas:`, editingFlow.asanas);
     
-    // Refresh the asana list to update recommended poses based on the last added pose
-    populateAsanaList();
+    // Update recommended poses based on the new last pose
+    updateRecommendedPoses();
     
     // Restore scroll position after refreshing the list
     if (asanaList) {
@@ -531,12 +582,6 @@ function selectAsana(asana) {
         setTimeout(() => {
             row.classList.remove('highlight-added');
         }, 1500);
-    }
-    
-    // Scroll to the table if it's not visible
-    const flowSequence = document.querySelector('.flow-sequence');
-    if (flowSequence) {
-        flowSequence.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 }
 
@@ -729,13 +774,31 @@ function saveFlow() {
         editingFlow = new Flow();
     }
 
+    // If there are no poses, just return home without saving
     if (editingFlow.asanas.length === 0) {
-        alert('Please add asanas to the flow before saving');
+        changeScreen('homeScreen');
+        editingFlow = new Flow();
+        editMode = false;
         return;
     }
+
+    // Require title only if there are poses
     if (!title) {
-        alert('Please enter a title for the flow before saving');
-        return;
+        const userChoice = confirm('Would you like to add a title to save this flow, or return home without saving?\n\nClick OK to add a title\nClick Cancel to return home');
+        if (userChoice) {
+            // User clicked OK - focus the title input
+            const titleInput = document.getElementById('title');
+            if (titleInput) {
+                titleInput.focus();
+            }
+            return;
+        } else {
+            // User clicked Cancel - return home without saving
+            changeScreen('homeScreen');
+            editingFlow = new Flow();
+            editMode = false;
+            return;
+        }
     }
 
     editingFlow.name = title;
@@ -1154,6 +1217,12 @@ function startCountdownTimer(duration) {
 function endFlow() {
     // Show a confirmation message
     if (confirm('Are you sure you want to end this flow?')) {
+        // Clear the timer if it exists
+        if (animationFrameId) {
+            clearTimeout(animationFrameId);
+            animationFrameId = null;
+        }
+
         // If the flow has a lastFlowed timestamp, keep it
         // Since the user is manually ending the flow, we consider it "completed"
         const flows = getFlows();
@@ -1239,23 +1308,13 @@ function togglePause() {
 function toggleSpeech() {
     speechEnabled = !speechEnabled;
     
-    // Update both button states
-    const speechToggleBtn = document.getElementById('speech-toggle');
-    const speechToggleFlowBtn = document.getElementById('speech-toggle-flow');
+    // Update global speech toggle
+    const speechToggleGlobal = document.getElementById('speech-toggle-global');
     
     if (speechEnabled) {
-        // Update main speech toggle button
-        if (speechToggleBtn) {
-            const buttonLabel = speechToggleBtn.querySelector('span');
-            speechToggleBtn.classList.remove('speech-disabled');
-            speechToggleBtn.title = "Voice guidance is on - Click to turn off";
-            if (buttonLabel) buttonLabel.textContent = "Sound: ON";
-        }
-        
-        // Update flow screen speech toggle button
-        if (speechToggleFlowBtn) {
-            speechToggleFlowBtn.classList.remove('speech-disabled');
-            speechToggleFlowBtn.title = "Voice guidance is on - Click to turn off";
+        // Update global speech toggle
+        if (speechToggleGlobal) {
+            speechToggleGlobal.checked = true;
         }
         
         // Speak the current pose if not paused
@@ -1277,6 +1336,11 @@ function toggleSpeech() {
             speechToggleFlowBtn.classList.add('speech-disabled');
             speechToggleFlowBtn.title = "Voice guidance is off - Click to turn on";
         }
+
+        // Update global speech toggle
+        if (speechToggleGlobal) {
+            speechToggleGlobal.checked = false;
+        }
         
         // Stop any current speech
         if (speechSynthesis.speaking) {
@@ -1284,6 +1348,18 @@ function toggleSpeech() {
         }
     }
 }
+
+// Add event listener for the global speech toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const speechToggleGlobal = document.getElementById('speech-toggle-global');
+    if (speechToggleGlobal) {
+        speechToggleGlobal.addEventListener('change', function() {
+            if (this.checked !== speechEnabled) {
+                toggleSpeech();
+            }
+        });
+    }
+});
 
 function editFlow(flowID) {
     const flows = getFlows();
@@ -1491,7 +1567,7 @@ async function loadAsanasFromXML() {
             const name = asanaElem.getElementsByTagName('n')[0]?.textContent || 'Unknown Pose';
             const sanskrit = asanaElem.getElementsByTagName('sanskrit')[0]?.textContent || '';
             const side = asanaElem.getElementsByTagName('side')[0]?.textContent || 'Center';
-            const image = asanaElem.getElementsByTagName('image')[0]?.textContent || 'images/default-pose.png';
+            const image = asanaElem.getElementsByTagName('image')[0]?.textContent || 'images/webp/default-pose.webp';
             const description = asanaElem.getElementsByTagName('description')[0]?.textContent || '';
             const difficulty = asanaElem.getElementsByTagName('difficulty')[0]?.textContent || 'Beginner';
             
@@ -1535,7 +1611,7 @@ async function loadAsanasFromXML() {
             new YogaAsana(
                 "Downward Facing Dog",
                 "Center",
-                "images/downward-facing-dog.png",
+                "images/webp/downward-facing-dog.webp",
                 "Downward Facing Dog is a standing pose that tones the legs and arms, while stretching them. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Stretch"],
@@ -1545,7 +1621,7 @@ async function loadAsanasFromXML() {
             new YogaAsana(
                 "Tree Pose",
                 "Right",
-                "images/tree-pose.png",
+                "images/webp/tree-pose.webp",
                 "Tree Pose is a standing pose that improves balance and concentration. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Balance"],
@@ -1555,7 +1631,7 @@ async function loadAsanasFromXML() {
             new YogaAsana(
                 "Warrior 2",
                 "Right",
-                "images/warrior-2.png",
+                "images/webp/warrior-2.webp",
                 "Warrior 2 is a standing pose that strengthens the legs and opens the hips. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Strength"],
@@ -1565,7 +1641,7 @@ async function loadAsanasFromXML() {
             new YogaAsana(
                 "Triangle Pose",
                 "Right",
-                "images/triangle-pose.png",
+                "images/triangle-pose.webp",
                 "Triangle Pose is a standing pose that stretches the legs and opens the hips. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Stretch"],
@@ -1584,21 +1660,30 @@ function getRecommendedPoses() {
         return [];
     }
     
-    const lastAsana = editingFlow.asanas[editingFlow.asanas.length - 1];
-    if (!lastAsana || !lastAsana.transitionsAsana) {
+    // Get the last pose based on the current table order
+    let lastAsana;
+    if (tableInDescendingOrder) {
+        // If in descending order, the last pose is at the beginning of the array
+        lastAsana = editingFlow.asanas[0];
+    } else {
+        // If in ascending order, the last pose is at the end of the array
+        lastAsana = editingFlow.asanas[editingFlow.asanas.length - 1];
+    }
+    
+    if (!lastAsana) {
         return [];
     }
     
-    // Get transition asana names
-    const transitionNames = lastAsana.transitionsAsana;
+    // Get transition asana names from the last asana
+    const transitionNames = lastAsana.getTransitions();
     
-    // Find matching asanas
+    // Find matching asanas from the full asana list
     const matches = asanas.filter(asana => 
         transitionNames.includes(asana.name)
     );
     
-    // Return only one recommendation (the first match)
-    return matches.length > 0 ? [matches[0]] : [];
+    // Return all matching transitions (up to 2)
+    return matches.slice(0, 2);
 }
 
 // Track current filter
@@ -1636,6 +1721,56 @@ function filterAsanas(category) {
     }
 }
 
+// Function to update recommended poses styling and animation
+function updateRecommendedPoses() {
+    const asanaList = document.getElementById('asanaList');
+    if (!asanaList) return;
+
+    // Get recommended poses
+    const recommendedPoses = getRecommendedPoses();
+    const hasRecommendations = recommendedPoses.length > 0;
+
+    // Remove recommended class and highlight from all poses
+    const allPoses = document.querySelectorAll('.asana-item');
+    allPoses.forEach(pose => {
+        pose.classList.remove('recommended', 'highlight');
+    });
+
+    if (hasRecommendations) {
+        // Add recommended class to matching poses
+        const recommendedEls = [];
+        allPoses.forEach(pose => {
+            const asanaName = pose.getAttribute('data-name');
+            if (recommendedPoses.some(reco => reco.name === asanaName)) {
+                pose.classList.add('recommended');
+                recommendedEls.push(pose);
+            }
+        });
+
+        // Add animation to recommended poses
+        recommendedEls.forEach((el, index) => {
+            // Scroll to make the first recommendation visible
+            if (index === 0) {
+                const recoBounds = el.getBoundingClientRect();
+                const containerBounds = asanaList.getBoundingClientRect();
+                
+                // Only scroll if the recommended pose is not fully visible
+                if (recoBounds.left < containerBounds.left || recoBounds.right > containerBounds.right) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+            
+            // Add slight delay between each recommendation animation
+            setTimeout(() => {
+                el.classList.add('highlight');
+                setTimeout(() => el.classList.remove('highlight'), 1500);
+            }, index * 200);
+        });
+
+        console.log('Recommended poses:', recommendedPoses.map(p => p.name));
+    }
+}
+
 // Populate the asana list with loaded asanas
 function populateAsanaList() {
     console.log('Populating asana list with asanas:', asanas.length);
@@ -1646,6 +1781,7 @@ function populateAsanaList() {
         return;
     }
     
+    // Clear the list
     asanaList.innerHTML = '';
     
     // Show loading message if no asanas yet
@@ -1653,10 +1789,6 @@ function populateAsanaList() {
         asanaList.innerHTML = '<div class="loading-message">Loading asanas...</div>';
         return;
     }
-    
-    // Check if we have recommended poses
-    const recommendedPoses = getRecommendedPoses();
-    const hasRecommendations = recommendedPoses.length > 0;
     
     // Filter poses based on current category
     let posesList = [...asanas];
@@ -1668,45 +1800,15 @@ function populateAsanaList() {
         });
     }
     
-    // If no poses match the filter
     if (posesList.length === 0) {
         asanaList.innerHTML = `<div class="no-matches">No poses found in the "${currentFilter}" category</div>`;
         return;
     }
     
-    // If we have recommendations, add animation but don't reposition
-    if (hasRecommendations) {
-        // Wait for elements to be created before animating
-        setTimeout(() => {
-            // Add a brief animation to the recommended pose
-            const recommendedEl = document.querySelector('.asana-item.recommended');
-            if (recommendedEl) {
-                // Scroll to make the recommendation visible
-                const recoBounds = recommendedEl.getBoundingClientRect();
-                const containerBounds = asanaList.getBoundingClientRect();
-                
-                // Only scroll if the recommended pose is not fully visible
-                if (recoBounds.left < containerBounds.left || recoBounds.right > containerBounds.right) {
-                    recommendedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }
-                
-                // Highlight it
-                recommendedEl.classList.add('highlight');
-                setTimeout(() => recommendedEl.classList.remove('highlight'), 1500);
-            }
-        }, 100);
-    }
-    
     // Create and add elements for each pose
-    posesList.forEach((asana, index) => {
+    posesList.forEach((asana) => {
         const asanaElement = document.createElement('div');
         asanaElement.className = 'asana-item';
-        
-        // Add recommended class if this is a recommended pose
-        if (recommendedPoses.some(reco => reco.name === asana.name)) {
-            asanaElement.classList.add('recommended');
-        }
-        
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
         
@@ -1737,8 +1839,6 @@ function populateAsanaList() {
         
         // Create name label - use Sanskrit if toggled
         const asanaName = document.createElement('p');
-        
-        // Check if getDisplayName exists, otherwise use direct property
         if (typeof asana.getDisplayName === 'function') {
             asanaName.textContent = asana.getDisplayName(useSanskritNames);
         } else {
@@ -1760,12 +1860,6 @@ function populateAsanaList() {
     });
     
     console.log('Asana list populated with', posesList.length, 'asanas');
-    if (hasRecommendations) {
-        console.log('Recommended poses:', recommendedPoses.map(p => p.name).join(', '));
-    }
-    
-    // Update scroll buttons visibility
-    updateScrollButtons();
 }
 
 // Scrolling functions for the asana list
@@ -1977,6 +2071,9 @@ function handleDrop(e) {
         // Rebuild the table
         rebuildFlowTable();
         
+        // Update recommended poses based on the new last pose
+        updateRecommendedPoses();
+        
         // Ensure draggable attributes are set again
         setTimeout(updateRowDragAttributes, 0);
         
@@ -1996,17 +2093,9 @@ function handleDrop(e) {
         if (editMode) {
             autoSaveFlow();
         }
-        
-        // Refresh the recommended poses based on the new last pose
-        populateAsanaList();
     } catch (error) {
-        console.error('Error during drag and drop operation:', error);
+        console.error('Error during drop:', error);
     }
-    
-    // Clean up
-    document.querySelectorAll('#flowTable tr').forEach(row => {
-        row.classList.remove('drop-target');
-    });
 }
 
 function handleDragEnd(e) {
@@ -2055,8 +2144,8 @@ function rebuildFlowTable() {
             <td title="Drag to reorder">${rowNumber}</td>
             <td>
                 <div class="table-asana">
-                    <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
-                         onerror="this.onerror=null; this.src=''; this.style.display='flex'; this.style.justifyContent='center'; 
+                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
+                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center'; 
                          this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px'; 
                          this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
                     <span>${typeof asana.getDisplayName === 'function' ? 
@@ -2094,8 +2183,8 @@ function rebuildFlowTable() {
 // Function to toggle Sanskrit names
 function toggleSanskritNames(event) {
     console.log("Toggle Sanskrit Names called");
+    const globalToggle = document.getElementById('sanskrit-toggle-global');
     const buildToggle = document.getElementById('sanskrit-toggle-build');
-    const flowToggle = document.getElementById('sanskrit-toggle-flow');
     
     // Determine which toggle was changed directly from the event
     let sourceToggle = event ? event.target : null;
@@ -2103,21 +2192,24 @@ function toggleSanskritNames(event) {
     if (!sourceToggle) {
         // If no event, try to determine from active element
         sourceToggle = document.activeElement === buildToggle ? buildToggle : 
-                        document.activeElement === flowToggle ? flowToggle : buildToggle;
+                        document.activeElement === globalToggle ? globalToggle : buildToggle;
     }
     
     // Sync both toggles to match the source toggle
-    if (buildToggle && flowToggle && sourceToggle) {
+    if (globalToggle && buildToggle && sourceToggle) {
         if (sourceToggle === buildToggle) {
-            flowToggle.checked = buildToggle.checked;
+            globalToggle.checked = buildToggle.checked;
         } else {
-            buildToggle.checked = flowToggle.checked;
+            buildToggle.checked = globalToggle.checked;
         }
     }
     
     // Update the global state
     useSanskritNames = sourceToggle ? sourceToggle.checked : false;
     console.log("Sanskrit names toggled to:", useSanskritNames);
+    
+    // Save to localStorage
+    localStorage.setItem('useSanskritNames', useSanskritNames);
     
     // Update UI elements that display pose names
     updateAsanaDisplayNames();
@@ -2174,33 +2266,21 @@ function initializeApp() {
             window.addEventListener('resize', updateScrollButtons);
             
             // Initialize toggle buttons for Sanskrit names
-            const buildToggle = document.getElementById('sanskrit-toggle-build');
-            const flowToggle = document.getElementById('sanskrit-toggle-flow');
+            const globalSanskritToggle = document.getElementById('sanskrit-toggle-global');
+            const buildSanskritToggle = document.getElementById('sanskrit-toggle-build');
             
-            // Set initial state and add direct event listeners
-            if (buildToggle) {
-                buildToggle.checked = useSanskritNames;
-                // Explicitly add event listener to handle changes
-                buildToggle.addEventListener('change', toggleSanskritNames);
+            // Set initial state
+            if (globalSanskritToggle) {
+                globalSanskritToggle.checked = useSanskritNames;
+                // Add event listener for global toggle
+                globalSanskritToggle.addEventListener('change', toggleSanskritNames);
             }
             
-            if (flowToggle) {
-                flowToggle.checked = useSanskritNames;
-                // Explicitly add event listener to handle changes
-                flowToggle.addEventListener('change', toggleSanskritNames);
+            if (buildSanskritToggle) {
+                buildSanskritToggle.checked = useSanskritNames;
+                // Add event listener for build toggle
+                buildSanskritToggle.addEventListener('change', toggleSanskritNames);
             }
-            
-            // Add a click handler to the document to handle toggle clicks differently
-            document.addEventListener('click', function(event) {
-                if (event.target.id === 'sanskrit-toggle-build' || 
-                    event.target.id === 'sanskrit-toggle-flow' ||
-                    event.target.closest('.switch')) {
-                    // Force update on next tick after the checkbox has changed state
-                    setTimeout(function() {
-                        toggleSanskritNames();
-                    }, 50);
-                }
-            });
             
             // Initialize the sort indicator to show the up arrow
             setTimeout(() => {
@@ -2219,6 +2299,12 @@ function initializeApp() {
         .catch(error => {
             console.error('Failed to initialize app:', error);
         });
+    
+    // Hide Sanskrit toggle on initial load (since we start on home screen)
+    const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
+    if (sanskritToggle) {
+        sanskritToggle.style.display = 'none';
+    }
 }
 
 // Add event listener to initialize the app when the DOM is loaded
