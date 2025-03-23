@@ -1193,6 +1193,12 @@ function startCountdownTimer(duration) {
 function endFlow() {
     // Show a confirmation message
     if (confirm('Are you sure you want to end this flow?')) {
+        // Clear the timer if it exists
+        if (animationFrameId) {
+            clearTimeout(animationFrameId);
+            animationFrameId = null;
+        }
+
         // If the flow has a lastFlowed timestamp, keep it
         // Since the user is manually ending the flow, we consider it "completed"
         const flows = getFlows();
