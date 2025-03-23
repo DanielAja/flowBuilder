@@ -97,6 +97,7 @@
       #buildScreen > div.build-content > div.language-toggle-container > button.home-btn {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 10px;
         background: rgba(255, 255, 255, 0.9);
         padding: 8px 12px;
@@ -108,6 +109,8 @@
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
+        width: 100%;
+        text-align: center;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn:hover,
@@ -174,7 +177,7 @@
             </label>
           </div>
           <button onclick="saveFlow()" class="save-flow-btn">Save Flow</button>
-          <button onclick="changeScreen('homeScreen')" class="home-btn">Back to Home</button>
+          <button onclick="changeScreen('homeScreen')" class="home-btn">Home</button>
         </div>
         <div class="asana-selection">
           <h3 class="asana-section-title">Select poses for your flow</h3>
