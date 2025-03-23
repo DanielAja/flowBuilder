@@ -438,6 +438,43 @@ function changeScreen(screenId) {
             sanskritToggle.style.display = 'flex';
         }
         
+        // Clear the asana search input
+        const asanaSearch = document.getElementById('asanaSearch');
+        if (asanaSearch) {
+            asanaSearch.value = '';
+            currentSearch = ''; // Reset the current search state
+        }
+
+        // Reset the asana list
+        const asanaList = document.getElementById('asanaList');
+        if (asanaList) {
+            asanaList.innerHTML = '';
+            // Reset filter and search states
+            currentFilter = 'all';
+            currentSearch = '';
+            // Repopulate the list with all asanas
+            populateAsanaList();
+        }
+
+        // Reset the flow table
+        const flowTable = document.getElementById('flowTable');
+        if (flowTable) {
+            // Clear existing rows except header
+            while (flowTable.rows.length > 1) {
+                flowTable.deleteRow(1);
+            }
+        }
+
+        // Reset category buttons to "All Poses"
+        const categoryButtons = document.querySelectorAll('.category-btn');
+        categoryButtons.forEach(button => {
+            if (button.textContent.includes('All Poses')) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+        
         // Initialize the sort indicator when switching to build screen
         setTimeout(() => {
             const tableHeader = document.querySelector('#flowTable th:first-child');
