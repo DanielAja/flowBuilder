@@ -1694,9 +1694,47 @@ let currentSearch = '';
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('asanaSearch');
     if (searchInput) {
+        let previousResults = [];
+        
         searchInput.addEventListener('input', function(e) {
-            currentSearch = e.target.value.toLowerCase();
-            populateAsanaList();
+            const newSearch = e.target.value.toLowerCase();
+            
+            // Get current displayed poses before applying new search
+            const asanaList = document.getElementById('asanaList');
+            const currentPoses = Array.from(asanaList.querySelectorAll('.asana-item')).map(item => item.getAttribute('data-name'));
+            
+            // Apply the new search
+            currentSearch = newSearch;
+            
+            // Get new filtered results
+            let newResults = [...asanas];
+            if (currentFilter !== 'all') {
+                newResults = newResults.filter(asana => {
+                    return asana.tags && asana.tags.some(tag => 
+                        tag.toLowerCase().includes(currentFilter.toLowerCase())
+                    );
+                });
+            }
+            if (newSearch) {
+                newResults = newResults.filter(asana => {
+                    const nameMatch = asana.name.toLowerCase().includes(newSearch);
+                    const sanskritMatch = asana.sanskrit && asana.sanskrit.toLowerCase().includes(newSearch);
+                    return nameMatch || sanskritMatch;
+                });
+            }
+            
+            // Compare new results with previous results
+            const newResultNames = newResults.map(asana => asana.name);
+            const previousResultNames = previousResults.map(asana => asana.name);
+            
+            // Only update if results have changed
+            if (JSON.stringify(newResultNames) !== JSON.stringify(previousResultNames)) {
+                // Update previous results
+                previousResults = newResults;
+                
+                // Populate the list with new results
+                populateAsanaList();
+            }
         });
     }
 });
@@ -1793,6 +1831,9 @@ function populateAsanaList() {
         return;
     }
     
+    // Get current displayed poses before clearing
+    const currentPoses = Array.from(asanaList.querySelectorAll('.asana-item')).map(item => item.getAttribute('data-name'));
+    
     // Clear the list
     asanaList.innerHTML = '';
     
@@ -1828,15 +1869,18 @@ function populateAsanaList() {
         return;
     }
     
-    // Create and add elements for each pose with staggered animation
+    // Create and add elements for each pose
     posesList.forEach((asana, index) => {
         const asanaElement = document.createElement('div');
         asanaElement.className = 'asana-item';
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
         
-        // Add staggered animation delay
-        asanaElement.style.animationDelay = `${index * 0.05}s`;
+        // Only add animation if this pose wasn't previously displayed
+        const wasPreviouslyDisplayed = currentPoses.includes(asana.name);
+        if (!wasPreviouslyDisplayed) {
+            asanaElement.style.animationDelay = `${index * 0.05}s`;
+        }
         
         // Create difficulty badge
         const difficultyBadge = document.createElement('span');
