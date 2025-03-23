@@ -60,7 +60,7 @@ class YogaAsana {
         this.tags = tags;
         // Ensure transitionsAsana is always an array
         this.transitionsAsana = Array.isArray(transitionsAsana) ? transitionsAsana : [];
-        this.duration = 7; // Default duration of 7 seconds
+        this.duration = 15; // Default duration of 15 seconds
     }
 
     setDuration(duration) {
@@ -1165,8 +1165,8 @@ function startCountdownTimer(duration) {
     
     // Make sure we have a valid duration
     if (!duration || isNaN(duration) || duration <= 0) {
-        duration = 7; // Default to 7 seconds if invalid
-        console.warn("Invalid duration, using default of 7 seconds");
+        duration = 15; // Default to 15 seconds if invalid
+        console.warn("Invalid duration, using default of 15 seconds");
     }
     
     // Reset the pause state when starting a new timer
