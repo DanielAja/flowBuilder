@@ -58,7 +58,8 @@ class YogaAsana {
         this.description = description;
         this.difficulty = difficulty;
         this.tags = tags;
-        this.transitionsAsana = transitionsAsana;
+        // Ensure transitionsAsana is always an array
+        this.transitionsAsana = Array.isArray(transitionsAsana) ? transitionsAsana : [];
         this.duration = 7; // Default duration of 7 seconds
     }
 
@@ -73,6 +74,11 @@ class YogaAsana {
     // Get the display name based on language preference
     getDisplayName(useSanskrit = false) {
         return useSanskrit && this.sanskrit ? this.sanskrit : this.name;
+    }
+
+    // Get the transition poses
+    getTransitions() {
+        return this.transitionsAsana;
     }
 }
 
@@ -1637,20 +1643,20 @@ function getRecommendedPoses() {
     }
     
     const lastAsana = editingFlow.asanas[editingFlow.asanas.length - 1];
-    if (!lastAsana || !lastAsana.transitionsAsana) {
+    if (!lastAsana) {
         return [];
     }
     
-    // Get transition asana names
-    const transitionNames = lastAsana.transitionsAsana;
+    // Get transition asana names from the last asana
+    const transitionNames = lastAsana.getTransitions();
     
-    // Find matching asanas
+    // Find matching asanas from the full asana list
     const matches = asanas.filter(asana => 
         transitionNames.includes(asana.name)
     );
     
-    // Return only one recommendation (the first match)
-    return matches.length > 0 ? [matches[0]] : [];
+    // Return all matching transitions (up to 2)
+    return matches.slice(0, 2);
 }
 
 // Track current filter
@@ -1688,6 +1694,54 @@ function filterAsanas(category) {
     }
 }
 
+// Function to update recommended poses styling and animation
+function updateRecommendedPoses() {
+    const asanaList = document.getElementById('asanaList');
+    if (!asanaList) return;
+
+    // Get recommended poses
+    const recommendedPoses = getRecommendedPoses();
+    const hasRecommendations = recommendedPoses.length > 0;
+
+    // Remove recommended class from all poses
+    const allPoses = document.querySelectorAll('.asana-item');
+    allPoses.forEach(pose => pose.classList.remove('recommended'));
+
+    if (hasRecommendations) {
+        // Add recommended class to matching poses
+        const recommendedEls = [];
+        allPoses.forEach(pose => {
+            const asanaName = pose.getAttribute('data-name');
+            if (recommendedPoses.some(reco => reco.name === asanaName)) {
+                pose.classList.add('recommended');
+                recommendedEls.push(pose);
+            }
+        });
+
+        // Add animation to recommended poses
+        recommendedEls.forEach((el, index) => {
+            // Scroll to make the first recommendation visible
+            if (index === 0) {
+                const recoBounds = el.getBoundingClientRect();
+                const containerBounds = asanaList.getBoundingClientRect();
+                
+                // Only scroll if the recommended pose is not fully visible
+                if (recoBounds.left < containerBounds.left || recoBounds.right > containerBounds.right) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+            
+            // Add slight delay between each recommendation animation
+            setTimeout(() => {
+                el.classList.add('highlight');
+                setTimeout(() => el.classList.remove('highlight'), 1500);
+            }, index * 200);
+        });
+
+        console.log('Recommended poses:', recommendedPoses.map(p => p.name));
+    }
+}
+
 // Populate the asana list with loaded asanas
 function populateAsanaList() {
     console.log('Populating asana list with asanas:', asanas.length);
@@ -1698,6 +1752,7 @@ function populateAsanaList() {
         return;
     }
     
+    // Clear the list
     asanaList.innerHTML = '';
     
     // Show loading message if no asanas yet
@@ -1705,10 +1760,6 @@ function populateAsanaList() {
         asanaList.innerHTML = '<div class="loading-message">Loading asanas...</div>';
         return;
     }
-    
-    // Check if we have recommended poses
-    const recommendedPoses = getRecommendedPoses();
-    const hasRecommendations = recommendedPoses.length > 0;
     
     // Filter poses based on current category
     let posesList = [...asanas];
@@ -1720,45 +1771,15 @@ function populateAsanaList() {
         });
     }
     
-    // If no poses match the filter
     if (posesList.length === 0) {
         asanaList.innerHTML = `<div class="no-matches">No poses found in the "${currentFilter}" category</div>`;
         return;
     }
     
-    // If we have recommendations, add animation but don't reposition
-    if (hasRecommendations) {
-        // Wait for elements to be created before animating
-        setTimeout(() => {
-            // Add a brief animation to the recommended pose
-            const recommendedEl = document.querySelector('.asana-item.recommended');
-            if (recommendedEl) {
-                // Scroll to make the recommendation visible
-                const recoBounds = recommendedEl.getBoundingClientRect();
-                const containerBounds = asanaList.getBoundingClientRect();
-                
-                // Only scroll if the recommended pose is not fully visible
-                if (recoBounds.left < containerBounds.left || recoBounds.right > containerBounds.right) {
-                    recommendedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }
-                
-                // Highlight it
-                recommendedEl.classList.add('highlight');
-                setTimeout(() => recommendedEl.classList.remove('highlight'), 1500);
-            }
-        }, 100);
-    }
-    
     // Create and add elements for each pose
-    posesList.forEach((asana, index) => {
+    posesList.forEach((asana) => {
         const asanaElement = document.createElement('div');
         asanaElement.className = 'asana-item';
-        
-        // Add recommended class if this is a recommended pose
-        if (recommendedPoses.some(reco => reco.name === asana.name)) {
-            asanaElement.classList.add('recommended');
-        }
-        
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
         
@@ -1789,8 +1810,6 @@ function populateAsanaList() {
         
         // Create name label - use Sanskrit if toggled
         const asanaName = document.createElement('p');
-        
-        // Check if getDisplayName exists, otherwise use direct property
         if (typeof asana.getDisplayName === 'function') {
             asanaName.textContent = asana.getDisplayName(useSanskritNames);
         } else {
@@ -1812,12 +1831,9 @@ function populateAsanaList() {
     });
     
     console.log('Asana list populated with', posesList.length, 'asanas');
-    if (hasRecommendations) {
-        console.log('Recommended poses:', recommendedPoses.map(p => p.name).join(', '));
-    }
     
-    // Update scroll buttons visibility
-    updateScrollButtons();
+    // Update recommended poses after populating the list
+    updateRecommendedPoses();
 }
 
 // Scrolling functions for the asana list
@@ -2029,6 +2045,9 @@ function handleDrop(e) {
         // Rebuild the table
         rebuildFlowTable();
         
+        // Update recommended poses based on the new last pose
+        updateRecommendedPoses();
+        
         // Ensure draggable attributes are set again
         setTimeout(updateRowDragAttributes, 0);
         
@@ -2048,17 +2067,9 @@ function handleDrop(e) {
         if (editMode) {
             autoSaveFlow();
         }
-        
-        // Refresh the recommended poses based on the new last pose
-        populateAsanaList();
     } catch (error) {
-        console.error('Error during drag and drop operation:', error);
+        console.error('Error during drop:', error);
     }
-    
-    // Clean up
-    document.querySelectorAll('#flowTable tr').forEach(row => {
-        row.classList.remove('drop-target');
-    });
 }
 
 function handleDragEnd(e) {
