@@ -16,6 +16,7 @@
     <transitions>
       <transition>Forward Fold</transition>
       <transition>Chair Pose</transition>
+      <transition>Tree Pose</transition>
     </transitions>
   </asana>
 
@@ -33,6 +34,7 @@
     <transitions>
       <transition>Cat Pose</transition>
       <transition>Downward Facing Dog</transition>
+      <transition>Child's Pose</transition>
     </transitions>
   </asana>
 
@@ -50,6 +52,7 @@
     <transitions>
       <transition>Easy Pose</transition>
       <transition>Seated Forward Fold</transition>
+      <transition>Boat Pose</transition>
     </transitions>
   </asana>
 
@@ -69,6 +72,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Forward Fold</transition>
+      <transition>Chair Twist</transition>
     </transitions>
   </asana>
 
@@ -86,6 +90,7 @@
     <transitions>
       <transition>Chair Pose</transition>
       <transition>Mountain Pose</transition>
+      <transition>Revolved Chair Pose</transition>
     </transitions>
   </asana>
 
@@ -103,6 +108,7 @@
     <transitions>
       <transition>Warrior 2</transition>
       <transition>Mountain Pose</transition>
+      <transition>Humble Warrior</transition>
     </transitions>
   </asana>
 
@@ -118,8 +124,9 @@
       <tag>Strength</tag>
     </tags>
     <transitions>
-      <transition>Mountain Pose</transition>
+      <transition>Extended Side Angle</transition>
       <transition>Triangle Pose</transition>
+      <transition>Reverse Warrior</transition>
     </transitions>
   </asana>
 
@@ -137,6 +144,7 @@
     <transitions>
       <transition>Warrior 2</transition>
       <transition>Half Moon Pose</transition>
+      <transition>Revolved Triangle Pose</transition>
     </transitions>
   </asana>
 
@@ -154,6 +162,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Warrior 3</transition>
+      <transition>Eagle Pose</transition>
     </transitions>
   </asana>
 
@@ -171,6 +180,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Half Forward Fold</transition>
+      <transition>Standing Split</transition>
     </transitions>
   </asana>
 
@@ -188,6 +198,7 @@
     <transitions>
       <transition>Forward Fold</transition>
       <transition>Plank</transition>
+      <transition>Mountain Pose</transition>
     </transitions>
   </asana>
 
@@ -205,6 +216,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Triangle Pose</transition>
+      <transition>Garland Pose</transition>
     </transitions>
   </asana>
 
@@ -222,6 +234,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Forward Fold</transition>
+      <transition>Wide-Legged Forward Fold</transition>
     </transitions>
   </asana>
 
@@ -240,6 +253,7 @@
     <transitions>
       <transition>Warrior 1</transition>
       <transition>Half Moon Pose</transition>
+      <transition>Standing Split</transition>
     </transitions>
   </asana>
 
@@ -257,6 +271,7 @@
     <transitions>
       <transition>Triangle Pose</transition>
       <transition>Warrior 3</transition>
+      <transition>Standing Split</transition>
     </transitions>
   </asana>
 
@@ -274,6 +289,7 @@
     <transitions>
       <transition>Triangle Pose</transition>
       <transition>Warrior 2</transition>
+      <transition>Half Moon Pose</transition>
     </transitions>
   </asana>
 
@@ -291,6 +307,7 @@
     <transitions>
       <transition>Chair Pose</transition>
       <transition>Mountain Pose</transition>
+      <transition>Chair Twist</transition>
     </transitions>
   </asana>
 
@@ -308,6 +325,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Tree Pose</transition>
+      <transition>Chair Pose</transition>
     </transitions>
   </asana>
 
@@ -325,6 +343,7 @@
     <transitions>
       <transition>Warrior 2</transition>
       <transition>Triangle Pose</transition>
+      <transition>Reverse Warrior</transition>
     </transitions>
   </asana>
 
@@ -342,6 +361,7 @@
     <transitions>
       <transition>Warrior 2</transition>
       <transition>Extended Side Angle</transition>
+      <transition>Half Moon Pose</transition>
     </transitions>
   </asana>
 
@@ -359,6 +379,7 @@
     <transitions>
       <transition>Forward Fold</transition>
       <transition>Half Moon Pose</transition>
+      <transition>Warrior 3</transition>
     </transitions>
   </asana>
 
@@ -375,6 +396,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Tree Pose</transition>
+      <transition>Warrior 3</transition>
     </transitions>
   </asana>
 
@@ -390,7 +412,8 @@
     </tags>
     <transitions>
       <transition>Warrior 1</transition>
-      <transition>Standing Forward Fold</transition>
+      <transition>Forward Fold</transition>
+      <transition>Wide-Legged Forward Fold</transition>
     </transitions>
   </asana>
 
@@ -410,6 +433,7 @@
     <transitions>
       <transition>Corpse Pose</transition>
       <transition>Staff Pose</transition>
+      <transition>Butterfly Pose</transition>
     </transitions>
   </asana>
 
@@ -427,6 +451,7 @@
     <transitions>
       <transition>Staff Pose</transition>
       <transition>Butterfly Pose</transition>
+      <transition>Boat Pose</transition>
     </transitions>
   </asana>
 
@@ -444,6 +469,7 @@
     <transitions>
       <transition>Seated Forward Fold</transition>
       <transition>Easy Pose</transition>
+      <transition>Half Lord of the Fishes</transition>
     </transitions>
   </asana>
 
@@ -460,6 +486,7 @@
     <transitions>
       <transition>Child's Pose</transition>
       <transition>Camel Pose</transition>
+      <transition>Gate Pose</transition>
     </transitions>
   </asana>
 
@@ -477,6 +504,7 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Table Top</transition>
+      <transition>Thread the Needle</transition>
     </transitions>
   </asana>
 
@@ -494,6 +522,7 @@
     <transitions>
       <transition>Easy Pose</transition>
       <transition>Bridge Pose</transition>
+      <transition>Reclined Twist</transition>
     </transitions>
   </asana>
 
@@ -510,6 +539,7 @@
     <transitions>
       <transition>Hero Pose</transition>
       <transition>Child's Pose</transition>
+      <transition>Table Top</transition>
     </transitions>
   </asana>
 
@@ -526,6 +556,7 @@
     <transitions>
       <transition>Corpse Pose</transition>
       <transition>Reclined Twist</transition>
+      <transition>Supine Twist</transition>
     </transitions>
   </asana>
 
@@ -542,6 +573,7 @@
     <transitions>
       <transition>Easy Pose</transition>
       <transition>Staff Pose</transition>
+      <transition>Butterfly Pose</transition>
     </transitions>
   </asana>
 
@@ -558,6 +590,7 @@
     <transitions>
       <transition>Corpse Pose</transition>
       <transition>Bridge Pose</transition>
+      <transition>Supine Twist</transition>
     </transitions>
   </asana>
 
@@ -574,6 +607,7 @@
     <transitions>
       <transition>Corpse Pose</transition>
       <transition>Happy Baby</transition>
+      <transition>Reclined Twist</transition>
     </transitions>
   </asana>
 
@@ -591,6 +625,7 @@
     <transitions>
       <transition>Staff Pose</transition>
       <transition>Seated Forward Fold</transition>
+      <transition>Plank</transition>
     </transitions>
   </asana>
 
@@ -607,6 +642,7 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Child's Pose</transition>
+      <transition>Half Pigeon</transition>
     </transitions>
   </asana>
 
@@ -623,6 +659,7 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Thread the Needle</transition>
+      <transition>Pigeon Pose</transition>
     </transitions>
   </asana>
 
@@ -639,6 +676,7 @@
     <transitions>
       <transition>Low Lunge</transition>
       <transition>Downward Facing Dog</transition>
+      <transition>Pigeon Pose</transition>
     </transitions>
   </asana>
 
@@ -656,6 +694,7 @@
     <transitions>
       <transition>Cow Pose</transition>
       <transition>Child's Pose</transition>
+      <transition>Table Top</transition>
     </transitions>
   </asana>
 
@@ -672,6 +711,7 @@
     <transitions>
       <transition>Cat Pose</transition>
       <transition>Table Top</transition>
+      <transition>Cobra Pose</transition>
     </transitions>
   </asana>
 
@@ -688,6 +728,7 @@
     <transitions>
       <transition>Table Top</transition>
       <transition>Child's Pose</transition>
+      <transition>Cat Pose</transition>
     </transitions>
   </asana>
 
@@ -707,6 +748,7 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Low Plank</transition>
+      <transition>Forearm Plank</transition>
     </transitions>
   </asana>
 
@@ -724,6 +766,7 @@
     <transitions>
       <transition>Plank</transition>
       <transition>Upward Facing Dog</transition>
+      <transition>Cobra Pose</transition>
     </transitions>
   </asana>
 
@@ -740,6 +783,7 @@
     <transitions>
       <transition>Plank</transition>
       <transition>Dolphin Pose</transition>
+      <transition>Side Plank</transition>
     </transitions>
   </asana>
 
@@ -757,6 +801,7 @@
     <transitions>
       <transition>Plank</transition>
       <transition>Wild Thing</transition>
+      <transition>Forearm Plank</transition>
     </transitions>
   </asana>
 
@@ -774,14 +819,15 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Warrior 1</transition>
+      <transition>Lizard Pose</transition>
     </transitions>
   </asana>
 
   <asana>
-    <n>High Lunge</n>
+    <n>Crescent Lunge</n>
     <side>Right</side>
-    <image>images/webp/high-lunge.webp</image>
-    <description>High Lunge strengthens the legs and core while stretching the hip flexors. The back knee is lifted off the ground, requiring more balance.</description>
+    <image>images/webp/crescent-lunge.webp</image>
+    <description>Crescent Lunge strengthens the legs and core while stretching the hip flexors. The back knee is lifted off the ground, requiring more balance.</description>
     <difficulty>Beginner</difficulty>
     <tags>
       <tag>Strength</tag>
@@ -790,14 +836,15 @@
     <transitions>
       <transition>Warrior 1</transition>
       <transition>Plank</transition>
+      <transition>Low Lunge</transition>
     </transitions>
   </asana>
 
   <asana>
-    <n>Crescent Lunge</n>
+    <n>Crescent Moon</n>
     <side>Right</side>
-    <image>images/webp/crescent-lunge.webp</image>
-    <description>Crescent Lunge is a variation of High Lunge with arms extended overhead. It builds strength and stability while opening the chest.</description>
+    <image>images/webp/crescent-moon.webp</image>
+    <description>Crescent Moon is a variation of Low Lunge with arms extended overhead. It builds strength and stability while opening the chest.</description>
     <difficulty>Beginner</difficulty>
     <tags>
       <tag>Strength</tag>
@@ -805,7 +852,8 @@
     </tags>
     <transitions>
       <transition>Warrior 1</transition>
-      <transition>High Lunge</transition>
+      <transition>Crescent Lunge</transition>
+      <transition>Reverse Warrior</transition>
     </transitions>
   </asana>
 
@@ -825,6 +873,7 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Child's Pose</transition>
+      <transition>Upward Facing Dog</transition>
     </transitions>
   </asana>
 
@@ -842,6 +891,7 @@
     <transitions>
       <transition>Low Plank</transition>
       <transition>Downward Facing Dog</transition>
+      <transition>Cobra Pose</transition>
     </transitions>
   </asana>
 
@@ -858,6 +908,7 @@
     <transitions>
       <transition>Corpse Pose</transition>
       <transition>Wheel Pose</transition>
+      <transition>Shoulder Stand</transition>
     </transitions>
   </asana>
 
@@ -874,6 +925,7 @@
     <transitions>
       <transition>Cobra Pose</transition>
       <transition>Bow Pose</transition>
+      <transition>Child's Pose</transition>
     </transitions>
   </asana>
 
@@ -891,6 +943,7 @@
     <transitions>
       <transition>Child's Pose</transition>
       <transition>Hero Pose</transition>
+      <transition>Bow Pose</transition>
     </transitions>
   </asana>
 
@@ -907,6 +960,7 @@
     <transitions>
       <transition>Cobra Pose</transition>
       <transition>Child's Pose</transition>
+      <transition>Locust Pose</transition>
     </transitions>
   </asana>
 
@@ -923,6 +977,7 @@
     <transitions>
       <transition>Corpse Pose</transition>
       <transition>Bridge Pose</transition>
+      <transition>Shoulder Stand</transition>
     </transitions>
   </asana>
 
@@ -939,6 +994,7 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Side Plank</transition>
+      <transition>Wheel Pose</transition>
     </transitions>
   </asana>
 
@@ -956,6 +1012,7 @@
     <transitions>
       <transition>Bridge Pose</transition>
       <transition>Corpse Pose</transition>
+      <transition>Wild Thing</transition>
     </transitions>
   </asana>
 
@@ -974,7 +1031,8 @@
     </tags>
     <transitions>
       <transition>Plank</transition>
-      <transition>Cobra</transition>
+      <transition>Child's Pose</transition>
+      <transition>Dolphin Pose</transition>
     </transitions>
   </asana>
 
@@ -992,6 +1050,7 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Child's Pose</transition>
+      <transition>Headstand</transition>
     </transitions>
   </asana>
 
@@ -1008,6 +1067,7 @@
     <transitions>
       <transition>Fish Pose</transition>
       <transition>Plow Pose</transition>
+      <transition>Bridge Pose</transition>
     </transitions>
   </asana>
 
@@ -1024,6 +1084,7 @@
     <transitions>
       <transition>Shoulder Stand</transition>
       <transition>Corpse Pose</transition>
+      <transition>Fish Pose</transition>
     </transitions>
   </asana>
 
@@ -1041,6 +1102,7 @@
     <transitions>
       <transition>Dolphin Pose</transition>
       <transition>Child's Pose</transition>
+      <transition>Shoulder Stand</transition>
     </transitions>
   </asana>
 
@@ -1057,6 +1119,7 @@
     <transitions>
       <transition>Plank</transition>
       <transition>Chair Pose</transition>
+      <transition>Flying Pigeon</transition>
     </transitions>
   </asana>
 
@@ -1073,6 +1136,7 @@
     <transitions>
       <transition>Crow Pose</transition>
       <transition>Tree Pose</transition>
+      <transition>Headstand</transition>
     </transitions>
   </asana>
 </asanas>

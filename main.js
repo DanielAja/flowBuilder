@@ -1686,8 +1686,58 @@ function getRecommendedPoses() {
     return matches.slice(0, 2);
 }
 
-// Track current filter
+// Track current filter and search
 let currentFilter = 'all';
+let currentSearch = '';
+
+// Add event listener for search input
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('asanaSearch');
+    if (searchInput) {
+        let previousResults = [];
+        
+        searchInput.addEventListener('input', function(e) {
+            const newSearch = e.target.value.toLowerCase();
+            
+            // Get current displayed poses before applying new search
+            const asanaList = document.getElementById('asanaList');
+            const currentPoses = Array.from(asanaList.querySelectorAll('.asana-item')).map(item => item.getAttribute('data-name'));
+            
+            // Apply the new search
+            currentSearch = newSearch;
+            
+            // Get new filtered results
+            let newResults = [...asanas];
+            if (currentFilter !== 'all') {
+                newResults = newResults.filter(asana => {
+                    return asana.tags && asana.tags.some(tag => 
+                        tag.toLowerCase().includes(currentFilter.toLowerCase())
+                    );
+                });
+            }
+            if (newSearch) {
+                newResults = newResults.filter(asana => {
+                    const nameMatch = asana.name.toLowerCase().includes(newSearch);
+                    const sanskritMatch = asana.sanskrit && asana.sanskrit.toLowerCase().includes(newSearch);
+                    return nameMatch || sanskritMatch;
+                });
+            }
+            
+            // Compare new results with previous results
+            const newResultNames = newResults.map(asana => asana.name);
+            const previousResultNames = previousResults.map(asana => asana.name);
+            
+            // Only update if results have changed
+            if (JSON.stringify(newResultNames) !== JSON.stringify(previousResultNames)) {
+                // Update previous results
+                previousResults = newResults;
+                
+                // Populate the list with new results
+                populateAsanaList();
+            }
+        });
+    }
+});
 
 // Filter asanas based on category
 function filterAsanas(category) {
@@ -1781,6 +1831,9 @@ function populateAsanaList() {
         return;
     }
     
+    // Get current displayed poses before clearing
+    const currentPoses = Array.from(asanaList.querySelectorAll('.asana-item')).map(item => item.getAttribute('data-name'));
+    
     // Clear the list
     asanaList.innerHTML = '';
     
@@ -1790,8 +1843,10 @@ function populateAsanaList() {
         return;
     }
     
-    // Filter poses based on current category
+    // Filter poses based on current category and search
     let posesList = [...asanas];
+    
+    // Apply category filter
     if (currentFilter !== 'all') {
         posesList = posesList.filter(asana => {
             return asana.tags && asana.tags.some(tag => 
@@ -1800,17 +1855,32 @@ function populateAsanaList() {
         });
     }
     
+    // Apply search filter
+    if (currentSearch) {
+        posesList = posesList.filter(asana => {
+            const nameMatch = asana.name.toLowerCase().includes(currentSearch);
+            const sanskritMatch = asana.sanskrit && asana.sanskrit.toLowerCase().includes(currentSearch);
+            return nameMatch || sanskritMatch;
+        });
+    }
+    
     if (posesList.length === 0) {
-        asanaList.innerHTML = `<div class="no-matches">No poses found in the "${currentFilter}" category</div>`;
+        asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
         return;
     }
     
     // Create and add elements for each pose
-    posesList.forEach((asana) => {
+    posesList.forEach((asana, index) => {
         const asanaElement = document.createElement('div');
         asanaElement.className = 'asana-item';
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
+        
+        // Only add animation if this pose wasn't previously displayed
+        const wasPreviouslyDisplayed = currentPoses.includes(asana.name);
+        if (!wasPreviouslyDisplayed) {
+            asanaElement.style.animationDelay = `${index * 0.05}s`;
+        }
         
         // Create difficulty badge
         const difficultyBadge = document.createElement('span');

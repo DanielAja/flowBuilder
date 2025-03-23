@@ -151,6 +151,155 @@
         flex-shrink: 0;
         min-width: fit-content;
       }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container {
+        width: 100%;
+        padding: 10px 0;
+        position: relative;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        color: #999;
+        pointer-events: none;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 4px;
+        background: transparent;
+        z-index: 1;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input {
+        width: 100%;
+        padding: 12px 20px;
+        padding-left: 50px;
+        border: 2px solid #eee;
+        border-radius: 25px;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input:focus {
+        border-color: #ff8c00;
+        box-shadow: 0 4px 8px rgba(255, 140, 0, 0.1);
+        background: rgba(255, 255, 255, 1);
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input:focus ~ .search-icon {
+        color: #ff8c00;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input::placeholder {
+        color: #999;
+        font-weight: 400;
+      }
+
+      #buildScreen > div.build-content > div.build-form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        max-width: 600px;
+        margin: 0;
+        padding: 10px;
+        border-radius: 15px;
+        outline: none;
+      }
+
+      #buildScreen > div.build-content > div.build-form > input[type="text"] {
+        width: 100%;
+        padding: 8px 15px;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.9);
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.build-form > textarea {
+        width: 100%;
+        padding: 8px 15px;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.9);
+        min-height: 80px;
+        resize: vertical;
+        font-family: inherit;
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.build-form > input[type="text"]:focus,
+      #buildScreen > div.build-content > div.build-form > textarea:focus {
+        border-color: #ff8c00;
+        box-shadow: 0 4px 8px rgba(255, 140, 0, 0.1);
+        background: rgba(255, 255, 255, 1);
+      }
+
+      #buildScreen > div.build-content > div.build-form > .flow-duration {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 15px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        border: 2px solid #eee;
+        margin: 0;
+        outline: none;
+      }
+
+      #buildScreen > div.build-content > div.build-form > .flow-duration > label {
+        font-size: 16px;
+        color: #333;
+        font-weight: 500;
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.build-form > .flow-duration > p {
+        font-size: 16px;
+        color: #ff8c00;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.build-form > input[type="text"]::placeholder,
+      #buildScreen > div.build-content > div.build-form > textarea::placeholder {
+        color: #999;
+        font-weight: 400;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.asana-scroll-container > #asanaList > .asana-item {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: slideIn 0.3s ease forwards;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
   <body>
@@ -206,6 +355,10 @@
         </div>
         <div class="asana-selection">
           <h3 class="asana-section-title">Select poses for your flow</h3>
+          <div class="search-container">
+            <div class="search-icon">🔍</div>
+            <input type="text" id="asanaSearch" placeholder="Search poses..." class="search-input">
+          </div>
           <div class="asana-category-buttons">
             <button class="category-btn active" onclick="filterAsanas('all')">All Poses</button>
             <button class="category-btn" onclick="filterAsanas('Standing')">Standing</button>
