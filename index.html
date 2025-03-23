@@ -200,6 +200,84 @@
         color: #999;
         font-weight: 400;
       }
+
+      #buildScreen > div.build-content > div.build-form {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        max-width: 600px;
+        margin: 0;
+        padding: 10px;
+        border-radius: 15px;
+        outline: none;
+      }
+
+      #buildScreen > div.build-content > div.build-form > input[type="text"] {
+        width: 100%;
+        padding: 8px 15px;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.9);
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.build-form > textarea {
+        width: 100%;
+        padding: 8px 15px;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        font-size: 16px;
+        outline: none;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.9);
+        min-height: 80px;
+        resize: vertical;
+        font-family: inherit;
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.build-form > input[type="text"]:focus,
+      #buildScreen > div.build-content > div.build-form > textarea:focus {
+        border-color: #ff8c00;
+        box-shadow: 0 4px 8px rgba(255, 140, 0, 0.1);
+        background: rgba(255, 255, 255, 1);
+      }
+
+      #buildScreen > div.build-content > div.build-form > .flow-duration {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 15px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        border: 2px solid #eee;
+        margin: 0;
+        outline: none;
+      }
+
+      #buildScreen > div.build-content > div.build-form > .flow-duration > label {
+        font-size: 16px;
+        color: #333;
+        font-weight: 500;
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.build-form > .flow-duration > p {
+        font-size: 16px;
+        color: #ff8c00;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.build-form > input[type="text"]::placeholder,
+      #buildScreen > div.build-content > div.build-form > textarea::placeholder {
+        color: #999;
+        font-weight: 400;
+      }
     </style>
   </head>
   <body>
