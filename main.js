@@ -1660,7 +1660,16 @@ function getRecommendedPoses() {
         return [];
     }
     
-    const lastAsana = editingFlow.asanas[editingFlow.asanas.length - 1];
+    // Get the last pose based on the current table order
+    let lastAsana;
+    if (tableInDescendingOrder) {
+        // If in descending order, the last pose is at the beginning of the array
+        lastAsana = editingFlow.asanas[0];
+    } else {
+        // If in ascending order, the last pose is at the end of the array
+        lastAsana = editingFlow.asanas[editingFlow.asanas.length - 1];
+    }
+    
     if (!lastAsana) {
         return [];
     }
