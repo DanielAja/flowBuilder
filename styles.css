@@ -1255,13 +1255,9 @@ h1 {
   top: 20px;
   left: 20px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 10px;
   z-index: 1000;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 8px 12px;
-  border-radius: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .language-toggle-container .toggle-label {
@@ -1327,6 +1323,36 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.language-toggle-container .save-flow-btn,
+.language-toggle-container .home-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.language-toggle-container .save-flow-btn:hover,
+.language-toggle-container .home-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.language-toggle-container .save-flow-btn:active,
+.language-toggle-container .home-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .asana-image-container {
@@ -1612,7 +1638,6 @@ input:checked + .slider:before {
 #flowScreen > div.flow-actions > button.home-btn {
   display: none;
 }
-
 #flowScreen > div.flow-content > div.countdown-container.flow-complete > button > span {
   width: 80%;
   height: 80%;
@@ -1646,3 +1671,34 @@ input:checked + .slider:before {
   transform: translate(-50%, -50%) scale(0.95);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
+
+#buildScreen > div.build-content > div.build-actions > button.save-flow-btn,
+#buildScreen > div.build-content > div.build-actions > button.home-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#buildScreen > div.build-content > div.build-actions > button.save-flow-btn:hover,
+#buildScreen > div.build-content > div.build-actions > button.home-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+#buildScreen > div.build-content > div.build-actions > button.save-flow-btn:active,
+#buildScreen > div.build-content > div.build-actions > button.home-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+

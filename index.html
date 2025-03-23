@@ -11,6 +11,117 @@
         text-align: center;
         width: 100%;
       }
+
+      #buildScreen > div.build-content > div.language-toggle-container {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 1000;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 12px;
+        border-radius: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.toggle-label {
+        color: #333;
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input:checked + span.slider {
+        background-color: #ff8c00;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input:focus + span.slider {
+        box-shadow: 0 0 1px #ff8c00;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input:checked + span.slider:before {
+        transform: translateX(20px);
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider.round {
+        border-radius: 24px;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider.round:before {
+        border-radius: 50%;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn,
+      #buildScreen > div.build-content > div.language-toggle-container > button.home-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 8px 12px;
+        border-radius: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: none;
+        color: #333;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn:hover,
+      #buildScreen > div.build-content > div.language-toggle-container > button.home-btn:hover {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-1px);
+      }
+
+      #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn:active,
+      #buildScreen > div.build-content > div.language-toggle-container > button.home-btn:active {
+        transform: translateY(1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
     </style>
   </head>
   <body>
@@ -54,15 +165,19 @@
           </div>
         </div>
         
-        <div class="asana-selection">
-          <h3 class="asana-section-title">Select poses for your flow</h3>
-          <div class="language-toggle-container">
+        <div class="language-toggle-container">
+          <div class="language-toggle-global">
             <label class="toggle-label">🕉️</label>
             <label class="switch">
               <input type="checkbox" id="sanskrit-toggle-build">
               <span class="slider round"></span>
             </label>
           </div>
+          <button onclick="saveFlow()" class="save-flow-btn">Save Flow</button>
+          <button onclick="changeScreen('homeScreen')" class="home-btn">Back to Home</button>
+        </div>
+        <div class="asana-selection">
+          <h3 class="asana-section-title">Select poses for your flow</h3>
           <div class="asana-category-buttons">
             <button class="category-btn active" onclick="filterAsanas('all')">All Poses</button>
             <button class="category-btn" onclick="filterAsanas('Standing')">Standing</button>
@@ -89,13 +204,6 @@
               <th>Remove</th>
             </tr>
           </table>
-        </div>
-        
-        <div class="build-actions">
-          <button onclick="saveFlow()" class="save-flow-btn">Save Flow</button>
-          <button onclick="changeScreen('homeScreen')" class="home-btn">
-            Back to Home
-          </button>
         </div>
         
         <p class="drag-drop-hint">Drag position numbers to reorder sequence</p>
