@@ -1858,7 +1858,8 @@ function populateAsanaList() {
     // Apply search filter
     if (currentSearch) {
         posesList = posesList.filter(asana => {
-            const nameMatch = asana.name.toLowerCase().includes(currentSearch);
+            const displayName = asana.getDisplayName(useSanskritNames);
+            const nameMatch = displayName.toLowerCase().includes(currentSearch);
             const sanskritMatch = asana.sanskrit && asana.sanskrit.toLowerCase().includes(currentSearch);
             return nameMatch || sanskritMatch;
         });
@@ -1890,7 +1891,7 @@ function populateAsanaList() {
         // Create image element
         const asanaImage = document.createElement('img');
         asanaImage.src = asana.image;
-        asanaImage.alt = asana.name;
+        asanaImage.alt = asana.getDisplayName(useSanskritNames);
         
         // Add error handling for missing images
         asanaImage.onerror = function() {
@@ -1904,16 +1905,12 @@ function populateAsanaList() {
             this.style.width = '120px';
             this.style.height = '120px';
             this.innerText = '🧘‍♀️';
-            console.log(`Missing image for ${asana.name} in asana list`);
+            console.log(`Missing image for ${asana.getDisplayName(useSanskritNames)} in asana list`);
         };
         
-        // Create name label - use Sanskrit if toggled
+        // Create name label - use getDisplayName for consistent naming
         const asanaName = document.createElement('p');
-        if (typeof asana.getDisplayName === 'function') {
-            asanaName.textContent = asana.getDisplayName(useSanskritNames);
-        } else {
-            asanaName.textContent = useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
-        }
+        asanaName.textContent = asana.getDisplayName(useSanskritNames);
         
         // Append elements
         asanaElement.appendChild(difficultyBadge);
@@ -2255,6 +2252,7 @@ function toggleSanskritNames(event) {
     console.log("Toggle Sanskrit Names called");
     const globalToggle = document.getElementById('sanskrit-toggle-global');
     const buildToggle = document.getElementById('sanskrit-toggle-build');
+    const flowToggle = document.getElementById('sanskrit-toggle-flow');
     
     // Determine which toggle was changed directly from the event
     let sourceToggle = event ? event.target : null;
@@ -2262,16 +2260,19 @@ function toggleSanskritNames(event) {
     if (!sourceToggle) {
         // If no event, try to determine from active element
         sourceToggle = document.activeElement === buildToggle ? buildToggle : 
-                        document.activeElement === globalToggle ? globalToggle : buildToggle;
+                      document.activeElement === globalToggle ? globalToggle :
+                      document.activeElement === flowToggle ? flowToggle : buildToggle;
     }
     
-    // Sync both toggles to match the source toggle
-    if (globalToggle && buildToggle && sourceToggle) {
-        if (sourceToggle === buildToggle) {
-            globalToggle.checked = buildToggle.checked;
-        } else {
-            buildToggle.checked = globalToggle.checked;
-        }
+    // Sync all toggles to match the source toggle
+    if (globalToggle && sourceToggle) {
+        globalToggle.checked = sourceToggle.checked;
+    }
+    if (buildToggle && sourceToggle) {
+        buildToggle.checked = sourceToggle.checked;
+    }
+    if (flowToggle && sourceToggle) {
+        flowToggle.checked = sourceToggle.checked;
     }
     
     // Update the global state
@@ -2284,14 +2285,12 @@ function toggleSanskritNames(event) {
     // Update UI elements that display pose names
     updateAsanaDisplayNames();
     
-    // Repopulate the asana list to show the updated names
-    if (currentScreenId === 'buildScreen') {
-        populateAsanaList();
-        
-        // Force rebuild of the flow table
-        if (editingFlow && editingFlow.asanas && editingFlow.asanas.length > 0) {
-            rebuildFlowTable();
-        }
+    // Always update the asana list regardless of current screen
+    populateAsanaList();
+    
+    // Force rebuild of the flow table if we have a flow
+    if (editingFlow && editingFlow.asanas && editingFlow.asanas.length > 0) {
+        rebuildFlowTable();
     }
     
     // If in flow screen, update the current asana display
