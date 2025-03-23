@@ -156,28 +156,42 @@ h1 {
   background-color: rgba(255, 140, 0, 0.05);
 }
 
-
 .flow-actions {
   display: flex;
   gap: 10px;
 }
 
 .flow-btn {
-  background-color: #fff;
-  border: 1px solid #333;
-  color: #333;
-  padding: 5px 15px;
-  border-radius: 15px;
+  background-color: #ff8c00;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 20px;
   font-size: 14px;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.flow-btn:hover {
+  background-color: #e67e00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.flow-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .edit-btn,
 .delete-btn {
-  background-color: #333;
-  color: #fff;
-  border: none;
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #e0e0e0;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -186,20 +200,19 @@ h1 {
   align-items: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.edit-btn {
-  background-color: #333;
-}
-
-.delete-btn {
-  background-color: #333;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .edit-btn:hover, .delete-btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  border-color: #ff8c00;
+  color: #ff8c00;
+}
+
+.edit-btn:active, .delete-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .edit-btn::after {
