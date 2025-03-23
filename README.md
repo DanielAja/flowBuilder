@@ -6,15 +6,54 @@ A web application for creating and practicing custom yoga flows.
 
 Try the live demo: [https://danielaja.github.io/flowBuilder/](https://danielaja.github.io/flowBuilder/)
 
+## Screenshots
+
+### Flow Builder Interface
+![Flow Builder Interface](build-a-flow-screenshot.png)
+*Main interface for building your yoga flow*
+
+### Pose Search
+![Pose Search](build-a-flow-screenshot-search.png)
+*Search and filter through available yoga poses*
+
+### Flow Practice - Sanskrit Names
+![Flow Practice with Sanskrit Names](flow-screen-screenshot-sandscript.png)
+*Practice mode showing Sanskrit pose names*
+
+### Flow Practice - English Names
+![Flow Practice](flow-screen-screenshot.png)
+*Practice mode showing English pose names*
+
 ## Features
 
-- Create and save custom yoga flows
-- Library of yoga poses with descriptions and difficulty levels
-- Filter poses by category (Standing, Seated, Balance, etc.)
-- Track when flows were last practiced
+### Flow Creation
+- Create and customize your own yoga flows
+- Search and browse through an extensive library of yoga poses
+- Filter poses by categories (Standing, Seated, Backbends, Balance, Stretches, Strength)
+- Add poses to your flow with duration settings for each pose
+- View total flow duration while building
+- Save flows with custom names and descriptions
+
+### Pose Library
+- Comprehensive library of yoga poses with difficulty levels (Beginner, Intermediate)
+- Visual pose representations with clear silhouette images
+- Both English and Sanskrit names for poses
+- Recommended poses highlighted for better guidance
+- Search functionality to quickly find specific poses
+
+### Practice Mode
+- Practice saved flows with intuitive timing system
+- Toggle between Sanskrit and English pose names
+- Visual countdown timer for each pose
+- Preview of upcoming poses
 - End flows at any time with the End Flow button
-- Responsive design works on desktop and mobile
+- Track when flows were last practiced
+
+### Technical Features
+- Responsive design works on desktop and mobile devices
 - Local storage persistence of created flows
+- Clean, modern interface
+- No account required - start creating flows immediately
 
 ## Getting Started
 
