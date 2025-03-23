@@ -1178,9 +1178,9 @@ function startCountdownTimer(duration) {
     
     // Calculate the circle circumference (2 * PI * radius)
     const circumference = 2 * Math.PI * 45; // The circle has r=45
-    countdownCircle.style.strokeDasharray = circumference;
     
-    // Reset the countdown animation
+    // Reset the countdown animation with the new duration
+    countdownCircle.style.strokeDasharray = circumference;
     countdownCircle.style.strokeDashoffset = "0";
     
     // Clear any existing timer
@@ -1204,8 +1204,10 @@ function startCountdownTimer(duration) {
             
             // Update the circle animation - offset increases as time decreases
             if (countdownCircle) {
-                const dashOffset = circumference * (timeLeft / duration);
-                countdownCircle.style.strokeDashoffset = circumference - dashOffset;
+                // Calculate the progress (0 to 1) and multiply by circumference
+                const progress = timeLeft / duration;
+                const dashOffset = circumference * (1 - progress);
+                countdownCircle.style.strokeDashoffset = dashOffset;
             }
             
             // Check if time is up
@@ -1217,13 +1219,23 @@ function startCountdownTimer(duration) {
                     const nextAsana = editingFlow.asanas[currentAsanaIndex];
                     console.log("Next asana:", nextAsana.name);
                     const nextDuration = updateAsanaDisplay(nextAsana);
-                    timeLeft = nextDuration;
                     
-                    // Reset the circle animation for the next pose
+                    // Clear the existing timer before starting a new one
+                    if (animationFrameId) {
+                        clearTimeout(animationFrameId);
+                        animationFrameId = null;
+                    }
+                    
+                    // Reset the circle animation
                     if (countdownCircle) {
                         countdownCircle.style.strokeDasharray = circumference;
                         countdownCircle.style.strokeDashoffset = "0";
                     }
+                    
+                    // Start a new timer with the next asana's duration
+                    setTimeout(() => {
+                        startCountdownTimer(nextDuration);
+                    }, 100);
                 } else {
                     console.log("End of flow reached!");
                     // End of flow - transform timer into a home button
