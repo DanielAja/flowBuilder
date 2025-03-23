@@ -125,6 +125,27 @@
         transform: translateY(1px);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
+
+      #buildScreen > div.build-content > div.asana-selection > div.asana-category-buttons {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        padding: 10px 0;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+        width: 100%;
+        flex-wrap: nowrap;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.asana-category-buttons::-webkit-scrollbar {
+        display: none; /* Chrome, Safari and Opera */
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.asana-category-buttons > button.category-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+        min-width: fit-content;
+      }
     </style>
   </head>
   <body>
