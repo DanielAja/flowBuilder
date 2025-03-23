@@ -1543,7 +1543,7 @@ async function loadAsanasFromXML() {
             const name = asanaElem.getElementsByTagName('n')[0]?.textContent || 'Unknown Pose';
             const sanskrit = asanaElem.getElementsByTagName('sanskrit')[0]?.textContent || '';
             const side = asanaElem.getElementsByTagName('side')[0]?.textContent || 'Center';
-            const image = asanaElem.getElementsByTagName('image')[0]?.textContent || 'images/default-pose.png';
+            const image = asanaElem.getElementsByTagName('image')[0]?.textContent || 'images/webp/default-pose.webp';
             const description = asanaElem.getElementsByTagName('description')[0]?.textContent || '';
             const difficulty = asanaElem.getElementsByTagName('difficulty')[0]?.textContent || 'Beginner';
             
@@ -1587,7 +1587,7 @@ async function loadAsanasFromXML() {
             new YogaAsana(
                 "Downward Facing Dog",
                 "Center",
-                "images/downward-facing-dog.png",
+                "images/webp/downward-facing-dog.webp",
                 "Downward Facing Dog is a standing pose that tones the legs and arms, while stretching them. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Stretch"],
@@ -1597,7 +1597,7 @@ async function loadAsanasFromXML() {
             new YogaAsana(
                 "Tree Pose",
                 "Right",
-                "images/tree-pose.png",
+                "images/webp/tree-pose.webp",
                 "Tree Pose is a standing pose that improves balance and concentration. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Balance"],
@@ -1607,7 +1607,7 @@ async function loadAsanasFromXML() {
             new YogaAsana(
                 "Warrior 2",
                 "Right",
-                "images/warrior-2.png",
+                "images/webp/warrior-2.webp",
                 "Warrior 2 is a standing pose that strengthens the legs and opens the hips. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Strength"],
@@ -1617,7 +1617,7 @@ async function loadAsanasFromXML() {
             new YogaAsana(
                 "Triangle Pose",
                 "Right",
-                "images/triangle-pose.png",
+                "images/triangle-pose.webp",
                 "Triangle Pose is a standing pose that stretches the legs and opens the hips. It is a great pose for beginners.",
                 "Beginner",
                 ["Standing", "Stretch"],
@@ -2107,8 +2107,8 @@ function rebuildFlowTable() {
             <td title="Drag to reorder">${rowNumber}</td>
             <td>
                 <div class="table-asana">
-                    <img src="${asana.image}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
-                         onerror="this.onerror=null; this.src=''; this.style.display='flex'; this.style.justifyContent='center'; 
+                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
+                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center'; 
                          this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px'; 
                          this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
                     <span>${typeof asana.getDisplayName === 'function' ? 
