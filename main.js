@@ -1824,16 +1824,19 @@ function populateAsanaList() {
     }
     
     if (posesList.length === 0) {
-        asanaList.innerHTML = `<div class="no-matches">No poses found matching your criteria</div>`;
+        asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
         return;
     }
     
-    // Create and add elements for each pose
-    posesList.forEach((asana) => {
+    // Create and add elements for each pose with staggered animation
+    posesList.forEach((asana, index) => {
         const asanaElement = document.createElement('div');
         asanaElement.className = 'asana-item';
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
+        
+        // Add staggered animation delay
+        asanaElement.style.animationDelay = `${index * 0.05}s`;
         
         // Create difficulty badge
         const difficultyBadge = document.createElement('span');

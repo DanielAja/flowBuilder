@@ -278,6 +278,23 @@
         color: #999;
         font-weight: 400;
       }
+
+      #buildScreen > div.build-content > div.asana-selection > div.asana-scroll-container > #asanaList > .asana-item {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: slideIn 0.3s ease forwards;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
   </head>
   <body>
