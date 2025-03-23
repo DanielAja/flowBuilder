@@ -1686,8 +1686,20 @@ function getRecommendedPoses() {
     return matches.slice(0, 2);
 }
 
-// Track current filter
+// Track current filter and search
 let currentFilter = 'all';
+let currentSearch = '';
+
+// Add event listener for search input
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('asanaSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            currentSearch = e.target.value.toLowerCase();
+            populateAsanaList();
+        });
+    }
+});
 
 // Filter asanas based on category
 function filterAsanas(category) {
@@ -1790,8 +1802,10 @@ function populateAsanaList() {
         return;
     }
     
-    // Filter poses based on current category
+    // Filter poses based on current category and search
     let posesList = [...asanas];
+    
+    // Apply category filter
     if (currentFilter !== 'all') {
         posesList = posesList.filter(asana => {
             return asana.tags && asana.tags.some(tag => 
@@ -1800,8 +1814,17 @@ function populateAsanaList() {
         });
     }
     
+    // Apply search filter
+    if (currentSearch) {
+        posesList = posesList.filter(asana => {
+            const nameMatch = asana.name.toLowerCase().includes(currentSearch);
+            const sanskritMatch = asana.sanskrit && asana.sanskrit.toLowerCase().includes(currentSearch);
+            return nameMatch || sanskritMatch;
+        });
+    }
+    
     if (posesList.length === 0) {
-        asanaList.innerHTML = `<div class="no-matches">No poses found in the "${currentFilter}" category</div>`;
+        asanaList.innerHTML = `<div class="no-matches">No poses found matching your criteria</div>`;
         return;
     }
     

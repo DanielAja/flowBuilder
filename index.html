@@ -146,6 +146,60 @@
         flex-shrink: 0;
         min-width: fit-content;
       }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container {
+        width: 100%;
+        padding: 10px 0;
+        position: relative;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-icon {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        color: #999;
+        pointer-events: none;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        padding: 4px;
+        background: transparent;
+        z-index: 1;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input {
+        width: 100%;
+        padding: 12px 20px;
+        padding-left: 50px;
+        border: 2px solid #eee;
+        border-radius: 25px;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        margin: 0;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input:focus {
+        border-color: #ff8c00;
+        box-shadow: 0 4px 8px rgba(255, 140, 0, 0.1);
+        background: rgba(255, 255, 255, 1);
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input:focus ~ .search-icon {
+        color: #ff8c00;
+      }
+
+      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input::placeholder {
+        color: #999;
+        font-weight: 400;
+      }
     </style>
   </head>
   <body>
@@ -201,6 +255,10 @@
         </div>
         <div class="asana-selection">
           <h3 class="asana-section-title">Select poses for your flow</h3>
+          <div class="search-container">
+            <div class="search-icon">🔍</div>
+            <input type="text" id="asanaSearch" placeholder="Search poses..." class="search-input">
+          </div>
           <div class="asana-category-buttons">
             <button class="category-btn active" onclick="filterAsanas('all')">All Poses</button>
             <button class="category-btn" onclick="filterAsanas('Standing')">Standing</button>
