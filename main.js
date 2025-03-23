@@ -784,8 +784,21 @@ function saveFlow() {
 
     // Require title only if there are poses
     if (!title) {
-        alert('Please enter a title for the flow before saving');
-        return;
+        const userChoice = confirm('Would you like to add a title to save this flow, or return home without saving?\n\nClick OK to add a title\nClick Cancel to return home');
+        if (userChoice) {
+            // User clicked OK - focus the title input
+            const titleInput = document.getElementById('title');
+            if (titleInput) {
+                titleInput.focus();
+            }
+            return;
+        } else {
+            // User clicked Cancel - return home without saving
+            changeScreen('homeScreen');
+            editingFlow = new Flow();
+            editMode = false;
+            return;
+        }
     }
 
     editingFlow.name = title;
