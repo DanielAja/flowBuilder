@@ -385,6 +385,7 @@
 
   <asana>
     <n>Dancer Pose</n>
+    <sanskrit>Natarajasana</sanskrit>
     <side>Right</side>
     <image>images/webp/dancer-pose.webp</image>
     <description>Dancer Pose combines balance, strength, and flexibility. Standing on one leg, the other foot is held behind while the free arm extends forward.</description>
@@ -402,6 +403,7 @@
 
   <asana>
     <n>Humble Warrior</n>
+    <sanskrit>Baddha Virabhadrasana</sanskrit>
     <side>Right</side>
     <image>images/webp/humble-warrior.webp</image>
     <description>Humble Warrior begins in Warrior 1 position with hands interlaced behind the back, folding forward inside the front leg. It deeply opens shoulders and hips.</description>
@@ -475,6 +477,7 @@
 
   <asana>
     <n>Hero Pose</n>
+    <sanskrit>Virasana</sanskrit>
     <side>Center</side>
     <image>images/webp/hero-pose.webp</image>
     <description>Hero Pose stretches the thighs and ankles. It improves posture and digestion when practiced regularly.</description>
@@ -528,6 +531,7 @@
 
   <asana>
     <n>Gate Pose</n>
+    <sanskrit>Parighasana</sanskrit>
     <side>Right</side>
     <image>images/webp/gate-pose.webp</image>
     <description>Gate Pose is a kneeling side stretch that opens the side body, shoulders, and hips. One leg extends to the side while the arm overhead creates a lateral stretch.</description>
@@ -545,6 +549,7 @@
 
   <asana>
     <n>Happy Baby</n>
+    <sanskrit>Ananda Balasana</sanskrit>
     <side>Center</side>
     <image>images/webp/happy-baby.webp</image>
     <description>Happy Baby opens the hips while lying on the back. Grab the outsides of the feet and gently pull knees toward armpits, creating a stretch in the inner groin.</description>
@@ -562,6 +567,7 @@
 
   <asana>
     <n>Half Lord of the Fishes</n>
+    <sanskrit>Ardha Matsyendrasana</sanskrit>
     <side>Right</side>
     <image>images/webp/half-lord-of-the-fishes.webp</image>
     <description>Half Lord of the Fishes is a seated spinal twist that improves digestion and mobility. One leg crosses over the extended leg with the opposite elbow outside the raised knee.</description>
@@ -579,6 +585,7 @@
 
   <asana>
     <n>Reclined Twist</n>
+    <sanskrit>Jathara Parivartanasana</sanskrit>
     <side>Right</side>
     <image>images/webp/reclined-twist.webp</image>
     <description>Reclined Twist is performed lying on the back with knees falling to one side. It gently stretches the spine and opens the shoulders.</description>
@@ -596,6 +603,7 @@
 
   <asana>
     <n>Supine Twist</n>
+    <sanskrit>Supta Matsyendrasana</sanskrit>
     <side>Right</side>
     <image>images/webp/supine-twist.webp</image>
     <description>Supine Twist is performed lying on the back with knees dropping to one side. Arms extend in a T-position for a gentle spinal rotation.</description>
@@ -614,6 +622,7 @@
   <!-- Intermediate Seated and Floor Poses -->
   <asana>
     <n>Boat Pose</n>
+    <sanskrit>Navasana</sanskrit>
     <side>Center</side>
     <image>images/webp/boat-pose.webp</image>
     <description>Boat Pose strongly engages the core muscles. Balancing on the sit bones, legs and upper body lift to create a V-shape.</description>
@@ -631,6 +640,7 @@
 
   <asana>
     <n>Pigeon Pose</n>
+    <sanskrit>Eka Pada Rajakapotasana</sanskrit>
     <side>Right</side>
     <image>images/webp/pigeon-pose.webp</image>
     <description>Pigeon Pose deeply opens the hips and stretches the glutes. It's a therapeutic pose for tight hips.</description>
@@ -648,6 +658,7 @@
 
   <asana>
     <n>Half Pigeon</n>
+    <sanskrit>Ardha Eka Pada Rajakapotasana</sanskrit>
     <side>Right</side>
     <image>images/webp/half-pigeon.webp</image>
     <description>Half Pigeon is a deep hip opener with the front shin parallel to the front of the mat. The back leg extends behind while the upper body can fold forward over the front leg.</description>
@@ -665,6 +676,7 @@
 
   <asana>
     <n>Lizard Pose</n>
+    <sanskrit>Utthan Pristhasana</sanskrit>
     <side>Right</side>
     <image>images/webp/lizard-pose.webp</image>
     <description>Lizard Pose is a deep hip opener that stretches the hamstrings, hip flexors, and quadriceps. The front foot is stepped to the outer edge of the mat with forearms or hands on the floor.</description>
@@ -683,6 +695,7 @@
   <!-- CAT-COW SEQUENCE -->
   <asana>
     <n>Cat Pose</n>
+    <sanskrit>Marjaryasana</sanskrit>
     <side>Center</side>
     <image>images/webp/cat-pose.webp</image>
     <description>Cat Pose is performed on hands and knees, arching the back upward while tucking the chin to chest. It helps improve spinal flexibility and relieves back tension.</description>
@@ -700,6 +713,7 @@
 
   <asana>
     <n>Cow Pose</n>
+    <sanskrit>Bitilasana</sanskrit>
     <side>Center</side>
     <image>images/webp/cow-pose.webp</image>
     <description>Cow Pose is performed on hands and knees, dropping the belly down while lifting the chest and gaze. It gently stretches the front torso and neck.</description>
@@ -717,6 +731,7 @@
 
   <asana>
     <n>Thread the Needle</n>
+    <sanskrit>Parsva Balasana</sanskrit>
     <side>Right</side>
     <image>images/webp/thread-the-needle.webp</image>
     <description>Thread the Needle begins in Table Top, then one arm threads under the body, creating a gentle twist in the spine. Great for releasing shoulder tension.</description>
@@ -772,6 +787,7 @@
 
   <asana>
     <n>Forearm Plank</n>
+    <sanskrit>Phalakasana II</sanskrit>
     <side>Center</side>
     <image>images/webp/forearm-plank.webp</image>
     <description>Forearm Plank strengthens the core, arms, and shoulders. The body remains in a straight line supported by forearms and toes.</description>
@@ -790,6 +806,7 @@
   <!-- Intermediate Core Poses -->
   <asana>
     <n>Side Plank</n>
+    <sanskrit>Vasisthasana</sanskrit>
     <side>Right</side>
     <image>images/webp/side-plank.webp</image>
     <description>Side Plank strengthens the wrists, arms, and core while improving balance. The body forms a straight line supported by one arm with feet stacked or staggered.</description>
@@ -808,6 +825,7 @@
   <!-- LUNGES -->
   <asana>
     <n>Low Lunge</n>
+    <sanskrit>Anjaneyasana</sanskrit>
     <side>Right</side>
     <image>images/webp/low-lunge.webp</image>
     <description>Low Lunge stretches the hip flexors and quadriceps while improving balance and stability. The back knee rests on the ground.</description>
@@ -825,6 +843,7 @@
 
   <asana>
     <n>Crescent Lunge</n>
+    <sanskrit>Ashta Chandrasana</sanskrit>
     <side>Right</side>
     <image>images/webp/crescent-lunge.webp</image>
     <description>Crescent Lunge strengthens the legs and core while stretching the hip flexors. The back knee is lifted off the ground, requiring more balance.</description>
@@ -842,6 +861,7 @@
 
   <asana>
     <n>Crescent Moon</n>
+    <sanskrit>Ardha Chandrasana Chapasana</sanskrit>
     <side>Right</side>
     <image>images/webp/crescent-moon.webp</image>
     <description>Crescent Moon is a variation of Low Lunge with arms extended overhead. It builds strength and stability while opening the chest.</description>
@@ -897,6 +917,7 @@
 
   <asana>
     <n>Bridge Pose</n>
+    <sanskrit>Setu Bandhasana</sanskrit>
     <side>Center</side>
     <image>images/webp/bridge-pose.webp</image>
     <description>Bridge Pose strengthens the glutes and opens the chest. It's a gentle backbend that energizes the body.</description>
@@ -914,6 +935,7 @@
 
   <asana>
     <n>Locust Pose</n>
+    <sanskrit>Salabhasana</sanskrit>
     <side>Center</side>
     <image>images/webp/locust-pose.webp</image>
     <description>Locust Pose strengthens the back muscles. Lying on the stomach, the chest, arms, and legs lift away from the floor.</description>
@@ -932,6 +954,7 @@
   <!-- Intermediate Backbends -->
   <asana>
     <n>Camel Pose</n>
+    <sanskrit>Ustrasana</sanskrit>
     <side>Center</side>
     <image>images/webp/camel-pose.webp</image>
     <description>Camel Pose is a deep backbend that opens the chest and shoulders. It stimulates the digestive system.</description>
@@ -949,6 +972,7 @@
 
   <asana>
     <n>Bow Pose</n>
+    <sanskrit>Dhanurasana</sanskrit>
     <side>Center</side>
     <image>images/webp/bow-pose.webp</image>
     <description>Bow Pose strengthens the back while opening the chest and shoulders. It stimulates the abdominal organs.</description>
@@ -966,6 +990,7 @@
 
   <asana>
     <n>Fish Pose</n>
+    <sanskrit>Matsyasana</sanskrit>
     <side>Center</side>
     <image>images/webp/fish-pose.webp</image>
     <description>Fish Pose opens the chest and throat. It's an energizing backbend that counteracts slouching.</description>
@@ -983,6 +1008,7 @@
 
   <asana>
     <n>Wild Thing</n>
+    <sanskrit>Camatkarasana</sanskrit>
     <side>Right</side>
     <image>images/webp/wild-thing.webp</image>
     <description>Wild Thing is a playful heart opener that transitions from Downward Dog or Side Plank. One arm supports the body while the opposite leg and arm extend, creating a backbend.</description>
@@ -1001,6 +1027,7 @@
   <!-- Advanced Backbends -->
   <asana>
     <n>Wheel Pose</n>
+    <sanskrit>Urdhva Dhanurasana</sanskrit>
     <side>Center</side>
     <image>images/webp/wheel-pose.webp</image>
     <description>Wheel Pose is a deep backbend that opens the chest and shoulders while strengthening the arms and legs.</description>
@@ -1039,6 +1066,7 @@
   <!-- Intermediate Inversions -->
   <asana>
     <n>Dolphin Pose</n>
+    <sanskrit>Ardha Pincha Mayurasana</sanskrit>
     <side>Center</side>
     <image>images/webp/dolphin-pose.webp</image>
     <description>Dolphin Pose strengthens the shoulders and arms while stretching the hamstrings. It's good preparation for headstand.</description>
@@ -1056,6 +1084,7 @@
 
   <asana>
     <n>Shoulder Stand</n>
+    <sanskrit>Salamba Sarvangasana</sanskrit>
     <side>Center</side>
     <image>images/webp/shoulder-stand.webp</image>
     <description>Shoulder Stand calms the nervous system and stimulates the thyroid. It's known as the queen of all yoga poses.</description>
@@ -1073,6 +1102,7 @@
 
   <asana>
     <n>Plow Pose</n>
+    <sanskrit>Halasana</sanskrit>
     <side>Center</side>
     <image>images/webp/plow-pose.webp</image>
     <description>Plow Pose stretches the spine and shoulders. It calms the mind and reduces stress and fatigue.</description>
@@ -1091,6 +1121,7 @@
   <!-- Advanced Inversions and Arm Balances -->
   <asana>
     <n>Headstand</n>
+    <sanskrit>Sirsasana</sanskrit>
     <side>Center</side>
     <image>images/webp/headstand.webp</image>
     <description>Headstand improves circulation, balance, and focus. It's considered the king of all yoga poses.</description>
@@ -1108,6 +1139,7 @@
 
   <asana>
     <n>Crow Pose</n>
+    <sanskrit>Bakasana</sanskrit>
     <side>Center</side>
     <image>images/webp/crow-pose.webp</image>
     <description>Crow Pose is an arm balance that builds strength in the arms and core. It improves focus and balance.</description>
@@ -1125,6 +1157,7 @@
 
   <asana>
     <n>Flying Pigeon</n>
+    <sanskrit>Eka Pada Galavasana</sanskrit>
     <side>Right</side>
     <image>images/webp/flying-pigeon.webp</image>
     <description>Flying Pigeon is an advanced arm balance. One leg hooks over the upper arm while the other leg extends back, balancing on the hands.</description>
