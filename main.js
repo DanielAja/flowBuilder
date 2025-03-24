@@ -293,7 +293,7 @@ function updateAsanaDisplay(asana) {
     console.log('Next Asana:', nextAsana ? nextAsana.name : 'End of flow', 'Image:', nextAsana ? nextAsana.image : 'End of flow image');
 
     // Ensure we return a valid numeric duration
-    return asana.duration || 7; // Default to 7 seconds if not set
+    return asana.duration || 15; // Default to 15 seconds if not set
 }
 
 // Function to speak the asana name
@@ -581,7 +581,7 @@ function selectAsana(asana) {
         [...asana.transitionsAsana || []],
         asana.sanskrit
     );
-    newAsana.setDuration(7); // Default 7 seconds
+    newAsana.setDuration(15); // Default 15 seconds
     
     // Add to the beginning or end of the array based on sort order
     if (tableInDescendingOrder) {
@@ -687,11 +687,11 @@ function updateRowNumbers() {
 }
 
 function updateFlowDuration() {
-    // Check for empty values and set to 7 seconds
+    // Check for empty values and set to 15 seconds
     const durationInputs = document.querySelectorAll('#flowTable .duration-wrapper input[type="number"]');
     durationInputs.forEach(input => {
         if (input.value === '' || parseInt(input.value) === 0) {
-            input.value = 7;
+            input.value = 15;
         }
     });
 
@@ -701,7 +701,7 @@ function updateFlowDuration() {
         if (index < editingFlow.asanas.length) {
             const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
             if (durationInput) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 7;
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 15;
             }
         }
     });
@@ -853,7 +853,7 @@ function saveFlow() {
             const sideSelect = row.querySelector('select.side-select');
             
             if (durationInput && sideSelect) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 7;
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 15;
                 editingFlow.asanas[index].side = sideSelect.value;
             }
         }
@@ -1041,7 +1041,7 @@ function playFlow(flowID) {
                 asana.transitionsAsana || [],
                 asana.sanskrit || ""
             );
-            newAsana.setDuration(asana.duration || 7);
+            newAsana.setDuration(asana.duration || 15);
             return newAsana;
         });
     }
@@ -1438,7 +1438,7 @@ function editFlow(flowID) {
                     asana.transitionsAsana || [],
                     asana.sanskrit || ""
                 );
-                newAsana.setDuration(asana.duration || 7);
+                newAsana.setDuration(asana.duration || 15);
                 return newAsana;
             }
             return asana;
@@ -1472,7 +1472,7 @@ function editFlow(flowID) {
                 asana.transitionsAsana || [],
                 asana.sanskrit || ""
             );
-            newAsana.setDuration(asana.duration || 7);
+            newAsana.setDuration(asana.duration || 15);
             return newAsana;
         }
         return asana;
