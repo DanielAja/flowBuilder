@@ -2683,6 +2683,9 @@ function saveSequence() {
     
     // Show success notification
     showToastNotification(`Sequence "${sequenceName}" saved successfully`);
+    
+    // Update the sequences display
+    displaySequences();
 }
 
 // Function to load sequences
@@ -2706,6 +2709,9 @@ function deleteSequence(sequenceId) {
     localStorage.setItem('sequences', JSON.stringify(sequences));
     
     showToastNotification('Sequence deleted successfully');
+    
+    // Update the sequences display
+    displaySequences();
 }
 
 // Function to load a sequence into the current flow
@@ -2768,13 +2774,21 @@ function displaySequences() {
         return;
     }
     
-    sequencesList.innerHTML = sequences.map(sequence => `
+    sequencesList.innerHTML = sequences.map(sequence => {
+        // Get first three pose names
+        const poseNames = sequence.poses.slice(0, 3).map(p => p.name);
+        // Add ellipsis if there are more than 3 poses
+        const description = sequence.poses.length > 3 
+            ? `${poseNames.join(', ')}...` 
+            : poseNames.join(', ');
+        
+        return `
         <div class="sequence-item">
             <div class="sequence-info">
                 <h4>${sequence.name}</h4>
                 <p class="sequence-description">${sequence.poses.length} poses</p>
                 <div class="sequence-timestamps">
-                    <span class="timestamp">Created: ${formatRelativeTime(sequence.createdAt)}</span>
+                    <span class="timestamp">${description}</span>
                 </div>
             </div>
             <div class="sequence-actions">
@@ -2782,5 +2796,5 @@ function displaySequences() {
                 <button class="table-btn remove-btn" onclick="deleteSequence('${sequence.id}')">x</button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
