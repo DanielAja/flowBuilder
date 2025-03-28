@@ -2050,6 +2050,125 @@ function populateAsanaList() {
     });
     
     console.log('Asana list populated with', posesList.length, 'asanas');
+    
+    // Get saved sequences and add them to the asana list
+    const sequences = getSequences();
+    
+    // Add saved sequences to the list
+    sequences.forEach((sequence, index) => {
+        // Create sequence element styled like asana-item
+        const sequenceElement = document.createElement('div');
+        sequenceElement.className = 'asana-item';
+        sequenceElement.draggable = true;
+        sequenceElement.setAttribute('data-sequence-id', sequence.id);
+        
+        // Add animation delay if not previously displayed
+        sequenceElement.style.animationDelay = `${(posesList.length + index) * 0.05}s`;
+        
+        // Create a container for sequence preview images
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'sequence-preview-container';
+        imageContainer.style.display = 'flex';
+        imageContainer.style.justifyContent = 'center';
+        imageContainer.style.position = 'relative';
+        imageContainer.style.height = '85px';
+        imageContainer.style.width = '100%';
+        imageContainer.style.marginBottom = '10px';
+        
+        // Add up to 3 preview images from the sequence
+        const maxPreviewImages = Math.min(3, sequence.poses.length);
+        for (let i = 0; i < maxPreviewImages; i++) {
+            const pose = sequence.poses[i];
+            const previewImg = document.createElement('img');
+            previewImg.src = pose.image;
+            previewImg.alt = pose.name;
+            previewImg.style.width = '60px';
+            previewImg.style.height = '60px';
+            previewImg.style.objectFit = 'contain';
+            previewImg.style.position = 'absolute';
+            previewImg.style.borderRadius = '50%';
+            previewImg.style.background = 'white';
+            previewImg.style.padding = '2px';
+            previewImg.style.border = '1px solid #eee';
+            previewImg.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            previewImg.style.transition = 'all 0.3s ease';
+            
+            // Position each image (staggered effect) - center the images with offsets
+            const offsetPercentage = (i * 30) - ((maxPreviewImages - 1) * 15);
+            previewImg.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+            previewImg.style.zIndex = `${3 - i}`;
+            
+            // Error handling for missing images
+            previewImg.onerror = function() {
+                this.onerror = null;
+                this.src = '';
+                this.style.display = 'flex';
+                this.style.justifyContent = 'center';
+                this.style.alignItems = 'center';
+                this.style.background = '#f5f5f5';
+                this.style.fontSize = '20px';
+                this.innerText = '🧘‍♀️';
+            };
+            
+            imageContainer.appendChild(previewImg);
+        }
+        
+        // Create sequence badge
+        const sequenceBadge = document.createElement('span');
+        sequenceBadge.className = 'difficulty-badge';
+        sequenceBadge.style.backgroundColor = '#ff8c00';
+        sequenceBadge.textContent = 'Sequence';
+        
+        // Create sequence name label
+        const sequenceName = document.createElement('p');
+        sequenceName.textContent = sequence.name;
+        
+        // Create pose count label with sequence indicator
+        const poseCount = document.createElement('p');
+        poseCount.textContent = `Sequence • ${sequence.poses.length} poses`;
+        poseCount.style.fontSize = '12px';
+        poseCount.style.color = '#666';
+        poseCount.style.marginTop = '2px';
+        
+        // Append elements
+        sequenceElement.appendChild(sequenceBadge);
+        sequenceElement.appendChild(imageContainer);
+        sequenceElement.appendChild(sequenceName);
+        sequenceElement.appendChild(poseCount);
+        
+        // Add event listener for click to load the sequence
+        // Add hover effect for the sequence
+        sequenceElement.addEventListener('mouseenter', function() {
+            // Fan out the images slightly on hover
+            const images = this.querySelectorAll('img');
+            images.forEach((img, idx) => {
+                const offsetPercentage = (idx * 35) - ((maxPreviewImages - 1) * 17.5);
+                img.style.transform = 'scale(1.1)';
+                img.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+            });
+        });
+        
+        sequenceElement.addEventListener('mouseleave', function() {
+            // Reset the images on mouse leave
+            const images = this.querySelectorAll('img');
+            images.forEach((img, idx) => {
+                const offsetPercentage = (idx * 30) - ((maxPreviewImages - 1) * 15);
+                img.style.transform = '';
+                img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+            });
+        });
+        
+        sequenceElement.addEventListener('click', function() {
+            loadSequence(sequence.id);
+        });
+        
+        // Add to list
+        asanaList.appendChild(sequenceElement);
+    });
+    
+    console.log('Asana list populated with', posesList.length, 'asanas and', sequences.length, 'sequences');
 }
 
 // Scrolling functions for the asana list
