@@ -481,6 +481,7 @@ h1 {
 
 #flowTable {
   width: 100%;
+  min-width: 800px; /* Minimum width to prevent squishing */
   border-collapse: collapse;
   margin: 15px auto;
   background-color: #fff;
@@ -1868,15 +1869,26 @@ input:checked + .slider:before {
     height: 60px;
   }
 
+  /* Force horizontal scrolling for selected-actions */
   .selected-actions {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row !important;
+    align-items: center;
+    justify-content: center !important;
+    overflow-x: auto;
+    padding: 10px 5px;
+    flex-wrap: nowrap !important;
+    display: flex !important;
   }
 
   .action-btn {
-    width: 100%;
-    min-width: unset;
+    width: auto !important;
+    min-width: max-content;
+    flex-shrink: 0;
+    padding: 6px 10px;
+    font-size: 12px;
+    display: inline-flex !important;
   }
+}
 
   #flowTable {
     font-size: 12px;
@@ -2056,7 +2068,7 @@ input:checked + .slider:before {
     gap: 10px;
     margin: 0;
     padding: 10px;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
     overflow-x: auto;
     scrollbar-width: none; /* Firefox */
@@ -2064,6 +2076,7 @@ input:checked + .slider:before {
     width: 100%;
     white-space: nowrap;
     flex-wrap: nowrap;
+    overflow-y: hidden;
 }
 
 .selected-actions::-webkit-scrollbar {
@@ -2074,17 +2087,23 @@ input:checked + .slider:before {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 16px;
+    padding: 6px 12px;
     border: none;
     border-radius: 20px;
     background: #f5f5f5;
     color: #666;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-width: 120px;
-    flex-shrink: 0; /* Prevent buttons from shrinking */
+    width: auto;
+    min-width: max-content;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.action-btn span {
+    display: inline-block;
     white-space: nowrap;
 }
 
@@ -2265,5 +2284,35 @@ input:checked + .slider:before {
 
 .delete-x:active {
     transform: scale(0.95);
+}
+
+.flow-sequence {
+  width: 95%;
+  max-width: 1000px;
+  margin: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ff8c00 #f0f0f0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.flow-sequence::-webkit-scrollbar {
+  height: 8px;
+}
+
+.flow-sequence::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 4px;
+}
+
+.flow-sequence::-webkit-scrollbar-thumb {
+  background-color: #ff8c00;
+  border-radius: 4px;
+}
+
+#flowTable {
+  width: 100%;
+  min-width: unset;
+  max-width: 100%;
 }
 
