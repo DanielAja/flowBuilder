@@ -2069,7 +2069,6 @@ function populateAsanaList() {
         imageContainer.style.position = 'relative';
         imageContainer.style.height = '85px';
         imageContainer.style.width = '100%';
-        imageContainer.style.marginBottom = '10px';
         
         // Add up to 3 preview images from the sequence
         const maxPreviewImages = Math.min(3, sequence.poses.length);

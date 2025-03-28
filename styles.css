@@ -2442,3 +2442,19 @@ input:checked + .slider:before {
   animation-delay: 0s !important; /* Override any inline animation-delay */
 }
 
+#asanaList > div:nth-child(67) > div.sequence-preview-container > img:nth-child(1) {
+  margin: 0;
+}
+
+.sequence-preview-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.sequence-preview-container img {
+  margin: 0;
+  object-fit: contain;
+}
+
