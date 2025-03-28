@@ -2928,9 +2928,8 @@ function saveSequence() {
     if (selectedPoses.length === 0) return;
 
     // Create a name for the sequence based on the poses
-    const defaultName = selectedPoses.map(p => p.name).join(' + ');
-    const sequenceName = prompt('Enter a name for this sequence (max 37 characters):', 
-        defaultName.length > 37 ? defaultName.substring(0, 37) + '...' : defaultName);
+    const defaultName = "My Sequence";
+    const sequenceName = prompt('Enter a name for this sequence (max 37 characters):', defaultName);
     
     if (!sequenceName) return; // User cancelled
 
