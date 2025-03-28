@@ -2002,12 +2002,6 @@ function populateAsanaList() {
         asanaElement.setAttribute('data-name', asana.name);
         asanaElement.setAttribute('data-tags', asana.tags.join(','));
         
-        // Only add animation if this pose wasn't previously displayed
-        const wasPreviouslyDisplayed = currentPoses.includes(asana.name);
-        if (!wasPreviouslyDisplayed) {
-            asanaElement.style.animationDelay = `${index * 0.05}s`;
-        }
-        
         // Create difficulty badge
         const difficultyBadge = document.createElement('span');
         difficultyBadge.className = `difficulty-badge ${asana.difficulty.toLowerCase()}`;
