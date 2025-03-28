@@ -346,7 +346,7 @@ h1 {
 .asana-section-title {
   font-size: 1.5rem;
   color: #333;
-  margin-bottom: 15px;
+  margin: 0;
   text-align: center;
   font-weight: 300;
   letter-spacing: 0.05em;
@@ -357,8 +357,8 @@ h1 {
   flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
-  margin-bottom: 15px;
   padding: 0 20px;
+  margin-bottom: 0;
 }
 
 .category-btn {
@@ -1170,11 +1170,11 @@ h1 {
 }
 
 .flow-header {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0);
   color: #333;
   padding: 40px 20px 25px;
   text-align: center;
-  z-index: 3;
+  z-index: 100;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   position: relative;
@@ -1662,19 +1662,30 @@ input:checked + .slider:before {
   header {
     flex-direction: column;
     align-items: flex-start;
+    padding: 15px;
+  }
+
+  h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
   }
 
   .build-flow-btn {
     margin-top: 10px;
+    width: 100%;
+    text-align: center;
   }
 
   .flow-item {
     flex-direction: column;
     align-items: flex-start;
+    padding: 12px 15px;
   }
 
   .flow-actions {
     margin-top: 10px;
+    width: 100%;
+    justify-content: flex-start;
   }
 
   .flow-list {
@@ -1684,6 +1695,237 @@ input:checked + .slider:before {
 
   .flow-item::after {
     width: 90%;
+  }
+
+  /* Build Screen Mobile Styles */
+  .build-content {
+    padding: 15px;
+  }
+
+  .build-title {
+    font-size: 36px;
+    margin: 10px 0;
+  }
+
+  .build-form {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .asana-category-buttons {
+    padding: 5px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .category-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .asana-scroll-container {
+    margin: 10px 0;
+  }
+
+  #asanaList {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .asana-item {
+    min-width: 100px;
+    padding: 8px;
+  }
+
+  .asana-item img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .asana-item p {
+    font-size: 12px;
+  }
+
+  /* Flow Table Mobile Styles */
+  #flowTable {
+    font-size: 14px;
+  }
+
+  #flowTable th,
+  #flowTable td {
+    padding: 8px;
+  }
+
+  #flowTable th:nth-child(1) {
+    width: 40px;
+  }
+
+  #flowTable th:nth-child(2) {
+    width: 40px;
+  }
+
+  #flowTable th:nth-child(3) {
+    min-width: 120px;
+  }
+
+  #flowTable th:nth-child(4),
+  #flowTable th:nth-child(5) {
+    width: 80px;
+  }
+
+  #flowTable th:nth-child(6) {
+    width: 60px;
+  }
+
+  .selected-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .action-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-width: 100px;
+  }
+
+  /* Flow Screen Mobile Styles */
+  .flow-header {
+    padding: 20px 15px;
+    z-index: 100;
+    position: relative;
+    background-color: rgba(255, 255, 255, 1);
+  }
+
+  .flow-header h1 {
+    font-size: 28px;
+  }
+
+  .flow-header p {
+    font-size: 16px;
+  }
+
+  #asanaImage {
+    max-width: 90vw;
+    max-height: 60vh;
+  }
+
+  .countdown-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  #countdown {
+    font-size: 24px;
+  }
+
+  .coming-up {
+    max-width: 120px;
+    padding: 10px;
+  }
+
+  #nextAsanaName {
+    font-size: 14px;
+  }
+
+  #nextAsanaImage {
+    width: 50px;
+    height: 50px;
+  }
+
+  .flow-controls-global {
+    top: 10px;
+    left: 10px;
+    gap: 5px;
+  }
+
+  .language-toggle-global {
+    padding: 6px 10px;
+  }
+
+  #end-flow-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  h1 {
+    font-size: 32px;
+  }
+
+  .build-title {
+    font-size: 32px;
+  }
+
+  .asana-item {
+    min-width: 90px;
+  }
+
+  .asana-item img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .selected-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .action-btn {
+    width: 100%;
+    min-width: unset;
+  }
+
+  #flowTable {
+    font-size: 12px;
+  }
+
+  #flowTable th,
+  #flowTable td {
+    padding: 6px;
+  }
+
+  .flow-header h1 {
+    font-size: 24px;
+  }
+
+  .flow-header p {
+    font-size: 14px;
+  }
+
+  #asanaImage {
+    max-width: 95vw;
+  }
+
+  .countdown-container {
+    width: 80px;
+    height: 80px;
+  }
+
+  #countdown {
+    font-size: 20px;
+  }
+
+  .coming-up {
+    max-width: 100px;
+    padding: 8px;
+  }
+
+  #nextAsanaName {
+    font-size: 12px;
+  }
+
+  #nextAsanaImage {
+    width: 40px;
+    height: 40px;
+  }
+
+  .flow-header {
+    z-index: 100;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0);
   }
 }
 
@@ -1814,12 +2056,22 @@ input:checked + .slider:before {
     gap: 10px;
     margin: 0;
     padding: 10px;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    width: 100%;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+}
+
+.selected-actions::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
 }
 
 .action-btn {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 8px 16px;
@@ -1832,6 +2084,8 @@ input:checked + .slider:before {
     cursor: pointer;
     transition: all 0.2s ease;
     min-width: 120px;
+    flex-shrink: 0; /* Prevent buttons from shrinking */
+    white-space: nowrap;
 }
 
 .action-btn:disabled {
