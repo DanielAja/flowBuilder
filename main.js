@@ -60,7 +60,7 @@ class YogaAsana {
         this.tags = tags;
         // Ensure transitionsAsana is always an array
         this.transitionsAsana = Array.isArray(transitionsAsana) ? transitionsAsana : [];
-        this.duration = 15; // Default duration of 15 seconds
+        this.duration = 7; // Default duration of 7 seconds
     }
 
     setDuration(duration) {
@@ -581,7 +581,7 @@ function selectAsana(asana) {
         [...asana.transitionsAsana || []],
         asana.sanskrit
     );
-    newAsana.setDuration(15); // Default 15 seconds
+    newAsana.setDuration(7); // Default 7 seconds
     
     // Add to the beginning or end of the array based on sort order
     if (tableInDescendingOrder) {
@@ -691,7 +691,7 @@ function updateFlowDuration() {
     const durationInputs = document.querySelectorAll('#flowTable .duration-wrapper input[type="number"]');
     durationInputs.forEach(input => {
         if (input.value === '' || parseInt(input.value) === 0) {
-            input.value = 15;
+            input.value = 7;
         }
     });
 
@@ -701,7 +701,7 @@ function updateFlowDuration() {
         if (index < editingFlow.asanas.length) {
             const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
             if (durationInput) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 15;
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 7;
             }
         }
     });
@@ -853,7 +853,7 @@ function saveFlow() {
             const sideSelect = row.querySelector('select.side-select');
             
             if (durationInput && sideSelect) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 15;
+                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 7;
                 editingFlow.asanas[index].side = sideSelect.value;
             }
         }
@@ -1165,8 +1165,8 @@ function startCountdownTimer(duration) {
     
     // Make sure we have a valid duration
     if (!duration || isNaN(duration) || duration <= 0) {
-        duration = 15; // Default to 15 seconds if invalid
-        console.warn("Invalid duration, using default of 15 seconds");
+        duration = 7; // Default to 7 seconds if invalid
+        console.warn("Invalid duration, using default of 7 seconds");
     }
     
     // Reset the pause state when starting a new timer
@@ -1438,7 +1438,7 @@ function editFlow(flowID) {
                     asana.transitionsAsana || [],
                     asana.sanskrit || ""
                 );
-                newAsana.setDuration(asana.duration || 15);
+                newAsana.setDuration(asana.duration || 7);
                 return newAsana;
             }
             return asana;
@@ -1472,7 +1472,7 @@ function editFlow(flowID) {
                 asana.transitionsAsana || [],
                 asana.sanskrit || ""
             );
-            newAsana.setDuration(asana.duration || 15);
+            newAsana.setDuration(asana.duration || 7);
             return newAsana;
         }
         return asana;
