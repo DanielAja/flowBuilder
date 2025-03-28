@@ -1524,7 +1524,7 @@ function updateSortIndicator() {
         if (tableInDescendingOrder) {
             // Add descending class and update header content
             tableHeader.classList.add('descending');
-            tableHeader.innerHTML = 'Number';
+            tableHeader.innerHTML = '#';
             tableHeader.title = 'Sorted by largest number first - Click to reverse';
             
             // Show a brief animated toast notification
@@ -1532,7 +1532,7 @@ function updateSortIndicator() {
         } else {
             // Add ascending class and update header content
             tableHeader.classList.add('ascending');
-            tableHeader.innerHTML = 'Number';
+            tableHeader.innerHTML = '#';
             tableHeader.title = 'Sorted by smallest number first - Click to reverse';
             
             // Show a brief animated toast notification

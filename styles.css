@@ -971,6 +971,9 @@ h1 {
   font-weight: bold;
   font-size: 14px;
   border: none;
+  margin: 0 auto; /* Add auto margins to center horizontally */
+  padding: 0; /* Remove any padding */
+  line-height: 1; /* Ensure text is vertically centered */
 }
 
 .reorder-btn {
@@ -982,6 +985,11 @@ h1 {
 .remove-btn {
   background-color: #ff6b6b;
   color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  vertical-align: middle;
 }
 
 #flowTable select.side-select {
@@ -1044,6 +1052,7 @@ h1 {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   -moz-appearance: textfield; /* Hide the spinner on Firefox */
+  margin: 0; /* Remove all margins */
 }
 
 #flowTable input[type="number"]::-webkit-inner-spin-button, 
