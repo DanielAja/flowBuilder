@@ -1870,12 +1870,17 @@ function filterAsanas(category) {
     
     // Update active button
     for (let button of buttons) {
-        button.classList.remove('active');
-        if (button.textContent.toLowerCase() === category.toLowerCase() || 
-            (category === 'all' && button.textContent === 'All Poses')) {
+        if (category === 'all' && button.textContent === 'All Poses') {
             button.classList.add('active');
+        } else if (button.textContent === category) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
         }
     }
+
+    // Update current filter
+    currentFilter = category;
 
     // Filter asanas
     for (let asana of asanas) {
