@@ -1779,6 +1779,7 @@ input:checked + .slider:before {
   position: relative;
   transition: all 0.2s ease;
   background-color: #fff;
+  margin: 0;
 }
 
 #flowTable input[type="checkbox"]:checked {
@@ -1811,9 +1812,8 @@ input:checked + .slider:before {
     gap: 10px;
     margin-bottom: 15px;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    align-items: center;
 }
 
 .action-btn {
