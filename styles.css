@@ -10,6 +10,13 @@ body {
   color: #333;
 }
 
+body.flow-mode {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
 .orange-bar {
   height: 40px;
   background-color: #ff8c00;
@@ -1110,8 +1117,15 @@ h1 {
   flex-direction: column;
   height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #e8eaec 100%);
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: none;
+  touch-action: none;
 }
 
 .flow-controls-global {
@@ -1277,12 +1291,12 @@ h1 {
 
 .flow-content {
   position: relative;
-  min-height: 400px; /* Adjust as needed */
-  height: 100%;
+  height: calc(100vh - 200px); /* Adjust height to account for header and actions */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  overflow: hidden;
 }
 
 /* Sanskrit Toggle Switch Styles */

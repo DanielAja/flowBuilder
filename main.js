@@ -416,6 +416,9 @@ function clearBuildAFlow() {
 // Screen management
 function changeScreen(screenId) {
     console.log(`Changing screen to: ${screenId}`);
+    // Remove flow-mode class when changing screens
+    document.body.classList.remove('flow-mode');
+    
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
     const targetScreen = document.getElementById(screenId);
     
@@ -509,6 +512,9 @@ function changeScreen(screenId) {
         if (sanskritToggle) {
             sanskritToggle.style.display = 'flex';
         }
+        
+        // Add flow-mode class to prevent scrolling
+        document.body.classList.add('flow-mode');
     }
 }
 
