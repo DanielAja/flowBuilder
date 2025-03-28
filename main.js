@@ -137,6 +137,54 @@ let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 // Global variable to store copied poses
 let copiedPoses = [];
 
+// Variable to store the controls show handler
+let showControlsHandler;
+
+// Setup auto-hide for flow controls
+function setupFlowControlsAutoHide() {
+    const flowControls = document.querySelector('.flow-controls-global');
+    if (!flowControls) return;
+    
+    // Add styles to enable transition
+    flowControls.style.transition = 'opacity 0.5s ease';
+    flowControls.style.opacity = '1';
+    
+    // Variable to track the timeout
+    let hideTimeout;
+    
+    // Function to show controls
+    showControlsHandler = () => {
+        // Clear any existing timeout
+        clearTimeout(hideTimeout);
+        
+        // Show controls
+        flowControls.style.opacity = '1';
+        flowControls.style.pointerEvents = 'auto';
+        
+        // Set timeout to hide after 7 seconds
+        hideTimeout = setTimeout(() => {
+            flowControls.style.opacity = '0';
+            flowControls.style.pointerEvents = 'none';
+        }, 7000);
+    };
+    
+    // Initial show and hide
+    showControlsHandler();
+    
+    // Add event listeners for touch and click
+    document.addEventListener('click', showControlsHandler);
+    document.addEventListener('touchstart', showControlsHandler);
+}
+
+// Clean up event listeners for flow controls
+function cleanupFlowControlsAutoHide() {
+    if (showControlsHandler) {
+        document.removeEventListener('click', showControlsHandler);
+        document.removeEventListener('touchstart', showControlsHandler);
+        showControlsHandler = null;
+    }
+}
+
 function displayFlowDuration(duration) {
     duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
     let hrs = Math.floor(duration / 3600);
@@ -515,6 +563,9 @@ function changeScreen(screenId) {
         
         // Add flow-mode class to prevent scrolling
         document.body.classList.add('flow-mode');
+        
+        // Setup auto-hide functionality for flow controls
+        setupFlowControlsAutoHide();
     }
 }
 
@@ -1302,6 +1353,9 @@ function endFlow() {
             flows[flowIndex].lastFlowed = new Date().toISOString();
             saveFlows(flows);
         }
+        
+        // Clean up flow controls event listeners
+        cleanupFlowControlsAutoHide();
         
         // Return to home screen
         changeScreen('homeScreen');
