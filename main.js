@@ -134,6 +134,9 @@ let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
 let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 
+// Global variable to store copied poses
+let copiedPoses = [];
+
 function displayFlowDuration(duration) {
     duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
     let hrs = Math.floor(duration / 3600);
@@ -2259,6 +2262,11 @@ function rebuildFlowTable() {
         row.innerHTML = `
             <td title="Drag to reorder">${rowNumber}</td>
             <td>
+                <input type="checkbox" class="asana-select" data-index="${index}" 
+                       ${asana.selected ? 'checked' : ''} 
+                       onchange="toggleAsanaSelection(this)">
+            </td>
+            <td>
                 <div class="table-asana">
                     <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
                          onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center'; 
@@ -2294,6 +2302,33 @@ function rebuildFlowTable() {
     updateFlowDuration();
     
     console.log('Rebuilt flow table with draggable rows');
+}
+
+// Function to toggle asana selection
+function toggleAsanaSelection(checkbox) {
+    const index = parseInt(checkbox.getAttribute('data-index'));
+    if (!isNaN(index) && editingFlow.asanas[index]) {
+        editingFlow.asanas[index].selected = checkbox.checked;
+        
+        // Update action buttons state
+        updateActionButtons();
+        
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+        
+        // Show a brief notification
+        showToastNotification(checkbox.checked ? 'Pose selected' : 'Pose deselected');
+        
+        // Update the select all checkbox state
+        updateSelectAllCheckbox();
+    }
+}
+
+// Function to get selected asanas
+function getSelectedAsanas() {
+    return editingFlow.asanas.filter(asana => asana.selected);
 }
 
 // Function to toggle Sanskrit names
@@ -2430,3 +2465,159 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM Loaded - Initializing app with Sanskrit names:", useSanskritNames);
     initializeApp();
 });
+
+// Function to toggle select all checkboxes
+function toggleSelectAll(checkbox) {
+    const isChecked = checkbox.checked;
+    
+    // Update all checkboxes in the table
+    const table = document.getElementById('flowTable');
+    const checkboxes = table.querySelectorAll('.asana-select');
+    checkboxes.forEach(cb => {
+        cb.checked = isChecked;
+    });
+    
+    // Update all asanas in the editingFlow
+    editingFlow.asanas.forEach(asana => {
+        if (asana) {
+            asana.selected = isChecked;
+        }
+    });
+    
+    // Update action buttons state
+    updateActionButtons();
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+    
+    // Show a brief notification
+    showToastNotification(isChecked ? 'All poses selected' : 'All poses deselected');
+}
+
+// Function to update select all checkbox state based on individual selections
+function updateSelectAllCheckbox() {
+    const table = document.getElementById('flowTable');
+    const checkboxes = table.querySelectorAll('.asana-select');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    
+    if (checkboxes.length === 0) {
+        selectAllCheckbox.checked = false;
+        return;
+    }
+    
+    // Check if all checkboxes are checked
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    selectAllCheckbox.checked = allChecked;
+}
+
+// Function to update action buttons state
+function updateActionButtons() {
+    const copyBtn = document.getElementById('copySelectedBtn');
+    const pasteBtn = document.getElementById('pasteSelectedBtn');
+    const deleteBtn = document.getElementById('deleteSelectedBtn');
+    
+    const selectedPoses = getSelectedAsanas();
+    const hasSelectedPoses = selectedPoses.length > 0;
+    const hasCopiedPoses = copiedPoses.length > 0;
+    
+    if (copyBtn) copyBtn.disabled = !hasSelectedPoses;
+    if (pasteBtn) pasteBtn.disabled = !hasCopiedPoses;
+    if (deleteBtn) deleteBtn.disabled = !hasSelectedPoses;
+}
+
+// Function to copy selected poses
+function copySelectedPoses() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+    
+    // Create deep copies of selected poses
+    copiedPoses = selectedPoses.map(asana => {
+        const newAsana = new YogaAsana(
+            asana.name,
+            asana.side,
+            asana.image,
+            asana.description,
+            asana.difficulty,
+            [...asana.tags],
+            [...asana.transitionsAsana],
+            asana.sanskrit
+        );
+        newAsana.setDuration(asana.duration);
+        return newAsana;
+    });
+    
+    // Update button states
+    updateActionButtons();
+    
+    // Show notification
+    showToastNotification(`Copied ${copiedPoses.length} pose${copiedPoses.length !== 1 ? 's' : ''}`);
+}
+
+// Function to paste copied poses
+function pasteSelectedPoses() {
+    if (copiedPoses.length === 0) return;
+    
+    // Create new asanas from copied poses
+    const newAsanas = copiedPoses.map(asana => {
+        const newAsana = new YogaAsana(
+            asana.name,
+            asana.side,
+            asana.image,
+            asana.description,
+            asana.difficulty,
+            [...asana.tags],
+            [...asana.transitionsAsana],
+            asana.sanskrit
+        );
+        newAsana.setDuration(asana.duration);
+        return newAsana;
+    });
+    
+    // Add poses based on sort order
+    if (tableInDescendingOrder) {
+        // If in descending order, add to the beginning of the array
+        editingFlow.asanas.unshift(...newAsanas);
+    } else {
+        // If in ascending order, add to the end of the array
+        editingFlow.asanas.push(...newAsanas);
+    }
+    
+    // Rebuild the table
+    rebuildFlowTable();
+    
+    // Update flow duration
+    updateFlowDuration();
+    
+    // Show notification
+    showToastNotification(`Pasted ${copiedPoses.length} pose${copiedPoses.length !== 1 ? 's' : ''}`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to delete selected poses
+function deleteSelectedPoses() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+    
+    // Remove selected poses from the flow
+    editingFlow.asanas = editingFlow.asanas.filter(asana => !asana.selected);
+    
+    // Rebuild the table
+    rebuildFlowTable();
+    
+    // Update flow duration
+    updateFlowDuration();
+    
+    // Show notification
+    showToastNotification(`Deleted ${selectedPoses.length} pose${selectedPoses.length !== 1 ? 's' : ''}`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}

@@ -376,9 +376,24 @@
         </div>
         
         <div class="flow-sequence">
+          <div class="selected-actions">
+            <button id="copySelectedBtn" class="action-btn" onclick="copySelectedPoses()" disabled>
+              <span>Copy Selected</span>
+            </button>
+            <button id="pasteSelectedBtn" class="action-btn" onclick="pasteSelectedPoses()" disabled>
+              <span>Paste Selected</span>
+            </button>
+            <button id="deleteSelectedBtn" class="action-btn" onclick="deleteSelectedPoses()" disabled>
+              <span>Delete Selected</span>
+            </button>
+          </div>
           <table id="flowTable">
             <tr>
               <th onclick="sortTableByLargestNumber()" style="cursor: pointer;" title="Click to sort by largest number first">#</th>
+              <th>
+                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                <label for="selectAllCheckbox" style="display: none;">Select All</label>
+              </th>
               <th>Asana</th>
               <th>Duration</th>
               <th>Side</th>
