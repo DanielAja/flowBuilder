@@ -1969,3 +1969,68 @@ input:checked + .slider:before {
     transform: scale(1.1);
 }
 
+.sequences-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    user-select: none;
+}
+
+.sequences-header:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.toggle-icon {
+    font-size: 12px;
+    color: #666;
+    transition: transform 0.3s ease;
+}
+
+.sequences-content {
+    max-height: 300px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.sequences-content.collapsed {
+    max-height: 0;
+}
+
+.sequences-content.expanded {
+    max-height: 300px;
+}
+
+.sequences-header.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.sequences-header.expanded .toggle-icon {
+    transform: rotate(0deg);
+}
+
+.delete-x {
+    font-size: 24px;
+    color: #ff6b6b;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.delete-x:hover {
+    background-color: #ff6b6b;
+    color: white;
+    transform: scale(1.1);
+}
+
+.delete-x:active {
+    transform: scale(0.95);
+}
+

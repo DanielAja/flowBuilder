@@ -2405,6 +2405,24 @@ function updateAsanaDisplayNames() {
     }
 }
 
+// Function to toggle sequences section
+function toggleSequences() {
+    const header = document.querySelector('.sequences-header');
+    const content = document.getElementById('sequencesContent');
+    
+    if (content.classList.contains('collapsed')) {
+        content.classList.remove('collapsed');
+        content.classList.add('expanded');
+        header.classList.remove('collapsed');
+        header.classList.add('expanded');
+    } else {
+        content.classList.remove('expanded');
+        content.classList.add('collapsed');
+        header.classList.remove('expanded');
+        header.classList.add('collapsed');
+    }
+}
+
 // Initialize the app
 function initializeApp() {
     // Load asanas from XML
@@ -2761,7 +2779,7 @@ function displaySequences() {
             </div>
             <div class="sequence-actions">
                 <button class="flow-btn" onclick="loadSequence('${sequence.id}')">LOAD</button>
-                <button class="delete-btn" onclick="deleteSequence('${sequence.id}')"></button>
+                <button class="table-btn remove-btn" onclick="deleteSequence('${sequence.id}')">x</button>
             </div>
         </div>
     `).join('');
