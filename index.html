@@ -376,9 +376,50 @@
         </div>
         
         <div class="flow-sequence">
+          <div class="saved-sequences">
+            <div class="sequences-header collapsed" onclick="toggleSequences()">
+              <h3 class="sequences-section-title">Saved Sequences</h3>
+              <span class="toggle-icon">▼</span>
+            </div>
+            <div id="sequencesContent" class="sequences-content collapsed">
+              <div id="sequencesList" class="sequences-list">
+                <div class="sequence-item">
+                    <div class="sequence-info">
+                        <h4>Mountain Pose + Half Forward Fold</h4>
+                        <p class="sequence-description">2 poses</p>
+                        <div class="sequence-timestamps">
+                            <span class="timestamp">Created: 4m ago</span>
+                        </div>
+                    </div>
+                    <div class="sequence-actions">
+                        <button class="flow-btn" onclick="loadSequence('348emhlw2')">LOAD</button>
+                        <button class="table-btn remove-btn" onclick="deleteSequence('348emhlw2')">×</button>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="selected-actions">
+            <button id="copySelectedBtn" class="action-btn" onclick="copySelectedPoses()" disabled>
+              <span>Copy Selected</span>
+            </button>
+            <button id="pasteSelectedBtn" class="action-btn" onclick="pasteSelectedPoses()" disabled>
+              <span>Paste Selected</span>
+            </button>
+            <button id="deleteSelectedBtn" class="action-btn" onclick="deleteSelectedPoses()" disabled>
+              <span>Delete Selected</span>
+            </button>
+            <button id="saveSequenceBtn" class="action-btn" onclick="saveSequence()" disabled>
+              <span>Save as Sequence</span>
+            </button>
+          </div>
           <table id="flowTable">
             <tr>
               <th onclick="sortTableByLargestNumber()" style="cursor: pointer;" title="Click to sort by largest number first">#</th>
+              <th>
+                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                <label for="selectAllCheckbox" style="display: none;">Select All</label>
+              </th>
               <th>Asana</th>
               <th>Duration</th>
               <th>Side</th>

@@ -340,7 +340,7 @@ h1 {
 .asana-selection, .flow-sequence {
   width: 95%;
   max-width: 1000px;
-  margin-bottom: 20px;
+  margin: 0;
 }
 
 .asana-section-title {
@@ -553,9 +553,15 @@ h1 {
   color: #ff8c00;
 }
 
+#flowTable th:nth-child(2) { /* Checkbox column */
+  text-align: center;
+  width: 80px;
+}
+
 #flowTable th:nth-child(3) { text-align: center; }
 #flowTable th:nth-child(4) { text-align: center; }
 #flowTable th:nth-child(5) { text-align: center; }
+#flowTable th:nth-child(6) { text-align: center; }
 
 #flowTable td {
   padding: 12px 15px;
@@ -586,6 +592,11 @@ h1 {
   background-color: #fff4e6;
   cursor: grab;
   color: #ff8c00;
+}
+
+#flowTable td:nth-child(2) { /* Checkbox cell */
+  text-align: center;
+  width: 80px;
 }
 
 #flowTable td:nth-child(3) { /* Duration column */
@@ -1354,7 +1365,8 @@ input:checked + .slider:before {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.9);
+  background-color: #ff8c00;
+  /* background: rgba(255, 255, 255, 0.9); */
   padding: 8px 12px;
   border-radius: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -1755,5 +1767,249 @@ input:checked + .slider:before {
 #buildScreen > div.build-content > div.build-actions > button.home-btn:active {
   transform: translateY(1px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Checkbox styling */
+#flowTable input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  transition: all 0.2s ease;
+  background-color: #fff;
+  margin: 0;
+}
+
+#flowTable input[type="checkbox"]:checked {
+  background-color: #ff8c00;
+  border-color: #ff8c00;
+}
+
+#flowTable input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#flowTable input[type="checkbox"]:hover {
+  border-color: #ff8c00;
+  box-shadow: 0 0 5px rgba(255, 140, 0, 0.3);
+}
+
+#flowTable input[type="checkbox"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+}
+
+.selected-actions {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    background: #f5f5f5;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f0f0f0;
+}
+
+.action-btn:not(:disabled):hover {
+    background: #ff8c00;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:not(:disabled):active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+.saved-sequences {
+    width: 100%;
+    margin: 0;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sequences-section-title {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+    text-align: center;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+}
+
+.sequences-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.sequences-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sequences-list::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 3px;
+}
+
+.sequences-list::-webkit-scrollbar-thumb {
+    background: #ff8c00;
+    border-radius: 3px;
+}
+
+.sequence-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.sequence-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sequence-info h4 {
+    font-size: 13px;
+    color: #333;
+    margin: 0 0 2px 0;
+}
+
+.sequence-description {
+    font-size: 11px;
+    color: #666;
+    margin: 0 0 2px 0;
+}
+
+.sequence-timestamps {
+    display: flex;
+    gap: 5px;
+}
+
+.sequence-actions {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.sequence-actions .flow-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    background: #ff8c00;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sequence-actions .delete-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.sequences-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px;
+    user-select: none;
+}
+
+.sequences-content {
+    max-height: 200px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.sequences-content.collapsed {
+    max-height: 0;
+}
+
+.sequences-content.expanded {
+    max-height: 200px;
+}
+
+.sequences-header.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.sequences-header.expanded .toggle-icon {
+    transform: rotate(0deg);
+}
+
+.delete-x {
+    font-size: 24px;
+    color: #ff6b6b;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.delete-x:hover {
+    background-color: #ff6b6b;
+    color: white;
+    transform: scale(1.1);
+}
+
+.delete-x:active {
+    transform: scale(0.95);
 }
 

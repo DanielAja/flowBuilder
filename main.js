@@ -134,6 +134,9 @@ let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
 let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 
+// Global variable to store copied poses
+let copiedPoses = [];
+
 function displayFlowDuration(duration) {
     duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
     let hrs = Math.floor(duration / 3600);
@@ -165,14 +168,18 @@ function updateAsanaDisplay(asana) {
     const nextAsanaImageElement = document.getElementById("nextAsanaImage");
     const comingUpSection = document.querySelector(".coming-up");
 
-    // Use the displayName based on the toggle setting
+    // Use the displayName based on the current language toggle setting
+    // We directly read the toggle state to ensure the most current value is used
+    const sanskritToggleGlobal = document.getElementById('sanskrit-toggle-global');
+    const currentUseSanskritNames = sanskritToggleGlobal ? sanskritToggleGlobal.checked : useSanskritNames;
+    
     if (asanaNameElement) {
         // Handle cases where getDisplayName might not exist
         if (typeof asana.getDisplayName === 'function') {
-            asanaNameElement.textContent = asana.getDisplayName(useSanskritNames);
+            asanaNameElement.textContent = asana.getDisplayName(currentUseSanskritNames);
         } else {
             // Fallback to using name or sanskrit based on toggle
-            asanaNameElement.textContent = useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
+            asanaNameElement.textContent = currentUseSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
         }
     }
     if (asanaSideElement) asanaSideElement.textContent = asana.side;
@@ -211,12 +218,13 @@ function updateAsanaDisplay(asana) {
             nextAsanaNameElement.offsetHeight; // Trigger reflow
             nextAsanaNameElement.style.animation = 'fade-in 0.6s ease-out';
             
+            // Use the same sanskritToggleGlobal value for consistency
             // Handle cases where getDisplayName might not exist
             if (typeof nextAsana.getDisplayName === 'function') {
-                nextAsanaNameElement.textContent = nextAsana.getDisplayName(useSanskritNames);
+                nextAsanaNameElement.textContent = nextAsana.getDisplayName(currentUseSanskritNames);
             } else {
                 // Fallback to using name or sanskrit based on toggle
-                nextAsanaNameElement.textContent = useSanskritNames && nextAsana.sanskrit ? nextAsana.sanskrit : nextAsana.name;
+                nextAsanaNameElement.textContent = currentUseSanskritNames && nextAsana.sanskrit ? nextAsana.sanskrit : nextAsana.name;
             }
         }
         if (nextAsanaImageElement) {
@@ -436,6 +444,12 @@ function changeScreen(screenId) {
         const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
         if (sanskritToggle) {
             sanskritToggle.style.display = 'flex';
+        }
+
+        // Sync build screen Sanskrit toggle state
+        const sanskritToggleBuild = document.getElementById('sanskrit-toggle-build');
+        if (sanskritToggleBuild) {
+            sanskritToggleBuild.checked = useSanskritNames;
         }
         
         // Clear the asana search input
@@ -821,19 +835,19 @@ function saveFlow() {
 
     // Require title only if there are poses
     if (!title) {
-        const userChoice = confirm('Would you like to add a title to save this flow, or return home without saving?\n\nClick OK to add a title\nClick Cancel to return home');
+        const userChoice = confirm('Would you like to add a title to save this flow, or return home without saving?\n\nClick OK to return home\nClick Cancel to add a title');
         if (userChoice) {
-            // User clicked OK - focus the title input
+            // User clicked OK - return home without saving
+            changeScreen('homeScreen');
+            editingFlow = new Flow();
+            editMode = false;
+            return;
+        } else {
+            // User clicked Cancel - focus the title input
             const titleInput = document.getElementById('title');
             if (titleInput) {
                 titleInput.focus();
             }
-            return;
-        } else {
-            // User clicked Cancel - return home without saving
-            changeScreen('homeScreen');
-            editingFlow = new Flow();
-            editMode = false;
             return;
         }
     }
@@ -2259,6 +2273,11 @@ function rebuildFlowTable() {
         row.innerHTML = `
             <td title="Drag to reorder">${rowNumber}</td>
             <td>
+                <input type="checkbox" class="asana-select" data-index="${index}" 
+                       ${asana.selected ? 'checked' : ''} 
+                       onchange="toggleAsanaSelection(this)">
+            </td>
+            <td>
                 <div class="table-asana">
                     <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
                          onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center'; 
@@ -2294,6 +2313,30 @@ function rebuildFlowTable() {
     updateFlowDuration();
     
     console.log('Rebuilt flow table with draggable rows');
+}
+
+// Function to toggle asana selection
+function toggleAsanaSelection(checkbox) {
+    const index = parseInt(checkbox.getAttribute('data-index'));
+    if (!isNaN(index) && editingFlow.asanas[index]) {
+        editingFlow.asanas[index].selected = checkbox.checked;
+        
+        // Update action buttons state
+        updateActionButtons();
+        
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+        
+        // Update the select all checkbox state
+        updateSelectAllCheckbox();
+    }
+}
+
+// Function to get selected asanas
+function getSelectedAsanas() {
+    return editingFlow.asanas.filter(asana => asana.selected);
 }
 
 // Function to toggle Sanskrit names
@@ -2342,9 +2385,38 @@ function toggleSanskritNames(event) {
         rebuildFlowTable();
     }
     
-    // If in flow screen, update the current asana display
+    // If in flow screen, update the current asana display and next asana
     if (currentScreenId === 'flowScreen' && editingFlow.asanas && editingFlow.asanas.length > 0) {
-        updateAsanaDisplay(editingFlow.asanas[currentAsanaIndex]);
+        // Get current asana
+        const currentAsana = editingFlow.asanas[currentAsanaIndex];
+        
+        // Update current asana name immediately
+        const asanaNameElement = document.getElementById("asanaName");
+        if (asanaNameElement && currentAsana) {
+            asanaNameElement.textContent = currentAsana.getDisplayName(useSanskritNames);
+        }
+        
+        // Update next asana if available
+        const nextAsana = editingFlow.asanas[currentAsanaIndex + 1];
+        if (nextAsana) {
+            const nextAsanaNameElement = document.getElementById('nextAsanaName');
+            if (nextAsanaNameElement) {
+                // Apply animation by resetting it
+                nextAsanaNameElement.style.animation = 'none';
+                nextAsanaNameElement.offsetHeight; // Trigger reflow
+                nextAsanaNameElement.style.animation = 'fade-in 0.6s ease-out';
+                
+                nextAsanaNameElement.textContent = nextAsana.getDisplayName(useSanskritNames);
+            }
+        }
+        
+        // Update speech if enabled and speaking
+        if (speechEnabled && !paused && speechSynthesis.speaking) {
+            // Cancel current speech
+            speechSynthesis.cancel();
+            // Speak the current pose name in the new language
+            speakAsanaName(currentAsana.name, currentAsana.side, currentAsana.sanskrit);
+        }
     }
     
     // Show a brief notification about the language change
@@ -2370,59 +2442,89 @@ function updateAsanaDisplayNames() {
     }
 }
 
+// Function to toggle sequences section
+function toggleSequences() {
+    const header = document.querySelector('.sequences-header');
+    const content = document.getElementById('sequencesContent');
+    
+    if (content.classList.contains('collapsed')) {
+        content.classList.remove('collapsed');
+        content.classList.add('expanded');
+        header.classList.remove('collapsed');
+        header.classList.add('expanded');
+    } else {
+        content.classList.remove('expanded');
+        content.classList.add('collapsed');
+        header.classList.remove('expanded');
+        header.classList.add('collapsed');
+    }
+}
+
 // Initialize the app
 function initializeApp() {
-    loadAsanasFromXML()
-        .then(() => {
-            displayFlows();
-            updateDate();
-            
-            // Set up drag and drop
-            setupDragAndDrop();
-            
-            // Add window resize listener for scroll buttons
-            window.addEventListener('resize', updateScrollButtons);
-            
-            // Initialize toggle buttons for Sanskrit names
-            const globalSanskritToggle = document.getElementById('sanskrit-toggle-global');
-            const buildSanskritToggle = document.getElementById('sanskrit-toggle-build');
-            
-            // Set initial state
-            if (globalSanskritToggle) {
-                globalSanskritToggle.checked = useSanskritNames;
-                // Add event listener for global toggle
-                globalSanskritToggle.addEventListener('change', toggleSanskritNames);
-            }
-            
-            if (buildSanskritToggle) {
-                buildSanskritToggle.checked = useSanskritNames;
-                // Add event listener for build toggle
-                buildSanskritToggle.addEventListener('change', toggleSanskritNames);
-            }
-            
-            // Initialize the sort indicator to show the up arrow
-            setTimeout(() => {
-                const tableHeader = document.querySelector('#flowTable th:first-child');
-                if (tableHeader) {
-                    // Set initial class based on tableInDescendingOrder
-                    tableHeader.classList.add(tableInDescendingOrder ? 'descending' : 'ascending');
-                    tableHeader.title = tableInDescendingOrder 
-                        ? 'Sorted by largest number first - Click to reverse'
-                        : 'Sorted by smallest number first - Click to reverse';
-                }
-            }, 500); // Short delay to ensure DOM is ready
-            
-            console.log('App initialized successfully');
-        })
-        .catch(error => {
-            console.error('Failed to initialize app:', error);
-        });
-    
-    // Hide Sanskrit toggle on initial load (since we start on home screen)
-    const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
-    if (sanskritToggle) {
-        sanskritToggle.style.display = 'none';
-    }
+    // Load asanas from XML
+    loadAsanasFromXML().then(() => {
+        // Display flows
+        displayFlows();
+        
+        // Display sequences
+        displaySequences();
+        
+        // Set up drag and drop
+        setupDragAndDrop();
+        
+        // Update date
+        updateDate();
+        
+        // Set up event listeners
+        const asanaSearch = document.getElementById('asanaSearch');
+        if (asanaSearch) {
+            asanaSearch.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const asanaItems = document.querySelectorAll('.asana-item');
+                
+                asanaItems.forEach(item => {
+                    const asanaName = item.querySelector('p').textContent.toLowerCase();
+                    const matches = asanaName.includes(searchTerm);
+                    item.style.display = matches ? 'flex' : 'none';
+                });
+                
+                // Update scroll buttons visibility
+                updateScrollButtons();
+            });
+        }
+        
+        // Set up Sanskrit name toggle
+        const sanskritToggle = document.getElementById('sanskrit-toggle-global');
+        if (sanskritToggle) {
+            sanskritToggle.addEventListener('change', function() {
+                useSanskritNames = this.checked;
+                updateAsanaDisplayNames();
+            });
+        }
+
+        // Set up build screen Sanskrit toggle
+        const sanskritToggleBuild = document.getElementById('sanskrit-toggle-build');
+        if (sanskritToggleBuild) {
+            sanskritToggleBuild.checked = useSanskritNames; // Set initial state
+            sanskritToggleBuild.addEventListener('change', toggleSanskritNames);
+        }
+
+        // Set up global Sanskrit toggle
+        const sanskritToggleGlobal = document.getElementById('sanskrit-toggle-global');
+        if (sanskritToggleGlobal) {
+            sanskritToggleGlobal.checked = useSanskritNames; // Set initial state
+            sanskritToggleGlobal.addEventListener('change', toggleSanskritNames);
+        }
+        
+        // Set up speech toggle
+        const speechToggle = document.getElementById('speech-toggle-global');
+        if (speechToggle) {
+            speechToggle.addEventListener('change', function() {
+                speechEnabled = this.checked;
+            });
+        }
+    });
 }
 
 // Add event listener to initialize the app when the DOM is loaded
@@ -2430,3 +2532,320 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM Loaded - Initializing app with Sanskrit names:", useSanskritNames);
     initializeApp();
 });
+
+// Function to toggle select all checkboxes
+function toggleSelectAll(checkbox) {
+    const isChecked = checkbox.checked;
+    
+    // Update all checkboxes in the table
+    const table = document.getElementById('flowTable');
+    const checkboxes = table.querySelectorAll('.asana-select');
+    checkboxes.forEach(cb => {
+        cb.checked = isChecked;
+    });
+    
+    // Update all asanas in the editingFlow
+    editingFlow.asanas.forEach(asana => {
+        if (asana) {
+            asana.selected = isChecked;
+        }
+    });
+    
+    // Update action buttons state
+    updateActionButtons();
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+    
+    // Show a brief notification
+    showToastNotification(isChecked ? 'All poses selected' : 'All poses deselected');
+}
+
+// Function to update select all checkbox state based on individual selections
+function updateSelectAllCheckbox() {
+    const table = document.getElementById('flowTable');
+    const checkboxes = table.querySelectorAll('.asana-select');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    
+    if (checkboxes.length === 0) {
+        selectAllCheckbox.checked = false;
+        return;
+    }
+    
+    // Check if all checkboxes are checked
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    selectAllCheckbox.checked = allChecked;
+}
+
+// Function to update action buttons state
+function updateActionButtons() {
+    const copyBtn = document.getElementById('copySelectedBtn');
+    const pasteBtn = document.getElementById('pasteSelectedBtn');
+    const deleteBtn = document.getElementById('deleteSelectedBtn');
+    const saveSequenceBtn = document.getElementById('saveSequenceBtn');
+    
+    const selectedPoses = getSelectedAsanas();
+    const hasSelectedPoses = selectedPoses.length > 0;
+    const hasCopiedPoses = copiedPoses.length > 0;
+    
+    if (copyBtn) copyBtn.disabled = !hasSelectedPoses;
+    if (pasteBtn) pasteBtn.disabled = !hasCopiedPoses;
+    if (deleteBtn) deleteBtn.disabled = !hasSelectedPoses;
+    if (saveSequenceBtn) saveSequenceBtn.disabled = !hasSelectedPoses;
+}
+
+// Function to copy selected poses
+function copySelectedPoses() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+    
+    // Create deep copies of selected poses
+    copiedPoses = selectedPoses.map(asana => {
+        const newAsana = new YogaAsana(
+            asana.name,
+            asana.side,
+            asana.image,
+            asana.description,
+            asana.difficulty,
+            [...asana.tags],
+            [...asana.transitionsAsana],
+            asana.sanskrit
+        );
+        newAsana.setDuration(asana.duration);
+        return newAsana;
+    });
+    
+    // Update button states
+    updateActionButtons();
+    
+    // Show notification
+    showToastNotification(`Copied ${copiedPoses.length} pose${copiedPoses.length !== 1 ? 's' : ''}`);
+}
+
+// Function to paste copied poses
+function pasteSelectedPoses() {
+    if (copiedPoses.length === 0) return;
+    
+    // Create new asanas from copied poses
+    const newAsanas = copiedPoses.map(asana => {
+        const newAsana = new YogaAsana(
+            asana.name,
+            asana.side,
+            asana.image,
+            asana.description,
+            asana.difficulty,
+            [...asana.tags],
+            [...asana.transitionsAsana],
+            asana.sanskrit
+        );
+        newAsana.setDuration(asana.duration);
+        return newAsana;
+    });
+    
+    // Add poses based on sort order
+    if (tableInDescendingOrder) {
+        // If in descending order, add to the beginning of the array
+        editingFlow.asanas.unshift(...newAsanas);
+    } else {
+        // If in ascending order, add to the end of the array
+        editingFlow.asanas.push(...newAsanas);
+    }
+    
+    // Rebuild the table
+    rebuildFlowTable();
+    
+    // Update flow duration
+    updateFlowDuration();
+    
+    // Show notification
+    showToastNotification(`Pasted ${copiedPoses.length} pose${copiedPoses.length !== 1 ? 's' : ''}`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to delete selected poses
+function deleteSelectedPoses() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+    
+    // Remove selected poses from the flow
+    editingFlow.asanas = editingFlow.asanas.filter(asana => !asana.selected);
+    
+    // Rebuild the table
+    rebuildFlowTable();
+    
+    // Update flow duration
+    updateFlowDuration();
+    
+    // Show notification
+    showToastNotification(`Deleted ${selectedPoses.length} pose${selectedPoses.length !== 1 ? 's' : ''}`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to save a sequence
+function saveSequence() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+
+    // Create a name for the sequence based on the poses
+    const sequenceName = prompt('Enter a name for this sequence:', 
+        selectedPoses.map(p => p.name).join(' + '));
+    
+    if (!sequenceName) return; // User cancelled
+
+    // Create a new sequence object
+    const sequence = {
+        id: generateUniqueID(),
+        name: sequenceName,
+        poses: selectedPoses.map(asana => {
+            const newAsana = new YogaAsana(
+                asana.name,
+                asana.side,
+                asana.image,
+                asana.description,
+                asana.difficulty,
+                [...asana.tags],
+                [...asana.transitionsAsana],
+                asana.sanskrit
+            );
+            newAsana.setDuration(asana.duration);
+            return newAsana;
+        }),
+        createdAt: new Date().toISOString()
+    };
+
+    // Get existing sequences
+    let sequences = JSON.parse(localStorage.getItem('sequences') || '[]');
+    
+    // Add new sequence
+    sequences.push(sequence);
+    
+    // Save back to localStorage
+    localStorage.setItem('sequences', JSON.stringify(sequences));
+    
+    // Show success notification
+    showToastNotification(`Sequence "${sequenceName}" saved successfully`);
+    
+    // Update the sequences display
+    displaySequences();
+}
+
+// Function to load sequences
+function getSequences() {
+    try {
+        const sequencesJson = localStorage.getItem('sequences');
+        if (!sequencesJson) return [];
+        return JSON.parse(sequencesJson);
+    } catch (error) {
+        console.error('Error getting sequences:', error);
+        return [];
+    }
+}
+
+// Function to delete a sequence
+function deleteSequence(sequenceId) {
+    if (!confirm('Are you sure you want to delete this sequence?')) return;
+    
+    let sequences = getSequences();
+    sequences = sequences.filter(seq => seq.id !== sequenceId);
+    localStorage.setItem('sequences', JSON.stringify(sequences));
+    
+    showToastNotification('Sequence deleted successfully');
+    
+    // Update the sequences display
+    displaySequences();
+}
+
+// Function to load a sequence into the current flow
+function loadSequence(sequenceId) {
+    const sequences = getSequences();
+    const sequence = sequences.find(seq => seq.id === sequenceId);
+    
+    if (!sequence) {
+        showToastNotification('Sequence not found');
+        return;
+    }
+
+    // Create new asanas from the sequence
+    const newAsanas = sequence.poses.map(asana => {
+        const newAsana = new YogaAsana(
+            asana.name,
+            asana.side,
+            asana.image,
+            asana.description,
+            asana.difficulty,
+            [...asana.tags],
+            [...asana.transitionsAsana],
+            asana.sanskrit
+        );
+        newAsana.setDuration(asana.duration);
+        return newAsana;
+    });
+
+    // Add poses based on sort order
+    if (tableInDescendingOrder) {
+        editingFlow.asanas.unshift(...newAsanas);
+    } else {
+        editingFlow.asanas.push(...newAsanas);
+    }
+
+    // Rebuild the table
+    rebuildFlowTable();
+    
+    // Update flow duration
+    updateFlowDuration();
+    
+    // Show notification
+    showToastNotification(`Loaded sequence "${sequence.name}"`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to display sequences in the UI
+function displaySequences() {
+    const sequences = getSequences();
+    const sequencesList = document.getElementById('sequencesList');
+    
+    if (!sequencesList) return;
+    
+    if (sequences.length === 0) {
+        sequencesList.innerHTML = '<div class="empty-message"><p>No saved sequences</p></div>';
+        return;
+    }
+    
+    sequencesList.innerHTML = sequences.map(sequence => {
+        // Get first three pose names
+        const poseNames = sequence.poses.slice(0, 3).map(p => p.name);
+        // Add ellipsis if there are more than 3 poses
+        const description = sequence.poses.length > 3 
+            ? `${poseNames.join(', ')}...` 
+            : poseNames.join(', ');
+        
+        return `
+        <div class="sequence-item">
+            <div class="sequence-info">
+                <h4>${sequence.name}</h4>
+                <p class="sequence-description">${sequence.poses.length} poses</p>
+                <div class="sequence-timestamps">
+                    <span class="timestamp">${description}</span>
+                </div>
+            </div>
+            <div class="sequence-actions">
+                <button class="flow-btn" onclick="loadSequence('${sequence.id}')">LOAD</button>
+                <button class="table-btn remove-btn" onclick="deleteSequence('${sequence.id}')">x</button>
+            </div>
+        </div>
+    `}).join('');
+}
