@@ -2329,9 +2329,6 @@ function toggleAsanaSelection(checkbox) {
             autoSaveFlow();
         }
         
-        // Show a brief notification
-        showToastNotification(checkbox.checked ? 'Pose selected' : 'Pose deselected');
-        
         // Update the select all checkbox state
         updateSelectAllCheckbox();
     }
