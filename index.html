@@ -386,6 +386,15 @@
             <button id="deleteSelectedBtn" class="action-btn" onclick="deleteSelectedPoses()" disabled>
               <span>Delete Selected</span>
             </button>
+            <button id="saveSequenceBtn" class="action-btn" onclick="saveSequence()" disabled>
+              <span>Save as Sequence</span>
+            </button>
+          </div>
+          <div class="saved-sequences">
+            <h3 class="sequences-section-title">Saved Sequences</h3>
+            <div id="sequencesList" class="sequences-list">
+              <!-- Saved sequences will be populated here -->
+            </div>
           </div>
           <table id="flowTable">
             <tr>
