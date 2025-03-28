@@ -440,6 +440,12 @@ function changeScreen(screenId) {
         if (sanskritToggle) {
             sanskritToggle.style.display = 'flex';
         }
+
+        // Sync build screen Sanskrit toggle state
+        const sanskritToggleBuild = document.getElementById('sanskrit-toggle-build');
+        if (sanskritToggleBuild) {
+            sanskritToggleBuild.checked = useSanskritNames;
+        }
         
         // Clear the asana search input
         const asanaSearch = document.getElementById('asanaSearch');
@@ -2377,9 +2383,38 @@ function toggleSanskritNames(event) {
         rebuildFlowTable();
     }
     
-    // If in flow screen, update the current asana display
+    // If in flow screen, update the current asana display and next asana
     if (currentScreenId === 'flowScreen' && editingFlow.asanas && editingFlow.asanas.length > 0) {
-        updateAsanaDisplay(editingFlow.asanas[currentAsanaIndex]);
+        // Get current asana
+        const currentAsana = editingFlow.asanas[currentAsanaIndex];
+        
+        // Update current asana name immediately
+        const asanaNameElement = document.getElementById("asanaName");
+        if (asanaNameElement && currentAsana) {
+            asanaNameElement.textContent = currentAsana.getDisplayName(useSanskritNames);
+        }
+        
+        // Update next asana if available
+        const nextAsana = editingFlow.asanas[currentAsanaIndex + 1];
+        if (nextAsana) {
+            const nextAsanaNameElement = document.getElementById('nextAsanaName');
+            if (nextAsanaNameElement) {
+                // Apply animation by resetting it
+                nextAsanaNameElement.style.animation = 'none';
+                nextAsanaNameElement.offsetHeight; // Trigger reflow
+                nextAsanaNameElement.style.animation = 'fade-in 0.6s ease-out';
+                
+                nextAsanaNameElement.textContent = nextAsana.getDisplayName(useSanskritNames);
+            }
+        }
+        
+        // Update speech if enabled and speaking
+        if (speechEnabled && !paused && speechSynthesis.speaking) {
+            // Cancel current speech
+            speechSynthesis.cancel();
+            // Speak the current pose name in the new language
+            speakAsanaName(currentAsana.name, currentAsana.side, currentAsana.sanskrit);
+        }
     }
     
     // Show a brief notification about the language change
@@ -2464,6 +2499,13 @@ function initializeApp() {
                 useSanskritNames = this.checked;
                 updateAsanaDisplayNames();
             });
+        }
+
+        // Set up build screen Sanskrit toggle
+        const sanskritToggleBuild = document.getElementById('sanskrit-toggle-build');
+        if (sanskritToggleBuild) {
+            sanskritToggleBuild.checked = useSanskritNames; // Set initial state
+            sanskritToggleBuild.addEventListener('change', toggleSanskritNames);
         }
         
         // Set up speech toggle
