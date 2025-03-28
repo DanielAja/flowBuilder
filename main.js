@@ -2137,24 +2137,6 @@ function populateAsanaList() {
         actionButtons.style.transition = 'opacity 0.2s ease';
         actionButtons.style.zIndex = '10';
         
-        // Create edit button
-        const editButton = document.createElement('button');
-        editButton.className = 'table-btn';
-        editButton.style.width = '26px';
-        editButton.style.height = '26px';
-        editButton.style.borderRadius = '50%';
-        editButton.style.backgroundColor = '#fff';
-        editButton.style.border = '1px solid #ddd';
-        editButton.style.color = '#555';
-        editButton.style.display = 'flex';
-        editButton.style.justifyContent = 'center';
-        editButton.style.alignItems = 'center';
-        editButton.style.cursor = 'pointer';
-        editButton.style.fontSize = '14px';
-        editButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-        editButton.innerHTML = '✎';
-        editButton.title = 'Edit sequence';
-        
         // Create delete button
         const deleteButton = document.createElement('button');
         deleteButton.className = 'table-btn remove-btn';
@@ -2173,19 +2155,13 @@ function populateAsanaList() {
         deleteButton.innerHTML = '×';
         deleteButton.title = 'Delete sequence';
         
-        // Add event listeners to buttons (with stopPropagation to prevent triggering the parent click)
-        editButton.addEventListener('click', function(e) {
-            e.stopPropagation();
-            editSequence(sequence.id);
-        });
-        
+        // Add event listener to delete button (with stopPropagation to prevent triggering the parent click)
         deleteButton.addEventListener('click', function(e) {
             e.stopPropagation();
             deleteSequence(sequence.id);
         });
         
-        // Add buttons to container
-        actionButtons.appendChild(editButton);
+        // Add delete button to container
         actionButtons.appendChild(deleteButton);
         
         // Append elements
