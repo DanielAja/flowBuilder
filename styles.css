@@ -2024,7 +2024,7 @@ input:checked + .slider:before {
   .flow-header {
     z-index: 100;
     position: relative;
-    background-color: rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 100);
   }
 }
 
