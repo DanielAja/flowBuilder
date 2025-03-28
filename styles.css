@@ -1796,7 +1796,7 @@ input:checked + .slider:before {
     padding: 20px 15px;
     z-index: 100;
     position: relative;
-    background-color: rgba(255, 255, 255, 1);
+    background-color: rgba(255, 255, 255, 0);
   }
 
   .flow-header h1 {
@@ -1887,6 +1887,93 @@ input:checked + .slider:before {
     padding: 6px 10px;
     font-size: 12px;
     display: inline-flex !important;
+  }
+  
+  /* Hide table asana images on small screens */
+  .table-asana-img {
+    display: none !important;
+  }
+  
+  .table-asana {
+    gap: 0;
+  }
+
+  /* Optimize table for small screens */
+  #flowTable {
+    table-layout: fixed;
+    font-size: 11px !important;
+  }
+
+  #flowTable th:nth-child(1),
+  #flowTable td:nth-child(1) {
+    width: 10% !important;
+    padding-left: 10px !important;
+  }
+
+  #flowTable th:nth-child(2),
+  #flowTable td:nth-child(2) {
+    width: 12% !important;
+    padding: 4px !important;
+  }
+
+  #flowTable th:nth-child(3),
+  #flowTable td:nth-child(3) {
+    width: 28% !important;
+  }
+
+  #flowTable th:nth-child(4),
+  #flowTable td:nth-child(4) {
+    width: 17% !important;
+    padding: 4px !important;
+  }
+
+  #flowTable th:nth-child(5),
+  #flowTable td:nth-child(5) {
+    width: 17% !important;
+    padding: 4px !important;
+  }
+
+  #flowTable th:nth-child(6),
+  #flowTable td:nth-child(6) {
+    width: 8% !important;
+    padding: 4px !important;
+  }
+
+  #flowTable th, 
+  #flowTable td {
+    padding: 4px !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .table-asana span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  .side-select, #flowTable input[type="number"] {
+    font-size: 10px !important;
+    padding: 4px !important;
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .duration-wrapper {
+    width: 100%;
+  }
+  
+  /* Reduce checkbox size on small screens */
+  #flowTable input[type="checkbox"],
+  #selectAllCheckbox {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  
+  #flowTable input[type="checkbox"]:checked::after {
+    font-size: 10px !important;
   }
 }
 
@@ -2314,5 +2401,6 @@ input:checked + .slider:before {
   width: 100%;
   min-width: unset;
   max-width: 100%;
+  table-layout: fixed;
 }
 
