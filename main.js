@@ -2130,11 +2130,75 @@ function populateAsanaList() {
         poseCount.style.color = '#666';
         poseCount.style.marginTop = '2px';
         
+        // Create action buttons container
+        const actionButtons = document.createElement('div');
+        actionButtons.className = 'sequence-action-buttons';
+        actionButtons.style.position = 'absolute';
+        actionButtons.style.top = '10px';
+        actionButtons.style.right = '10px';
+        actionButtons.style.display = 'flex';
+        actionButtons.style.gap = '5px';
+        actionButtons.style.opacity = '0';
+        actionButtons.style.transition = 'opacity 0.2s ease';
+        actionButtons.style.zIndex = '10';
+        
+        // Create edit button
+        const editButton = document.createElement('button');
+        editButton.className = 'table-btn';
+        editButton.style.width = '26px';
+        editButton.style.height = '26px';
+        editButton.style.borderRadius = '50%';
+        editButton.style.backgroundColor = '#fff';
+        editButton.style.border = '1px solid #ddd';
+        editButton.style.color = '#555';
+        editButton.style.display = 'flex';
+        editButton.style.justifyContent = 'center';
+        editButton.style.alignItems = 'center';
+        editButton.style.cursor = 'pointer';
+        editButton.style.fontSize = '14px';
+        editButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+        editButton.innerHTML = '✎';
+        editButton.title = 'Edit sequence';
+        
+        // Create delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'table-btn remove-btn';
+        deleteButton.style.width = '26px';
+        deleteButton.style.height = '26px';
+        deleteButton.style.borderRadius = '50%';
+        deleteButton.style.backgroundColor = '#ff6b6b';
+        deleteButton.style.border = 'none';
+        deleteButton.style.color = '#fff';
+        deleteButton.style.display = 'flex';
+        deleteButton.style.justifyContent = 'center';
+        deleteButton.style.alignItems = 'center';
+        deleteButton.style.cursor = 'pointer';
+        deleteButton.style.fontSize = '16px';
+        deleteButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+        deleteButton.innerHTML = '×';
+        deleteButton.title = 'Delete sequence';
+        
+        // Add event listeners to buttons (with stopPropagation to prevent triggering the parent click)
+        editButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            editSequence(sequence.id);
+        });
+        
+        deleteButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            deleteSequence(sequence.id);
+        });
+        
+        // Add buttons to container
+        actionButtons.appendChild(editButton);
+        actionButtons.appendChild(deleteButton);
+        
         // Append elements
         sequenceElement.appendChild(sequenceBadge);
         sequenceElement.appendChild(imageContainer);
         sequenceElement.appendChild(sequenceName);
         sequenceElement.appendChild(poseCount);
+        sequenceElement.appendChild(actionButtons);
         
         // Add event listener for click to load the sequence
         // Add hover effect for the sequence
@@ -2147,6 +2211,12 @@ function populateAsanaList() {
                 img.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
                 img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
             });
+            
+            // Show edit and delete buttons on hover
+            const actionButtons = this.querySelector('.sequence-action-buttons');
+            if (actionButtons) {
+                actionButtons.style.opacity = '1';
+            }
         });
         
         sequenceElement.addEventListener('mouseleave', function() {
@@ -2158,6 +2228,12 @@ function populateAsanaList() {
                 img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
                 img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
             });
+            
+            // Hide edit and delete buttons when not hovering
+            const actionButtons = this.querySelector('.sequence-action-buttons');
+            if (actionButtons) {
+                actionButtons.style.opacity = '0';
+            }
         });
         
         sequenceElement.addEventListener('click', function() {
@@ -2914,8 +2990,9 @@ function saveSequence() {
     // Show success notification
     showToastNotification(`Sequence "${sequenceName}" saved successfully`);
     
-    // Update the sequences display
+    // Update the sequences display and asana list
     displaySequences();
+    populateAsanaList(); // Refresh asana list to show the new sequence
 }
 
 // Function to load sequences
@@ -2942,6 +3019,131 @@ function deleteSequence(sequenceId) {
     
     // Update the sequences display
     displaySequences();
+    populateAsanaList(); // Refresh the asana list to remove the deleted sequence
+}
+
+// Function to edit a sequence
+function editSequence(sequenceId) {
+    // Get current sequences
+    const sequences = getSequences();
+    
+    // Find the sequence with matching ID
+    const sequence = sequences.find(seq => seq.id === sequenceId);
+    
+    if (!sequence) {
+        showToastNotification('Sequence not found');
+        return;
+    }
+    
+    // Load the sequence poses into the editor
+    editingFlow = new Flow();
+    
+    // Add the sequence poses to the flow
+    sequence.poses.forEach(asana => {
+        const newAsana = new YogaAsana(
+            asana.name,
+            asana.side,
+            asana.image,
+            asana.description,
+            asana.difficulty,
+            [...asana.tags],
+            [...asana.transitionsAsana],
+            asana.sanskrit
+        );
+        newAsana.setDuration(asana.duration);
+        editingFlow.addAsana(newAsana);
+    });
+    
+    // Set a title for the flow using the sequence name
+    editingFlow.name = `Edit: ${sequence.name}`;
+    
+    // Store the sequence ID to update it later
+    editingFlow.editingSequenceId = sequenceId;
+    
+    // Update flow duration
+    editingFlow.calculateTotalDuration();
+    
+    // Show toast notification
+    showToastNotification(`Editing sequence: ${sequence.name}`);
+    
+    // Switch to the build screen
+    changeScreen('buildScreen');
+    
+    // Update the UI
+    const titleInput = document.getElementById('title');
+    if (titleInput) {
+        titleInput.value = sequence.name;
+    }
+    
+    // Rebuild the table to show the sequence poses
+    rebuildFlowTable();
+    
+    // Add a save button event listener to save the edited sequence
+    const saveBtn = document.querySelector('.save-flow-btn');
+    if (saveBtn) {
+        // Store original onclick
+        const originalOnClick = saveBtn.onclick;
+        
+        // Replace with our function
+        saveBtn.onclick = function() {
+            // Update the sequence
+            updateEditedSequence(sequenceId, sequence.name);
+            
+            // Restore original handler
+            saveBtn.onclick = originalOnClick;
+            
+            // Go back to home screen
+            changeScreen('homeScreen');
+        };
+        
+        // Update button text
+        saveBtn.textContent = 'Done';
+    }
+}
+
+// Function to update an edited sequence
+function updateEditedSequence(sequenceId, originalName) {
+    // Get current sequences
+    const sequences = getSequences();
+    
+    // Find the sequence with matching ID
+    const index = sequences.findIndex(seq => seq.id === sequenceId);
+    
+    if (index === -1) {
+        showToastNotification('Sequence not found');
+        return;
+    }
+    
+    // Get the title input
+    const titleInput = document.getElementById('title');
+    const newName = titleInput ? titleInput.value : originalName;
+    
+    // Update the sequence
+    sequences[index].name = newName;
+    sequences[index].poses = editingFlow.asanas.map(asana => {
+        const newAsana = new YogaAsana(
+            asana.name,
+            asana.side,
+            asana.image,
+            asana.description,
+            asana.difficulty,
+            [...asana.tags],
+            [...asana.transitionsAsana],
+            asana.sanskrit
+        );
+        newAsana.setDuration(asana.duration);
+        return newAsana;
+    });
+    
+    // Save back to localStorage
+    localStorage.setItem('sequences', JSON.stringify(sequences));
+    
+    // Update UI
+    displaySequences();
+    populateAsanaList();
+    
+    // Show notification
+    showToastNotification(`Sequence "${newName}" updated successfully`);
 }
 
 // Function to load a sequence into the current flow
@@ -2989,6 +3191,11 @@ function loadSequence(sequenceId) {
     // Auto-save if in edit mode
     if (editMode) {
         autoSaveFlow();
+        
+        // If we're editing a sequence that appears in the asana list, refresh the list
+        if (editingFlow.editingSequenceId) {
+            populateAsanaList();
+        }
     }
 }
 
