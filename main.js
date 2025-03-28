@@ -168,14 +168,18 @@ function updateAsanaDisplay(asana) {
     const nextAsanaImageElement = document.getElementById("nextAsanaImage");
     const comingUpSection = document.querySelector(".coming-up");
 
-    // Use the displayName based on the toggle setting
+    // Use the displayName based on the current language toggle setting
+    // We directly read the toggle state to ensure the most current value is used
+    const sanskritToggleGlobal = document.getElementById('sanskrit-toggle-global');
+    const currentUseSanskritNames = sanskritToggleGlobal ? sanskritToggleGlobal.checked : useSanskritNames;
+    
     if (asanaNameElement) {
         // Handle cases where getDisplayName might not exist
         if (typeof asana.getDisplayName === 'function') {
-            asanaNameElement.textContent = asana.getDisplayName(useSanskritNames);
+            asanaNameElement.textContent = asana.getDisplayName(currentUseSanskritNames);
         } else {
             // Fallback to using name or sanskrit based on toggle
-            asanaNameElement.textContent = useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
+            asanaNameElement.textContent = currentUseSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
         }
     }
     if (asanaSideElement) asanaSideElement.textContent = asana.side;
@@ -214,12 +218,13 @@ function updateAsanaDisplay(asana) {
             nextAsanaNameElement.offsetHeight; // Trigger reflow
             nextAsanaNameElement.style.animation = 'fade-in 0.6s ease-out';
             
+            // Use the same sanskritToggleGlobal value for consistency
             // Handle cases where getDisplayName might not exist
             if (typeof nextAsana.getDisplayName === 'function') {
-                nextAsanaNameElement.textContent = nextAsana.getDisplayName(useSanskritNames);
+                nextAsanaNameElement.textContent = nextAsana.getDisplayName(currentUseSanskritNames);
             } else {
                 // Fallback to using name or sanskrit based on toggle
-                nextAsanaNameElement.textContent = useSanskritNames && nextAsana.sanskrit ? nextAsana.sanskrit : nextAsana.name;
+                nextAsanaNameElement.textContent = currentUseSanskritNames && nextAsana.sanskrit ? nextAsana.sanskrit : nextAsana.name;
             }
         }
         if (nextAsanaImageElement) {
@@ -2506,6 +2511,13 @@ function initializeApp() {
         if (sanskritToggleBuild) {
             sanskritToggleBuild.checked = useSanskritNames; // Set initial state
             sanskritToggleBuild.addEventListener('change', toggleSanskritNames);
+        }
+
+        // Set up global Sanskrit toggle
+        const sanskritToggleGlobal = document.getElementById('sanskrit-toggle-global');
+        if (sanskritToggleGlobal) {
+            sanskritToggleGlobal.checked = useSanskritNames; // Set initial state
+            sanskritToggleGlobal.addEventListener('change', toggleSanskritNames);
         }
         
         // Set up speech toggle
