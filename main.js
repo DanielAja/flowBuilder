@@ -2928,15 +2928,27 @@ function saveSequence() {
     if (selectedPoses.length === 0) return;
 
     // Create a name for the sequence based on the poses
-    const sequenceName = prompt('Enter a name for this sequence:', 
-        selectedPoses.map(p => p.name).join(' + '));
+    const defaultName = selectedPoses.map(p => p.name).join(' + ');
+    const sequenceName = prompt('Enter a name for this sequence (max 37 characters):', 
+        defaultName.length > 37 ? defaultName.substring(0, 37) + '...' : defaultName);
     
     if (!sequenceName) return; // User cancelled
+
+    // Validate sequence name
+    if (sequenceName.trim() === '') {
+        showToastNotification('Sequence name cannot be empty');
+        return;
+    }
+
+    if (sequenceName.length > 37) {
+        showToastNotification('Sequence name cannot exceed 37 characters');
+        return;
+    }
 
     // Create a new sequence object
     const sequence = {
         id: generateUniqueID(),
-        name: sequenceName,
+        name: sequenceName.trim(),
         poses: selectedPoses.map(asana => {
             const newAsana = new YogaAsana(
                 asana.name,
