@@ -1864,34 +1864,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Filter asanas based on category
 function filterAsanas(category) {
-    console.log(`Filtering asanas by category: ${category}`);
-    
-    // Save current scroll position
     const asanaList = document.getElementById('asanaList');
-    const scrollPosition = asanaList ? asanaList.scrollLeft : 0;
-    
-    // Update filter
-    currentFilter = category;
+    const asanas = asanaList.getElementsByClassName('asana-item');
+    const buttons = document.getElementsByClassName('category-btn');
     
     // Update active button
-    const categoryButtons = document.querySelectorAll('.category-btn');
-    categoryButtons.forEach(button => {
-        if (button.textContent.includes(category === 'all' ? 'All Poses' : category)) {
+    for (let button of buttons) {
+        button.classList.remove('active');
+        if (button.textContent.toLowerCase() === category.toLowerCase() || 
+            (category === 'all' && button.textContent === 'All Poses')) {
             button.classList.add('active');
-        } else {
-            button.classList.remove('active');
         }
-    });
-    
-    // Repopulate the list with the filter
-    populateAsanaList();
-    
-    // Restore scroll position after filtering
-    if (asanaList) {
-        setTimeout(() => {
-            asanaList.scrollLeft = scrollPosition;
-        }, 10);
     }
+
+    // Filter asanas
+    for (let asana of asanas) {
+        if (category === 'all') {
+            asana.style.display = 'flex';
+        } else if (category === 'sequence') {
+            // Show only sequence items
+            asana.style.display = asana.hasAttribute('data-sequence-id') ? 'flex' : 'none';
+        } else {
+            // For other categories, check if the asana has the category tag
+            const tags = asana.getAttribute('data-tags')?.split(',') || [];
+            asana.style.display = tags.includes(category) ? 'flex' : 'none';
+        }
+    }
+
+    // Update scroll buttons visibility
+    updateScrollButtons();
 }
 
 // Function to update recommended poses styling and animation
@@ -1999,6 +2000,7 @@ function populateAsanaList() {
         asanaElement.className = 'asana-item';
         asanaElement.draggable = true;
         asanaElement.setAttribute('data-name', asana.name);
+        asanaElement.setAttribute('data-tags', asana.tags.join(','));
         
         // Only add animation if this pose wasn't previously displayed
         const wasPreviouslyDisplayed = currentPoses.includes(asana.name);

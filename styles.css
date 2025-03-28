@@ -2419,3 +2419,26 @@ input:checked + .slider:before {
   table-layout: fixed;
 }
 
+#buildScreen > div.build-content > div.asana-selection > div.asana-scroll-container > #asanaList > .asana-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideIn 0.2s ease forwards;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Add a new class for sequence items with faster animation */
+#buildScreen > div.build-content > div.asana-selection > div.asana-scroll-container > #asanaList > .asana-item[data-sequence-id] {
+  animation: slideIn 0.15s ease forwards;
+  animation-delay: 0s !important; /* Override any inline animation-delay */
+}
+
