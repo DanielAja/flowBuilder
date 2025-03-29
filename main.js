@@ -1866,18 +1866,6 @@ document.addEventListener('DOMContentLoaded', function() {
 function filterAsanas(category) {
     const asanaList = document.getElementById('asanaList');
     const asanas = asanaList.getElementsByClassName('asana-item');
-    const buttons = document.getElementsByClassName('category-btn');
-    
-    // Update active button
-    for (let button of buttons) {
-        if (category === 'all' && button.textContent === 'All Poses') {
-            button.classList.add('active');
-        } else if (button.textContent === category) {
-            button.classList.add('active');
-        } else {
-            button.classList.remove('active');
-        }
-    }
 
     // Update current filter
     currentFilter = category;
@@ -1886,7 +1874,7 @@ function filterAsanas(category) {
     for (let asana of asanas) {
         if (category === 'all') {
             asana.style.display = 'flex';
-        } else if (category === 'sequence') {
+        } else if (category === 'Sequence') {
             // Show only sequence items
             asana.style.display = asana.hasAttribute('data-sequence-id') ? 'flex' : 'none';
         } else {
