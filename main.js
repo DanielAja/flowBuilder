@@ -500,7 +500,7 @@ function changeScreen(screenId) {
         // Update the save button text
         const saveButton = document.querySelector('#buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn');
         if (saveButton) {
-            saveButton.textContent = 'Save';
+            saveButton.textContent = 'Done';
         }
 
         // Sync build screen Sanskrit toggle state
