@@ -497,6 +497,12 @@ function changeScreen(screenId) {
             sanskritToggle.style.display = 'flex';
         }
 
+        // Update the save button text
+        const saveButton = document.querySelector('#buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn');
+        if (saveButton) {
+            saveButton.textContent = 'Save';
+        }
+
         // Sync build screen Sanskrit toggle state
         const sanskritToggleBuild = document.getElementById('sanskrit-toggle-build');
         if (sanskritToggleBuild) {
