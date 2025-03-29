@@ -782,8 +782,10 @@ h1 {
   flex-direction: column;
   align-items: center;
   margin: 5px;
-  min-width: 130px;
-  flex-shrink: 0; /* Prevent containers from shrinking */
+  min-width: 300px;
+  width: fit-content; /* Changed from max-content to fit-content */
+  max-width: 750px;
+  flex: 0 1 auto;
   cursor: pointer;
   border-radius: 8px;
   padding: 12px;
@@ -791,7 +793,22 @@ h1 {
   background-color: #f9f9f9;
   border: 2px solid transparent;
   position: relative;
-  padding-bottom: 20px; /* Add padding to make room for the badge */
+  padding-bottom: 20px;
+  height: auto;
+  min-height: 150px;
+  justify-content: center;
+  aspect-ratio: auto;
+}
+
+.asana-item-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 10px;
+  flex: 1;
 }
 
 .asana-item:hover {
@@ -826,10 +843,13 @@ h1 {
   text-align: center;
   margin: 0;
   transition: all 0.3s ease;
-  width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  width: auto; /* Changed from 100% to auto */
+  min-width: 100%; /* Added to ensure text takes at least full width */
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.2;
+  padding: 0 5px;
+  max-width: 100%;
 }
 
 .asana-item:hover p {
