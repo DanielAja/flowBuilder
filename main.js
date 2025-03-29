@@ -519,6 +519,8 @@ function changeScreen(screenId) {
             currentSearch = '';
             // Repopulate the list with all asanas
             populateAsanaList();
+            // Reset scroll position to the beginning
+            asanaList.scrollLeft = 0;
         }
 
         // Reset the flow table
@@ -1882,6 +1884,11 @@ function filterAsanas(category) {
             const tags = asana.getAttribute('data-tags')?.split(',') || [];
             asana.style.display = tags.includes(category) ? 'flex' : 'none';
         }
+    }
+
+    // Reset scroll position to the beginning
+    if (asanaList) {
+        asanaList.scrollLeft = 0;
     }
 
     // Update scroll buttons visibility
