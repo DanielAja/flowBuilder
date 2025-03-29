@@ -1872,6 +1872,20 @@ function filterAsanas(category) {
     // Update current filter
     currentFilter = category;
 
+    // Update active button class
+    const categoryButtons = document.querySelectorAll('.category-btn');
+    categoryButtons.forEach(button => {
+        // Remove active class from all buttons
+        button.classList.remove('active');
+        
+        // Add active class to the clicked button
+        if (button.textContent.trim() === 'All Poses' && category === 'all') {
+            button.classList.add('active');
+        } else if (button.textContent.trim() === category) {
+            button.classList.add('active');
+        }
+    });
+
     // Filter asanas
     for (let asana of asanas) {
         if (category === 'all') {
@@ -2972,11 +2986,178 @@ function saveSequence() {
     // Show success notification
     showToastNotification(`Sequence "${sequenceName}" saved successfully`);
     
-    // Update the sequences display and asana list
+    // Update the sequences display
     displaySequences();
     
-    // Force refresh the asana list to show the new sequence
-    setTimeout(() => populateAsanaList(), 0);
+    // Add the new sequence directly to the asana list
+    const asanaList = document.getElementById('asanaList');
+    if (asanaList) {
+        // Create sequence element styled like asana-item
+        const sequenceElement = document.createElement('div');
+        sequenceElement.className = 'asana-item';
+        sequenceElement.draggable = true;
+        sequenceElement.setAttribute('data-sequence-id', sequence.id);
+        
+        // Create a container for sequence preview images
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'sequence-preview-container';
+        imageContainer.style.display = 'flex';
+        imageContainer.style.justifyContent = 'center';
+        imageContainer.style.position = 'relative';
+        imageContainer.style.height = '85px';
+        imageContainer.style.width = '100%';
+        
+        // Add up to 3 preview images from the sequence
+        const maxPreviewImages = Math.min(3, sequence.poses.length);
+        for (let i = 0; i < maxPreviewImages; i++) {
+            const pose = sequence.poses[i];
+            const previewImg = document.createElement('img');
+            previewImg.src = pose.image;
+            previewImg.alt = pose.name;
+            previewImg.style.width = '60px';
+            previewImg.style.height = '60px';
+            previewImg.style.objectFit = 'contain';
+            previewImg.style.position = 'absolute';
+            previewImg.style.borderRadius = '50%';
+            previewImg.style.background = 'white';
+            previewImg.style.padding = '2px';
+            previewImg.style.border = '1px solid #eee';
+            previewImg.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            previewImg.style.transition = 'all 0.3s ease';
+            
+            // Position each image (staggered effect) - center the images with offsets
+            const offsetPercentage = (i * 30) - ((maxPreviewImages - 1) * 15);
+            previewImg.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+            previewImg.style.zIndex = `${3 - i}`;
+            
+            // Error handling for missing images
+            previewImg.onerror = function() {
+                this.onerror = null;
+                this.src = '';
+                this.style.display = 'flex';
+                this.style.justifyContent = 'center';
+                this.style.alignItems = 'center';
+                this.style.background = '#f5f5f5';
+                this.style.fontSize = '20px';
+                this.innerText = '🧘‍♀️';
+            };
+            
+            imageContainer.appendChild(previewImg);
+        }
+        
+        // Create sequence badge
+        const sequenceBadge = document.createElement('span');
+        sequenceBadge.className = 'difficulty-badge';
+        sequenceBadge.style.backgroundColor = '#ff8c00';
+        sequenceBadge.textContent = 'Sequence';
+        
+        // Create sequence name label
+        const sequenceName = document.createElement('p');
+        sequenceName.textContent = sequence.name;
+        
+        // Create pose count label with sequence indicator
+        const poseCount = document.createElement('p');
+        poseCount.textContent = `Sequence • ${sequence.poses.length} poses`;
+        poseCount.style.fontSize = '12px';
+        poseCount.style.color = '#666';
+        poseCount.style.marginTop = '2px';
+        
+        // Create action buttons container
+        const actionButtons = document.createElement('div');
+        actionButtons.className = 'sequence-action-buttons';
+        actionButtons.style.position = 'absolute';
+        actionButtons.style.top = '10px';
+        actionButtons.style.right = '10px';
+        actionButtons.style.display = 'flex';
+        actionButtons.style.gap = '5px';
+        actionButtons.style.opacity = '0';
+        actionButtons.style.transition = 'opacity 0.2s ease';
+        actionButtons.style.zIndex = '10';
+        
+        // Create delete button
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'table-btn remove-btn';
+        deleteButton.style.width = '26px';
+        deleteButton.style.height = '26px';
+        deleteButton.style.borderRadius = '50%';
+        deleteButton.style.backgroundColor = '#ff6b6b';
+        deleteButton.style.border = 'none';
+        deleteButton.style.color = '#fff';
+        deleteButton.style.display = 'flex';
+        deleteButton.style.justifyContent = 'center';
+        deleteButton.style.alignItems = 'center';
+        deleteButton.style.cursor = 'pointer';
+        deleteButton.style.fontSize = '16px';
+        deleteButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+        deleteButton.innerHTML = '×';
+        deleteButton.title = 'Delete sequence';
+        
+        // Add event listener to delete button (with stopPropagation to prevent triggering the parent click)
+        deleteButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            deleteSequence(sequence.id);
+        });
+        
+        // Add delete button to container
+        actionButtons.appendChild(deleteButton);
+        
+        // Append elements
+        sequenceElement.appendChild(sequenceBadge);
+        sequenceElement.appendChild(imageContainer);
+        sequenceElement.appendChild(sequenceName);
+        sequenceElement.appendChild(poseCount);
+        sequenceElement.appendChild(actionButtons);
+        
+        // Add event listener for click to load the sequence
+        sequenceElement.addEventListener('click', function() {
+            loadSequence(sequence.id);
+        });
+        
+        // Add hover effects
+        sequenceElement.addEventListener('mouseenter', function() {
+            // Fan out the images slightly on hover
+            const images = this.querySelectorAll('img');
+            images.forEach((img, idx) => {
+                const offsetPercentage = (idx * 35) - ((maxPreviewImages - 1) * 17.5);
+                img.style.transform = 'scale(1.1)';
+                img.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+            });
+            
+            // Show delete button on hover
+            if (actionButtons) {
+                actionButtons.style.opacity = '1';
+            }
+        });
+        
+        sequenceElement.addEventListener('mouseleave', function() {
+            // Reset the images on mouse leave
+            const images = this.querySelectorAll('img');
+            images.forEach((img, idx) => {
+                const offsetPercentage = (idx * 30) - ((maxPreviewImages - 1) * 15);
+                img.style.transform = '';
+                img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+            });
+            
+            // Hide delete button when not hovering
+            if (actionButtons) {
+                actionButtons.style.opacity = '0';
+            }
+        });
+        
+        // Add to list with animation
+        sequenceElement.style.opacity = '0';
+        sequenceElement.style.transform = 'translateY(20px)';
+        asanaList.appendChild(sequenceElement);
+        
+        // Trigger animation
+        setTimeout(() => {
+            sequenceElement.style.transition = 'all 0.2s ease';
+            sequenceElement.style.opacity = '1';
+            sequenceElement.style.transform = 'translateY(0)';
+        }, 10);
+    }
 }
 
 // Function to load sequences
