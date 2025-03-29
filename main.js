@@ -2047,7 +2047,7 @@ function populateAsanaList() {
     
     console.log('Asana list populated with', posesList.length, 'asanas');
     
-    // Get saved sequences and add them to the asana list
+    // Always get a fresh copy of sequences directly from localStorage
     const sequences = getSequences();
     
     // Add saved sequences to the list
@@ -2974,7 +2974,9 @@ function saveSequence() {
     
     // Update the sequences display and asana list
     displaySequences();
-    populateAsanaList(); // Refresh asana list to show the new sequence
+    
+    // Force refresh the asana list to show the new sequence
+    setTimeout(() => populateAsanaList(), 0);
 }
 
 // Function to load sequences
@@ -3001,7 +3003,9 @@ function deleteSequence(sequenceId) {
     
     // Update the sequences display
     displaySequences();
-    populateAsanaList(); // Refresh the asana list to remove the deleted sequence
+    
+    // Force refresh the asana list to reflect the deleted sequence
+    setTimeout(() => populateAsanaList(), 0);
 }
 
 // Function to edit a sequence
