@@ -3156,6 +3156,16 @@ function saveSequence() {
             sequenceElement.style.transition = 'all 0.2s ease';
             sequenceElement.style.opacity = '1';
             sequenceElement.style.transform = 'translateY(0)';
+            
+            // Change filter to "All Poses"
+            filterAsanas('all');
+            
+            // Scroll to the new sequence
+            const scrollPosition = sequenceElement.offsetLeft - (asanaList.offsetWidth - sequenceElement.offsetWidth) / 2;
+            asanaList.scrollTo({
+                left: scrollPosition,
+                behavior: 'smooth'
+            });
         }, 10);
     }
 }
@@ -3185,8 +3195,22 @@ function deleteSequence(sequenceId) {
     // Update the sequences display
     displaySequences();
     
-    // Force refresh the asana list to reflect the deleted sequence
-    setTimeout(() => populateAsanaList(), 0);
+    // Find and remove the sequence element from asanaList
+    const asanaList = document.getElementById('asanaList');
+    if (asanaList) {
+        const sequenceElement = asanaList.querySelector(`[data-sequence-id="${sequenceId}"]`);
+        if (sequenceElement) {
+            // Add fade out animation
+            sequenceElement.style.transition = 'all 0.2s ease';
+            sequenceElement.style.opacity = '0';
+            sequenceElement.style.transform = 'translateY(20px)';
+            
+            // Remove the element after animation
+            setTimeout(() => {
+                sequenceElement.remove();
+            }, 200);
+        }
+    }
 }
 
 // Function to edit a sequence
