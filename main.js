@@ -2010,7 +2010,13 @@ function populateAsanaList() {
     }
     
     if (posesList.length === 0) {
-        asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
+        asanaList.innerHTML = `
+            <div class="no-matches">
+                No poses found 🧘‍♂️
+                <button class="add-custom-pose-btn" onclick="addCustomPose()">
+                    Add Custom Pose
+                </button>
+            </div>`;
         return;
     }
     
@@ -2035,15 +2041,7 @@ function populateAsanaList() {
         // Add error handling for missing images
         asanaImage.onerror = function() {
             this.onerror = null;
-            this.src = '';
-            this.style.display = 'flex';
-            this.style.justifyContent = 'center';
-            this.style.alignItems = 'center';
-            this.style.background = '#f5f5f5';
-            this.style.fontSize = '30px';
-            this.style.width = '120px';
-            this.style.height = '120px';
-            this.innerText = '🧘‍♀️';
+            this.src = 'images/webp/no-image.webp';
             console.log(`Missing image for ${asana.getDisplayName(useSanskritNames)} in asana list`);
         };
         
@@ -2504,7 +2502,6 @@ function rebuildFlowTable() {
         const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
         
         const row = table.insertRow(-1);
-        // Make the row element draggable for the drag event system to work
         row.setAttribute('draggable', 'true');
         row.setAttribute('data-index', index);
         
@@ -2516,49 +2513,73 @@ function rebuildFlowTable() {
             rowNumber = index + 1;
         }
         
-        row.innerHTML = `
-            <td title="Drag to reorder">${rowNumber}</td>
-            <td>
-                <input type="checkbox" class="asana-select" data-index="${index}" 
-                       ${asana.selected ? 'checked' : ''} 
-                       onchange="toggleAsanaSelection(this)">
-            </td>
-            <td>
-                <div class="table-asana">
-                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
-                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center'; 
-                         this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px'; 
-                         this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
-                    <span>${typeof asana.getDisplayName === 'function' ? 
-                            asana.getDisplayName(useSanskritNames) : 
-                            (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
-                </div>
-            </td>
-            <td>
-                <div class="duration-wrapper">
-                    <input type="number" value="${asana.duration || 3}" min="1" max="300" onchange="updateFlowDuration()"/>
-                    <span class="duration-unit">s</span>
-                </div>
-            </td>
-            <td>${createSideDropdown(asana.side)}</td>
-            <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
+        // Create cells
+        const numberCell = row.insertCell();
+        numberCell.title = "Drag to reorder";
+        numberCell.textContent = rowNumber;
+        numberCell.style.cursor = "grab";
+        
+        const checkboxCell = row.insertCell();
+        checkboxCell.innerHTML = `<input type="checkbox" class="asana-select" data-index="${index}" 
+                                ${asana.selected ? 'checked' : ''} 
+                                onchange="toggleAsanaSelection(this)">`;
+        
+        const nameCell = row.insertCell();
+        const tableAsanaDiv = document.createElement('div');
+        tableAsanaDiv.className = 'table-asana';
+        
+        // Create and add image
+        const img = document.createElement('img');
+        img.src = asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`;
+        img.alt = asana.name;
+        img.className = 'table-asana-img';
+        img.style = imgTransform;
+        img.onerror = function() {
+            this.onerror = null;
+            this.src = 'images/webp/no-image.webp';
+            console.log(`Missing image for ${asana.name} in flow table`);
+        };
+        tableAsanaDiv.appendChild(img);
+        
+        // Add either input or span for name
+        if (asana.tags.includes('Custom')) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'editable-pose-name';
+            input.value = asana.getDisplayName(useSanskritNames);
+            input.onchange = () => updatePoseName(input, index);
+            tableAsanaDiv.appendChild(input);
+        } else {
+            const span = document.createElement('span');
+            span.textContent = asana.getDisplayName(useSanskritNames);
+            tableAsanaDiv.appendChild(span);
+        }
+        nameCell.appendChild(tableAsanaDiv);
+        
+        // Add duration cell
+        const durationCell = row.insertCell();
+        durationCell.innerHTML = `
+            <div class="duration-wrapper">
+                <input type="number" value="${asana.duration || 3}" min="1" max="300" onchange="updateFlowDuration()"/>
+                <span class="duration-unit">s</span>
+            </div>
         `;
         
-        // Add specific drag handle tooltip and style
-        const numCell = row.cells[0];
-        numCell.style.cursor = "grab";
+        // Add side selection cell
+        const sideCell = row.insertCell();
+        sideCell.innerHTML = createSideDropdown(asana.side);
+        
+        // Add remove button cell
+        const removeCell = row.insertCell();
+        removeCell.innerHTML = '<button class="table-btn remove-btn" onclick="removePose(this)">×</button>';
     });
     
-    // Make sure drag and drop works after rebuild by updating all row attributes
+    // Make sure drag and drop works after rebuild
     updateRowDragAttributes();
-    
-    // Set up drag handlers again to ensure they work after rebuilding
     setupDragAndDrop();
     
     // Update flow duration
     updateFlowDuration();
-    
-    console.log('Rebuilt flow table with draggable rows');
 }
 
 // Function to toggle asana selection
@@ -3431,4 +3452,73 @@ function displaySequences() {
             </div>
         </div>
     `}).join('');
+}
+// Function to add a custom pose
+function addCustomPose() {
+    // Prompt for custom pose name
+    const poseName = prompt('Enter a name for your custom pose:', 'Custom Pose');
+    
+    // If user cancels or enters empty name, don't create the pose
+    if (!poseName || poseName.trim() === '') {
+        return;
+    }
+
+    // Create sanskrit name by adding "Asana" suffix if not already present
+    const sanskritName = poseName.toLowerCase().endsWith('asana') ? 
+        poseName.trim() : 
+        `${poseName.trim()} Asana`;
+
+    // Create a new YogaAsana with custom name
+    const customPose = new YogaAsana(
+        poseName.trim(),
+        "Center",
+        "images/webp/no-image.webp", // Changed default image
+        `A custom pose: ${poseName.trim()}`,
+        "Beginner",
+        ["Custom"],
+        [],
+        sanskritName
+    );
+    
+    // Add to the flow
+    if (tableInDescendingOrder) {
+        editingFlow.asanas.unshift(customPose);
+    } else {
+        editingFlow.addAsana(customPose);
+    }
+    
+    // Rebuild the table
+    rebuildFlowTable();
+    
+    // Update flow duration
+    updateFlowDuration();
+    
+    // Show notification
+    showToastNotification(`Custom pose "${poseName.trim()}" added - Edit duration and side as needed`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to update pose name
+function updatePoseName(input, index) {
+    const newName = input.value.trim();
+    if (newName && editingFlow.asanas[index]) {
+        const asana = editingFlow.asanas[index];
+        asana.name = newName;
+        // Update sanskrit name if using sanskrit names
+        asana.sanskrit = newName.toLowerCase().endsWith('asana') ? 
+            newName : 
+            `${newName} Asana`;
+            
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+        
+        // Show notification
+        showToastNotification(`Pose name updated to "${newName}"`);
+    }
 }

@@ -2458,3 +2458,65 @@ input:checked + .slider:before {
   object-fit: contain;
 }
 
+.no-matches {
+    padding: 20px;
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin: 10px auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.add-custom-pose-btn {
+    background: linear-gradient(135deg, #ff8c00, #ff6b00);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(255, 140, 0, 0.3);
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.add-custom-pose-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 140, 0, 0.4);
+    background: linear-gradient(135deg, #ff9d1a, #ff7b1a);
+}
+
+.add-custom-pose-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 3px rgba(255, 140, 0, 0.3);
+}
+
+.editable-pose-name {
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: #333;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    width: calc(100% - 60px);
+    margin-left: 10px;
+}
+
+.editable-pose-name:hover {
+    background: rgba(255, 140, 0, 0.1);
+}
+
+.editable-pose-name:focus {
+    outline: none;
+    background: white;
+    box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+}
+
