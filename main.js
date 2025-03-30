@@ -1872,9 +1872,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Filter asanas based on category
 function filterAsanas(category) {
-    const asanaList = document.getElementById('asanaList');
-    const asanas = asanaList.getElementsByClassName('asana-item');
-
     // Update current filter
     currentFilter = category;
 
@@ -1892,27 +1889,8 @@ function filterAsanas(category) {
         }
     });
 
-    // Filter asanas
-    for (let asana of asanas) {
-        if (category === 'all') {
-            asana.style.display = 'flex';
-        } else if (category === 'Sequence') {
-            // Show only sequence items
-            asana.style.display = asana.hasAttribute('data-sequence-id') ? 'flex' : 'none';
-        } else {
-            // For other categories, check if the asana has the category tag
-            const tags = asana.getAttribute('data-tags')?.split(',') || [];
-            asana.style.display = tags.includes(category) ? 'flex' : 'none';
-        }
-    }
-
-    // Reset scroll position to the beginning
-    if (asanaList) {
-        asanaList.scrollLeft = 0;
-    }
-
-    // Update scroll buttons visibility
-    updateScrollButtons();
+    // Use populateAsanaList to handle both filtering and searching
+    populateAsanaList();
 }
 
 // Function to update recommended poses styling and animation
@@ -1987,11 +1965,17 @@ function populateAsanaList() {
         return;
     }
     
+    // Get sequences first
+    const sequences = getSequences();
+    
     // Filter poses based on current category and search
     let posesList = [...asanas];
     
     // Apply category filter
-    if (currentFilter !== 'all') {
+    if (currentFilter === 'Sequence') {
+        // If Sequence is selected, only show sequences
+        posesList = [];
+    } else if (currentFilter !== 'all') {
         posesList = posesList.filter(asana => {
             return asana.tags && asana.tags.some(tag => 
                 tag.toLowerCase().includes(currentFilter.toLowerCase())
@@ -2009,233 +1993,246 @@ function populateAsanaList() {
         });
     }
     
-    if (posesList.length === 0) {
+    // Show no matches message if both poses and sequences are empty
+    if (posesList.length === 0 && (!sequences || sequences.length === 0)) {
         asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
         return;
     }
     
-    // Create and add elements for each pose
-    posesList.forEach((asana, index) => {
-        const asanaElement = document.createElement('div');
-        asanaElement.className = 'asana-item';
-        asanaElement.draggable = true;
-        asanaElement.setAttribute('data-name', asana.name);
-        asanaElement.setAttribute('data-tags', asana.tags.join(','));
-        
-        // Create difficulty badge
-        const difficultyBadge = document.createElement('span');
-        difficultyBadge.className = `difficulty-badge ${asana.difficulty.toLowerCase()}`;
-        difficultyBadge.textContent = asana.difficulty;
-        
-        // Create image element
-        const asanaImage = document.createElement('img');
-        asanaImage.src = asana.image;
-        asanaImage.alt = asana.getDisplayName(useSanskritNames);
-        
-        // Add error handling for missing images
-        asanaImage.onerror = function() {
-            this.onerror = null;
-            this.src = '';
-            this.style.display = 'flex';
-            this.style.justifyContent = 'center';
-            this.style.alignItems = 'center';
-            this.style.background = '#f5f5f5';
-            this.style.fontSize = '30px';
-            this.style.width = '120px';
-            this.style.height = '120px';
-            this.innerText = '🧘‍♀️';
-            console.log(`Missing image for ${asana.getDisplayName(useSanskritNames)} in asana list`);
-        };
-        
-        // Create name label - use getDisplayName for consistent naming
-        const asanaName = document.createElement('p');
-        asanaName.textContent = asana.getDisplayName(useSanskritNames);
-        
-        // Append elements
-        asanaElement.appendChild(difficultyBadge);
-        asanaElement.appendChild(asanaImage);
-        asanaElement.appendChild(asanaName);
-        
-        // Add event listener for click
-        asanaElement.addEventListener('click', function() {
-            selectAsana(asana);
-        });
-        
-        // Add to list
-        asanaList.appendChild(asanaElement);
-    });
-    
-    console.log('Asana list populated with', posesList.length, 'asanas');
-    
-    // Always get a fresh copy of sequences directly from localStorage
-    const sequences = getSequences();
-    
-    // Add saved sequences to the list
-    sequences.forEach((sequence, index) => {
-        // Create sequence element styled like asana-item
-        const sequenceElement = document.createElement('div');
-        sequenceElement.className = 'asana-item';
-        sequenceElement.draggable = true;
-        sequenceElement.setAttribute('data-sequence-id', sequence.id);
-        
-        // Add animation delay if not previously displayed
-        sequenceElement.style.animationDelay = `${(posesList.length + index) * 0.05}s`;
-        
-        // Create a container for sequence preview images
-        const imageContainer = document.createElement('div');
-        imageContainer.className = 'sequence-preview-container';
-        imageContainer.style.display = 'flex';
-        imageContainer.style.justifyContent = 'center';
-        imageContainer.style.position = 'relative';
-        imageContainer.style.height = '85px';
-        imageContainer.style.width = '100%';
-        
-        // Add up to 3 preview images from the sequence
-        const maxPreviewImages = Math.min(3, sequence.poses.length);
-        for (let i = 0; i < maxPreviewImages; i++) {
-            const pose = sequence.poses[i];
-            const previewImg = document.createElement('img');
-            previewImg.src = pose.image;
-            previewImg.alt = pose.name;
-            previewImg.style.width = '60px';
-            previewImg.style.height = '60px';
-            previewImg.style.objectFit = 'contain';
-            previewImg.style.position = 'absolute';
-            previewImg.style.borderRadius = '50%';
-            previewImg.style.background = 'white';
-            previewImg.style.padding = '2px';
-            previewImg.style.border = '1px solid #eee';
-            previewImg.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-            previewImg.style.transition = 'all 0.3s ease';
+    // Create and add elements for each pose if not in Sequence filter
+    if (currentFilter !== 'Sequence') {
+        posesList.forEach((asana, index) => {
+            const asanaElement = document.createElement('div');
+            asanaElement.className = 'asana-item';
+            asanaElement.draggable = true;
+            asanaElement.setAttribute('data-name', asana.name);
+            asanaElement.setAttribute('data-tags', asana.tags.join(','));
             
-            // Position each image (staggered effect) - center the images with offsets
-            const offsetPercentage = (i * 30) - ((maxPreviewImages - 1) * 15);
-            previewImg.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
-            previewImg.style.zIndex = `${3 - i}`;
+            // Create difficulty badge
+            const difficultyBadge = document.createElement('span');
+            difficultyBadge.className = `difficulty-badge ${asana.difficulty.toLowerCase()}`;
+            difficultyBadge.textContent = asana.difficulty;
             
-            // Error handling for missing images
-            previewImg.onerror = function() {
+            // Create image element
+            const asanaImage = document.createElement('img');
+            asanaImage.src = asana.image;
+            asanaImage.alt = asana.getDisplayName(useSanskritNames);
+            
+            // Add error handling for missing images
+            asanaImage.onerror = function() {
                 this.onerror = null;
                 this.src = '';
                 this.style.display = 'flex';
                 this.style.justifyContent = 'center';
                 this.style.alignItems = 'center';
                 this.style.background = '#f5f5f5';
-                this.style.fontSize = '20px';
+                this.style.fontSize = '30px';
+                this.style.width = '120px';
+                this.style.height = '120px';
                 this.innerText = '🧘‍♀️';
+                console.log(`Missing image for ${asana.getDisplayName(useSanskritNames)} in asana list`);
             };
             
-            imageContainer.appendChild(previewImg);
-        }
-        
-        // Create sequence badge
-        const sequenceBadge = document.createElement('span');
-        sequenceBadge.className = 'difficulty-badge';
-        sequenceBadge.style.backgroundColor = '#ff8c00';
-        sequenceBadge.textContent = 'Sequence';
-        
-        // Create sequence name label
-        const sequenceName = document.createElement('p');
-        sequenceName.textContent = sequence.name;
-        
-        // Create pose count label with sequence indicator
-        const poseCount = document.createElement('p');
-        poseCount.textContent = `Sequence • ${sequence.poses.length} poses`;
-        poseCount.style.fontSize = '12px';
-        poseCount.style.color = '#666';
-        poseCount.style.marginTop = '2px';
-        
-        // Create action buttons container
-        const actionButtons = document.createElement('div');
-        actionButtons.className = 'sequence-action-buttons';
-        actionButtons.style.position = 'absolute';
-        actionButtons.style.top = '10px';
-        actionButtons.style.right = '10px';
-        actionButtons.style.display = 'flex';
-        actionButtons.style.gap = '5px';
-        actionButtons.style.opacity = '0';
-        actionButtons.style.transition = 'opacity 0.2s ease';
-        actionButtons.style.zIndex = '10';
-        
-        // Create delete button
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'table-btn remove-btn';
-        deleteButton.style.width = '26px';
-        deleteButton.style.height = '26px';
-        deleteButton.style.borderRadius = '50%';
-        deleteButton.style.backgroundColor = '#ff6b6b';
-        deleteButton.style.border = 'none';
-        deleteButton.style.color = '#fff';
-        deleteButton.style.display = 'flex';
-        deleteButton.style.justifyContent = 'center';
-        deleteButton.style.alignItems = 'center';
-        deleteButton.style.cursor = 'pointer';
-        deleteButton.style.fontSize = '16px';
-        deleteButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-        deleteButton.innerHTML = '×';
-        deleteButton.title = 'Delete sequence';
-        
-        // Add event listener to delete button (with stopPropagation to prevent triggering the parent click)
-        deleteButton.addEventListener('click', function(e) {
-            e.stopPropagation();
-            deleteSequence(sequence.id);
-        });
-        
-        // Add delete button to container
-        actionButtons.appendChild(deleteButton);
-        
-        // Append elements
-        sequenceElement.appendChild(sequenceBadge);
-        sequenceElement.appendChild(imageContainer);
-        sequenceElement.appendChild(sequenceName);
-        sequenceElement.appendChild(poseCount);
-        sequenceElement.appendChild(actionButtons);
-        
-        // Add event listener for click to load the sequence
-        // Add hover effect for the sequence
-        sequenceElement.addEventListener('mouseenter', function() {
-            // Fan out the images slightly on hover
-            const images = this.querySelectorAll('img');
-            images.forEach((img, idx) => {
-                const offsetPercentage = (idx * 35) - ((maxPreviewImages - 1) * 17.5);
-                img.style.transform = 'scale(1.1)';
-                img.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-                img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+            // Create name label - use getDisplayName for consistent naming
+            const asanaName = document.createElement('p');
+            asanaName.textContent = asana.getDisplayName(useSanskritNames);
+            
+            // Append elements
+            asanaElement.appendChild(difficultyBadge);
+            asanaElement.appendChild(asanaImage);
+            asanaElement.appendChild(asanaName);
+            
+            // Add event listener for click
+            asanaElement.addEventListener('click', function() {
+                selectAsana(asana);
             });
             
-            // Show edit and delete buttons on hover
-            const actionButtons = this.querySelector('.sequence-action-buttons');
-            if (actionButtons) {
-                actionButtons.style.opacity = '1';
-            }
+            // Add to list
+            asanaList.appendChild(asanaElement);
         });
-        
-        sequenceElement.addEventListener('mouseleave', function() {
-            // Reset the images on mouse leave
-            const images = this.querySelectorAll('img');
-            images.forEach((img, idx) => {
-                const offsetPercentage = (idx * 30) - ((maxPreviewImages - 1) * 15);
-                img.style.transform = '';
-                img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-                img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
-            });
-            
-            // Hide edit and delete buttons when not hovering
-            const actionButtons = this.querySelector('.sequence-action-buttons');
-            if (actionButtons) {
-                actionButtons.style.opacity = '0';
-            }
-        });
-        
-        sequenceElement.addEventListener('click', function() {
-            loadSequence(sequence.id);
-        });
-        
-        // Add to list
-        asanaList.appendChild(sequenceElement);
-    });
+    }
     
-    console.log('Asana list populated with', posesList.length, 'asanas and', sequences.length, 'sequences');
+    // Filter sequences based on search if needed
+    let filteredSequences = sequences;
+    if (currentSearch) {
+        filteredSequences = sequences.filter(sequence => 
+            sequence.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+            sequence.poses.some(pose => 
+                pose.name.toLowerCase().includes(currentSearch.toLowerCase()) ||
+                (pose.sanskrit && pose.sanskrit.toLowerCase().includes(currentSearch.toLowerCase()))
+            )
+        );
+    }
+    
+    // Add sequences if we're showing all poses or specifically filtering for sequences
+    if (currentFilter === 'all' || currentFilter === 'Sequence') {
+        // Add saved sequences to the list
+        filteredSequences.forEach((sequence, index) => {
+            // Create sequence element styled like asana-item
+            const sequenceElement = document.createElement('div');
+            sequenceElement.className = 'asana-item';
+            sequenceElement.draggable = true;
+            sequenceElement.setAttribute('data-sequence-id', sequence.id);
+            
+            // Add animation delay if not previously displayed
+            sequenceElement.style.animationDelay = `${(posesList.length + index) * 0.05}s`;
+            
+            // Create a container for sequence preview images
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'sequence-preview-container';
+            imageContainer.style.display = 'flex';
+            imageContainer.style.justifyContent = 'center';
+            imageContainer.style.position = 'relative';
+            imageContainer.style.height = '85px';
+            imageContainer.style.width = '100%';
+            
+            // Add up to 3 preview images from the sequence
+            const maxPreviewImages = Math.min(3, sequence.poses.length);
+            for (let i = 0; i < maxPreviewImages; i++) {
+                const pose = sequence.poses[i];
+                const previewImg = document.createElement('img');
+                previewImg.src = pose.image;
+                previewImg.alt = pose.name;
+                previewImg.style.width = '60px';
+                previewImg.style.height = '60px';
+                previewImg.style.objectFit = 'contain';
+                previewImg.style.position = 'absolute';
+                previewImg.style.borderRadius = '50%';
+                previewImg.style.background = 'white';
+                previewImg.style.padding = '2px';
+                previewImg.style.border = '1px solid #eee';
+                previewImg.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                previewImg.style.transition = 'all 0.3s ease';
+                
+                // Position each image (staggered effect)
+                const offsetPercentage = (i * 30) - ((maxPreviewImages - 1) * 15);
+                previewImg.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+                previewImg.style.zIndex = `${3 - i}`;
+                
+                // Error handling for missing images
+                previewImg.onerror = function() {
+                    this.onerror = null;
+                    this.src = '';
+                    this.style.display = 'flex';
+                    this.style.justifyContent = 'center';
+                    this.style.alignItems = 'center';
+                    this.style.background = '#f5f5f5';
+                    this.style.fontSize = '20px';
+                    this.innerText = '🧘‍♀️';
+                };
+                
+                imageContainer.appendChild(previewImg);
+            }
+            
+            // Create sequence badge
+            const sequenceBadge = document.createElement('span');
+            sequenceBadge.className = 'difficulty-badge';
+            sequenceBadge.style.backgroundColor = '#ff8c00';
+            sequenceBadge.textContent = 'Sequence';
+            
+            // Create sequence name label
+            const sequenceName = document.createElement('p');
+            sequenceName.textContent = sequence.name;
+            
+            // Create pose count label
+            const poseCount = document.createElement('p');
+            poseCount.textContent = `Sequence • ${sequence.poses.length} poses`;
+            poseCount.style.fontSize = '12px';
+            poseCount.style.color = '#666';
+            poseCount.style.marginTop = '2px';
+            
+            // Create action buttons container
+            const actionButtons = document.createElement('div');
+            actionButtons.className = 'sequence-action-buttons';
+            actionButtons.style.position = 'absolute';
+            actionButtons.style.top = '10px';
+            actionButtons.style.right = '10px';
+            actionButtons.style.display = 'flex';
+            actionButtons.style.gap = '5px';
+            actionButtons.style.opacity = '0';
+            actionButtons.style.transition = 'opacity 0.2s ease';
+            actionButtons.style.zIndex = '10';
+            
+            // Create delete button
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'table-btn remove-btn';
+            deleteButton.style.width = '26px';
+            deleteButton.style.height = '26px';
+            deleteButton.style.borderRadius = '50%';
+            deleteButton.style.backgroundColor = '#ff6b6b';
+            deleteButton.style.border = 'none';
+            deleteButton.style.color = '#fff';
+            deleteButton.style.display = 'flex';
+            deleteButton.style.justifyContent = 'center';
+            deleteButton.style.alignItems = 'center';
+            deleteButton.style.cursor = 'pointer';
+            deleteButton.style.fontSize = '16px';
+            deleteButton.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+            deleteButton.innerHTML = '×';
+            deleteButton.title = 'Delete sequence';
+            
+            // Add event listener to delete button
+            deleteButton.addEventListener('click', function(e) {
+                e.stopPropagation();
+                deleteSequence(sequence.id);
+            });
+            
+            // Add delete button to container
+            actionButtons.appendChild(deleteButton);
+            
+            // Append elements
+            sequenceElement.appendChild(sequenceBadge);
+            sequenceElement.appendChild(imageContainer);
+            sequenceElement.appendChild(sequenceName);
+            sequenceElement.appendChild(poseCount);
+            sequenceElement.appendChild(actionButtons);
+            
+            // Add hover effects
+            sequenceElement.addEventListener('mouseenter', function() {
+                const images = this.querySelectorAll('img');
+                images.forEach((img, idx) => {
+                    const offsetPercentage = (idx * 35) - ((maxPreviewImages - 1) * 17.5);
+                    img.style.transform = 'scale(1.1)';
+                    img.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                    img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+                });
+                
+                if (actionButtons) {
+                    actionButtons.style.opacity = '1';
+                }
+            });
+            
+            sequenceElement.addEventListener('mouseleave', function() {
+                const images = this.querySelectorAll('img');
+                images.forEach((img, idx) => {
+                    const offsetPercentage = (idx * 30) - ((maxPreviewImages - 1) * 15);
+                    img.style.transform = '';
+                    img.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    img.style.left = `calc(50% - 30px + ${offsetPercentage}%)`;
+                });
+                
+                if (actionButtons) {
+                    actionButtons.style.opacity = '0';
+                }
+            });
+            
+            // Add click event to load sequence
+            sequenceElement.addEventListener('click', function() {
+                loadSequence(sequence.id);
+            });
+            
+            // Add to list
+            asanaList.appendChild(sequenceElement);
+        });
+    }
+    
+    // Show no matches message if both poses and sequences are empty after filtering
+    if (asanaList.children.length === 0) {
+        asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
+    }
+    
+    // Update scroll buttons visibility
+    updateScrollButtons();
 }
 
 // Scrolling functions for the asana list
