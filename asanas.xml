@@ -1172,4 +1172,184 @@
       <transition>Headstand</transition>
     </transitions>
   </asana>
+
+  <asana>
+    <n>Bound Half Moon</n>
+    <sanskrit>Baddha Ardha Chandrasana</sanskrit>
+    <side>Right</side>
+    <image>images/webp/bound-half-moon.webp</image>
+    <description>Bound Half Moon is a variation of Half Moon Pose where the top arm reaches back to bind with the back leg. It combines balance, flexibility, and strength.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Bind</tag>
+    </tags>
+    <transitions>
+      <transition>Half Moon Pose</transition>
+      <transition>Standing Split</transition>
+      <transition>Warrior 3</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Gorilla Pose</n>
+    <sanskrit>Pada Hastasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/gorilla-pose.webp</image>
+    <description>Gorilla Pose is a standing forward fold where the hands are placed under the feet. It deeply stretches the hamstrings and calves.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Forward Fold</transition>
+      <transition>Mountain Pose</transition>
+      <transition>Standing Split</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Three Legged Dog</n>
+    <sanskrit>Eka Pada Adho Mukha Svanasana</sanskrit>
+    <side>Right</side>
+    <image>images/webp/three-legged-dog.webp</image>
+    <description>Three Legged Dog is a variation of Downward Facing Dog where one leg lifts high. It strengthens the shoulders and core while stretching the hamstrings.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Inversion</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Downward Facing Dog</transition>
+      <transition>Warrior 3</transition>
+      <transition>Low Lunge</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Peacock Pose</n>
+    <sanskrit>Mayurasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/peacock-pose.webp</image>
+    <description>Peacock Pose is an advanced arm balance that strengthens the wrists, arms, and core. The body balances horizontally with the elbows pressing into the abdomen.</description>
+    <difficulty>Advanced</difficulty>
+    <tags>
+      <tag>Arm Balance</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Plank</transition>
+      <transition>Forearm Plank</transition>
+      <transition>Crow Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Yogi Toe Lock</n>
+    <sanskrit>Padangusthasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/yogi-toe-lock.webp</image>
+    <description>Yogi Toe Lock is a standing forward fold where the big toes are held with the first two fingers. It stretches the hamstrings and improves balance.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Forward Fold</transition>
+      <transition>Mountain Pose</transition>
+      <transition>Standing Split</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Reclined Bound Angle</n>
+    <sanskrit>Supta Baddha Konasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/reclined-bound-angle.webp</image>
+    <description>Reclined Bound Angle is a restorative pose that opens the hips and chest. The soles of the feet come together while lying on the back.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Restorative</tag>
+      <tag>Hip Opener</tag>
+    </tags>
+    <transitions>
+      <transition>Butterfly Pose</transition>
+      <transition>Corpse Pose</transition>
+      <transition>Happy Baby</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Standing Bow</n>
+    <sanskrit>Dancer Pose</sanskrit>
+    <side>Right</side>
+    <image>images/webp/standing-bow.webp</image>
+    <description>Standing Bow is a balancing pose that combines backbend and leg extension. One hand holds the foot while the other arm extends forward.</description>
+    <difficulty>Intermediate</difficulty>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Backbend</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Warrior 3</transition>
+      <transition>Tree Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Bird Dog</n>
+    <sanskrit>Dvipada Adho Mukha Svanasana</sanskrit>
+    <side>Right</side>
+    <image>images/webp/bird-dog.webp</image>
+    <description>Bird Dog strengthens the core and back while improving balance. From Table Top, one arm and opposite leg extend parallel to the ground.</description>
+    <difficulty>Beginner</difficulty>
+    <tags>
+      <tag>Core</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Table Top</transition>
+      <transition>Cat Pose</transition>
+      <transition>Downward Facing Dog</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Birds of Paradise</n>
+    <sanskrit>Svarga Dvijasana</sanskrit>
+    <side>Right</side>
+    <image>images/webp/birds-of-paradise.webp</image>
+    <description>Birds of Paradise is an advanced standing pose that combines balance, flexibility, and strength. One leg wraps around the standing leg while the arms bind.</description>
+    <difficulty>Advanced</difficulty>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Bind</tag>
+    </tags>
+    <transitions>
+      <transition>Tree Pose</transition>
+      <transition>Standing Split</transition>
+      <transition>Warrior 3</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Firefly Pose</n>
+    <sanskrit>Tittibhasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/firefly-pose.webp</image>
+    <description>Firefly Pose is an advanced arm balance that requires significant core and arm strength. The legs extend straight out to the sides while balancing on the hands.</description>
+    <difficulty>Advanced</difficulty>
+    <tags>
+      <tag>Arm Balance</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Malasana</transition>
+      <transition>Crow Pose</transition>
+      <transition>Bakasana</transition>
+    </transitions>
+  </asana>
 </asanas>
