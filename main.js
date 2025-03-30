@@ -2228,7 +2228,13 @@ function populateAsanaList() {
     
     // Show no matches message if both poses and sequences are empty after filtering
     if (asanaList.children.length === 0) {
-        asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
+        asanaList.innerHTML = `
+            <div class="no-matches">
+                <p>No poses found 🧘‍♂️</p>
+                <button class="add-custom-pose-btn" onclick="addCustomPose()">
+                    <span>+</span> Add Custom Pose
+                </button>
+            </div>`;
     }
     
     // Update scroll buttons visibility
@@ -3428,4 +3434,45 @@ function displaySequences() {
             </div>
         </div>
     `}).join('');
+}
+
+// Function to add a custom pose
+function addCustomPose() {
+    // Show a prompt for the pose name
+    const poseName = prompt('Enter the name of your custom pose:');
+    if (!poseName) return; // User cancelled
+
+    // Create a new YogaAsana instance
+    const customPose = new YogaAsana(
+        poseName,
+        'Center', // Default side
+        'images/webp/no-image.webp', // Use no-image.webp for custom poses
+        'Custom pose', // Default description
+        'Beginner', // Default difficulty
+        ['Custom'], // Default tags
+        [], // No transitions by default
+        '' // No Sanskrit name by default
+    );
+    customPose.setDuration(7); // Default duration
+
+    // Add to the flow based on sort order
+    if (tableInDescendingOrder) {
+        editingFlow.asanas.unshift(customPose);
+    } else {
+        editingFlow.addAsana(customPose);
+    }
+
+    // Rebuild the table
+    rebuildFlowTable();
+
+    // Update flow duration
+    updateFlowDuration();
+
+    // Show notification
+    showToastNotification(`Added custom pose: ${poseName}`);
+
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
 }

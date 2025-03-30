@@ -2490,3 +2490,54 @@ input:checked + .slider:before {
   object-fit: contain;
 }
 
+.no-matches {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 8px;
+  margin: 10px auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.no-matches p {
+  margin: 0;
+}
+
+.add-custom-pose-btn {
+  background: linear-gradient(135deg, #ff8c00, #ff6b00);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 5px rgba(255, 140, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.add-custom-pose-btn span {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.add-custom-pose-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.4);
+  background: linear-gradient(135deg, #ff9d1a, #ff7c1a);
+}
+
+.add-custom-pose-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(255, 140, 0, 0.3);
+}
+
