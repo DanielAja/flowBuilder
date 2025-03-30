@@ -500,7 +500,7 @@ function changeScreen(screenId) {
         // Update the save button text
         const saveButton = document.querySelector('#buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn');
         if (saveButton) {
-            saveButton.textContent = 'Save';
+            saveButton.textContent = 'Done';
         }
 
         // Sync build screen Sanskrit toggle state
@@ -1872,9 +1872,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Filter asanas based on category
 function filterAsanas(category) {
-    const asanaList = document.getElementById('asanaList');
-    const asanas = asanaList.getElementsByClassName('asana-item');
-
     // Update current filter
     currentFilter = category;
 
@@ -1892,27 +1889,8 @@ function filterAsanas(category) {
         }
     });
 
-    // Filter asanas
-    for (let asana of asanas) {
-        if (category === 'all') {
-            asana.style.display = 'flex';
-        } else if (category === 'Sequence') {
-            // Show only sequence items
-            asana.style.display = asana.hasAttribute('data-sequence-id') ? 'flex' : 'none';
-        } else {
-            // For other categories, check if the asana has the category tag
-            const tags = asana.getAttribute('data-tags')?.split(',') || [];
-            asana.style.display = tags.includes(category) ? 'flex' : 'none';
-        }
-    }
-
-    // Reset scroll position to the beginning
-    if (asanaList) {
-        asanaList.scrollLeft = 0;
-    }
-
-    // Update scroll buttons visibility
-    updateScrollButtons();
+    // Use populateAsanaList to handle both filtering and searching
+    populateAsanaList();
 }
 
 // Function to update recommended poses styling and animation
@@ -1987,11 +1965,17 @@ function populateAsanaList() {
         return;
     }
     
+    // Get sequences first
+    const sequences = getSequences();
+    
     // Filter poses based on current category and search
     let posesList = [...asanas];
     
     // Apply category filter
-    if (currentFilter !== 'all') {
+    if (currentFilter === 'Sequence') {
+        // If Sequence is selected, only show sequences
+        posesList = [];
+    } else if (currentFilter !== 'all') {
         posesList = posesList.filter(asana => {
             return asana.tags && asana.tags.some(tag => 
                 tag.toLowerCase().includes(currentFilter.toLowerCase())
@@ -2009,14 +1993,9 @@ function populateAsanaList() {
         });
     }
     
-    if (posesList.length === 0) {
-        asanaList.innerHTML = `
-            <div class="no-matches">
-                No poses found 🧘‍♂️
-                <button class="add-custom-pose-btn" onclick="addCustomPose()">
-                    Add Custom Pose
-                </button>
-            </div>`;
+    // Show no matches message if both poses and sequences are empty
+    if (posesList.length === 0 && (!sequences || sequences.length === 0)) {
+        asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
         return;
     }
     
@@ -2233,7 +2212,13 @@ function populateAsanaList() {
         asanaList.appendChild(sequenceElement);
     });
     
-    console.log('Asana list populated with', posesList.length, 'asanas and', sequences.length, 'sequences');
+    // Show no matches message if both poses and sequences are empty after filtering
+    if (asanaList.children.length === 0) {
+        asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
+    }
+    
+    // Update scroll buttons visibility
+    updateScrollButtons();
 }
 
 // Scrolling functions for the asana list
