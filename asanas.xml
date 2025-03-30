@@ -1246,18 +1246,18 @@
   </asana>
 
   <asana>
-    <n>Yogi Toe Lock</n>
-    <sanskrit>Padangusthasana</sanskrit>
-    <side>Center</side>
-    <image>images/webp/yogi-toe-lock.webp</image>
-    <description>Yogi Toe Lock is a standing forward fold where the big toes are held with the first two fingers. It stretches the hamstrings and improves balance.</description>
-    <difficulty>Beginner</difficulty>
+    <n>Hand to Big Toe</n>
+    <sanskrit>Utthita Hasta Padangusthasana</sanskrit>
+    <side>Right</side>
+    <image>images/webp/hand-to-big-toe.webp</image>
+    <description>Hand to Big Toe pose involves standing on one leg while holding the big toe of the extended leg. This pose builds balance, flexibility and core strength.</description>
+    <difficulty>Intermediate</difficulty>
     <tags>
       <tag>Standing</tag>
+      <tag>Balance</tag>
       <tag>Stretch</tag>
     </tags>
     <transitions>
-      <transition>Forward Fold</transition>
       <transition>Mountain Pose</transition>
       <transition>Standing Split</transition>
     </transitions>
