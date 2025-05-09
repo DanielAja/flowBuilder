@@ -2649,6 +2649,10 @@ function handleCardDragStart(e) {
     }, 100);
 }
 
+// Track the last position to prevent unnecessary updates
+let lastDropPosition = null;
+let lastIndicatorUpdate = 0;
+
 function handleCardDragOver(e) {
     if (!dragSource) return;
 
@@ -2658,6 +2662,13 @@ function handleCardDragOver(e) {
     const cardsContainer = document.querySelector('.flow-cards');
     if (!cardsContainer) return;
 
+    // Throttle updates to reduce flickering (only update every 50ms)
+    const now = Date.now();
+    if (now - lastIndicatorUpdate < 50) {
+        return;
+    }
+    lastIndicatorUpdate = now;
+
     // Find the card being hovered over
     let targetCard = null;
     if (e.target.classList && e.target.classList.contains('flow-card')) {
@@ -2666,77 +2677,80 @@ function handleCardDragOver(e) {
         targetCard = e.target.closest('.flow-card');
     }
 
-    // If we didn't find a card, check if we're hovering over a drop indicator
-    if (!targetCard && e.target.classList && e.target.classList.contains('drop-indicator')) {
-        // If already on a drop indicator, no need to recalculate
-        return;
-    }
-
     // If dragging over the dragging card itself, don't show indicators
     if (targetCard === dragSource) {
         return;
     }
 
-    // Only update indicators if needed to prevent flickering
+    // Calculate current position info
+    let currentPosition = null;
+
     if (targetCard) {
         const rect = targetCard.getBoundingClientRect();
         const middle = rect.top + rect.height / 2;
         const isBelow = e.clientY > middle;
+        const targetIndex = targetCard.getAttribute('data-index');
 
-        // Check if we already have an indicator in the right position
-        const currentIndicator = cardsContainer.querySelector('.drop-indicator');
-        if (currentIndicator) {
-            const prevCard = currentIndicator.previousElementSibling;
-            const nextCard = currentIndicator.nextElementSibling;
-
-            // If indicator is already in the correct position, don't recreate it
-            if ((isBelow && prevCard === targetCard) || (!isBelow && nextCard === targetCard)) {
-                return;
-            }
-
-            // Otherwise, remove existing indicators
-            currentIndicator.remove();
-        }
-
-        // Create new drop indicator
-        const indicator = document.createElement('div');
-        indicator.className = 'drop-indicator';
-        indicator.setAttribute('data-target', targetCard.getAttribute('data-index'));
-        indicator.setAttribute('data-position', isBelow ? 'after' : 'before');
-
-        if (isBelow) {
-            targetCard.insertAdjacentElement('afterend', indicator);
-        } else {
-            targetCard.insertAdjacentElement('beforebegin', indicator);
-        }
-    } else if (cardsContainer.children.length > 0 && dragSource) {
-        // When hovering over empty space, show indicator at the end of the container
-        // Only do this if there are existing cards
-
-        // Determining if we're closer to the top or bottom of the container to decide where to place indicator
+        currentPosition = {
+            targetIndex,
+            isBelow,
+            type: 'card'
+        };
+    } else {
+        // Empty space position
         const containerRect = cardsContainer.getBoundingClientRect();
-        const cards = Array.from(cardsContainer.querySelectorAll('.flow-card')).filter(card => card !== dragSource);
+        const isBottom = e.clientY > containerRect.top + containerRect.height / 2;
+
+        currentPosition = {
+            isBottom,
+            type: 'container'
+        };
+    }
+
+    // If position hasn't changed, don't update
+    if (lastDropPosition &&
+        JSON.stringify(lastDropPosition) === JSON.stringify(currentPosition)) {
+        return;
+    }
+
+    // Update the last position
+    lastDropPosition = currentPosition;
+
+    // Remove all existing indicators
+    const indicators = cardsContainer.querySelectorAll('.drop-indicator');
+    indicators.forEach(indicator => indicator.remove());
+
+    // Create a new indicator based on current position
+    const indicator = document.createElement('div');
+    indicator.className = 'drop-indicator';
+
+    if (currentPosition.type === 'card') {
+        // Position relative to a card
+        targetCard = Array.from(cardsContainer.querySelectorAll('.flow-card'))
+            .find(card => card.getAttribute('data-index') === currentPosition.targetIndex);
+
+        if (targetCard) {
+            indicator.setAttribute('data-target', currentPosition.targetIndex);
+            indicator.setAttribute('data-position', currentPosition.isBelow ? 'after' : 'before');
+
+            if (currentPosition.isBelow) {
+                targetCard.insertAdjacentElement('afterend', indicator);
+            } else {
+                targetCard.insertAdjacentElement('beforebegin', indicator);
+            }
+        }
+    } else {
+        // Position relative to container (empty space)
+        const cards = Array.from(cardsContainer.querySelectorAll('.flow-card'))
+            .filter(card => card !== dragSource);
 
         if (cards.length > 0) {
-            // Remove existing indicators first
-            const indicators = cardsContainer.querySelectorAll('.drop-indicator');
-            indicators.forEach(indicator => indicator.remove());
-
-            // Create a new indicator
-            const indicator = document.createElement('div');
-            indicator.className = 'drop-indicator';
-
-            // If we're above the top half of the container
-            if (e.clientY < containerRect.top + containerRect.height / 2) {
-                // Add at the beginning (before the first non-dragged card)
-                if (cards[0]) {
-                    cards[0].insertAdjacentElement('beforebegin', indicator);
-                }
+            if (currentPosition.isBottom) {
+                // Add at the end
+                cards[cards.length - 1].insertAdjacentElement('afterend', indicator);
             } else {
-                // Add at the end (after the last non-dragged card)
-                if (cards[cards.length - 1]) {
-                    cards[cards.length - 1].insertAdjacentElement('afterend', indicator);
-                }
+                // Add at the beginning
+                cards[0].insertAdjacentElement('beforebegin', indicator);
             }
         }
     }
@@ -2789,60 +2803,107 @@ function handleCardDrop(e) {
     console.log('Moving asana from', sourceIndex, 'to', targetIndex);
 
     try {
-        // Get all cards for animation
+        // Store the original positions of all cards before making any changes
         const allCards = Array.from(cardsContainer.querySelectorAll('.flow-card'));
-
-        // Apply animation class to affected cards
-        if (sourceIndex < targetIndex) {
-            // Moving down - animate cards in between
-            for (let i = sourceIndex + 1; i <= targetIndex; i++) {
-                const cardToAnimate = allCards.find(card => parseInt(card.getAttribute('data-index')) === i);
-                if (cardToAnimate) {
-                    cardToAnimate.style.animation = 'card-move-up 0.4s ease';
-                    // Remove animation class after it completes
-                    setTimeout(() => {
-                        cardToAnimate.style.animation = '';
-                    }, 500);
-                }
-            }
-        } else {
-            // Moving up - animate cards in between
-            for (let i = targetIndex; i < sourceIndex; i++) {
-                const cardToAnimate = allCards.find(card => parseInt(card.getAttribute('data-index')) === i);
-                if (cardToAnimate) {
-                    cardToAnimate.style.animation = 'card-move-down 0.4s ease';
-                    // Remove animation class after it completes
-                    setTimeout(() => {
-                        cardToAnimate.style.animation = '';
-                    }, 500);
-                }
-            }
-        }
+        const cardPositions = allCards.map(card => {
+            const rect = card.getBoundingClientRect();
+            return {
+                card: card,
+                index: parseInt(card.getAttribute('data-index')),
+                left: rect.left,
+                top: rect.top
+            };
+        });
 
         // Update the asanas array
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
         editingFlow.asanas.splice(targetIndex, 0, movedAsana);
 
-        // Rebuild both views
+        // Temporarily disable transition to avoid animation glitches
+        allCards.forEach(card => {
+            card.style.transition = 'none';
+            card.style.pointerEvents = 'none'; // Prevent interactions during animation
+        });
+
+        // Force a reflow
+        cardsContainer.offsetHeight;
+
+        // Rebuild both views (this will change the DOM)
         rebuildFlowTable();
 
-        // Find the moved card and highlight it
-        setTimeout(() => {
-            const movedCard = Array.from(cardsContainer.querySelectorAll('.flow-card'))
-                .find(card => parseInt(card.getAttribute('data-index')) === targetIndex);
+        // Get the new card positions
+        const newCards = Array.from(cardsContainer.querySelectorAll('.flow-card'));
 
+        // Apply initial transforms to position cards at their original locations
+        newCards.forEach(newCard => {
+            const newIndex = parseInt(newCard.getAttribute('data-index'));
+            const oldPosition = cardPositions.find(pos => {
+                // Find the card that was at this position before
+                // If this is the moved card, find its original position
+                if (newIndex === targetIndex && pos.index === sourceIndex) {
+                    return true;
+                }
+                // For other cards, find their original positions based on index shift
+                else if (sourceIndex < targetIndex) {
+                    // When moving down, cards in between move up
+                    if (pos.index > sourceIndex && pos.index <= targetIndex) {
+                        return pos.index - 1 === newIndex;
+                    } else {
+                        return pos.index === newIndex;
+                    }
+                } else {
+                    // When moving up, cards in between move down
+                    if (pos.index >= targetIndex && pos.index < sourceIndex) {
+                        return pos.index + 1 === newIndex;
+                    } else {
+                        return pos.index === newIndex;
+                    }
+                }
+            });
+
+            if (oldPosition) {
+                const newRect = newCard.getBoundingClientRect();
+                const xDiff = oldPosition.left - newRect.left;
+                const yDiff = oldPosition.top - newRect.top;
+
+                // Apply transform to start from the old position
+                newCard.style.transform = `translate(${xDiff}px, ${yDiff}px)`;
+            }
+        });
+
+        // Force a reflow
+        cardsContainer.offsetHeight;
+
+        // Enable transitions and animate to new positions
+        newCards.forEach(newCard => {
+            newCard.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            setTimeout(() => {
+                newCard.style.transform = '';
+            }, 10); // Small delay to ensure transition applies
+        });
+
+        // Reset styles and highlight moved card after animation
+        setTimeout(() => {
+            newCards.forEach(card => {
+                card.style.pointerEvents = ''; // Re-enable interactions
+            });
+
+            // Find the moved card and apply highlight animation
+            const movedCard = newCards.find(card => parseInt(card.getAttribute('data-index')) === targetIndex);
             if (movedCard) {
+                movedCard.style.transition = 'all 0.3s ease';
                 movedCard.style.boxShadow = '0 0 15px rgba(255, 140, 0, 0.8)';
                 movedCard.style.borderColor = '#ff8c00';
+                movedCard.style.transform = 'scale(1.03)';
 
-                // Reset after animation completes
+                // Reset after highlight animation completes
                 setTimeout(() => {
                     movedCard.style.boxShadow = '';
                     movedCard.style.borderColor = '';
-                    movedCard.style.transition = 'all 0.3s ease';
+                    movedCard.style.transform = '';
                 }, 800);
             }
-        }, 50);
+        }, 550); // Just after the position transition completes
 
         // Update recommended poses based on the new last pose
         updateRecommendedPoses();
@@ -2869,8 +2930,10 @@ function handleCardDragEnd(e) {
         indicators.forEach(indicator => indicator.remove());
     }
 
-    // Reset the dragSource
+    // Reset all tracking variables
     dragSource = null;
+    lastDropPosition = null;
+    lastIndicatorUpdate = 0;
 }
 
 // Function to toggle between table and card view
@@ -3025,6 +3088,36 @@ function rebuildCardView() {
         card.setAttribute('draggable', 'true');
         card.setAttribute('data-index', index);
 
+        // Add click handler to the entire card
+        card.addEventListener('click', function(e) {
+            // We need to ignore clicks on specific interactive elements
+            const ignoreElements = ['select', 'input', 'button', '.flow-card-number', '.remove-btn'];
+            let shouldIgnore = false;
+
+            for (const selector of ignoreElements) {
+                if (e.target.matches && e.target.matches(selector) ||
+                    e.target.closest && e.target.closest(selector)) {
+                    shouldIgnore = true;
+                    break;
+                }
+            }
+
+            if (!shouldIgnore) {
+                e.stopPropagation(); // Stop event from bubbling
+
+                // Find the checkbox
+                const checkbox = this.querySelector('.flow-card-checkbox');
+                if (checkbox) {
+                    // Toggle the checkbox value
+                    checkbox.checked = !checkbox.checked;
+
+                    // Trigger the change event manually to update internal state
+                    const changeEvent = new Event('change', { bubbles: true });
+                    checkbox.dispatchEvent(changeEvent);
+                }
+            }
+        });
+
         if (asana.selected) {
             card.classList.add('selected');
         }
@@ -3042,13 +3135,28 @@ function rebuildCardView() {
         checkbox.className = 'flow-card-checkbox asana-select';
         checkbox.checked = asana.selected || false;
         checkbox.setAttribute('data-index', index);
-        checkbox.onchange = function() { toggleAsanaSelection(this); };
+        checkbox.onchange = function() {
+            // Update internal state via the existing function
+            toggleAsanaSelection(this);
+
+            // Update card visual state
+            const card = this.closest('.flow-card');
+            if (card) {
+                if (this.checked) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            }
+        };
 
         // Create image
         const img = document.createElement('img');
         img.className = 'flow-card-image';
         img.src = asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`;
         img.alt = asana.name;
+
+        // Allow click events to bubble up to the card
 
         if (asana.side === "Left") {
             img.style.transform = 'scaleX(-1)';
@@ -3070,12 +3178,16 @@ function rebuildCardView() {
         const infoDiv = document.createElement('div');
         infoDiv.className = 'flow-card-info';
 
+        // Allow click events to bubble up to the card
+
         // Create pose name
         const nameP = document.createElement('p');
         nameP.className = 'flow-card-name';
         nameP.textContent = typeof asana.getDisplayName === 'function' ?
             asana.getDisplayName(useSanskritNames) :
             (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name);
+
+        // Allow click events to bubble up to the card
 
         // Create side info
         const sideP = document.createElement('div');
@@ -3086,11 +3198,13 @@ function rebuildCardView() {
         sideLabel.textContent = 'Side: ';
         sideLabel.style.fontSize = '14px';
         sideLabel.style.color = '#666';
+        sideLabel.style.fontWeight = '500';
 
         // Create side dropdown
         const sideSelect = document.createElement('select');
         sideSelect.className = 'side-select';
         sideSelect.onchange = function() { updateAsanaImageOrientation(this); };
+        sideSelect.onclick = function(e) { e.stopPropagation(); }; // Prevent clicks from bubbling
 
         if (asana.side === "Center") {
             const option = document.createElement('option');
@@ -3124,6 +3238,7 @@ function rebuildCardView() {
         durationLabel.textContent = 'Duration: ';
         durationLabel.style.fontSize = '14px';
         durationLabel.style.color = '#666';
+        durationLabel.style.fontWeight = '500';
 
         // Create duration input
         const durationInput = document.createElement('input');
@@ -3132,15 +3247,23 @@ function rebuildCardView() {
         durationInput.min = 1;
         durationInput.max = 300;
         durationInput.onchange = updateFlowDuration;
+        durationInput.onclick = function(e) { e.stopPropagation(); }; // Prevent clicks from bubbling
+        // Style already set in CSS
 
-        // Create duration unit
+        // Create wrapper for input and seconds unit
+        const inputWrapper = document.createElement('div');
+        inputWrapper.className = 'duration-input-wrapper';
+
+        // Create duration unit (change to 's' for seconds)
         const durationSpan = document.createElement('span');
         durationSpan.className = 'duration-unit';
-        durationSpan.textContent = 'seconds';
+        durationSpan.textContent = 's';
+
+        inputWrapper.appendChild(durationInput);
+        inputWrapper.appendChild(durationSpan);
 
         durationDiv.appendChild(durationLabel);
-        durationDiv.appendChild(durationInput);
-        durationDiv.appendChild(durationSpan);
+        durationDiv.appendChild(inputWrapper);
 
         // Add all elements to info div
         infoDiv.appendChild(nameP);
