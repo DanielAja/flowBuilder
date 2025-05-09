@@ -390,20 +390,37 @@
             <button id="saveSequenceBtn" class="action-btn" onclick="saveSequence()" disabled>
               <span>Save</span>
             </button>
+            <button id="addCustomPoseBtn" class="action-btn" onclick="addCustomPose()">
+              <span>+ Custom</span>
+            </button>
           </div>
-          <table id="flowTable">
-            <tr>
-              <th onclick="sortTableByLargestNumber()" style="cursor: pointer;" title="Click to sort by largest number first">#</th>
-              <th>
-                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
-                <label for="selectAllCheckbox" style="display: none;">Select All</label>
-              </th>
-              <th>Asana</th>
-              <th>Duration</th>
-              <th>Side</th>
-              <th>Remove</th>
-            </tr>
-          </table>
+
+          <div class="view-toggle-container">
+            <button class="view-toggle-btn active" id="tableViewBtn" onclick="toggleViewMode('table')">
+              <span>Table View</span>
+            </button>
+            <button class="view-toggle-btn" id="cardViewBtn" onclick="toggleViewMode('card')">
+              <span>Card View</span>
+            </button>
+          </div>
+
+          <div class="flow-table-container">
+            <table id="flowTable">
+              <tr>
+                <th onclick="sortTableByLargestNumber()" style="cursor: pointer;" title="Click to sort by largest number first">#</th>
+                <th>
+                  <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                  <label for="selectAllCheckbox" style="display: none;">Select All</label>
+                </th>
+                <th>Asana</th>
+                <th>Duration</th>
+                <th>Side</th>
+                <th>Remove</th>
+              </tr>
+            </table>
+          </div>
+
+          <div class="flow-cards"></div>
         </div>
         
         <p class="drag-drop-hint">Drag position numbers to reorder sequence</p>

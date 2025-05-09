@@ -133,6 +133,7 @@ let speechEnabled = false; // Default to speech disabled
 let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
 let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
+let currentViewMode = localStorage.getItem('viewMode') || 'table'; // Default to table view
 
 // Global variable to store copied poses
 let copiedPoses = [];
@@ -2268,33 +2269,87 @@ function updateScrollButtons() {
 // Function to set up drag and drop functionality
 function setupDragAndDrop() {
     console.log('Setting up drag and drop...');
+
+    // Setup for table view
+    setupTableDragAndDrop();
+
+    // Setup for card view
+    setupCardDragAndDrop();
+
+    // Initialize flow sequence with the correct view mode
+    initializeViewMode();
+
+    console.log('Drag and drop setup complete');
+}
+
+// Initialize view mode based on saved preference
+function initializeViewMode() {
+    const flowSequence = document.querySelector('.flow-sequence');
+    const tableBtn = document.getElementById('tableViewBtn');
+    const cardBtn = document.getElementById('cardViewBtn');
+
+    if (flowSequence && tableBtn && cardBtn) {
+        if (currentViewMode === 'table') {
+            flowSequence.classList.add('table-view-active');
+            flowSequence.classList.remove('card-view-active');
+            tableBtn.classList.add('active');
+            cardBtn.classList.remove('active');
+        } else {
+            flowSequence.classList.add('card-view-active');
+            flowSequence.classList.remove('table-view-active');
+            tableBtn.classList.remove('active');
+            cardBtn.classList.add('active');
+        }
+    }
+}
+
+function setupTableDragAndDrop() {
     const flowTable = document.getElementById('flowTable');
     if (!flowTable) {
         console.error('Flow table not found for drag and drop setup');
         return;
     }
-    
+
     // Rebind all drag-and-drop events
     // First remove any existing handlers to prevent duplicates
-    flowTable.removeEventListener('dragstart', handleDragStart);
-    flowTable.removeEventListener('dragenter', handleDragEnter);
-    flowTable.removeEventListener('dragover', handleDragOver);
-    flowTable.removeEventListener('dragleave', handleDragLeave);
-    flowTable.removeEventListener('drop', handleDrop);
-    flowTable.removeEventListener('dragend', handleDragEnd);
-    
+    flowTable.removeEventListener('dragstart', handleTableDragStart);
+    flowTable.removeEventListener('dragenter', handleTableDragEnter);
+    flowTable.removeEventListener('dragover', handleTableDragOver);
+    flowTable.removeEventListener('dragleave', handleTableDragLeave);
+    flowTable.removeEventListener('drop', handleTableDrop);
+    flowTable.removeEventListener('dragend', handleTableDragEnd);
+
     // Now add fresh event listeners
-    flowTable.addEventListener('dragstart', handleDragStart);
-    flowTable.addEventListener('dragenter', handleDragEnter);
-    flowTable.addEventListener('dragover', handleDragOver);
-    flowTable.addEventListener('dragleave', handleDragLeave);
-    flowTable.addEventListener('drop', handleDrop);
-    flowTable.addEventListener('dragend', handleDragEnd);
-    
+    flowTable.addEventListener('dragstart', handleTableDragStart);
+    flowTable.addEventListener('dragenter', handleTableDragEnter);
+    flowTable.addEventListener('dragover', handleTableDragOver);
+    flowTable.addEventListener('dragleave', handleTableDragLeave);
+    flowTable.addEventListener('drop', handleTableDrop);
+    flowTable.addEventListener('dragend', handleTableDragEnd);
+
     // Make sure all rows are properly draggable
     updateRowDragAttributes();
-    
-    console.log('Drag and drop setup complete');
+}
+
+function setupCardDragAndDrop() {
+    const cardsContainer = document.querySelector('.flow-cards');
+    if (!cardsContainer) {
+        console.error('Cards container not found for drag and drop setup');
+        return;
+    }
+
+    // Rebind all drag-and-drop events
+    // First remove any existing handlers to prevent duplicates
+    cardsContainer.removeEventListener('dragstart', handleCardDragStart);
+    cardsContainer.removeEventListener('dragover', handleCardDragOver);
+    cardsContainer.removeEventListener('drop', handleCardDrop);
+    cardsContainer.removeEventListener('dragend', handleCardDragEnd);
+
+    // Now add fresh event listeners
+    cardsContainer.addEventListener('dragstart', handleCardDragStart);
+    cardsContainer.addEventListener('dragover', handleCardDragOver);
+    cardsContainer.addEventListener('drop', handleCardDrop);
+    cardsContainer.addEventListener('dragend', handleCardDragEnd);
 }
 
 // Ensures all rows have proper drag attributes
@@ -2314,7 +2369,7 @@ function updateRowDragAttributes() {
 }
 
 // Drag and drop event handlers
-function handleDragStart(e) {
+function handleTableDragStart(e) {
     // Find the row being dragged - either the target itself or its parent row
     let row = null;
     
@@ -2364,7 +2419,7 @@ function handleDragStart(e) {
     }, 100);
 }
 
-function handleDragEnter(e) {
+function handleTableDragEnter(e) {
     // Ensure we're actually dragging something
     if (!dragSource) return;
     
@@ -2380,7 +2435,7 @@ function handleDragEnter(e) {
     }
 }
 
-function handleDragOver(e) {
+function handleTableDragOver(e) {
     if (!dragSource) return;
     
     e.preventDefault(); // Necessary to allow dropping
@@ -2403,7 +2458,7 @@ function handleDragOver(e) {
     }
 }
 
-function handleDragLeave(e) {
+function handleTableDragLeave(e) {
     // Only remove the class if we're leaving the row entirely, not just moving between cells
     const relatedTarget = e.relatedTarget;
     if (!relatedTarget || !e.target.contains(relatedTarget)) {
@@ -2414,7 +2469,7 @@ function handleDragLeave(e) {
     }
 }
 
-function handleDrop(e) {
+function handleTableDrop(e) {
     e.preventDefault();
     
     // Check if we have a valid drag source
@@ -2477,40 +2532,270 @@ function handleDrop(e) {
     }
 }
 
-function handleDragEnd(e) {
+function handleTableDragEnd(e) {
     // Remove all drag styling
     document.querySelectorAll('#flowTable tr').forEach(row => {
         row.classList.remove('dragging', 'drop-target');
     });
-    
+
     // Clear the drag source
     console.log('Drag operation ended');
     dragSource = null;
-    
+
     // Re-setup drag and drop to ensure everything is bound correctly
     setTimeout(updateRowDragAttributes, 50);
 }
 
+// Card view drag and drop event handlers
+function handleCardDragStart(e) {
+    // Find the card being dragged
+    let card = null;
+
+    if (e.target.classList && e.target.classList.contains('flow-card')) {
+        card = e.target;
+    } else if (e.target.classList && e.target.classList.contains('flow-card-number')) {
+        // Allow drag from the number circle
+        card = e.target.closest('.flow-card');
+    } else {
+        // Don't allow drag from other elements
+        e.preventDefault();
+        return false;
+    }
+
+    if (!card) {
+        e.preventDefault();
+        return false;
+    }
+
+    console.log('Drag started on card:', card.getAttribute('data-index'));
+    dragSource = card;
+    card.classList.add('dragging');
+
+    // Set the drag data
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', card.getAttribute('data-index'));
+
+    // Make a ghost image that's more visible
+    const dragImage = card.cloneNode(true);
+    dragImage.style.width = card.offsetWidth + 'px';
+    dragImage.style.height = card.offsetHeight + 'px';
+    dragImage.style.opacity = '0.7';
+    dragImage.style.position = 'absolute';
+    dragImage.style.top = '-1000px';
+    dragImage.style.backgroundColor = '#fff8f0';
+    dragImage.style.border = '2px solid #ff8c00';
+    document.body.appendChild(dragImage);
+
+    // Use the custom drag image
+    e.dataTransfer.setDragImage(dragImage, 40, 40);
+
+    // Clean up the ghost after a short delay
+    setTimeout(() => {
+        document.body.removeChild(dragImage);
+    }, 100);
+}
+
+function handleCardDragOver(e) {
+    if (!dragSource) return;
+
+    e.preventDefault(); // Necessary to allow dropping
+    e.dataTransfer.dropEffect = 'move';
+
+    const cardsContainer = document.querySelector('.flow-cards');
+    if (!cardsContainer) return;
+
+    // Find the card being hovered over
+    let targetCard = null;
+    if (e.target.classList && e.target.classList.contains('flow-card')) {
+        targetCard = e.target;
+    } else {
+        targetCard = e.target.closest('.flow-card');
+    }
+
+    // Remove all drop indicators
+    const indicators = cardsContainer.querySelectorAll('.drop-indicator');
+    indicators.forEach(indicator => indicator.remove());
+
+    // If hovering over a card, add a drop indicator before or after it
+    if (targetCard && targetCard !== dragSource) {
+        const rect = targetCard.getBoundingClientRect();
+        const middle = rect.top + rect.height / 2;
+        const isBelow = e.clientY > middle;
+
+        // Create drop indicator
+        const indicator = document.createElement('div');
+        indicator.className = 'drop-indicator';
+
+        if (isBelow) {
+            targetCard.insertAdjacentElement('afterend', indicator);
+        } else {
+            targetCard.insertAdjacentElement('beforebegin', indicator);
+        }
+    }
+}
+
+function handleCardDrop(e) {
+    e.preventDefault();
+
+    // Check if we have a valid drag source
+    if (!dragSource) {
+        console.log('No valid drag source');
+        return;
+    }
+
+    const cardsContainer = document.querySelector('.flow-cards');
+    if (!cardsContainer) return;
+
+    // Find the card being dropped onto
+    let targetCard = null;
+    if (e.target.classList && e.target.classList.contains('flow-card')) {
+        targetCard = e.target;
+    } else {
+        targetCard = e.target.closest('.flow-card');
+    }
+
+    if (!targetCard) {
+        // If not dropped on a card, check if dropped on a drop indicator
+        const indicator = e.target.closest('.drop-indicator');
+        if (!indicator) return;
+
+        // Get the next card after the indicator
+        targetCard = indicator.nextElementSibling;
+        if (!targetCard || !targetCard.classList.contains('flow-card')) {
+            // If no next card, drop at the end
+            const cards = cardsContainer.querySelectorAll('.flow-card');
+            targetCard = cards[cards.length - 1];
+        }
+    }
+
+    if (!targetCard || targetCard === dragSource) return;
+
+    // Get source and target indices
+    const sourceIndex = parseInt(dragSource.getAttribute('data-index'));
+    const targetIndex = parseInt(targetCard.getAttribute('data-index'));
+
+    if (isNaN(sourceIndex) || isNaN(targetIndex) || sourceIndex === targetIndex) {
+        return;
+    }
+
+    console.log('Moving asana from', sourceIndex, 'to', targetIndex);
+
+    try {
+        // Update the asanas array
+        const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
+        editingFlow.asanas.splice(targetIndex, 0, movedAsana);
+
+        // Rebuild both views
+        rebuildFlowTable();
+
+        // Update recommended poses based on the new last pose
+        updateRecommendedPoses();
+
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+    } catch (error) {
+        console.error('Error during card drag and drop:', error);
+    }
+}
+
+function handleCardDragEnd(e) {
+    // Clean up the drag operation
+    if (dragSource) {
+        dragSource.classList.remove('dragging');
+    }
+
+    // Remove all drop indicators
+    const cardsContainer = document.querySelector('.flow-cards');
+    if (cardsContainer) {
+        const indicators = cardsContainer.querySelectorAll('.drop-indicator');
+        indicators.forEach(indicator => indicator.remove());
+    }
+
+    // Reset the dragSource
+    dragSource = null;
+}
+
+// Function to toggle between table and card view
+function toggleViewMode(mode) {
+    currentViewMode = mode;
+
+    // Save preference to localStorage
+    localStorage.setItem('viewMode', mode);
+
+    // Update the toggle buttons
+    const tableBtn = document.getElementById('tableViewBtn');
+    const cardBtn = document.getElementById('cardViewBtn');
+    const flowSequence = document.querySelector('.flow-sequence');
+
+    if (tableBtn && cardBtn && flowSequence) {
+        if (mode === 'table') {
+            tableBtn.classList.add('active');
+            cardBtn.classList.remove('active');
+            flowSequence.classList.add('table-view-active');
+            flowSequence.classList.remove('card-view-active');
+        } else {
+            tableBtn.classList.remove('active');
+            cardBtn.classList.add('active');
+            flowSequence.classList.remove('table-view-active');
+            flowSequence.classList.add('card-view-active');
+        }
+    }
+
+    // Rebuild the flow display to update both views
+    rebuildFlowTable();
+
+    // Show a brief notification about the view change
+    showToastNotification(`Switched to ${mode} view`);
+}
+
 function rebuildFlowTable() {
+    // First, update table view
+    rebuildTableView();
+
+    // Then, update card view
+    rebuildCardView();
+
+    // Set the active view based on current mode
+    const flowSequence = document.querySelector('.flow-sequence');
+    if (flowSequence) {
+        if (currentViewMode === 'table') {
+            flowSequence.classList.add('table-view-active');
+            flowSequence.classList.remove('card-view-active');
+        } else {
+            flowSequence.classList.remove('table-view-active');
+            flowSequence.classList.add('card-view-active');
+        }
+    }
+
+    // Make sure drag and drop works after rebuild by updating all attributes
+    updateDragDropHandlers();
+
+    // Update flow duration
+    updateFlowDuration();
+}
+
+function rebuildTableView() {
     const table = document.getElementById('flowTable');
     if (!table) return;
-    
+
     // Clear the table except for the header
     while (table.rows.length > 1) {
         table.deleteRow(1);
     }
-    
+
     // Rebuild rows from editingFlow.asanas
     editingFlow.asanas.forEach((asana, index) => {
         if (!asana) return;
-        
+
         const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
-        
+
         const row = table.insertRow(-1);
         // Make the row element draggable for the drag event system to work
         row.setAttribute('draggable', 'true');
         row.setAttribute('data-index', index);
-        
+
         // Determine row number based on current sort order
         let rowNumber;
         if (tableInDescendingOrder) {
@@ -2518,22 +2803,22 @@ function rebuildFlowTable() {
         } else {
             rowNumber = index + 1;
         }
-        
+
         row.innerHTML = `
             <td title="Drag to reorder">${rowNumber}</td>
             <td>
-                <input type="checkbox" class="asana-select" data-index="${index}" 
-                       ${asana.selected ? 'checked' : ''} 
+                <input type="checkbox" class="asana-select" data-index="${index}"
+                       ${asana.selected ? 'checked' : ''}
                        onchange="toggleAsanaSelection(this)">
             </td>
             <td>
                 <div class="table-asana">
-                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}" 
-                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center'; 
-                         this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px'; 
+                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}"
+                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center';
+                         this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px';
                          this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
-                    <span>${typeof asana.getDisplayName === 'function' ? 
-                            asana.getDisplayName(useSanskritNames) : 
+                    <span>${typeof asana.getDisplayName === 'function' ?
+                            asana.getDisplayName(useSanskritNames) :
                             (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
                 </div>
             </td>
@@ -2546,22 +2831,196 @@ function rebuildFlowTable() {
             <td>${createSideDropdown(asana.side)}</td>
             <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
         `;
-        
+
         // Add specific drag handle tooltip and style
         const numCell = row.cells[0];
         numCell.style.cursor = "grab";
     });
-    
-    // Make sure drag and drop works after rebuild by updating all row attributes
+}
+
+function rebuildCardView() {
+    const cardsContainer = document.querySelector('.flow-cards');
+    if (!cardsContainer) return;
+
+    // Clear existing cards
+    cardsContainer.innerHTML = '';
+
+    // No poses message
+    if (editingFlow.asanas.length === 0) {
+        cardsContainer.innerHTML = '<div class="empty-message"><p>No poses added yet.</p><p>Select poses from above to build your flow.</p></div>';
+        return;
+    }
+
+    // Rebuild cards from editingFlow.asanas
+    editingFlow.asanas.forEach((asana, index) => {
+        if (!asana) return;
+
+        // Determine card number based on current sort order
+        let cardNumber;
+        if (tableInDescendingOrder) {
+            cardNumber = editingFlow.asanas.length - index;
+        } else {
+            cardNumber = index + 1;
+        }
+
+        // Create the card element
+        const card = document.createElement('div');
+        card.className = 'flow-card';
+        card.setAttribute('draggable', 'true');
+        card.setAttribute('data-index', index);
+
+        if (asana.selected) {
+            card.classList.add('selected');
+        }
+
+        // Create number indicator
+        const numberDiv = document.createElement('div');
+        numberDiv.className = 'flow-card-number';
+        numberDiv.textContent = cardNumber;
+        numberDiv.style.cursor = 'grab';
+        numberDiv.title = 'Drag to reorder';
+
+        // Create checkbox
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'flow-card-checkbox asana-select';
+        checkbox.checked = asana.selected || false;
+        checkbox.setAttribute('data-index', index);
+        checkbox.onchange = function() { toggleAsanaSelection(this); };
+
+        // Create image
+        const img = document.createElement('img');
+        img.className = 'flow-card-image';
+        img.src = asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`;
+        img.alt = asana.name;
+
+        if (asana.side === "Left") {
+            img.style.transform = 'scaleX(-1)';
+        }
+
+        // Add error handling for the image
+        img.onerror = function() {
+            this.onerror = null;
+            this.src = 'images/webp/default-pose.webp';
+            this.style.display = 'flex';
+            this.style.justifyContent = 'center';
+            this.style.alignItems = 'center';
+            this.style.background = '#f5f5f5';
+            this.style.fontSize = '24px';
+            this.innerText = '🧘‍♀️';
+        };
+
+        // Create info container
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'flow-card-info';
+
+        // Create pose name
+        const nameP = document.createElement('p');
+        nameP.className = 'flow-card-name';
+        nameP.textContent = typeof asana.getDisplayName === 'function' ?
+            asana.getDisplayName(useSanskritNames) :
+            (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name);
+
+        // Create side info
+        const sideP = document.createElement('div');
+        sideP.className = 'flow-card-side';
+
+        // Create side label
+        const sideLabel = document.createElement('span');
+        sideLabel.textContent = 'Side: ';
+        sideLabel.style.fontSize = '14px';
+        sideLabel.style.color = '#666';
+
+        // Create side dropdown
+        const sideSelect = document.createElement('select');
+        sideSelect.className = 'side-select';
+        sideSelect.onchange = function() { updateAsanaImageOrientation(this); };
+
+        if (asana.side === "Center") {
+            const option = document.createElement('option');
+            option.value = "Center";
+            option.textContent = "Center";
+            option.selected = true;
+            sideSelect.appendChild(option);
+        } else {
+            const rightOption = document.createElement('option');
+            rightOption.value = "Right";
+            rightOption.textContent = "Right";
+            rightOption.selected = asana.side === "Right";
+            sideSelect.appendChild(rightOption);
+
+            const leftOption = document.createElement('option');
+            leftOption.value = "Left";
+            leftOption.textContent = "Left";
+            leftOption.selected = asana.side === "Left";
+            sideSelect.appendChild(leftOption);
+        }
+
+        sideP.appendChild(sideLabel);
+        sideP.appendChild(sideSelect);
+
+        // Create duration container
+        const durationDiv = document.createElement('div');
+        durationDiv.className = 'flow-card-duration';
+
+        // Create duration label
+        const durationLabel = document.createElement('span');
+        durationLabel.textContent = 'Duration: ';
+        durationLabel.style.fontSize = '14px';
+        durationLabel.style.color = '#666';
+
+        // Create duration input
+        const durationInput = document.createElement('input');
+        durationInput.type = 'number';
+        durationInput.value = asana.duration || 3;
+        durationInput.min = 1;
+        durationInput.max = 300;
+        durationInput.onchange = updateFlowDuration;
+
+        // Create duration unit
+        const durationSpan = document.createElement('span');
+        durationSpan.className = 'duration-unit';
+        durationSpan.textContent = 'seconds';
+
+        durationDiv.appendChild(durationLabel);
+        durationDiv.appendChild(durationInput);
+        durationDiv.appendChild(durationSpan);
+
+        // Add all elements to info div
+        infoDiv.appendChild(nameP);
+        infoDiv.appendChild(sideP);
+        infoDiv.appendChild(durationDiv);
+
+        // Create actions container
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'flow-card-actions';
+
+        // Create remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.textContent = '×';
+        removeBtn.onclick = function() { removePose(this); };
+
+        actionsDiv.appendChild(removeBtn);
+
+        // Add all elements to the card
+        card.appendChild(numberDiv);
+        card.appendChild(checkbox);
+        card.appendChild(img);
+        card.appendChild(infoDiv);
+        card.appendChild(actionsDiv);
+
+        // Add the card to the container
+        cardsContainer.appendChild(card);
+    });
+}
+
+function updateDragDropHandlers() {
+    // Update row attributes for table view
     updateRowDragAttributes();
-    
-    // Set up drag handlers again to ensure they work after rebuilding
+
+    // Set up drag handlers for both views
     setupDragAndDrop();
-    
-    // Update flow duration
-    updateFlowDuration();
-    
-    console.log('Rebuilt flow table with draggable rows');
 }
 
 // Function to toggle asana selection
@@ -2715,10 +3174,23 @@ function initializeApp() {
     loadAsanasFromXML().then(() => {
         // Display flows
         displayFlows();
-        
+
         // Display sequences
         displaySequences();
-        
+
+        // Initialize view toggle buttons with saved preference
+        const tableBtn = document.getElementById('tableViewBtn');
+        const cardBtn = document.getElementById('cardViewBtn');
+        if (tableBtn && cardBtn) {
+            if (currentViewMode === 'table') {
+                tableBtn.classList.add('active');
+                cardBtn.classList.remove('active');
+            } else {
+                tableBtn.classList.remove('active');
+                cardBtn.classList.add('active');
+            }
+        }
+
         // Set up drag and drop
         setupDragAndDrop();
         
