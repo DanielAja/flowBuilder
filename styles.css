@@ -490,6 +490,9 @@ h1 {
   max-height: 500px;
   overflow-y: auto;
   padding: 15px;
+  touch-action: none; /* Improve touch dragging */
+  -webkit-user-select: none; /* Prevent text selection during drag */
+  user-select: none;
 }
 
 /* Individual card */
@@ -529,25 +532,26 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background-color: #ff8c00;
   color: white;
   font-weight: bold;
-  top: -10px;
-  left: -10px;
+  font-size: 18px;
+  top: -25px;
+  left: -20px;
   z-index: 2;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
 }
 
 .flow-card-checkbox {
   position: absolute;
   top: 10px;
-  left: 10px;
+  left: 40px;
   z-index: 2;
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .flow-card-image {
@@ -653,13 +657,27 @@ h1 {
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 18px;
+  font-size: 24px;
+  font-weight: bold;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 10;
+  padding: 0;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.flow-card:hover .remove-btn {
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 .flow-card .remove-btn:hover {
   background-color: #ff5252;
-  transform: scale(1.1);
+  transform: scale(1.2);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Hide one view depending on active toggle */
@@ -673,16 +691,71 @@ h1 {
 
 /* Drag and drop styles for cards */
 .flow-card.dragging {
-  opacity: 0.5;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  opacity: 0.85;
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05) rotate(1deg);
+  z-index: 100;
+  cursor: grabbing;
+  position: relative;
+  animation: card-float 0.3s ease-out forwards;
+  will-change: transform;
+}
+
+@keyframes card-float {
+  0% { transform: scale(1) rotate(0deg); box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); }
+  100% { transform: scale(1.05) rotate(1deg); box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2); }
 }
 
 .flow-cards .drop-indicator {
-  height: 3px;
+  height: 4px;
   background-color: #ff8c00;
-  margin: 8px 0;
-  border-radius: 3px;
-  width: 100%;
+  margin: 10px 0;
+  border-radius: 4px;
+  width: 90%;
+  position: relative;
+  left: 5%;
+  animation: drop-indicator-pulse 1.5s infinite;
+  transition: all 0.2s ease;
+  transform-origin: center;
+  z-index: 90;
+}
+
+@keyframes drop-indicator-pulse {
+  0% { opacity: 0.6; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.5); }
+  100% { opacity: 0.6; transform: scaleY(1); }
+}
+
+/* Add transition to all cards for smoother reordering */
+.flow-card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  user-select: none;
+}
+
+/* Make sure only the number circle has grab cursor */
+.flow-card-number {
+  cursor: grab !important;
+}
+
+/* Make the whole card have move cursor when dragging */
+.flow-card.dragging {
+  cursor: grabbing !important;
+}
+
+/* Move-up animation for cards when one is removed */
+@keyframes card-move-up {
+  0% { transform: translateY(0); }
+  10% { transform: translateY(5px); }
+  30% { transform: translateY(-5px); }
+  50% { transform: translateY(0); }
+}
+
+/* Move-down animation for cards when one is inserted */
+@keyframes card-move-down {
+  0% { transform: translateY(0); }
+  10% { transform: translateY(-5px); }
+  30% { transform: translateY(5px); }
+  50% { transform: translateY(0); }
 }
 
 #asanaList {

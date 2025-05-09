@@ -851,36 +851,73 @@ function showSaveIndicator() {
 }
 
 function removePose(button) {
+    // Check if the button is in a card or table row
+    const card = button.closest('.flow-card');
     const row = button.closest('tr');
-    if (!row) return;
-    
-    const table = document.getElementById("flowTable");
-    if (!table) return;
-    
-    const rowIndex = row.rowIndex;
-    
-    // Get the data-index attribute to find the actual array index
-    const dataIndex = parseInt(row.getAttribute('data-index'));
-    
-    // If data-index is valid, use it to remove from array
-    if (!isNaN(dataIndex) && dataIndex >= 0 && dataIndex < editingFlow.asanas.length) {
-        editingFlow.asanas.splice(dataIndex, 1);
-    } else {
-        // Fallback to using row index if data-index is invalid
-        const arrayIndex = rowIndex - 1;
-        if (arrayIndex >= 0 && arrayIndex < editingFlow.asanas.length) {
-            editingFlow.asanas.splice(arrayIndex, 1);
+    let dataIndex;
+
+    if (card) {
+        // Card view
+        dataIndex = parseInt(card.getAttribute('data-index'));
+
+        // Prevent interactions during animation
+        card.style.pointerEvents = 'none';
+        button.style.pointerEvents = 'none';
+
+        // Add removal animation
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.8)';
+        card.style.transition = 'all 0.3s ease-out';
+
+        // Short delay to allow animation to complete
+        setTimeout(() => {
+            // Remove from array if index is valid
+            if (!isNaN(dataIndex) && dataIndex >= 0 && dataIndex < editingFlow.asanas.length) {
+                editingFlow.asanas.splice(dataIndex, 1);
+
+                // Rebuild the entire view to ensure proper order and numbering
+                rebuildFlowTable();
+
+                // Update flow duration
+                updateFlowDuration();
+
+                // Refresh the asana list to update recommended poses
+                populateAsanaList();
+            }
+        }, 300);
+        return; // End the function here for card view
+    } else if (row) {
+        // Table view
+        const table = document.getElementById("flowTable");
+        if (!table) return;
+
+        const rowIndex = row.rowIndex;
+
+        // Get the data-index attribute to find the actual array index
+        dataIndex = parseInt(row.getAttribute('data-index'));
+
+        // If data-index is valid, use it to remove from array
+        if (!isNaN(dataIndex) && dataIndex >= 0 && dataIndex < editingFlow.asanas.length) {
+            editingFlow.asanas.splice(dataIndex, 1);
+        } else {
+            // Fallback to using row index if data-index is invalid
+            const arrayIndex = rowIndex - 1;
+            if (arrayIndex >= 0 && arrayIndex < editingFlow.asanas.length) {
+                editingFlow.asanas.splice(arrayIndex, 1);
+            }
         }
+
+        // Rebuild the entire table to ensure proper order and numbering
+        rebuildFlowTable();
+
+        // Update flow duration
+        updateFlowDuration();
+
+        // Refresh the asana list to update recommended poses
+        populateAsanaList();
+    } else {
+        console.error('Remove button not in a card or table row');
     }
-    
-    // Rebuild the entire table to ensure proper order and numbering
-    rebuildFlowTable();
-    
-    // Update flow duration
-    updateFlowDuration();
-    
-    // Refresh the asana list to update recommended poses
-    populateAsanaList();
 }
 
 function saveFlow() {
@@ -2350,6 +2387,21 @@ function setupCardDragAndDrop() {
     cardsContainer.addEventListener('dragover', handleCardDragOver);
     cardsContainer.addEventListener('drop', handleCardDrop);
     cardsContainer.addEventListener('dragend', handleCardDragEnd);
+
+    // Ensure all cards are properly draggable
+    const cards = cardsContainer.querySelectorAll('.flow-card');
+    cards.forEach(card => {
+        card.setAttribute('draggable', 'true');
+
+        // Ensure number indicator is properly styled as drag handle
+        const numberDiv = card.querySelector('.flow-card-number');
+        if (numberDiv) {
+            numberDiv.style.cursor = 'grab';
+            numberDiv.title = 'Drag to reorder';
+        }
+    });
+
+    console.log(`Set up drag and drop for ${cards.length} cards`);
 }
 
 // Ensures all rows have proper drag attributes
@@ -2548,6 +2600,8 @@ function handleTableDragEnd(e) {
 
 // Card view drag and drop event handlers
 function handleCardDragStart(e) {
+    e.stopPropagation(); // Prevent event bubbling
+
     // Find the card being dragged
     let card = null;
 
@@ -2612,24 +2666,78 @@ function handleCardDragOver(e) {
         targetCard = e.target.closest('.flow-card');
     }
 
-    // Remove all drop indicators
-    const indicators = cardsContainer.querySelectorAll('.drop-indicator');
-    indicators.forEach(indicator => indicator.remove());
+    // If we didn't find a card, check if we're hovering over a drop indicator
+    if (!targetCard && e.target.classList && e.target.classList.contains('drop-indicator')) {
+        // If already on a drop indicator, no need to recalculate
+        return;
+    }
 
-    // If hovering over a card, add a drop indicator before or after it
-    if (targetCard && targetCard !== dragSource) {
+    // If dragging over the dragging card itself, don't show indicators
+    if (targetCard === dragSource) {
+        return;
+    }
+
+    // Only update indicators if needed to prevent flickering
+    if (targetCard) {
         const rect = targetCard.getBoundingClientRect();
         const middle = rect.top + rect.height / 2;
         const isBelow = e.clientY > middle;
 
-        // Create drop indicator
+        // Check if we already have an indicator in the right position
+        const currentIndicator = cardsContainer.querySelector('.drop-indicator');
+        if (currentIndicator) {
+            const prevCard = currentIndicator.previousElementSibling;
+            const nextCard = currentIndicator.nextElementSibling;
+
+            // If indicator is already in the correct position, don't recreate it
+            if ((isBelow && prevCard === targetCard) || (!isBelow && nextCard === targetCard)) {
+                return;
+            }
+
+            // Otherwise, remove existing indicators
+            currentIndicator.remove();
+        }
+
+        // Create new drop indicator
         const indicator = document.createElement('div');
         indicator.className = 'drop-indicator';
+        indicator.setAttribute('data-target', targetCard.getAttribute('data-index'));
+        indicator.setAttribute('data-position', isBelow ? 'after' : 'before');
 
         if (isBelow) {
             targetCard.insertAdjacentElement('afterend', indicator);
         } else {
             targetCard.insertAdjacentElement('beforebegin', indicator);
+        }
+    } else if (cardsContainer.children.length > 0 && dragSource) {
+        // When hovering over empty space, show indicator at the end of the container
+        // Only do this if there are existing cards
+
+        // Determining if we're closer to the top or bottom of the container to decide where to place indicator
+        const containerRect = cardsContainer.getBoundingClientRect();
+        const cards = Array.from(cardsContainer.querySelectorAll('.flow-card')).filter(card => card !== dragSource);
+
+        if (cards.length > 0) {
+            // Remove existing indicators first
+            const indicators = cardsContainer.querySelectorAll('.drop-indicator');
+            indicators.forEach(indicator => indicator.remove());
+
+            // Create a new indicator
+            const indicator = document.createElement('div');
+            indicator.className = 'drop-indicator';
+
+            // If we're above the top half of the container
+            if (e.clientY < containerRect.top + containerRect.height / 2) {
+                // Add at the beginning (before the first non-dragged card)
+                if (cards[0]) {
+                    cards[0].insertAdjacentElement('beforebegin', indicator);
+                }
+            } else {
+                // Add at the end (after the last non-dragged card)
+                if (cards[cards.length - 1]) {
+                    cards[cards.length - 1].insertAdjacentElement('afterend', indicator);
+                }
+            }
         }
     }
 }
@@ -2681,12 +2789,60 @@ function handleCardDrop(e) {
     console.log('Moving asana from', sourceIndex, 'to', targetIndex);
 
     try {
+        // Get all cards for animation
+        const allCards = Array.from(cardsContainer.querySelectorAll('.flow-card'));
+
+        // Apply animation class to affected cards
+        if (sourceIndex < targetIndex) {
+            // Moving down - animate cards in between
+            for (let i = sourceIndex + 1; i <= targetIndex; i++) {
+                const cardToAnimate = allCards.find(card => parseInt(card.getAttribute('data-index')) === i);
+                if (cardToAnimate) {
+                    cardToAnimate.style.animation = 'card-move-up 0.4s ease';
+                    // Remove animation class after it completes
+                    setTimeout(() => {
+                        cardToAnimate.style.animation = '';
+                    }, 500);
+                }
+            }
+        } else {
+            // Moving up - animate cards in between
+            for (let i = targetIndex; i < sourceIndex; i++) {
+                const cardToAnimate = allCards.find(card => parseInt(card.getAttribute('data-index')) === i);
+                if (cardToAnimate) {
+                    cardToAnimate.style.animation = 'card-move-down 0.4s ease';
+                    // Remove animation class after it completes
+                    setTimeout(() => {
+                        cardToAnimate.style.animation = '';
+                    }, 500);
+                }
+            }
+        }
+
         // Update the asanas array
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
         editingFlow.asanas.splice(targetIndex, 0, movedAsana);
 
         // Rebuild both views
         rebuildFlowTable();
+
+        // Find the moved card and highlight it
+        setTimeout(() => {
+            const movedCard = Array.from(cardsContainer.querySelectorAll('.flow-card'))
+                .find(card => parseInt(card.getAttribute('data-index')) === targetIndex);
+
+            if (movedCard) {
+                movedCard.style.boxShadow = '0 0 15px rgba(255, 140, 0, 0.8)';
+                movedCard.style.borderColor = '#ff8c00';
+
+                // Reset after animation completes
+                setTimeout(() => {
+                    movedCard.style.boxShadow = '';
+                    movedCard.style.borderColor = '';
+                    movedCard.style.transition = 'all 0.3s ease';
+                }, 800);
+            }
+        }, 50);
 
         // Update recommended poses based on the new last pose
         updateRecommendedPoses();
@@ -2991,17 +3147,19 @@ function rebuildCardView() {
         infoDiv.appendChild(sideP);
         infoDiv.appendChild(durationDiv);
 
-        // Create actions container
-        const actionsDiv = document.createElement('div');
-        actionsDiv.className = 'flow-card-actions';
-
-        // Create remove button
+        // Create remove button (place it directly on the card, not in actions div)
         const removeBtn = document.createElement('button');
         removeBtn.className = 'remove-btn';
         removeBtn.textContent = '×';
-        removeBtn.onclick = function() { removePose(this); };
+        removeBtn.title = 'Remove pose';
+        removeBtn.onclick = function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+            removePose(this);
+        };
 
-        actionsDiv.appendChild(removeBtn);
+        // Create actions container (we keep this for future actions)
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'flow-card-actions';
 
         // Add all elements to the card
         card.appendChild(numberDiv);
@@ -3009,9 +3167,15 @@ function rebuildCardView() {
         card.appendChild(img);
         card.appendChild(infoDiv);
         card.appendChild(actionsDiv);
+        card.appendChild(removeBtn); // Add the remove button directly to the card
 
         // Add the card to the container
         cardsContainer.appendChild(card);
+
+        // Ensure direct drag event binding
+        card.addEventListener('dragstart', function(e) {
+            handleCardDragStart(e);
+        });
     });
 }
 
