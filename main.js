@@ -2652,6 +2652,7 @@ function handleCardDragStart(e) {
 // Track the last position to prevent unnecessary updates
 let lastDropPosition = null;
 let lastIndicatorUpdate = 0;
+let positionChangeTimeout = null;
 
 function handleCardDragOver(e) {
     if (!dragSource) return;
@@ -2662,9 +2663,9 @@ function handleCardDragOver(e) {
     const cardsContainer = document.querySelector('.flow-cards');
     if (!cardsContainer) return;
 
-    // Throttle updates to reduce flickering (only update every 50ms)
+    // Increase throttle time to reduce flickering (only update every 150ms)
     const now = Date.now();
-    if (now - lastIndicatorUpdate < 50) {
+    if (now - lastIndicatorUpdate < 150) {
         return;
     }
     lastIndicatorUpdate = now;
@@ -2687,8 +2688,28 @@ function handleCardDragOver(e) {
 
     if (targetCard) {
         const rect = targetCard.getBoundingClientRect();
-        const middle = rect.top + rect.height / 2;
-        const isBelow = e.clientY > middle;
+        // Create a 20% buffer zone around the middle to prevent rapid toggling
+        const bufferSize = rect.height * 0.2; // 20% of height
+        const upperThreshold = rect.top + (rect.height / 2) - bufferSize;
+        const lowerThreshold = rect.top + (rect.height / 2) + bufferSize;
+
+        // Only consider it "below" if cursor is clearly below the buffer zone
+        // Only consider it "above" if cursor is clearly above the buffer zone
+        // If in the buffer zone, maintain the previous position
+        let isBelow;
+        if (lastDropPosition && lastDropPosition.type === 'card' &&
+            lastDropPosition.targetIndex === targetCard.getAttribute('data-index')) {
+            // If we're over the same card as before and in the buffer zone, don't change
+            if (e.clientY > upperThreshold && e.clientY < lowerThreshold) {
+                isBelow = lastDropPosition.isBelow;
+            } else {
+                isBelow = e.clientY > lowerThreshold;
+            }
+        } else {
+            // New card, use the buffer zone logic
+            isBelow = e.clientY > lowerThreshold;
+        }
+
         const targetIndex = targetCard.getAttribute('data-index');
 
         currentPosition = {
@@ -2713,40 +2734,47 @@ function handleCardDragOver(e) {
         return;
     }
 
-    // Update the last position
-    lastDropPosition = currentPosition;
+    // Clear any pending position change
+    if (positionChangeTimeout) {
+        clearTimeout(positionChangeTimeout);
+    }
 
-    // Remove all existing indicators
-    const indicators = cardsContainer.querySelectorAll('.drop-indicator');
-    indicators.forEach(indicator => indicator.remove());
+    // Delay the position change to prevent rapid toggling
+    positionChangeTimeout = setTimeout(() => {
+        // Update the last position
+        lastDropPosition = currentPosition;
 
-    // Create a new indicator based on current position
-    const indicator = document.createElement('div');
-    indicator.className = 'drop-indicator';
+        // Remove all existing indicators
+        const indicators = cardsContainer.querySelectorAll('.drop-indicator');
+        indicators.forEach(indicator => indicator.remove());
 
-    if (currentPosition.type === 'card') {
-        // Position relative to a card
-        targetCard = Array.from(cardsContainer.querySelectorAll('.flow-card'))
-            .find(card => card.getAttribute('data-index') === currentPosition.targetIndex);
+        // Create a new indicator based on current position
+        const indicator = document.createElement('div');
+        indicator.className = 'drop-indicator';
 
-        if (targetCard) {
-            indicator.setAttribute('data-target', currentPosition.targetIndex);
-            indicator.setAttribute('data-position', currentPosition.isBelow ? 'after' : 'before');
+        if (currentPosition.type === 'card') {
+            // Position relative to a card
+            targetCard = Array.from(cardsContainer.querySelectorAll('.flow-card'))
+                .find(card => card.getAttribute('data-index') === currentPosition.targetIndex);
 
-            if (currentPosition.isBelow) {
-                targetCard.insertAdjacentElement('afterend', indicator);
-            } else {
-                targetCard.insertAdjacentElement('beforebegin', indicator);
+            if (targetCard) {
+                indicator.setAttribute('data-target', currentPosition.targetIndex);
+                indicator.setAttribute('data-position', currentPosition.isBelow ? 'after' : 'before');
+
+                if (currentPosition.isBelow) {
+                    targetCard.insertAdjacentElement('afterend', indicator);
+                } else {
+                    targetCard.insertAdjacentElement('beforebegin', indicator);
+                }
             }
-        }
-    } else {
-        // Position relative to container (empty space)
-        const cards = Array.from(cardsContainer.querySelectorAll('.flow-card'))
-            .filter(card => card !== dragSource);
+        } else {
+            // Position relative to container (empty space)
+            const cards = Array.from(cardsContainer.querySelectorAll('.flow-card'))
+                .filter(card => card !== dragSource);
 
-        if (cards.length > 0) {
-            if (currentPosition.isBottom) {
-                // Add at the end
+            if (cards.length > 0) {
+                if (currentPosition.isBottom) {
+                    // Add at the end
                 cards[cards.length - 1].insertAdjacentElement('afterend', indicator);
             } else {
                 // Add at the beginning
@@ -2754,6 +2782,7 @@ function handleCardDragOver(e) {
             }
         }
     }
+    }, 50); // Short delay before updating the UI
 }
 
 function handleCardDrop(e) {
@@ -2928,6 +2957,12 @@ function handleCardDragEnd(e) {
     if (cardsContainer) {
         const indicators = cardsContainer.querySelectorAll('.drop-indicator');
         indicators.forEach(indicator => indicator.remove());
+    }
+
+    // Clear any pending position change timeout
+    if (positionChangeTimeout) {
+        clearTimeout(positionChangeTimeout);
+        positionChangeTimeout = null;
     }
 
     // Reset all tracking variables
