@@ -2647,142 +2647,107 @@ function handleCardDragStart(e) {
     setTimeout(() => {
         document.body.removeChild(dragImage);
     }, 100);
+
+    // Reset indicator info
+    currentIndicatorInfo = null;
 }
 
 // Track the last position to prevent unnecessary updates
-let lastDropPosition = null;
-let lastIndicatorUpdate = 0;
-let positionChangeTimeout = null;
+let dragOverRafId = null; // For requestAnimationFrame in dragOver
+let currentIndicatorInfo = null; // { parent: HTMLElement, nextSibling: HTMLElement | null }
 
 function handleCardDragOver(e) {
     if (!dragSource) return;
 
-    e.preventDefault(); // Necessary to allow dropping
+    e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
 
     const cardsContainer = document.querySelector('.flow-cards');
     if (!cardsContainer) return;
 
-    // Increase throttle time to reduce flickering (only update every 150ms)
-    const now = Date.now();
-    if (now - lastIndicatorUpdate < 150) {
-        return;
-    }
-    lastIndicatorUpdate = now;
-
-    // Find the card being hovered over
-    let targetCard = null;
-    if (e.target.classList && e.target.classList.contains('flow-card')) {
-        targetCard = e.target;
-    } else {
-        targetCard = e.target.closest('.flow-card');
+    if (dragOverRafId) {
+        cancelAnimationFrame(dragOverRafId);
     }
 
-    // If dragging over the dragging card itself, don't show indicators
-    if (targetCard === dragSource) {
-        return;
-    }
+    dragOverRafId = requestAnimationFrame(() => {
+        const draggingCard = dragSource;
+        let newIndicatorParent = cardsContainer;
+        let newIndicatorNextSibling = null;
 
-    // Calculate current position info
-    let currentPosition = null;
+        // Get all non-dragging cards
+        const otherCards = Array.from(cardsContainer.querySelectorAll('.flow-card:not(.dragging)'));
 
-    if (targetCard) {
-        const rect = targetCard.getBoundingClientRect();
-        // Create a 20% buffer zone around the middle to prevent rapid toggling
-        const bufferSize = rect.height * 0.2; // 20% of height
-        const upperThreshold = rect.top + (rect.height / 2) - bufferSize;
-        const lowerThreshold = rect.top + (rect.height / 2) + bufferSize;
-
-        // Only consider it "below" if cursor is clearly below the buffer zone
-        // Only consider it "above" if cursor is clearly above the buffer zone
-        // If in the buffer zone, maintain the previous position
-        let isBelow;
-        if (lastDropPosition && lastDropPosition.type === 'card' &&
-            lastDropPosition.targetIndex === targetCard.getAttribute('data-index')) {
-            // If we're over the same card as before and in the buffer zone, don't change
-            if (e.clientY > upperThreshold && e.clientY < lowerThreshold) {
-                isBelow = lastDropPosition.isBelow;
-            } else {
-                isBelow = e.clientY > lowerThreshold;
+        let foundTarget = false;
+        for (const card of otherCards) {
+            const rect = card.getBoundingClientRect();
+            // Check if cursor is within the vertical bounds of this card
+            if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                 // Cursor is over this card. Decide if it's in the top or bottom half.
+                if (e.clientY < rect.top + rect.height / 2) {
+                    // Top half: insert before this card
+                    newIndicatorNextSibling = card;
+                } else {
+                    // Bottom half: insert after this card
+                    newIndicatorNextSibling = card.nextElementSibling;
+                }
+                foundTarget = true;
+                break;
             }
-        } else {
-            // New card, use the buffer zone logic
-            isBelow = e.clientY > lowerThreshold;
         }
 
-        const targetIndex = targetCard.getAttribute('data-index');
+        if (!foundTarget && otherCards.length > 0) {
+            // If not directly over any card, determine if cursor is above the first or below the last
+            const firstCardRect = otherCards[0].getBoundingClientRect();
+            const lastCardRect = otherCards[otherCards.length - 1].getBoundingClientRect();
 
-        currentPosition = {
-            targetIndex,
-            isBelow,
-            type: 'card'
-        };
-    } else {
-        // Empty space position
-        const containerRect = cardsContainer.getBoundingClientRect();
-        const isBottom = e.clientY > containerRect.top + containerRect.height / 2;
-
-        currentPosition = {
-            isBottom,
-            type: 'container'
-        };
-    }
-
-    // If position hasn't changed, don't update
-    if (lastDropPosition &&
-        JSON.stringify(lastDropPosition) === JSON.stringify(currentPosition)) {
-        return;
-    }
-
-    // Clear any pending position change
-    if (positionChangeTimeout) {
-        clearTimeout(positionChangeTimeout);
-    }
-
-    // Delay the position change to prevent rapid toggling
-    positionChangeTimeout = setTimeout(() => {
-        // Update the last position
-        lastDropPosition = currentPosition;
-
-        // Remove all existing indicators
-        const indicators = cardsContainer.querySelectorAll('.drop-indicator');
-        indicators.forEach(indicator => indicator.remove());
-
-        // Create a new indicator based on current position
-        const indicator = document.createElement('div');
-        indicator.className = 'drop-indicator';
-
-        if (currentPosition.type === 'card') {
-            // Position relative to a card
-            targetCard = Array.from(cardsContainer.querySelectorAll('.flow-card'))
-                .find(card => card.getAttribute('data-index') === currentPosition.targetIndex);
-
-            if (targetCard) {
-                indicator.setAttribute('data-target', currentPosition.targetIndex);
-                indicator.setAttribute('data-position', currentPosition.isBelow ? 'after' : 'before');
-
-                if (currentPosition.isBelow) {
-                    targetCard.insertAdjacentElement('afterend', indicator);
-                } else {
-                    targetCard.insertAdjacentElement('beforebegin', indicator);
+            if (e.clientY < firstCardRect.top + firstCardRect.height / 2) {
+                newIndicatorNextSibling = otherCards[0]; // Place before the first card
+            } else if (e.clientY > lastCardRect.top + lastCardRect.height / 2) {
+                newIndicatorNextSibling = null; // Place after the last card (at the end)
+            } else {
+                // Fallback: try to find the closest card to snap to
+                let closestCard = null;
+                let minDistance = Infinity;
+                otherCards.forEach(card => {
+                    const rect = card.getBoundingClientRect();
+                    const cardCenterY = rect.top + rect.height / 2;
+                    const distance = Math.abs(e.clientY - cardCenterY);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestCard = card;
+                    }
+                });
+                if (closestCard) {
+                    const rect = closestCard.getBoundingClientRect();
+                     if (e.clientY < rect.top + rect.height / 2) {
+                        newIndicatorNextSibling = closestCard;
+                    } else {
+                        newIndicatorNextSibling = closestCard.nextElementSibling;
+                    }
                 }
             }
-        } else {
-            // Position relative to container (empty space)
-            const cards = Array.from(cardsContainer.querySelectorAll('.flow-card'))
-                .filter(card => card !== dragSource);
+        } else if (!foundTarget && otherCards.length === 0 && cardsContainer.children.length > 0 && cardsContainer.children[0] !== draggingCard) {
+            // Only one card left (the one being dragged is not in otherCards)
+            // or container is empty except for the placeholder of the dragging card
+             newIndicatorNextSibling = cardsContainer.firstChild; // Default to beginning if container not truly empty
+        }
 
-            if (cards.length > 0) {
-                if (currentPosition.isBottom) {
-                    // Add at the end
-                cards[cards.length - 1].insertAdjacentElement('afterend', indicator);
-            } else {
-                // Add at the beginning
-                cards[0].insertAdjacentElement('beforebegin', indicator);
+
+        // Update DOM for indicator only if its logical position changes
+        if (!currentIndicatorInfo || currentIndicatorInfo.parent !== newIndicatorParent || currentIndicatorInfo.nextSibling !== newIndicatorNextSibling) {
+            const existingIndicator = cardsContainer.querySelector('.drop-indicator');
+            if (existingIndicator) {
+                existingIndicator.remove();
+            }
+
+            if (dragSource) {
+                const indicator = document.createElement('div');
+                indicator.className = 'drop-indicator';
+                newIndicatorParent.insertBefore(indicator, newIndicatorNextSibling);
+                currentIndicatorInfo = { parent: newIndicatorParent, nextSibling: newIndicatorNextSibling };
             }
         }
-    }
-    }, 50); // Short delay before updating the UI
+    });
 }
 
 function handleCardDrop(e) {
@@ -2904,11 +2869,13 @@ function handleCardDrop(e) {
         cardsContainer.offsetHeight;
 
         // Enable transitions and animate to new positions
-        newCards.forEach(newCard => {
-            newCard.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
-            setTimeout(() => {
-                newCard.style.transform = '';
-            }, 10); // Small delay to ensure transition applies
+        requestAnimationFrame(() => { // First RAF
+            requestAnimationFrame(() => { // Second RAF for timing the "Play" step
+                newCards.forEach(newCard => {
+                    newCard.style.transition = 'transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                    newCard.style.transform = '';
+                });
+            });
         });
 
         // Reset styles and highlight moved card after animation
@@ -2959,16 +2926,15 @@ function handleCardDragEnd(e) {
         indicators.forEach(indicator => indicator.remove());
     }
 
-    // Clear any pending position change timeout
-    if (positionChangeTimeout) {
-        clearTimeout(positionChangeTimeout);
-        positionChangeTimeout = null;
+    // Clear any pending animation frame for dragOver
+    if (dragOverRafId) {
+        cancelAnimationFrame(dragOverRafId);
+        dragOverRafId = null;
     }
 
     // Reset all tracking variables
     dragSource = null;
-    lastDropPosition = null;
-    lastIndicatorUpdate = 0;
+    currentIndicatorInfo = null;
 }
 
 // Function to toggle between table and card view
