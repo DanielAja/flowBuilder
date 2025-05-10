@@ -572,6 +572,7 @@ h1 {
   left: -20px;
   z-index: 2;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  cursor: default; /* Remove grab cursor */
 }
 
 .flow-card-checkbox {
@@ -781,28 +782,7 @@ h1 {
   100% { transform: scale(1.05) rotate(1deg); box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2); }
 }
 
-.flow-cards .drop-indicator {
-  height: 6px;
-  background-color: #ff8c00;
-  margin: 12px 0;
-  border-radius: 6px;
-  width: 85%;
-  position: relative;
-  left: 7.5%;
-  box-shadow: 0 0 8px rgba(255, 140, 0, 0.6);
-  animation: drop-indicator-pulse 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  transform-origin: center;
-  z-index: 90;
-  pointer-events: none; /* Prevent mouse interactions with the indicator */
-  will-change: opacity, transform; /* Optimize for animations */
-}
-
-@keyframes drop-indicator-pulse {
-  0% { opacity: 0.7; transform: scaleY(1); box-shadow: 0 0 8px rgba(255, 140, 0, 0.4); }
-  50% { opacity: 1; transform: scaleY(1.3); box-shadow: 0 0 12px rgba(255, 140, 0, 0.7); }
-  100% { opacity: 0.7; transform: scaleY(1); box-shadow: 0 0 8px rgba(255, 140, 0, 0.4); }
-}
+/* Drop indicator removed - drag and drop disabled */
 
 /* Add transition to all cards for smoother reordering */
 .flow-card {
@@ -810,22 +790,12 @@ h1 {
   user-select: none;
 }
 
-/* Make sure only the number circle has grab cursor even when the card is selectable */
+/* Number circle styling */
 .flow-card-number {
-  cursor: grab !important;
   z-index: 12; /* Higher than the card's after pseudo-element */
 }
 
-/* Make the whole card have move cursor when dragging */
-.flow-card.dragging {
-  cursor: grabbing !important;
-  z-index: 100;
-  opacity: 0.9;
-  background-color: #fff8f0;
-  border: 2px solid #ff8c00;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2), 0 0 15px rgba(255, 140, 0, 0.4);
-  transition: none !important; /* Prevent transitions during drag */
-}
+/* Dragging disabled */
 
 /* Enhance will-change for performance optimization */
 .flow-card {

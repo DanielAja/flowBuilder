@@ -2307,11 +2307,8 @@ function updateScrollButtons() {
 function setupDragAndDrop() {
     console.log('Setting up drag and drop...');
 
-    // Setup for table view
+    // Setup for table view only
     setupTableDragAndDrop();
-
-    // Setup for card view
-    setupCardDragAndDrop();
 
     // Initialize flow sequence with the correct view mode
     initializeViewMode();
@@ -2369,39 +2366,26 @@ function setupTableDragAndDrop() {
 }
 
 function setupCardDragAndDrop() {
+    // This function is disabled to prevent loading issues
+    console.log('Card drag and drop is disabled');
+
     const cardsContainer = document.querySelector('.flow-cards');
     if (!cardsContainer) {
-        console.error('Cards container not found for drag and drop setup');
         return;
     }
 
-    // Rebind all drag-and-drop events
-    // First remove any existing handlers to prevent duplicates
-    cardsContainer.removeEventListener('dragstart', handleCardDragStart);
-    cardsContainer.removeEventListener('dragover', handleCardDragOver);
-    cardsContainer.removeEventListener('drop', handleCardDrop);
-    cardsContainer.removeEventListener('dragend', handleCardDragEnd);
-
-    // Now add fresh event listeners
-    cardsContainer.addEventListener('dragstart', handleCardDragStart);
-    cardsContainer.addEventListener('dragover', handleCardDragOver);
-    cardsContainer.addEventListener('drop', handleCardDrop);
-    cardsContainer.addEventListener('dragend', handleCardDragEnd);
-
-    // Ensure all cards are properly draggable
+    // Make sure cards are not draggable
     const cards = cardsContainer.querySelectorAll('.flow-card');
     cards.forEach(card => {
-        card.setAttribute('draggable', 'true');
+        card.setAttribute('draggable', 'false');
 
-        // Ensure number indicator is properly styled as drag handle
+        // Style number indicator without drag functionality
         const numberDiv = card.querySelector('.flow-card-number');
         if (numberDiv) {
-            numberDiv.style.cursor = 'grab';
-            numberDiv.title = 'Drag to reorder';
+            numberDiv.style.cursor = 'default';
+            numberDiv.removeAttribute('title');
         }
     });
-
-    console.log(`Set up drag and drop for ${cards.length} cards`);
 }
 
 // Ensures all rows have proper drag attributes
@@ -2553,9 +2537,12 @@ function handleTableDrop(e) {
         // Update the asanas array
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
         editingFlow.asanas.splice(targetIndex, 0, movedAsana);
-        
-        // Rebuild the table
-        rebuildFlowTable();
+
+        // Only rebuild the table view - don't rebuild the card view to prevent loss of cards
+        rebuildTableView();
+
+        // Just update the positions in the card view without rebuilding it
+        updateCardIndices();
         
         // Update recommended poses based on the new last pose
         updateRecommendedPoses();
@@ -3096,7 +3083,7 @@ function rebuildCardView() {
         // Create the card element
         const card = document.createElement('div');
         card.className = 'flow-card';
-        card.setAttribute('draggable', 'true');
+        card.setAttribute('draggable', 'false'); // Disable dragging
         card.setAttribute('data-index', index);
 
         // Add click handler to the entire card
@@ -3306,10 +3293,45 @@ function rebuildCardView() {
         // Add the card to the container
         cardsContainer.appendChild(card);
 
-        // Ensure direct drag event binding
-        card.addEventListener('dragstart', function(e) {
-            handleCardDragStart(e);
-        });
+        // Drag functionality disabled
+    });
+}
+
+function updateCardIndices() {
+    // Update card indices and numbers without rebuilding the entire card view
+    const cardsContainer = document.querySelector('.flow-cards');
+    if (!cardsContainer) return;
+
+    const cards = cardsContainer.querySelectorAll('.flow-card');
+
+    // Update each card with the correct index and number
+    editingFlow.asanas.forEach((asana, index) => {
+        // Find the card with this asana (they should be in the same order)
+        const card = cards[index];
+        if (!card) return;
+
+        // Update the index attribute
+        card.setAttribute('data-index', index);
+
+        // Update the card number
+        let cardNumber;
+        if (tableInDescendingOrder) {
+            cardNumber = editingFlow.asanas.length - index;
+        } else {
+            cardNumber = index + 1;
+        }
+
+        // Update the number display
+        const numberDiv = card.querySelector('.flow-card-number');
+        if (numberDiv) {
+            numberDiv.textContent = cardNumber;
+        }
+
+        // Update checkbox index
+        const checkbox = card.querySelector('.flow-card-checkbox');
+        if (checkbox) {
+            checkbox.setAttribute('data-index', index);
+        }
     });
 }
 
