@@ -2982,6 +2982,7 @@ function toggleViewMode(mode) {
     const tableBtn = document.getElementById('tableViewBtn');
     const cardBtn = document.getElementById('cardViewBtn');
     const flowSequence = document.querySelector('.flow-sequence');
+    const viewToggleSwitch = document.getElementById('view-toggle-build');
 
     if (tableBtn && cardBtn && flowSequence) {
         if (mode === 'table') {
@@ -2989,11 +2990,15 @@ function toggleViewMode(mode) {
             cardBtn.classList.remove('active');
             flowSequence.classList.add('table-view-active');
             flowSequence.classList.remove('card-view-active');
+            // Update the toggle switch to match (unchecked = table)
+            if (viewToggleSwitch) viewToggleSwitch.checked = false;
         } else {
             tableBtn.classList.remove('active');
             cardBtn.classList.add('active');
             flowSequence.classList.remove('table-view-active');
             flowSequence.classList.add('card-view-active');
+            // Update the toggle switch to match (checked = card)
+            if (viewToggleSwitch) viewToggleSwitch.checked = true;
         }
     }
 
@@ -3002,6 +3007,11 @@ function toggleViewMode(mode) {
 
     // Show a brief notification about the view change
     showToastNotification(`Switched to ${mode} view`);
+}
+
+// Function to handle view toggle from the switch
+function toggleViewFromSwitch(isChecked) {
+    toggleViewMode(isChecked ? 'card' : 'table');
 }
 
 function rebuildFlowTable() {
@@ -3503,13 +3513,17 @@ function initializeApp() {
         // Initialize view toggle buttons with saved preference
         const tableBtn = document.getElementById('tableViewBtn');
         const cardBtn = document.getElementById('cardViewBtn');
+        const viewToggleSwitch = document.getElementById('view-toggle-build');
+
         if (tableBtn && cardBtn) {
             if (currentViewMode === 'table') {
                 tableBtn.classList.add('active');
                 cardBtn.classList.remove('active');
+                if (viewToggleSwitch) viewToggleSwitch.checked = false;
             } else {
                 tableBtn.classList.remove('active');
                 cardBtn.classList.add('active');
+                if (viewToggleSwitch) viewToggleSwitch.checked = true;
             }
         }
 

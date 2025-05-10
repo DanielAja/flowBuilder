@@ -25,16 +25,19 @@
         flex-direction: column;
         gap: 10px;
         z-index: 1000;
+        width: auto;
+        max-width: 120px;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 5px;
         background: rgba(255, 255, 255, 0.9);
-        padding: 8px 12px;
+        padding: 6px 10px;
         border-radius: 20px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: fit-content;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.toggle-label {
@@ -114,7 +117,8 @@
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
-        width: 100%;
+        width: auto;
+        min-width: 70px;
         text-align: center;
       }
 
@@ -344,12 +348,20 @@
         </div>
         
         <div class="language-toggle-container">
-          <div class="language-toggle-global">
+          <div class="language-toggle-global" title="Toggle Sanskrit Names">
             <label class="toggle-label">🕉️</label>
             <label class="switch">
               <input type="checkbox" id="sanskrit-toggle-build">
               <span class="slider round"></span>
             </label>
+          </div>
+          <div class="view-toggle-global" title="Toggle between Table and Card Views">
+            <label class="toggle-label">🃏</label>
+            <label class="switch">
+              <input type="checkbox" id="view-toggle-build" onchange="toggleViewFromSwitch(this.checked)">
+              <span class="slider round"></span>
+            </label>
+            <span class="toggle-hint"></span>
           </div>
           <button onclick="saveFlow()" class="save-flow-btn">Back</button>
         </div>
@@ -395,7 +407,7 @@
             </button>
           </div>
 
-          <div class="view-toggle-container">
+          <div class="view-toggle-container" style="display: none;">
             <button class="view-toggle-btn active" id="tableViewBtn" onclick="toggleViewMode('table')">
               <span>Table View</span>
             </button>

@@ -2605,6 +2605,44 @@ input:checked + .slider:before {
   box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
 }
 
+.view-toggle-global {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 6px 10px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    width: fit-content;
+}
+
+.view-toggle-global .toggle-label {
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.toggle-hint {
+    font-size: 12px;
+    color: #666;
+    margin-left: 5px;
+    display: none;
+}
+
+/* Styles for the view toggle switch */
+#view-toggle-build:checked + .slider {
+    background-color: #ff8c00;
+}
+
+#view-toggle-build:focus + .slider {
+    box-shadow: 0 0 1px #ff8c00;
+}
+
+#view-toggle-build:checked + .slider:before {
+    transform: translateX(20px);
+}
+
 .selected-actions {
     display: flex;
     gap: 10px;
