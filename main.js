@@ -1217,19 +1217,15 @@ function playFlow(flowID) {
     // Start the flow if it has asanas
     if (editingFlow.asanas && editingFlow.asanas.length > 0) {
         console.log("Starting flow with asanas:", editingFlow.asanas.length);
-        
+
         // Reset current asana index and pause state
         currentAsanaIndex = 0;
         paused = false;
-        
+
         // Get the first asana
         const asana = editingFlow.asanas[currentAsanaIndex];
         console.log("First asana:", asana.name, "Duration:", asana.duration);
-        
-        // Update the display and get the duration
-        const duration = updateAsanaDisplay(asana);
-        console.log("Display updated, duration:", duration);
-        
+
         // Set the proper pause button icon
         const pauseBtn = document.querySelector('.pause-btn');
         if (pauseBtn) {
@@ -1237,35 +1233,87 @@ function playFlow(flowID) {
             pauseBtn.classList.remove('paused');
             pauseBtn.title = "Pause flow";
         }
-        
+
         // Make sure the countdown container has the proper SVG structure
         const countdownContainer = document.querySelector('.countdown-container');
         if (countdownContainer) {
             // Remove flow-complete class if it exists
             countdownContainer.classList.remove('flow-complete');
-            
+
+            // Set up a 3-second countdown before starting the flow
+            const asanaName = document.getElementById('asanaName');
+            const asanaSide = document.getElementById('asanaSide');
+            const originalAsanaName = asanaName.textContent;
+            const originalAsanaSide = asanaSide.textContent;
+
+            // Change display to show countdown starting
+            asanaName.textContent = "Get Ready";
+            asanaSide.textContent = "Starting in 3";
+
             countdownContainer.innerHTML = `
                 <svg class="countdown-svg" viewBox="0 0 100 100">
                     <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
-                    <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent" 
-                            stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7" 
+                    <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent"
+                            stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
                             stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
                 </svg>
-                <div id="countdown">${displayFlowDuration(duration)}</div>
+                <div id="countdown">3</div>
             `;
+
+            // Clear any existing animation frame/timer
+            if (animationFrameId) {
+                clearTimeout(animationFrameId);
+                animationFrameId = null;
+            }
+
+            // Start 3-second countdown
+            let startCountdown = 3;
+            const startTimer = setInterval(() => {
+                startCountdown--;
+                const countdownElement = document.getElementById('countdown');
+                if (countdownElement) {
+                    countdownElement.textContent = startCountdown;
+                }
+                asanaSide.textContent = "Starting in " + startCountdown;
+
+                // Update circle animation
+                const countdownCircle = document.getElementById('countdown-circle');
+                if (countdownCircle) {
+                    const circumference = 2 * Math.PI * 45;
+                    const progress = startCountdown / 3;
+                    const dashOffset = circumference * (1 - progress);
+                    countdownCircle.style.strokeDasharray = circumference;
+                    countdownCircle.style.strokeDashoffset = dashOffset;
+                }
+
+                if (startCountdown <= 0) {
+                    clearInterval(startTimer);
+
+                    // Update the display and get the duration for the first asana
+                    const duration = updateAsanaDisplay(asana);
+                    console.log("Display updated, duration:", duration);
+
+                    // Update countdown display for the actual asana
+                    if (countdownContainer) {
+                        countdownContainer.innerHTML = `
+                            <svg class="countdown-svg" viewBox="0 0 100 100">
+                                <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
+                                <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent"
+                                        stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
+                                        stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
+                            </svg>
+                            <div id="countdown">${displayFlowDuration(duration)}</div>
+                        `;
+                    }
+
+                    // Start the actual flow timer
+                    setTimeout(() => {
+                        console.log("Starting countdown timer for first asana");
+                        startCountdownTimer(duration);
+                    }, 100);
+                }
+            }, 1000);
         }
-        
-        // Clear any existing animation frame/timer
-        if (animationFrameId) {
-            clearTimeout(animationFrameId);
-            animationFrameId = null;
-        }
-        
-        // Set up the countdown timer with a slight delay to ensure the DOM is ready
-        setTimeout(() => {
-            console.log("Starting countdown timer for first asana");
-            startCountdownTimer(duration);
-        }, 100);
     } else {
         console.warn("No asanas in the flow to start!");
     }
