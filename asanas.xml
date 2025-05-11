@@ -3,6 +3,28 @@
 
   <!-- FOUNDATION POSES -->
   <asana>
+    <n>Stand at Attention</n>
+    <sanskrit>Samasthiti</sanskrit>
+    <side>Center</side>
+    <image>images/webp/stand-at-attention.webp</image>
+    <description>A fundamental standing pose with feet together, arms at sides, and active engagement of all muscles. Develops concentration, stability, and balanced posture.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Foundation</tag>
+      <tag>Grounding</tag>
+      <tag>Alignment</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Forward Fold</transition>
+      <transition>Chair Pose</transition>
+      <transition>Upward Salute</transition>
+    </transitions>
+  </asana>
+
+  <asana>
     <n>Mountain Pose</n>
     <sanskrit>Tadasana</sanskrit>
     <side>Center</side>
@@ -20,6 +42,7 @@
       <transition>Chair Pose</transition>
       <transition>Tree Pose</transition>
       <transition>Upward Salute</transition> <!-- Added common transition -->
+      <transition>Stand at Attention</transition>
     </transitions>
   </asana>
 
@@ -109,6 +132,32 @@
       <transition>Plank</transition>
       <transition>Low Lunge</transition>
       <transition>Mountain Pose</transition>
+      <transition>Revolved Crescent Lunge</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Revolved Crescent Lunge</n>
+    <sanskrit>Parivrtta Anjaneyasana</sanskrit>
+    <side>Right</side> <!-- Default side -->
+    <image>images/webp/revolved-crescent-lunge.webp</image>
+    <description>Deep twisting pose that combines the leg strength of Crescent Lunge with a powerful spinal rotation. Improves balance, digestion, and detoxification while stretching hips and shoulders.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra> <!-- Twisting action, core engagement -->
+    <tags>
+      <tag>Standing</tag>
+      <tag>Twist</tag>
+      <tag>Balance</tag>
+      <tag>Hip Opener</tag>
+      <tag>Strength</tag>
+      <tag>Detox</tag>
+    </tags>
+    <transitions>
+      <transition>Crescent Lunge</transition>
+      <transition>Warrior 1</transition>
+      <transition>Revolved Chair Pose</transition>
+      <transition>Side Angle Pose</transition>
+      <transition>Revolved Triangle Pose</transition>
     </transitions>
   </asana>
 
@@ -1634,6 +1683,31 @@
 
 
   <!-- RESTORATIVE / RELAXATION -->
+  <asana>
+    <n>Ragdoll Pose</n>
+    <sanskrit>Uttanasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/ragdoll-pose.webp</image>
+    <description>Relaxed variation of Forward Fold with bent knees, soft spine, and loose arms. Releases tension in spine, shoulders, and hamstrings. Calms the nervous system.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Root</chakra> <!-- Grounding, release -->
+    <tags>
+      <tag>Standing</tag>
+      <tag>Forward Fold</tag>
+      <tag>Restorative</tag>
+      <tag>Stretch</tag>
+      <tag>Calming</tag>
+      <tag>Inversion (mild)</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Forward Fold</transition>
+      <transition>Half Forward Fold</transition>
+      <transition>Standing Forward Bend (Padangusthasana)</transition>
+      <transition>Downward Facing Dog</transition>
+    </transitions>
+  </asana>
+
   <asana>
     <n>Child's Pose</n>
     <sanskrit>Balasana</sanskrit>

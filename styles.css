@@ -1878,7 +1878,6 @@ input:checked + .slider:before {
 .flow-complete-message {
   animation: celebrationPulse 2s infinite;
   color: #ff8c00;
-  text-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
   font-size: 2.5rem !important;
   font-weight: bold !important;
   letter-spacing: 0.05em !important;
