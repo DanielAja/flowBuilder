@@ -50,7 +50,7 @@ function saveFlows(flows) {
 
 // YogaAsana class definition
 class YogaAsana {
-    constructor(name, side, image, description, difficulty, tags, transitionsAsana, sanskrit = "") {
+    constructor(name, side, image, description, difficulty, tags, transitionsAsana, sanskrit = "", chakra = "") {
         this.name = name;
         this.sanskrit = sanskrit;
         this.side = side;
@@ -61,6 +61,7 @@ class YogaAsana {
         // Ensure transitionsAsana is always an array
         this.transitionsAsana = Array.isArray(transitionsAsana) ? transitionsAsana : [];
         this.duration = 7; // Default duration of 7 seconds
+        this.chakra = chakra; // Store which chakra is associated with this pose
     }
 
     setDuration(duration) {
@@ -665,7 +666,8 @@ function selectAsana(asana) {
         asana.difficulty,
         [...asana.tags || []],
         [...asana.transitionsAsana || []],
-        asana.sanskrit
+        asana.sanskrit,
+        asana.chakra || ""
     );
     newAsana.setDuration(7); // Default 7 seconds
     
@@ -2108,6 +2110,7 @@ async function loadAsanasFromXML() {
             const image = asanaElem.getElementsByTagName('image')[0]?.textContent || 'images/webp/default-pose.webp';
             const description = asanaElem.getElementsByTagName('description')[0]?.textContent || '';
             const difficulty = asanaElem.getElementsByTagName('difficulty')[0]?.textContent || 'Beginner';
+            const chakra = asanaElem.getElementsByTagName('chakra')[0]?.textContent || '';
             
             // Extract tags
             const tagElements = asanaElem.getElementsByTagName('tag');
@@ -2132,7 +2135,8 @@ async function loadAsanasFromXML() {
                 difficulty,
                 tags,
                 transitions,
-                sanskrit
+                sanskrit,
+                chakra
             );
             
             // Add to asanas array
@@ -2154,7 +2158,8 @@ async function loadAsanasFromXML() {
                 "Beginner",
                 ["Standing", "Stretch"],
                 ["Plank", "Cobra"],
-                "Adho Mukha Svanasana"
+                "Adho Mukha Svanasana",
+                "Third Eye"
             ),
             new YogaAsana(
                 "Tree Pose",
@@ -2164,7 +2169,8 @@ async function loadAsanasFromXML() {
                 "Beginner",
                 ["Standing", "Balance"],
                 ["Mountain Pose", "Warrior 3"],
-                "Vrksasana"
+                "Vrksasana",
+                "Root"
             ),
             new YogaAsana(
                 "Warrior 2",
@@ -2174,7 +2180,8 @@ async function loadAsanasFromXML() {
                 "Beginner",
                 ["Standing", "Strength"],
                 ["Mountain Pose", "Triangle Pose"],
-                "Virabhadrasana II"
+                "Virabhadrasana II",
+                "Sacral"
             ),
             new YogaAsana(
                 "Triangle Pose",
@@ -2184,7 +2191,8 @@ async function loadAsanasFromXML() {
                 "Beginner",
                 ["Standing", "Stretch"],
                 ["Warrior 2", "Half Moon Pose"],
-                "Trikonasana"
+                "Trikonasana",
+                "Sacral"
             )
         ];
         console.log('Loaded fallback asanas');
@@ -2420,11 +2428,16 @@ function populateAsanaList() {
             difficultyBadge.className = `difficulty-badge ${asana.difficulty.toLowerCase()}`;
             difficultyBadge.textContent = asana.difficulty;
             
+            // Create image container (for positioning the chakra indicator)
+            const imgContainer = document.createElement('div');
+            imgContainer.style.position = 'relative';
+            imgContainer.style.display = 'inline-block';
+
             // Create image element
             const asanaImage = document.createElement('img');
             asanaImage.src = asana.image;
             asanaImage.alt = asana.getDisplayName(useSanskritNames);
-            
+
             // Add error handling for missing images
             asanaImage.onerror = function() {
                 this.onerror = null;
@@ -2439,6 +2452,29 @@ function populateAsanaList() {
                 this.innerText = '🧘‍♀️';
                 console.log(`Missing image for ${asana.getDisplayName(useSanskritNames)} in asana list`);
             };
+
+            // Add chakra indicator if the pose has chakra information
+            if (asana.chakra) {
+                const chakraIndicator = document.createElement('div');
+                chakraIndicator.className = 'chakra-indicator';
+
+                // Add the specific chakra class based on the chakra name
+                const chakraClass = asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
+                                   asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
+                                   asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
+                                   asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
+                                   asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
+                                   asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
+                                   asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : '';
+
+                if (chakraClass) {
+                    chakraIndicator.classList.add(chakraClass);
+                    chakraIndicator.title = `${asana.chakra} Chakra`;
+                    imgContainer.appendChild(chakraIndicator);
+                }
+            }
+
+            imgContainer.appendChild(asanaImage);
             
             // Create name label - use getDisplayName for consistent naming
             const asanaName = document.createElement('p');
@@ -2446,7 +2482,7 @@ function populateAsanaList() {
             
             // Append elements
             asanaElement.appendChild(difficultyBadge);
-            asanaElement.appendChild(asanaImage);
+            asanaElement.appendChild(imgContainer);
             asanaElement.appendChild(asanaName);
             
             // Add event listener for click
@@ -3399,10 +3435,21 @@ function rebuildTableView() {
             </td>
             <td>
                 <div class="table-asana">
-                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}"
-                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center';
-                         this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px';
-                         this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
+                    <div style="position: relative; display: inline-block;">
+                        <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}"
+                             onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center';
+                             this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px';
+                             this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
+                        ${asana.chakra ? `<div class="chakra-indicator ${
+                            asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
+                            asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
+                            asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
+                            asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
+                            asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
+                            asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
+                            asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : ''
+                        }" title="${asana.chakra} Chakra"></div>` : ''}
+                    </div>
                     <span>${typeof asana.getDisplayName === 'function' ?
                             asana.getDisplayName(useSanskritNames) :
                             (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
@@ -3517,6 +3564,11 @@ function rebuildCardView() {
             }
         };
 
+        // Create image container (for positioning the chakra indicator)
+        const imgContainer = document.createElement('div');
+        imgContainer.style.position = 'relative';
+        imgContainer.style.display = 'inline-block';
+
         // Create image
         const img = document.createElement('img');
         img.className = 'flow-card-image';
@@ -3524,7 +3576,6 @@ function rebuildCardView() {
         img.alt = asana.name;
 
         // Allow click events to bubble up to the card
-
         if (asana.side === "Left") {
             img.style.transform = 'scaleX(-1)';
         }
@@ -3540,6 +3591,29 @@ function rebuildCardView() {
             this.style.fontSize = '24px';
             this.innerText = '🧘‍♀️';
         };
+
+        // Add chakra indicator if the pose has chakra information
+        if (asana.chakra) {
+            const chakraIndicator = document.createElement('div');
+            chakraIndicator.className = 'chakra-indicator';
+
+            // Add the specific chakra class based on the chakra name
+            const chakraClass = asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
+                               asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
+                               asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
+                               asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
+                               asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
+                               asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
+                               asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : '';
+
+            if (chakraClass) {
+                chakraIndicator.classList.add(chakraClass);
+                chakraIndicator.title = `${asana.chakra} Chakra`;
+                imgContainer.appendChild(chakraIndicator);
+            }
+        }
+
+        imgContainer.appendChild(img);
 
         // Create info container
         const infoDiv = document.createElement('div');
@@ -3654,7 +3728,7 @@ function rebuildCardView() {
         // Add all elements to the card
         card.appendChild(numberDiv);
         card.appendChild(checkbox);
-        card.appendChild(img);
+        card.appendChild(imgContainer);
         card.appendChild(infoDiv);
         card.appendChild(actionsDiv);
         card.appendChild(removeBtn); // Add the remove button directly to the card

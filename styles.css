@@ -598,6 +598,7 @@ h1 {
   border: 1px solid #eee;
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .flow-card:hover .flow-card-image {
@@ -2966,6 +2967,74 @@ input:checked + .slider:before {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(255, 140, 0, 0.4);
   background: linear-gradient(135deg, #ff9d1a, #ff7c1a);
+}
+
+/* Chakra indicator styles */
+.chakra-indicator {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  bottom: 5px;
+  right: 5px;
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.chakra-indicator:hover {
+  transform: scale(1.3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Colors for different chakras */
+.chakra-root {
+  background: linear-gradient(135deg, #ff0000, #8B0000);
+}
+
+.chakra-sacral {
+  background: linear-gradient(135deg, #ff8c00, #ff4500);
+}
+
+.chakra-solar {
+  background: linear-gradient(135deg, #ffff00, #ffd700);
+}
+
+.chakra-heart {
+  background: linear-gradient(135deg, #00ff00, #008000);
+}
+
+.chakra-throat {
+  background: linear-gradient(135deg, #00ffff, #008b8b);
+}
+
+.chakra-third-eye {
+  background: linear-gradient(135deg, #0000ff, #000080);
+}
+
+.chakra-crown {
+  background: linear-gradient(135deg, #800080, #4b0082);
+}
+
+/* Table view chakra indicator */
+.table-asana .chakra-indicator {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  right: -2px;
+  bottom: -2px;
+}
+
+/* Asana list chakra indicator */
+.asana-item .chakra-indicator {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  right: 2px;
+  bottom: 2px;
+  z-index: 5;
+}
 }
 
 .add-custom-pose-btn:active {
