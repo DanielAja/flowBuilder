@@ -134,6 +134,7 @@ let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
 let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 let currentViewMode = localStorage.getItem('viewMode') || 'table'; // Default to table view
+let confettiAnimationId = null; // For tracking confetti animation
 
 // Global variable to store copied poses
 let copiedPoses = [];
@@ -1578,6 +1579,10 @@ function startCountdownTimer(duration) {
                     }, 100);
                 } else {
                     console.log("End of flow reached!");
+
+                    // Trigger confetti animation to celebrate completion
+                    createConfetti();
+
                     // End of flow - transform timer into a home button
                     const countdownContainer = document.querySelector('.countdown-container');
                     if (countdownContainer) {
@@ -1589,6 +1594,21 @@ function startCountdownTimer(duration) {
                         `;
                         countdownContainer.classList.add('flow-complete');
                     }
+
+                    // Show congratulations message with special styling
+                    const asanaName = document.getElementById('asanaName');
+                    if (asanaName) {
+                        asanaName.textContent = "Flow Complete!";
+                        asanaName.classList.add('flow-complete-message');
+                    }
+
+                    const asanaSide = document.getElementById('asanaSide');
+                    if (asanaSide) {
+                        asanaSide.textContent = "Great job!";
+                        asanaSide.style.fontSize = "1.5rem";
+                        asanaSide.style.color = "#333";
+                    }
+
                     return; // Exit the timer loop at the end of the flow
                 }
             }
@@ -1601,6 +1621,114 @@ function startCountdownTimer(duration) {
     // Start the timer immediately with first update
     console.log("Starting timer with first update");
     updateTimer();
+}
+
+// Function to create and animate confetti
+function createConfetti() {
+    // Stop any existing confetti animation
+    if (confettiAnimationId) {
+        cancelAnimationFrame(confettiAnimationId);
+        confettiAnimationId = null;
+    }
+
+    // Remove any existing canvas
+    const existingCanvas = document.getElementById('confetti-canvas');
+    if (existingCanvas) {
+        existingCanvas.remove();
+    }
+
+    // Create a canvas for the confetti
+    const canvas = document.createElement('canvas');
+    canvas.id = 'confetti-canvas';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '1000';
+    document.body.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+
+    // Confetti configuration
+    const confettiCount = 200;
+    const confettiColors = ['#ff8c00', '#ffd700', '#00bfff', '#ff1493', '#32cd32', '#7b68ee'];
+    const confetti = [];
+
+    // Create confetti pieces
+    for (let i = 0; i < confettiCount; i++) {
+        confetti.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            size: Math.random() * 10 + 5,
+            color: confettiColors[Math.floor(Math.random() * confettiColors.length)],
+            rotation: Math.random() * 2 * Math.PI,
+            rotationSpeed: Math.random() * 0.2 - 0.1,
+            speedX: Math.random() * 5 - 2.5,
+            speedY: Math.random() * 5 + 7,
+            shape: Math.random() > 0.5 ? 'circle' : 'rect'
+        });
+    }
+
+    // Animate confetti
+    function animateConfetti() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let stillActive = false;
+
+        confetti.forEach(piece => {
+            ctx.save();
+            ctx.translate(piece.x, piece.y);
+            ctx.rotate(piece.rotation);
+
+            ctx.fillStyle = piece.color;
+            if (piece.shape === 'circle') {
+                ctx.beginPath();
+                ctx.arc(0, 0, piece.size / 2, 0, 2 * Math.PI);
+                ctx.fill();
+            } else {
+                ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size);
+            }
+
+            ctx.restore();
+
+            // Update position
+            piece.x += piece.speedX;
+            piece.y += piece.speedY;
+            piece.rotation += piece.rotationSpeed;
+
+            // Check if this piece is still active
+            if (piece.y < canvas.height + piece.size) {
+                stillActive = true;
+            }
+        });
+
+        // Continue animation if there are active confetti pieces
+        if (stillActive) {
+            confettiAnimationId = requestAnimationFrame(animateConfetti);
+        } else {
+            // Clean up when all confetti is off-screen
+            if (canvas) {
+                canvas.remove();
+            }
+            confettiAnimationId = null;
+        }
+    }
+
+    // Start animation
+    confettiAnimationId = requestAnimationFrame(animateConfetti);
+
+    // Set timeout to remove confetti after 5 seconds (optional)
+    setTimeout(() => {
+        if (confettiAnimationId) {
+            cancelAnimationFrame(confettiAnimationId);
+            confettiAnimationId = null;
+        }
+        if (canvas) {
+            canvas.remove();
+        }
+    }, 5000);
 }
 
 function endFlow() {
