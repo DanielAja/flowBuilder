@@ -1243,12 +1243,90 @@ function playFlow(flowID) {
             // Set up a 3-second countdown before starting the flow
             const asanaName = document.getElementById('asanaName');
             const asanaSide = document.getElementById('asanaSide');
+            const asanaImage = document.getElementById('asanaImage');
             const originalAsanaName = asanaName.textContent;
             const originalAsanaSide = asanaSide.textContent;
+            const originalImageSrc = asanaImage.src;
 
-            // Change display to show countdown starting
+            // Save original image source for later
+            const originalNextAsanaImage = document.getElementById('nextAsanaImage');
+            const originalNextImageSrc = originalNextAsanaImage ? originalNextAsanaImage.src : '';
+
+            // Change display to show countdown starting and add animation
             asanaName.textContent = "Get Ready";
+            asanaName.style.animation = 'pulse 1.5s infinite';
+
+            // Add the pulse animation if it doesn't exist
+            if (!document.getElementById('countdown-animations')) {
+                const styleEl = document.createElement('style');
+                styleEl.id = 'countdown-animations';
+                styleEl.textContent = `
+                    @keyframes pulse {
+                        0% { transform: scale(1); }
+                        50% { transform: scale(1.05); }
+                        100% { transform: scale(1); }
+                    }
+                `;
+                document.head.appendChild(styleEl);
+            }
+
             asanaSide.textContent = "Starting in 3";
+
+            // Replace image with countdown number
+            asanaImage.style.display = 'none';
+
+            // Create and add a countdown number display to the image container
+            const asanaImageContainer = document.querySelector('.asana-image-container');
+            const countdownDisplay = document.createElement('div');
+            countdownDisplay.id = 'countdown-display';
+            countdownDisplay.textContent = '3';
+
+            // Create a circular container with white gradient
+            const circleContainer = document.createElement('div');
+            circleContainer.style.position = 'absolute';
+            circleContainer.style.top = '50%';
+            circleContainer.style.left = '50%';
+            circleContainer.style.transform = 'translate(-50%, -50%)';
+            circleContainer.style.width = '250px';
+            circleContainer.style.height = '250px';
+            circleContainer.style.borderRadius = '50%';
+            circleContainer.style.background = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0) 100%)';
+            circleContainer.style.display = 'flex';
+            circleContainer.style.justifyContent = 'center';
+            circleContainer.style.alignItems = 'center';
+            circleContainer.style.boxShadow = '0 0 30px rgba(255, 140, 0, 0.3)';
+            circleContainer.style.zIndex = '5';
+            circleContainer.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
+            circleContainer.style.opacity = '0';
+            circleContainer.style.transform = 'translate(-50%, -50%) scale(0.5)';
+            circleContainer.style.border = '2px solid rgba(255, 140, 0, 0.3)';
+
+            // Apply stylish styling to the countdown
+            countdownDisplay.style.fontSize = '150px';
+            countdownDisplay.style.fontWeight = 'bold';
+            countdownDisplay.style.color = '#ff8c00';
+            countdownDisplay.style.textShadow = '0 0 5px rgba(255, 255, 255, 0.7)';
+            countdownDisplay.style.position = 'relative';
+            countdownDisplay.style.zIndex = '10';
+            countdownDisplay.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
+
+            // Add countdown to the circle container
+            circleContainer.appendChild(countdownDisplay);
+
+            // Add the circle container to the image container
+            asanaImageContainer.appendChild(circleContainer);
+
+            // Trigger the animation after a slight delay
+            setTimeout(() => {
+                circleContainer.style.opacity = '1';
+                circleContainer.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 50);
+
+            // Hide the "Coming Up" section during countdown
+            const comingUpSection = document.querySelector('.coming-up');
+            if (comingUpSection) {
+                comingUpSection.style.visibility = 'hidden';
+            }
 
             countdownContainer.innerHTML = `
                 <svg class="countdown-svg" viewBox="0 0 100 100">
@@ -1274,6 +1352,60 @@ function playFlow(flowID) {
                 if (countdownElement) {
                     countdownElement.textContent = startCountdown;
                 }
+
+                // Update the large countdown display in the image container with animation
+                const countdownDisplay = document.getElementById('countdown-display');
+                if (countdownDisplay) {
+                    // Add pulse animation to the circle container
+                    const circleContainer = countdownDisplay.parentElement;
+                    if (circleContainer) {
+                        // Apply animations to the circle
+                        circleContainer.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                        setTimeout(() => {
+                            circleContainer.style.transform = 'translate(-50%, -50%) scale(1)';
+                        }, 300);
+
+                        // Change the background color based on countdown number - keeping white gradient but with different borders
+                        const colors = {
+                            2: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0) 100%)',
+                            1: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0) 100%)',
+                            0: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0) 100%)'
+                        };
+
+                        // Border colors for each step
+                        const borderColors = {
+                            2: '2px solid rgba(255, 140, 0, 0.6)',
+                            1: '2px solid rgba(255, 0, 0, 0.6)',
+                            0: '2px solid rgba(0, 200, 0, 0.6)'
+                        };
+
+                        // Apply border color
+                        if (borderColors[startCountdown]) {
+                            circleContainer.style.border = borderColors[startCountdown];
+                        }
+
+                        // Keep text color constant - using the orange theme color
+                        countdownDisplay.style.color = '#ff8c00';
+
+                        if (colors[startCountdown]) {
+                            circleContainer.style.background = colors[startCountdown];
+                        }
+                    }
+
+                    // Apply exit animation
+                    countdownDisplay.style.opacity = '0';
+
+                    // Set new number and apply entrance animation after short delay
+                    setTimeout(() => {
+                        countdownDisplay.textContent = startCountdown;
+
+                        // Slight delay before entrance animation
+                        setTimeout(() => {
+                            countdownDisplay.style.opacity = '1';
+                        }, 50);
+                    }, 250);
+                }
+
                 asanaSide.textContent = "Starting in " + startCountdown;
 
                 // Update circle animation
@@ -1288,6 +1420,49 @@ function playFlow(flowID) {
 
                 if (startCountdown <= 0) {
                     clearInterval(startTimer);
+
+                    // Animate the countdown display and circle container out with a final animation
+                    const countdownDisplay = document.getElementById('countdown-display');
+                    if (countdownDisplay) {
+                        // Get the circle container
+                        const circleContainer = countdownDisplay.parentElement;
+
+                        if (circleContainer) {
+                            // Add a celebratory animation to the circle
+                            circleContainer.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                            circleContainer.style.opacity = '0';
+                            circleContainer.style.transition = 'transform 0.8s ease-out, opacity 0.8s ease-out';
+
+                            // Remove after animation completes
+                            setTimeout(() => {
+                                circleContainer.remove();
+                            }, 800);
+                        } else {
+                            // Fallback in case the circle container isn't found
+                            countdownDisplay.style.opacity = '0';
+                            countdownDisplay.style.transform = 'scale(2)';
+
+                            // Remove after animation completes
+                            setTimeout(() => {
+                                countdownDisplay.remove();
+                            }, 500);
+                        }
+                    }
+
+                    // Show the asana image again
+                    const asanaImage = document.getElementById('asanaImage');
+                    if (asanaImage) {
+                        asanaImage.style.display = '';
+                    }
+
+                    // Show the "Coming Up" section again
+                    const comingUpSection = document.querySelector('.coming-up');
+                    if (comingUpSection) {
+                        comingUpSection.style.visibility = '';
+                    }
+
+                    // Reset any animation on the asana name
+                    asanaName.style.animation = '';
 
                     // Update the display and get the duration for the first asana
                     const duration = updateAsanaDisplay(asana);
