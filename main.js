@@ -218,6 +218,11 @@ function updateAsanaDisplay(asana) {
     const nextAsanaImageElement = document.getElementById("nextAsanaImage");
     const comingUpSection = document.querySelector(".coming-up");
 
+    // Reset any previous animation classes on the asana name
+    if (asanaNameElement) {
+        asanaNameElement.classList.remove('flow-complete-message');
+    }
+
     // Use the displayName based on the current language toggle setting
     // We directly read the toggle state to ensure the most current value is used
     const sanskritToggleGlobal = document.getElementById('sanskrit-toggle-global');
@@ -1223,6 +1228,19 @@ function playFlow(flowID) {
         currentAsanaIndex = 0;
         paused = false;
 
+        // Reset any animation classes on the title elements
+        const asanaName = document.getElementById('asanaName');
+        if (asanaName) {
+            asanaName.classList.remove('flow-complete-message');
+            asanaName.style.animation = '';
+        }
+
+        const asanaSide = document.getElementById('asanaSide');
+        if (asanaSide) {
+            asanaSide.style.fontSize = '';
+            asanaSide.style.color = '';
+        }
+
         // Get the first asana
         const asana = editingFlow.asanas[currentAsanaIndex];
         console.log("First asana:", asana.name, "Duration:", asana.duration);
@@ -1604,7 +1622,7 @@ function startCountdownTimer(duration) {
 
                     const asanaSide = document.getElementById('asanaSide');
                     if (asanaSide) {
-                        asanaSide.textContent = "Great job!";
+                        asanaSide.textContent = "";
                         asanaSide.style.fontSize = "1.5rem";
                         asanaSide.style.color = "#333";
                     }

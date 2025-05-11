@@ -1862,15 +1862,15 @@ input:checked + .slider:before {
   height: 150px;
   background: rgba(255, 255, 255, 0.98);
   animation: pulse-complete 2s infinite ease-in-out;
-  border: 2px solid rgba(255, 140, 0, 0.5);
+  border: none;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes pulse-complete {
-  0% { box-shadow: 0 0 0 0 rgba(255, 140, 0, 0.6); }
-  70% { box-shadow: 0 0 0 20px rgba(255, 140, 0, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(255, 140, 0, 0); }
+  0% { box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
+  70% { box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); }
+  100% { box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
 }
 
 /* Style for flow completion message */
