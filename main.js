@@ -1157,14 +1157,15 @@ function playFlow(flowID) {
             
             // Create a new YogaAsana instance
             const newAsana = new YogaAsana(
-                asana.name, 
-                asana.side, 
+                asana.name,
+                asana.side,
                 asana.image,
                 asana.description,
                 asana.difficulty,
                 asana.tags || [],
                 asana.transitionsAsana || [],
-                asana.sanskrit || ""
+                asana.sanskrit || "",
+                asana.chakra || ""
             );
             newAsana.setDuration(asana.duration || 15);
             return newAsana;
@@ -1920,14 +1921,15 @@ function editFlow(flowID) {
             // Make sure each asana is a proper YogaAsana object
             if (!(asana instanceof YogaAsana)) {
                 const newAsana = new YogaAsana(
-                    asana.name, 
-                    asana.side, 
+                    asana.name,
+                    asana.side,
                     asana.image,
                     asana.description,
                     asana.difficulty,
                     asana.tags || [],
                     asana.transitionsAsana || [],
-                    asana.sanskrit || ""
+                    asana.sanskrit || "",
+                    asana.chakra || ""
                 );
                 newAsana.setDuration(asana.duration || 7);
                 return newAsana;
@@ -1954,14 +1956,15 @@ function editFlow(flowID) {
         // If asana is not already a YogaAsana instance with the method
         if (!asana.getDisplayName) {
             const newAsana = new YogaAsana(
-                asana.name, 
-                asana.side, 
+                asana.name,
+                asana.side,
                 asana.image,
                 asana.description,
                 asana.difficulty,
                 asana.tags || [],
                 asana.transitionsAsana || [],
-                asana.sanskrit || ""
+                asana.sanskrit || "",
+                asana.chakra || ""
             );
             newAsana.setDuration(asana.duration || 7);
             return newAsana;
@@ -3502,6 +3505,12 @@ function rebuildCardView() {
         card.setAttribute('draggable', 'false'); // Disable dragging
         card.setAttribute('data-index', index);
 
+        // Add chakra data to the card for debugging
+        if (asana.chakra) {
+            card.setAttribute('data-chakra', asana.chakra);
+            console.log(`Card ${index} has chakra: ${asana.chakra}`);
+        }
+
         // Add click handler to the entire card
         card.addEventListener('click', function(e) {
             // We need to ignore clicks on specific interactive elements
@@ -3614,6 +3623,13 @@ function rebuildCardView() {
         }
 
         imgContainer.appendChild(img);
+
+        // Verify that the chakra indicator is added correctly
+        if (imgContainer.querySelector('.chakra-indicator')) {
+            console.log(`Added chakra indicator for ${asana.name}`);
+        } else if (asana.chakra) {
+            console.log(`Failed to add chakra indicator for ${asana.name} with chakra ${asana.chakra}`);
+        }
 
         // Create info container
         const infoDiv = document.createElement('div');
@@ -4099,7 +4115,8 @@ function copySelectedPoses() {
             asana.difficulty,
             [...asana.tags],
             [...asana.transitionsAsana],
-            asana.sanskrit
+            asana.sanskrit,
+            asana.chakra || ""
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
@@ -4126,7 +4143,8 @@ function pasteSelectedPoses() {
             asana.difficulty,
             [...asana.tags],
             [...asana.transitionsAsana],
-            asana.sanskrit
+            asana.sanskrit,
+            asana.chakra || ""
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
@@ -4214,7 +4232,8 @@ function saveSequence() {
                 asana.difficulty,
                 [...asana.tags],
                 [...asana.transitionsAsana],
-                asana.sanskrit
+                asana.sanskrit,
+                asana.chakra || ""
             );
             newAsana.setDuration(asana.duration);
             return newAsana;
@@ -4487,7 +4506,8 @@ function editSequence(sequenceId) {
             asana.difficulty,
             [...asana.tags],
             [...asana.transitionsAsana],
-            asana.sanskrit
+            asana.sanskrit,
+            asana.chakra || ""
         );
         newAsana.setDuration(asana.duration);
         editingFlow.addAsana(newAsana);
@@ -4568,7 +4588,8 @@ function updateEditedSequence(sequenceId, originalName) {
             asana.difficulty,
             [...asana.tags],
             [...asana.transitionsAsana],
-            asana.sanskrit
+            asana.sanskrit,
+            asana.chakra || ""
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
@@ -4605,7 +4626,8 @@ function loadSequence(sequenceId) {
             asana.difficulty,
             [...asana.tags],
             [...asana.transitionsAsana],
-            asana.sanskrit
+            asana.sanskrit,
+            asana.chakra || ""
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
@@ -4690,7 +4712,8 @@ function addCustomPose() {
         'Beginner', // Default difficulty
         ['Custom'], // Default tags
         [], // No transitions by default
-        '' // No Sanskrit name by default
+        '', // No Sanskrit name by default
+        '' // No chakra by default
     );
     customPose.setDuration(7); // Default duration
 
