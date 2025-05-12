@@ -3025,6 +3025,13 @@ input:checked + .slider:before {
   bottom: -2px;
 }
 
+/* Hide chakra indicator in table view on small screens */
+@media screen and (max-width: 500px) {
+  .table-asana .chakra-indicator {
+    display: none !important;
+  }
+}
+
 /* Asana list chakra indicator */
 .asana-item .chakra-indicator {
   position: absolute;
