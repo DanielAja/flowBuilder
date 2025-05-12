@@ -131,6 +131,7 @@
       <transition>Warrior 2</transition> <!-- Common transition -->
       <transition>Plank</transition>
       <transition>Low Lunge</transition>
+      <transition>Runner's Lunge</transition>
       <transition>Mountain Pose</transition>
       <transition>Revolved Crescent Lunge</transition>
     </transitions>
@@ -869,6 +870,7 @@
     </tags>
     <transitions>
       <transition>Low Lunge</transition>
+      <transition>Runner's Lunge</transition>
       <transition>Downward Facing Dog</transition>
       <transition>Half Pigeon</transition>
       <transition>Plank</transition>
@@ -896,6 +898,31 @@
       <transition>Crescent Lunge</transition> <!-- Lifting back knee -->
       <transition>Lizard Pose</transition>
       <transition>Half Splits</transition> <!-- Added transition -->
+      <transition>Runner's Lunge</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Runner's Lunge</n>
+    <sanskrit>Utthan Pristhasana</sanskrit>
+    <side>Right</side> <!-- Default side -->
+    <image>images/webp/runners-lunge.webp</image>
+    <description>A foundational lunge with the back knee on or hovering above the ground. Builds strength in the legs while opening the hip flexors and preparing for deeper poses.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Sacral</chakra> <!-- Hip flexor opening -->
+    <tags>
+      <tag>Standing</tag>
+      <tag>Lunge</tag>
+      <tag>Hip Opener</tag>
+      <tag>Stretch</tag>
+      <tag>Psoas Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Low Lunge</transition>
+      <transition>Downward Facing Dog</transition>
+      <transition>Crescent Lunge</transition>
+      <transition>Lizard Pose</transition>
+      <transition>Half Splits</transition>
     </transitions>
   </asana>
 
@@ -1393,6 +1420,8 @@
       <transition>Forward Fold</transition> <!-- Walking feet forward -->
       <transition>Upward Facing Dog</transition> <!-- Vinyasa flow -->
       <transition>Dolphin Pose</transition>
+      <transition>Low Lunge</transition>
+      <transition>Runner's Lunge</transition>
     </transitions>
   </asana>
 
