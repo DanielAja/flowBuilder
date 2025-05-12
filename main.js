@@ -140,6 +140,9 @@ let confettiAnimationId = null; // For tracking confetti animation
 // Global variable to store copied poses
 let copiedPoses = [];
 
+// Global variable to store imported flow (temporary storage)
+let importedFlow = null;
+
 // Variable to store the controls show handler
 let showControlsHandler;
 
@@ -1107,8 +1110,9 @@ function displayFlows() {
                 </div>
                 <div class="flow-actions">
                     <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
-                    <button class="edit-btn" onclick="editFlow('${flow.flowID}')"></button>
-                    <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')"></button>
+                    <button class="share-btn" onclick="showShareFlow('${flow.flowID}')" title="Share this flow"></button>
+                    <button class="edit-btn" onclick="editFlow('${flow.flowID}')" title="Edit this flow"></button>
+                    <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')" title="Delete this flow"></button>
                 </div>
             `;
             flowList.appendChild(flowItem);
@@ -1765,18 +1769,120 @@ function endFlow() {
         // Since the user is manually ending the flow, we consider it "completed"
         const flows = getFlows();
         const flowIndex = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
-        
+
         if (flowIndex !== -1) {
             // Only update if the flow was already saved
             flows[flowIndex].lastFlowed = new Date().toISOString();
             saveFlows(flows);
         }
-        
+
         // Clean up flow controls event listeners
         cleanupFlowControlsAutoHide();
-        
+
         // Return to home screen
         changeScreen('homeScreen');
+    }
+}
+
+// Function to export a flow as a shareable string
+function exportFlow(flowID) {
+    // Get all flows from storage
+    const flows = getFlows();
+
+    // Find the flow with the given ID
+    const flowToExport = flows.find(flow => flow.flowID === flowID);
+
+    if (!flowToExport) {
+        console.error(`Flow with ID ${flowID} not found`);
+        return null;
+    }
+
+    try {
+        // Create a simplified version of the flow for sharing
+        // We exclude some properties that aren't needed for sharing
+        const exportData = {
+            name: flowToExport.name,
+            description: flowToExport.description,
+            time: flowToExport.time,
+            peakPose: flowToExport.peakPose,
+            asanas: flowToExport.asanas.map(asana => ({
+                name: asana.name,
+                sanskrit: asana.sanskrit || "",
+                side: asana.side,
+                image: asana.image,
+                description: asana.description,
+                difficulty: asana.difficulty,
+                tags: asana.tags || [],
+                transitionsAsana: asana.transitionsAsana || [],
+                duration: asana.duration || 7,
+                chakra: asana.chakra || ""
+            })),
+            timestamp: new Date().toISOString(),
+            version: "1.0" // For future compatibility
+        };
+
+        // Convert to JSON string and encode as base64
+        const jsonStr = JSON.stringify(exportData);
+        // Use btoa for base64 encoding (it's built into browsers)
+        const encoded = btoa(jsonStr);
+
+        return encoded;
+    } catch (error) {
+        console.error('Error exporting flow:', error);
+        return null;
+    }
+}
+
+// Function to import a flow from a shareable string
+function importFlow(shareCode) {
+    try {
+        // Decode the base64 string
+        const jsonStr = atob(shareCode);
+
+        // Parse the JSON
+        const importData = JSON.parse(jsonStr);
+
+        // Validate the imported data has the minimum required fields
+        if (!importData.name || !Array.isArray(importData.asanas)) {
+            throw new Error("Invalid flow data");
+        }
+
+        // Create a new Flow object
+        const newFlow = new Flow(
+            importData.name,
+            importData.description || "",
+            importData.time || 0,
+            importData.peakPose || ""
+        );
+
+        // Generate a new ID for this flow
+        newFlow.flowID = generateUniqueID();
+        newFlow.lastEdited = new Date().toISOString();
+
+        // Add each asana to the flow
+        importData.asanas.forEach(asana => {
+            const newAsana = new YogaAsana(
+                asana.name,
+                asana.side,
+                asana.image,
+                asana.description,
+                asana.difficulty,
+                asana.tags || [],
+                asana.transitionsAsana || [],
+                asana.sanskrit || "",
+                asana.chakra || ""
+            );
+            newAsana.setDuration(asana.duration || 7);
+            newFlow.addAsana(newAsana);
+        });
+
+        // Calculate total duration
+        newFlow.calculateTotalDuration();
+
+        return newFlow;
+    } catch (error) {
+        console.error('Error importing flow:', error);
+        return null;
     }
 }
 
@@ -1905,16 +2011,16 @@ document.addEventListener('DOMContentLoaded', function() {
 function editFlow(flowID) {
     const flows = getFlows();
     const flowToEdit = flows.find(flow => flow.flowID === flowID);
-    
+
     if (!flowToEdit) {
         console.error(`Flow with ID ${flowID} not found`);
         return;
     }
-    
+
     // Create a deep copy of the flow
     editingFlow = new Flow();
     Object.assign(editingFlow, flowToEdit);
-    
+
     // Make sure the asanas are proper objects
     if (editingFlow.asanas && Array.isArray(editingFlow.asanas)) {
         editingFlow.asanas = editingFlow.asanas.map(asana => {
@@ -1937,20 +2043,20 @@ function editFlow(flowID) {
             return asana;
         });
     }
-    
+
     // Set edit mode
     editMode = true;
-    
+
     // Switch to build screen
     changeScreen('buildScreen');
-    
+
     // Update form fields with flow data
     const titleInput = document.getElementById('title');
     const descriptionInput = document.getElementById('description');
-    
+
     if (titleInput) titleInput.value = editingFlow.name || '';
     if (descriptionInput) descriptionInput.value = editingFlow.description || '';
-    
+
     // Ensure all asanas have getDisplayName method
     editingFlow.asanas = editingFlow.asanas.map(asana => {
         // If asana is not already a YogaAsana instance with the method
@@ -1971,11 +2077,162 @@ function editFlow(flowID) {
         }
         return asana;
     });
-    
+
     // Use the rebuildFlowTable function to populate the table
     rebuildFlowTable();
-    
+
     console.log('Editing flow:', editingFlow.name, 'with', editingFlow.asanas.length, 'asanas');
+}
+
+// Show the share flow modal with export code
+function showShareFlow(flowID) {
+    // Generate the share code for the flow
+    const shareCode = exportFlow(flowID);
+
+    if (!shareCode) {
+        alert('Error generating share code. Please try again.');
+        return;
+    }
+
+    // Get the modal and share code output elements
+    const modal = document.getElementById('shareFlowModal');
+    const shareCodeOutput = document.getElementById('shareCodeOutput');
+
+    // Set the share code in the textarea
+    if (shareCodeOutput) {
+        shareCodeOutput.value = shareCode;
+    }
+
+    // Hide any copy confirmation message
+    const copyConfirmation = document.getElementById('copyConfirmation');
+    if (copyConfirmation) {
+        copyConfirmation.style.display = 'none';
+    }
+
+    // Show the modal
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+// Copy the share code to clipboard
+function copyShareCode() {
+    const shareCodeOutput = document.getElementById('shareCodeOutput');
+    const copyConfirmation = document.getElementById('copyConfirmation');
+
+    if (shareCodeOutput && copyConfirmation) {
+        // Select the text
+        shareCodeOutput.select();
+
+        try {
+            // Execute copy command
+            document.execCommand('copy');
+
+            // Show confirmation
+            copyConfirmation.style.display = 'block';
+
+            // Hide confirmation after 3 seconds
+            setTimeout(() => {
+                copyConfirmation.style.display = 'none';
+            }, 3000);
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            alert('Failed to copy to clipboard. Please select and copy the text manually.');
+        }
+    }
+}
+
+// Close the share modal
+function closeShareModal() {
+    const modal = document.getElementById('shareFlowModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+// Show the import flow modal
+function showImportFlow() {
+    // Get the modal and import code input elements
+    const modal = document.getElementById('importFlowModal');
+    const importCodeInput = document.getElementById('importCodeInput');
+
+    // Clear any previous input and error messages
+    if (importCodeInput) {
+        importCodeInput.value = '';
+    }
+
+    const importError = document.getElementById('importError');
+    if (importError) {
+        importError.style.display = 'none';
+    }
+
+    // Show the modal
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+// Process the import flow action
+function processImportFlow() {
+    const importCodeInput = document.getElementById('importCodeInput');
+    const importError = document.getElementById('importError');
+
+    if (!importCodeInput || !importError) {
+        console.error('Import elements not found');
+        return;
+    }
+
+    const shareCode = importCodeInput.value.trim();
+
+    if (!shareCode) {
+        importError.style.display = 'block';
+        return;
+    }
+
+    try {
+        // Try to import the flow
+        const newFlow = importFlow(shareCode);
+
+        if (!newFlow) {
+            importError.style.display = 'block';
+            return;
+        }
+
+        // Get existing flows
+        const flows = getFlows();
+
+        // Check if a flow with the same name already exists
+        const existingNameIndex = flows.findIndex(flow => flow.name === newFlow.name);
+        if (existingNameIndex !== -1) {
+            // Append a suffix to make the name unique
+            newFlow.name = `${newFlow.name} (Imported)`;
+        }
+
+        // Add new flow to storage
+        flows.push(newFlow);
+        saveFlows(flows);
+
+        // Close the modal
+        closeImportModal();
+
+        // Refresh the flow list
+        displayFlows();
+
+        // Show success message
+        alert(`Flow "${newFlow.name}" has been imported successfully!`);
+
+    } catch (error) {
+        console.error('Error importing flow:', error);
+        importError.style.display = 'block';
+    }
+}
+
+// Close the import modal
+function closeImportModal() {
+    const modal = document.getElementById('importFlowModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 // Function to toggle the table sort order

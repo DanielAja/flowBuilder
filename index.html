@@ -312,9 +312,14 @@
     <div id="homeScreen" class="screen active">
       <header>
         <h1>flow builder</h1>
-        <button class="build-flow-btn" onclick="startNewFlow()">
-          BUILD A FLOW
-        </button>
+        <div class="header-buttons">
+          <button class="import-flow-btn" onclick="showImportFlow()">
+            IMPORT FLOW
+          </button>
+          <button class="build-flow-btn" onclick="startNewFlow()">
+            BUILD A FLOW
+          </button>
+        </div>
       </header>
 
 
@@ -516,6 +521,34 @@
         <button onclick="changeScreen('homeScreen')" class="home-btn">
           Back to Home
         </button>
+      </div>
+    </div>
+
+    <!-- Share Flow Modal -->
+    <div id="shareFlowModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeShareModal()">&times;</span>
+        <h2>Share Your Flow</h2>
+        <p class="modal-description">Copy this code to share your flow with others:</p>
+        <div class="share-code-container">
+          <textarea id="shareCodeOutput" readonly></textarea>
+          <button class="copy-btn" onclick="copyShareCode()">Copy Code</button>
+        </div>
+        <div id="copyConfirmation" class="copy-confirmation">Copied to clipboard!</div>
+      </div>
+    </div>
+
+    <!-- Import Flow Modal -->
+    <div id="importFlowModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeImportModal()">&times;</span>
+        <h2>Import Flow</h2>
+        <p class="modal-description">Paste a shared flow code below:</p>
+        <div class="import-code-container">
+          <textarea id="importCodeInput" placeholder="Paste flow code here..."></textarea>
+          <button class="import-btn" onclick="processImportFlow()">Import Flow</button>
+        </div>
+        <div id="importError" class="import-error">Invalid flow code. Please check and try again.</div>
       </div>
     </div>
 
