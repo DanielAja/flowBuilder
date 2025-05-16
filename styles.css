@@ -1247,6 +1247,54 @@ h1 {
   transform: translateY(-50%) scale(1.2);
 }
 
+/* Styles for section drop target */
+#flowTable tr.drop-target-section {
+  border-top: 4px solid #ff8c00;
+  border-bottom: 4px solid #ff8c00;
+  background-color: rgba(255, 140, 0, 0.15);
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+  position: relative;
+  z-index: 5;
+}
+
+#flowTable tr.drop-target-section td {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+#flowTable tr.drop-target-section.section-header {
+  background-color: rgba(255, 140, 0, 0.2);
+}
+
+/* Pose number drag indicator */
+.pose-drag-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  background-color: #ff8c00;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  pointer-events: none;
+  transition: transform 0.1s ease;
+  animation: pulse-indicator 1s infinite alternate;
+}
+
+@keyframes pulse-indicator {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(255, 140, 0, 0.5);
+  }
+  100% {
+    transform: scale(1.1);
+    box-shadow: 0 3px 12px rgba(255, 140, 0, 0.8);
+  }
+}
+
 #flowTable tr.drag-highlight, #flowTable tr.highlight-added {
   animation: pulse 1.5s ease-in-out infinite;
 }

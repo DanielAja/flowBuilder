@@ -115,6 +115,64 @@ class Flow {
         return sectionId;
     }
     
+    // Reorder a section by moving it from one position to another
+    reorderSection(sourceSectionId, targetRow) {
+        // Find the source section
+        const sourceIndex = this.sections.findIndex(section => section.id === sourceSectionId);
+        if (sourceIndex === -1) {
+            console.error('Source section not found:', sourceSectionId);
+            return false;
+        }
+        
+        // Determine the target position for the section
+        let targetIndex;
+        
+        // If the target is a section header, place it before that section
+        if (targetRow.classList.contains('section-header')) {
+            const targetSectionId = targetRow.getAttribute('data-section-id');
+            targetIndex = this.sections.findIndex(section => section.id === targetSectionId);
+            if (targetIndex === -1) {
+                console.error('Target section not found:', targetSectionId);
+                return false;
+            }
+        } 
+        // If the target is a regular row, find what section it belongs to
+        else {
+            const targetSectionId = targetRow.getAttribute('data-section-id');
+            
+            // If it's in a section, place it after that section
+            if (targetSectionId) {
+                targetIndex = this.sections.findIndex(section => section.id === targetSectionId);
+                if (targetIndex === -1) {
+                    console.error('Target section not found:', targetSectionId);
+                    return false;
+                }
+                // Place after this section
+                targetIndex += 1;
+            } 
+            // If it's not in a section, place the section at the beginning
+            else {
+                targetIndex = 0;
+            }
+        }
+        
+        // Adjust target index if moving downward
+        if (sourceIndex < targetIndex) {
+            targetIndex -= 1;
+        }
+        
+        // Don't do anything if source and target are the same
+        if (sourceIndex === targetIndex) {
+            return false;
+        }
+        
+        // Move the section
+        const [movedSection] = this.sections.splice(sourceIndex, 1);
+        this.sections.splice(targetIndex, 0, movedSection);
+        
+        return true;
+    }
+    
     // Get section by ID
     getSectionById(sectionId) {
         return this.sections.find(section => section.id === sectionId);
@@ -3105,17 +3163,30 @@ function updateRowDragAttributes() {
         row.setAttribute('draggable', 'true');
         row.setAttribute('data-index', index);
         
-        // Make sure first cell is styled as drag handle
-        const firstCell = row.cells[0];
-        if (firstCell) {
-            firstCell.style.cursor = 'grab';
-            firstCell.setAttribute('title', 'Drag to reorder');
+        // If this is a section header, make it draggable and style it
+        if (row.classList.contains('section-header')) {
+            // For section headers, make the section name act as a drag handle
+            const sectionNameCell = row.querySelector('.section-name');
+            if (sectionNameCell) {
+                sectionNameCell.style.cursor = 'grab';
+                sectionNameCell.setAttribute('title', 'Drag to reorder this group');
+            }
+        } 
+        // For regular rows, style the first cell as a drag handle
+        else {
+            const firstCell = row.cells[0];
+            if (firstCell) {
+                firstCell.style.cursor = 'grab';
+                firstCell.setAttribute('title', 'Drag to reorder');
+            }
         }
     });
 }
 
 // Drag and drop event handlers
 function handleTableDragStart(e) {
+    console.log('------ DRAG START ------');
+    
     // Find the row being dragged - either the target itself or its parent row
     let row = null;
     
@@ -3124,33 +3195,126 @@ function handleTableDragStart(e) {
     } else {
         row = e.target.closest('tr');
         
-        // Only allow drag from the first cell (position number)
-        const cell = e.target.closest('td');
-        if (!cell || cell.cellIndex !== 0) {
-            e.preventDefault();
-            return false;
+        // Check if this is a section header
+        const isSectionHeader = row && row.classList.contains('section-header');
+        
+        if (isSectionHeader) {
+            // For section headers, allow drag from the section name
+            const sectionName = e.target.closest('.section-name');
+            if (!sectionName) {
+                console.log('⛔ Invalid drag source: Not dragging from section name');
+                e.preventDefault();
+                return false;
+            }
+        } else {
+            // For regular rows, only allow drag from the first cell (position number)
+            const cell = e.target.closest('td');
+            if (!cell || cell.cellIndex !== 0) {
+                console.log('⛔ Invalid drag source: Not dragging from first cell');
+                e.preventDefault();
+                return false;
+            }
+            
+            // Display the pose number in the drag image
+            const poseIndex = parseInt(row.getAttribute('data-index'));
+            const displayNumber = row.cells[0].textContent.trim();
+            
+            // Log the pose information to console
+            console.log(`Dragging pose number: ${displayNumber} (index: ${poseIndex})`);
+            if (poseIndex >= 0 && poseIndex < editingFlow.asanas.length) {
+                const pose = editingFlow.asanas[poseIndex];
+                console.log(`Pose name: ${pose.name}`);
+                console.log(`Pose duration: ${pose.duration} seconds`);
+            }
+            
+            // Create a floating indicator showing the pose number being dragged
+            const indicator = document.createElement('div');
+            indicator.className = 'pose-drag-indicator';
+            indicator.textContent = displayNumber;
+            indicator.style.position = 'fixed';
+            indicator.style.backgroundColor = '#ff8c00';
+            indicator.style.color = 'white';
+            indicator.style.padding = '8px 12px';
+            indicator.style.borderRadius = '50%';
+            indicator.style.fontWeight = 'bold';
+            indicator.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+            indicator.style.zIndex = '10000';
+            indicator.style.fontSize = '18px';
+            indicator.style.pointerEvents = 'none';
+            indicator.id = 'pose-drag-indicator';
+            document.body.appendChild(indicator);
+            
+            // Position it near the cursor
+            const updateIndicatorPosition = (e) => {
+                indicator.style.left = (e.clientX + 15) + 'px';
+                indicator.style.top = (e.clientY + 15) + 'px';
+            };
+            
+            // Initial position
+            updateIndicatorPosition(e);
+            
+            // Update position during drag
+            document.addEventListener('dragover', updateIndicatorPosition);
+            
+            // Remove indicator when drag ends
+            document.addEventListener('dragend', function removeIndicator() {
+                if (document.getElementById('pose-drag-indicator')) {
+                    document.body.removeChild(indicator);
+                }
+                document.removeEventListener('dragover', updateIndicatorPosition);
+                document.removeEventListener('dragend', removeIndicator);
+            }, { once: true });
         }
     }
     
     if (!row || row.rowIndex === 0) {
+        console.log('⛔ Invalid drag source: Header row or no row');
         e.preventDefault();
         return false; // Ignore header row
     }
     
-    // Check if the row is a section header
-    if (row.classList.contains('section-header')) {
-        e.preventDefault();
-        return false; // Don't allow dragging section headers
-    }
+    // Allow section headers to be dragged
+    const isSectionHeader = row.classList.contains('section-header');
+    console.log('🔄 Drag source type:', isSectionHeader ? 'GROUP HEADER' : 'POSE');
     
     // Store the section ID for later use during drop
-    // This will only allow drag and drop within the same section
     const sectionId = row.getAttribute('data-section-id');
     
-    console.log('Drag started on row:', row.rowIndex, 'Section ID:', sectionId);
+    // If this is a section header, get the section ID from the data attribute
+    const sectionHeaderId = isSectionHeader ? row.getAttribute('data-section-id') : null;
+    
+    // Get detailed information about what's being dragged
+    if (isSectionHeader) {
+        // For section headers, get the section name
+        const sectionName = row.getAttribute('data-section');
+        const section = editingFlow.getSectionById(sectionHeaderId);
+        const poseCount = section ? section.asanaIds.length : 0;
+        
+        console.log(`📋 Dragging GROUP: "${sectionName}" (ID: ${sectionHeaderId})`);
+        console.log(`   Contains ${poseCount} poses`);
+    } else {
+        // For regular rows, get the pose details
+        const poseIndex = parseInt(row.getAttribute('data-index'));
+        const pose = editingFlow.asanas[poseIndex];
+        
+        if (pose) {
+            console.log(`📋 Dragging POSE: "${pose.name}" (Index: ${poseIndex})`);
+            console.log(`   In group: ${sectionId ? 'Yes - ' + sectionId : 'No (ungrouped)'}`);
+            
+            if (sectionId) {
+                const section = editingFlow.getSectionById(sectionId);
+                if (section) {
+                    console.log(`   Group name: "${section.name}"`);
+                }
+            }
+        }
+    }
+    
     dragSource = row;
-    // Store section ID with the drag source
+    // Store metadata with the drag source
     dragSource.sectionId = sectionId;
+    dragSource.isSectionHeader = isSectionHeader;
+    dragSource.sectionHeaderId = sectionHeaderId;
     row.classList.add('dragging');
     
     // Set the drag data
@@ -3203,15 +3367,26 @@ function handleTableDragOver(e) {
     const row = e.target.closest('tr');
     if (!row || row.rowIndex === 0) return; // Ignore header row
     
-    // Add visual feedback to the row being hovered over
+    // Determine if we're dragging a section header
+    const isDraggingSection = dragSource.isSectionHeader;
+    
+    // Remove visual feedback from all rows
     const allRows = Array.from(document.querySelectorAll('#flowTable tr:not(:first-child)'));
     allRows.forEach(r => {
         if (r !== dragSource) {
-            r.classList.remove('drop-target');
+            r.classList.remove('drop-target', 'drop-target-section');
         }
     });
     
-    if (row !== dragSource) {
+    // Don't add visual feedback to the drag source
+    if (row === dragSource) return;
+    
+    // Add appropriate visual feedback based on what's being dragged
+    if (isDraggingSection) {
+        // When dragging a section, add special styling
+        row.classList.add('drop-target-section');
+    } else {
+        // When dragging a regular pose, use standard styling
         row.classList.add('drop-target');
     }
 }
@@ -3222,83 +3397,210 @@ function handleTableDragLeave(e) {
     if (!relatedTarget || !e.target.contains(relatedTarget)) {
         const row = e.target.closest('tr');
         if (row) {
-            row.classList.remove('drop-target');
+            row.classList.remove('drop-target', 'drop-target-section');
         }
     }
 }
 
 function handleTableDrop(e) {
     e.preventDefault();
+    console.log('------ DROP EVENT ------');
     
     // Check if we have a valid drag source
     if (!dragSource) {
-        console.log('No valid drag source');
+        console.log('⛔ Error: No valid drag source');
         return;
     }
     
     const row = e.target.closest('tr');
     if (!row || row.rowIndex === 0) {
-        console.log('Invalid drop target (header or not a row)');
+        console.log('⛔ Error: Invalid drop target (header or not a row)');
         return; // Ignore header row
     }
     
-    // Don't allow dropping on section headers
+    // Log drop target details
     if (row.classList.contains('section-header')) {
-        console.log('Cannot drop on a section header');
+        const sectionName = row.getAttribute('data-section');
+        const sectionId = row.getAttribute('data-section-id');
+        console.log(`📍 Drop target: GROUP header "${sectionName}" (ID: ${sectionId})`);
+    } else {
+        const targetIndex = parseInt(row.getAttribute('data-index'));
+        const targetPose = targetIndex >= 0 && targetIndex < editingFlow.asanas.length ? 
+            editingFlow.asanas[targetIndex] : null;
+        const targetSectionId = row.getAttribute('data-section-id');
+        
+        console.log(`📍 Drop target: POSE at index ${targetIndex}`);
+        if (targetPose) {
+            console.log(`   Pose name: "${targetPose.name}"`);
+        }
+        console.log(`   In group: ${targetSectionId ? 'Yes - ' + targetSectionId : 'No (ungrouped)'}`);
+        
+        if (targetSectionId) {
+            const section = editingFlow.getSectionById(targetSectionId);
+            if (section) {
+                console.log(`   Group name: "${section.name}"`);
+            }
+        }
+    }
+    
+    // If the source is a section header, handle section reordering
+    if (dragSource.isSectionHeader) {
+        handleSectionReordering(e, row);
         return;
+    }
+    
+    // For regular pose drops on section headers, treat it as dropping at the first position in that section
+    if (row.classList.contains('section-header')) {
+        const sectionId = row.getAttribute('data-section-id');
+        if (sectionId) {
+            // Find the first row in this section
+            const sectionRows = Array.from(document.querySelectorAll(`tr[data-section-id="${sectionId}"]`));
+            if (sectionRows.length > 0) {
+                // Use the first actual row in the section instead
+                row = sectionRows[0];
+            } else {
+                console.log('Cannot drop on an empty section header');
+                return;
+            }
+        } else {
+            console.log('Cannot drop on a section header without ID');
+            return;
+        }
     }
     
     // Get the section IDs for source and target rows
     const sourceSectionId = dragSource.sectionId;
     const targetSectionId = row.getAttribute('data-section-id');
     
-    // Only allow dropping within the same section or if both are unsectioned
-    if (sourceSectionId !== targetSectionId) {
-        console.log('Cannot move poses between different groups');
-        showToastNotification('Poses can only be reordered within the same group');
-        return;
+    // Now allow dropping between different sections
+    const movingBetweenSections = sourceSectionId !== targetSectionId;
+    if (movingBetweenSections) {
+        console.log('Moving pose between different groups', 
+            sourceSectionId ? `from group ${sourceSectionId}` : 'from ungrouped', 
+            targetSectionId ? `to group ${targetSectionId}` : 'to ungrouped');
     }
-    
-    console.log('Drop target row:', row.rowIndex);
     
     // Get source and target indices
     const sourceIndex = parseInt(dragSource.getAttribute('data-index'));
     const targetIndex = parseInt(row.getAttribute('data-index'));
     
     if (isNaN(sourceIndex) || isNaN(targetIndex) || sourceIndex === targetIndex) {
-        console.log('Invalid indices or source and target are the same');
+        console.log('⛔ Error: Invalid indices or source and target are the same');
         return;
     }
     
-    console.log('Moving asana from index', sourceIndex, 'to', targetIndex);
+    console.log('------ POSE MOVEMENT ------');
+    
+    // Get source pose details
+    const sourcePose = editingFlow.asanas[sourceIndex];
+    if (sourcePose) {
+        console.log(`🔄 Moving POSE: "${sourcePose.name}" from index ${sourceIndex} to ${targetIndex}`);
+        
+        // Log source group info
+        const sourceGroup = sourceSectionId ? 
+            editingFlow.getSectionById(sourceSectionId) : null;
+        if (sourceGroup) {
+            console.log(`   From group: "${sourceGroup.name}" (ID: ${sourceSectionId})`);
+        } else {
+            console.log('   From: Ungrouped poses');
+        }
+        
+        // Log target group info
+        const targetGroup = targetSectionId ? 
+            editingFlow.getSectionById(targetSectionId) : null;
+        if (targetGroup) {
+            console.log(`   To group: "${targetGroup.name}" (ID: ${targetSectionId})`);
+        } else {
+            console.log('   To: Ungrouped poses');
+        }
+        
+        // Log if this is cross-group movement
+        if (sourceSectionId !== targetSectionId) {
+            console.log('   ⚠️ Moving between different groups');
+        }
+    }
     
     try {
-        // Update the asanas array
+        console.log(`Moving asana index ${sourceIndex} to ${targetIndex}`);
+        
+        // Create a map to track how indices will change after the move
+        let indexMap = new Map();
+        
+        // Update all the sections first BEFORE actually moving the asana
+        // This ensures we're working with the original indices while updating
+        
+        // Process sections first to build the index mapping
+        editingFlow.sections.forEach(section => {
+            // Create a copy of the section's asana IDs for reference
+            const originalIds = [...section.asanaIds];
+            
+            // Track which ids we need to update
+            let updatedIds = [];
+            
+            for (const id of originalIds) {
+                // If this is the source index being moved
+                if (id === sourceIndex) {
+                    // Only keep if this is the target section
+                    if (section.id === targetSectionId) {
+                        // It will map to the target index
+                        updatedIds.push(targetIndex);
+                    }
+                    // Otherwise remove it from the source section
+                }
+                // Handle other indices that might shift
+                else {
+                    let newIndex = id;
+                    
+                    // If moving an asana down in the array
+                    if (sourceIndex < targetIndex) {
+                        // Shift indices that are between source and target (inclusive) down by 1
+                        if (id > sourceIndex && id <= targetIndex) {
+                            newIndex = id - 1;
+                        }
+                    } 
+                    // If moving an asana up in the array
+                    else {
+                        // Shift indices that are between target and source (inclusive) up by 1
+                        if (id >= targetIndex && id < sourceIndex) {
+                            newIndex = id + 1;
+                        }
+                    }
+                    
+                    updatedIds.push(newIndex);
+                    // Store the mapping for later reference
+                    indexMap.set(id, newIndex);
+                }
+            }
+            
+            // If this is the target section and we're moving from outside this section
+            if (section.id === targetSectionId && (!sourceSectionId || sourceSectionId !== targetSectionId)) {
+                // Add the pose at the target index if it's not already there
+                if (!updatedIds.includes(targetIndex)) {
+                    // Insert at the correct position rather than just pushing to the end
+                    let insertPosition = 0;
+                    while (insertPosition < updatedIds.length && updatedIds[insertPosition] < targetIndex) {
+                        insertPosition++;
+                    }
+                    updatedIds.splice(insertPosition, 0, targetIndex);
+                    console.log(`Inserting pose at position ${insertPosition} in group`);
+                }
+            }
+            
+            // Don't sort - we've already carefully positioned items
+            // updatedIds.sort((a, b) => a - b);
+            
+            // Store updated IDs for this section
+            section.asanaIds = updatedIds;
+            
+            console.log(`Updated section ${section.id}: ${originalIds} -> ${updatedIds}`);
+        });
+        
+        // Now move the actual pose in the asanas array
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
         editingFlow.asanas.splice(targetIndex, 0, movedAsana);
 
-        // If the poses are in a section, we need to update the section's asanaIds array
-        // to reflect the new indices
-        if (sourceSectionId) {
-            const section = editingFlow.getSectionById(sourceSectionId);
-            if (section) {
-                // Update all of section.asanaIds to point to the correct indices after the move
-                section.asanaIds = section.asanaIds.map(id => {
-                    if (id === sourceIndex) return targetIndex;
-                    if (sourceIndex < targetIndex) {
-                        // Moving down - shift indices in between down by 1
-                        if (id > sourceIndex && id <= targetIndex) return id - 1;
-                    } else {
-                        // Moving up - shift indices in between up by 1
-                        if (id >= targetIndex && id < sourceIndex) return id + 1;
-                    }
-                    return id;
-                });
-            }
-        }
-
-        // Only rebuild the table view - don't rebuild the card view to prevent loss of cards
-        rebuildTableView();
+        // Fully rebuild the table view with all the new indices and section memberships
+        rebuildFlowTable();
 
         // Just update the positions in the card view without rebuilding it
         updateCardIndices();
@@ -3308,6 +3610,40 @@ function handleTableDrop(e) {
         
         // Ensure draggable attributes are set again
         setTimeout(updateRowDragAttributes, 0);
+        
+        // Log completion status
+        console.log('✅ Pose movement completed successfully');
+        
+        // Log the updated section contents if moving between sections
+        if (movingBetweenSections) {
+            if (sourceSectionId) {
+                const sourceSection = editingFlow.getSectionById(sourceSectionId);
+                if (sourceSection) {
+                    console.log(`Source group "${sourceSection.name}" after move:`);
+                    console.log(`  Contains ${sourceSection.asanaIds.length} poses`);
+                    sourceSection.asanaIds.forEach(index => {
+                        const pose = editingFlow.asanas[index];
+                        if (pose) {
+                            console.log(`  - "${pose.name}" (Index: ${index})`);
+                        }
+                    });
+                }
+            }
+            
+            if (targetSectionId) {
+                const targetSection = editingFlow.getSectionById(targetSectionId);
+                if (targetSection) {
+                    console.log(`Target group "${targetSection.name}" after move:`);
+                    console.log(`  Contains ${targetSection.asanaIds.length} poses`);
+                    targetSection.asanaIds.forEach(index => {
+                        const pose = editingFlow.asanas[index];
+                        if (pose) {
+                            console.log(`  - "${pose.name}" (Index: ${index})`);
+                        }
+                    });
+                }
+            }
+        }
         
         // Add highlight animation to the moved row
         setTimeout(() => {
@@ -3325,8 +3661,133 @@ function handleTableDrop(e) {
         if (editMode) {
             autoSaveFlow();
         }
+        
+        // Print the entire table data to console after drop
+        console.log('------ TABLE AFTER DROP ------');
+        console.log('Total poses:', editingFlow.asanas.length);
+        
+        // Log all poses with their indices
+        console.log('POSES:');
+        editingFlow.asanas.forEach((pose, index) => {
+            // Find which section this pose belongs to
+            const sectionInfo = editingFlow.sections.find(section => 
+                section.asanaIds.includes(index)
+            );
+            
+            const sectionName = sectionInfo ? 
+                `"${sectionInfo.name}" (ID: ${sectionInfo.id})` : 
+                'Ungrouped';
+                
+            console.log(`  ${index + 1}. "${pose.name}" - Group: ${sectionName}`);
+        });
+        
+        // Log all groups with their contents
+        console.log('GROUPS:');
+        editingFlow.sections.forEach((section, idx) => {
+            console.log(`  ${idx + 1}. "${section.name}" (ID: ${section.id})`);
+            console.log(`     Contains ${section.asanaIds.length} poses:`);
+            
+            section.asanaIds.forEach(asanaIndex => {
+                const pose = editingFlow.asanas[asanaIndex];
+                if (pose) {
+                    console.log(`       - ${asanaIndex + 1}. "${pose.name}"`);
+                }
+            });
+        });
     } catch (error) {
         console.error('Error during drop:', error);
+    }
+}
+
+// Handle reordering of an entire section
+function handleSectionReordering(e, targetRow) {
+    console.log('------ SECTION REORDERING ------');
+    
+    if (!dragSource || !dragSource.isSectionHeader) {
+        console.error('⛔ Error: Not a valid section drag operation');
+        return;
+    }
+    
+    const sourceSectionId = dragSource.sectionHeaderId;
+    if (!sourceSectionId) {
+        console.error('⛔ Error: Source section ID not found');
+        return;
+    }
+    
+    // Get source section details
+    const sourceSection = editingFlow.getSectionById(sourceSectionId);
+    if (sourceSection) {
+        console.log(`🔄 Moving GROUP: "${sourceSection.name}" (ID: ${sourceSectionId})`);
+        console.log(`   Contains ${sourceSection.asanaIds.length} poses`);
+        
+        // Log the poses in this section
+        if (sourceSection.asanaIds.length > 0) {
+            console.log('   Poses in this group:');
+            sourceSection.asanaIds.forEach(asanaId => {
+                if (asanaId >= 0 && asanaId < editingFlow.asanas.length) {
+                    console.log(`     - "${editingFlow.asanas[asanaId].name}" (Index: ${asanaId})`);
+                }
+            });
+        }
+    }
+    
+    // Determine target position
+    let targetPosition = 'Unknown';
+    if (targetRow.classList.contains('section-header')) {
+        const targetSectionId = targetRow.getAttribute('data-section-id');
+        const targetSectionName = targetRow.getAttribute('data-section');
+        targetPosition = `before group "${targetSectionName}" (ID: ${targetSectionId})`;
+    } else {
+        const targetSectionId = targetRow.getAttribute('data-section-id');
+        if (targetSectionId) {
+            const targetSection = editingFlow.getSectionById(targetSectionId);
+            if (targetSection) {
+                targetPosition = `after group "${targetSection.name}" (ID: ${targetSectionId})`;
+            }
+        } else {
+            const targetIndex = parseInt(targetRow.getAttribute('data-index'));
+            const targetPose = targetIndex >= 0 && targetIndex < editingFlow.asanas.length ? 
+                editingFlow.asanas[targetIndex] : null;
+            if (targetPose) {
+                targetPosition = `at ungrouped pose "${targetPose.name}" (Index: ${targetIndex})`;
+            } else {
+                targetPosition = `at row ${targetRow.rowIndex}`;
+            }
+        }
+    }
+    
+    console.log(`📍 Target position: ${targetPosition}`);
+    
+    // Call the flow's reorderSection method
+    const success = editingFlow.reorderSection(sourceSectionId, targetRow);
+    
+    if (success) {
+        console.log('✅ Section reordering successful');
+        
+        // Log the new section order
+        console.log('New section order:');
+        editingFlow.sections.forEach((section, index) => {
+            console.log(`  ${index + 1}. "${section.name}" (ID: ${section.id}) - ${section.asanaIds.length} poses`);
+        });
+        
+        // Fully rebuild the table with the new section order
+        rebuildFlowTable();
+        
+        // Update the card view without rebuilding
+        updateCardIndices();
+        
+        // Ensure draggable attributes are set again
+        setTimeout(updateRowDragAttributes, 0);
+        
+        // Show notification
+        showToastNotification('Group reordered successfully');
+        
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+    } else {
+        console.error('⛔ Failed to reorder section');
     }
 }
 
@@ -3336,8 +3797,13 @@ function handleTableDragEnd(e) {
         row.classList.remove('dragging', 'drop-target');
     });
 
-    // Clear the drag source
+    // Clear the drag source and its properties
     console.log('Drag operation ended');
+    if (dragSource) {
+        // Clean up custom properties
+        delete dragSource.isSectionHeader;
+        delete dragSource.sectionHeaderId;
+    }
     dragSource = null;
 
     // Re-setup drag and drop to ensure everything is bound correctly
@@ -3374,6 +3840,59 @@ function handleCardDragStart(e) {
     // Set the drag data
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', card.getAttribute('data-index'));
+    
+    // Add a floating number indicator
+    const cardIndex = parseInt(card.getAttribute('data-index'));
+    const numberElement = card.querySelector('.flow-card-number');
+    const displayNumber = numberElement ? numberElement.textContent.trim() : (cardIndex + 1).toString();
+    
+    // Log the pose information to console
+    console.log(`Dragging card pose number: ${displayNumber} (index: ${cardIndex})`);
+    if (cardIndex >= 0 && cardIndex < editingFlow.asanas.length) {
+        const pose = editingFlow.asanas[cardIndex];
+        console.log(`Pose name: ${pose.name}`);
+        console.log(`Pose duration: ${pose.duration} seconds`);
+        if (pose.chakra) console.log(`Pose chakra: ${pose.chakra}`);
+        if (pose.side) console.log(`Pose side: ${pose.side}`);
+    }
+    
+    // Create a floating indicator showing the pose number being dragged
+    const indicator = document.createElement('div');
+    indicator.className = 'pose-drag-indicator';
+    indicator.textContent = displayNumber;
+    indicator.style.position = 'fixed';
+    indicator.style.backgroundColor = '#ff8c00';
+    indicator.style.color = 'white';
+    indicator.style.padding = '8px 12px';
+    indicator.style.borderRadius = '50%';
+    indicator.style.fontWeight = 'bold';
+    indicator.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+    indicator.style.zIndex = '10000';
+    indicator.style.fontSize = '18px';
+    indicator.style.pointerEvents = 'none';
+    indicator.id = 'pose-drag-indicator';
+    document.body.appendChild(indicator);
+    
+    // Position it near the cursor
+    const updateIndicatorPosition = (e) => {
+        indicator.style.left = (e.clientX + 15) + 'px';
+        indicator.style.top = (e.clientY + 15) + 'px';
+    };
+    
+    // Initial position
+    updateIndicatorPosition(e);
+    
+    // Update position during drag
+    document.addEventListener('dragover', updateIndicatorPosition);
+    
+    // Remove indicator when drag ends
+    document.addEventListener('dragend', function removeIndicator() {
+        if (document.getElementById('pose-drag-indicator')) {
+            document.body.removeChild(indicator);
+        }
+        document.removeEventListener('dragover', updateIndicatorPosition);
+        document.removeEventListener('dragend', removeIndicator);
+    }, { once: true });
 
     // Make a ghost image that's more visible
     const dragImage = card.cloneNode(true);
@@ -3555,7 +4074,88 @@ function handleCardDrop(e) {
             };
         });
 
-        // Update the asanas array
+        // Create a map to track how indices will change after the move
+        let indexMap = new Map();
+        
+        // Update all the sections first BEFORE actually moving the asana
+        // This ensures we're working with the original indices while updating
+        
+        // Get the section IDs for source and target rows
+        const sourceSectionId = editingFlow.sections.find(section => 
+            section.asanaIds.includes(sourceIndex))?.id;
+        
+        // Find which section the target index belongs to
+        const targetSectionId = editingFlow.sections.find(section => 
+            section.asanaIds.includes(targetIndex))?.id;
+        
+        // Check if we're moving between different sections
+        const movingBetweenSections = sourceSectionId !== targetSectionId;
+        
+        // Process sections first to build the index mapping
+        editingFlow.sections.forEach(section => {
+            // Create a copy of the section's asana IDs for reference
+            const originalIds = [...section.asanaIds];
+            
+            // Track which ids we need to update
+            let updatedIds = [];
+            
+            for (const id of originalIds) {
+                // If this is the source index being moved
+                if (id === sourceIndex) {
+                    // Only keep if this is the target section
+                    if (section.id === targetSectionId) {
+                        // It will map to the target index
+                        updatedIds.push(targetIndex);
+                    }
+                    // Otherwise remove it from the source section
+                }
+                // Handle other indices that might shift
+                else {
+                    let newIndex = id;
+                    
+                    // If moving an asana down in the array
+                    if (sourceIndex < targetIndex) {
+                        // Shift indices that are between source and target (inclusive) down by 1
+                        if (id > sourceIndex && id <= targetIndex) {
+                            newIndex = id - 1;
+                        }
+                    } 
+                    // If moving an asana up in the array
+                    else {
+                        // Shift indices that are between target and source (inclusive) up by 1
+                        if (id >= targetIndex && id < sourceIndex) {
+                            newIndex = id + 1;
+                        }
+                    }
+                    
+                    updatedIds.push(newIndex);
+                    // Store the mapping for later reference
+                    indexMap.set(id, newIndex);
+                }
+            }
+            
+            // If this is the target section and we're moving from outside this section
+            if (section.id === targetSectionId && (!sourceSectionId || sourceSectionId !== targetSectionId)) {
+                // Add the pose at the target index if it's not already there
+                if (!updatedIds.includes(targetIndex)) {
+                    // Insert at the correct position rather than just pushing to the end
+                    let insertPosition = 0;
+                    while (insertPosition < updatedIds.length && updatedIds[insertPosition] < targetIndex) {
+                        insertPosition++;
+                    }
+                    updatedIds.splice(insertPosition, 0, targetIndex);
+                    console.log(`Inserting pose at position ${insertPosition} in group`);
+                }
+            }
+            
+            // Don't sort - we've already carefully positioned items
+            // updatedIds.sort((a, b) => a - b);
+            
+            // Store updated IDs for this section
+            section.asanaIds = updatedIds;
+        });
+        
+        // Now move the actual pose in the asanas array
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
         editingFlow.asanas.splice(targetIndex, 0, movedAsana);
 
@@ -3654,6 +4254,39 @@ function handleCardDrop(e) {
         if (editMode) {
             autoSaveFlow();
         }
+        
+        // Print the entire table data to console after card drop
+        console.log('------ CARD VIEW AFTER DROP ------');
+        console.log('Total poses:', editingFlow.asanas.length);
+        
+        // Log all poses with their indices
+        console.log('POSES:');
+        editingFlow.asanas.forEach((pose, index) => {
+            // Find which section this pose belongs to
+            const sectionInfo = editingFlow.sections.find(section => 
+                section.asanaIds.includes(index)
+            );
+            
+            const sectionName = sectionInfo ? 
+                `"${sectionInfo.name}" (ID: ${sectionInfo.id})` : 
+                'Ungrouped';
+                
+            console.log(`  ${index + 1}. "${pose.name}" - Group: ${sectionName}`);
+        });
+        
+        // Log all groups with their contents
+        console.log('GROUPS:');
+        editingFlow.sections.forEach((section, idx) => {
+            console.log(`  ${idx + 1}. "${section.name}" (ID: ${section.id})`);
+            console.log(`     Contains ${section.asanaIds.length} poses:`);
+            
+            section.asanaIds.forEach(asanaIndex => {
+                const pose = editingFlow.asanas[asanaIndex];
+                if (pose) {
+                    console.log(`       - ${asanaIndex + 1}. "${pose.name}"`);
+                }
+            });
+        });
     } catch (error) {
         console.error('Error during card drag and drop:', error);
     }
@@ -3732,6 +4365,9 @@ function rebuildFlowTable() {
 
     // Then, update card view
     rebuildCardView();
+    
+    // Ensure drag and drop is properly set up
+    setTimeout(setupDragAndDrop, 10);
 
     // Set the active view based on current mode
     const flowSequence = document.querySelector('.flow-sequence');
@@ -3854,6 +4490,7 @@ function rebuildTableView() {
                 headerRow.className = 'section-header';
                 headerRow.setAttribute('data-section', section.name);
                 headerRow.setAttribute('data-section-id', section.id);
+                headerRow.setAttribute('draggable', 'true');
                 
                 // Add a section color class for consistent coloring
                 const colorClass = `section-color-${sectionIndex % 3}`;
