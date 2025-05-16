@@ -5853,6 +5853,18 @@ function loadSequence(sequenceId) {
     } else {
         editingFlow.asanas.push(...newAsanas);
     }
+    
+    // Create a new section for the sequence
+    const sectionId = editingFlow.addSection(sequence.name);
+    
+    // Get the indices of the newly added asanas
+    const startIndex = tableInDescendingOrder ? 0 : editingFlow.asanas.length - newAsanas.length;
+    const endIndex = tableInDescendingOrder ? newAsanas.length - 1 : editingFlow.asanas.length - 1;
+    
+    // Add all asanas from the sequence to the section
+    for (let i = startIndex; i <= endIndex; i++) {
+        editingFlow.addAsanaToSection(i, sectionId);
+    }
 
     // Rebuild the table
     rebuildFlowTable();
@@ -5861,7 +5873,7 @@ function loadSequence(sequenceId) {
     updateFlowDuration();
     
     // Show notification
-    showToastNotification(`Loaded sequence "${sequence.name}"`);
+    showToastNotification(`Loaded sequence "${sequence.name}" and added to a group`);
     
     // Auto-save if in edit mode
     if (editMode) {
