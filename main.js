@@ -91,9 +91,62 @@ class Flow {
         this.time = time;
         this.peakPose = peakPose;
         this.asanas = [];
+        this.sections = []; // Array to store user-created sections
         this.flowID = generateUniqueID();
         this.lastEdited = new Date().toISOString();
         this.lastFlowed = null; // Will be set when flow is practiced
+    }
+    
+    // Add a new section to the flow
+    addSection(name) {
+        // Generate a unique ID for the section
+        const sectionId = generateUniqueID();
+        
+        // Create a new section object
+        const section = {
+            id: sectionId,
+            name: name,
+            asanaIds: [] // Store IDs of asanas in this section
+        };
+        
+        // Add the section to the flow
+        this.sections.push(section);
+        
+        return sectionId;
+    }
+    
+    // Get section by ID
+    getSectionById(sectionId) {
+        return this.sections.find(section => section.id === sectionId);
+    }
+    
+    // Add an asana to a section
+    addAsanaToSection(asanaIndex, sectionId) {
+        const section = this.getSectionById(sectionId);
+        if (section && !section.asanaIds.includes(asanaIndex)) {
+            section.asanaIds.push(asanaIndex);
+        }
+    }
+    
+    // Remove an asana from a section
+    removeAsanaFromSection(asanaIndex, sectionId) {
+        const section = this.getSectionById(sectionId);
+        if (section) {
+            section.asanaIds = section.asanaIds.filter(id => id !== asanaIndex);
+        }
+    }
+    
+    // Get asanas in a section
+    getAsanasInSection(sectionId) {
+        const section = this.getSectionById(sectionId);
+        if (!section) return [];
+        
+        return section.asanaIds.map(index => {
+            return {
+                asana: this.asanas[index],
+                index: index
+            };
+        }).filter(item => item.asana); // Filter out undefined asanas
     }
 
     calculateTotalDuration() {
@@ -3092,6 +3145,15 @@ function handleTableDragStart(e) {
         return false; // Ignore header row
     }
     
+    // Check if the pose is part of a section/group
+    const sectionId = row.getAttribute('data-section-id');
+    if (sectionId) {
+        // Show notification instead of allowing drag
+        showToastNotification('Cannot move poses that are already in a group');
+        e.preventDefault();
+        return false;
+    }
+    
     console.log('Drag started on row:', row.rowIndex);
     dragSource = row;
     row.classList.add('dragging');
@@ -3666,69 +3728,151 @@ function rebuildTableView() {
     while (table.rows.length > 1) {
         table.deleteRow(1);
     }
-
-    // Rebuild rows from editingFlow.asanas
-    editingFlow.asanas.forEach((asana, index) => {
-        if (!asana) return;
-
-        const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
-
-        const row = table.insertRow(-1);
-        // Make the row element draggable for the drag event system to work
-        row.setAttribute('draggable', 'true');
-        row.setAttribute('data-index', index);
-
-        // Determine row number based on current sort order
-        let rowNumber;
-        if (tableInDescendingOrder) {
-            rowNumber = editingFlow.asanas.length - index;
-        } else {
-            rowNumber = index + 1;
-        }
-
-        row.innerHTML = `
-            <td title="Drag to reorder">${rowNumber}</td>
-            <td>
-                <input type="checkbox" class="asana-select" data-index="${index}"
-                       ${asana.selected ? 'checked' : ''}
-                       onchange="toggleAsanaSelection(this)">
-            </td>
-            <td>
-                <div class="table-asana">
-                    <div style="position: relative; display: inline-block;">
-                        <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}"
-                             onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center';
-                             this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px';
-                             this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
-                        ${asana.chakra ? `<div class="chakra-indicator ${
-                            asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
-                            asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
-                            asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
-                            asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
-                            asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
-                            asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
-                            asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : ''
-                        }" title="${asana.chakra} Chakra"></div>` : ''}
-                    </div>
-                    <span>${typeof asana.getDisplayName === 'function' ?
-                            asana.getDisplayName(useSanskritNames) :
-                            (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
-                </div>
-            </td>
-            <td>
-                <div class="duration-wrapper">
-                    <input type="number" value="${asana.duration || 3}" min="1" max="300" onchange="updateFlowDuration()"/>
-                    <span class="duration-unit">s</span>
-                </div>
-            </td>
-            <td>${createSideDropdown(asana.side)}</td>
-            <td><button class="table-btn remove-btn" onclick="removePose(this)">×</button></td>
-        `;
-
-        // Add specific drag handle tooltip and style
-        const numCell = row.cells[0];
-        numCell.style.cursor = "grab";
+    
+    // First add all unsectioned asanas
+    let unsectionedAsanas = new Set();
+    for (let i = 0; i < editingFlow.asanas.length; i++) {
+        unsectionedAsanas.add(i);
+    }
+    
+    // Remove asanas that are already in a section
+    editingFlow.sections.forEach(section => {
+        section.asanaIds.forEach(asanaId => {
+            unsectionedAsanas.delete(asanaId);
+        });
     });
+    
+    // Add all unsectioned asanas without a section header
+    if (unsectionedAsanas.size > 0) {
+        // Add asana rows for unsectioned asanas directly (no section header)
+        Array.from(unsectionedAsanas).forEach(index => {
+            const asana = editingFlow.asanas[index];
+            if (!asana) return;
+            
+            addAsanaRow(table, asana, index, '', '');
+        });
+    }
+    
+    // Now add each user-created section
+    editingFlow.sections.forEach((section, sectionIndex) => {
+        const asanasInSection = editingFlow.getAsanasInSection(section.id);
+        if (asanasInSection.length === 0) return;
+        
+        // Add section header row
+        const headerRow = table.insertRow(-1);
+        headerRow.className = 'section-header';
+        headerRow.setAttribute('data-section', section.name);
+        headerRow.setAttribute('data-section-id', section.id);
+        
+        // Add a section color class for consistent coloring
+        // This ensures poses in the same section have the same color
+        const colorClass = `section-color-${sectionIndex % 3}`;
+        headerRow.classList.add(colorClass);
+        
+        // Calculate if all poses in this section are selected
+        const allSelected = asanasInSection.every(asanaInfo => asanaInfo.asana.selected);
+        
+        // Create section header with checkbox
+        headerRow.innerHTML = `
+            <td colspan="2">
+                <input type="checkbox" class="section-select" 
+                       data-section="${section.name}" 
+                       data-section-id="${section.id}" 
+                       ${allSelected ? 'checked' : ''}
+                       onchange="toggleSectionSelection(this)">
+            </td>
+            <td colspan="3" class="section-name">
+                <span>${section.name}</span>
+                <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
+            </td>
+            <td>
+                <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">×</button>
+            </td>
+        `;
+        
+        // Add asana rows for this section
+        asanasInSection.forEach(({asana, index}) => {
+            const row = addAsanaRow(table, asana, index, section.name, section.id);
+            // Add the same color class to ensure visual consistency
+            row.classList.add(colorClass);
+        });
+    });
+    
+    // We're removing the "Create New Section" button at the bottom as requested
+}
+
+// Helper function to add an asana row to the table
+function addAsanaRow(table, asana, index, sectionName, sectionId) {
+    if (!asana) return;
+    
+    const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
+    
+    const row = table.insertRow(-1);
+    // Make the row element draggable for the drag event system to work
+    row.setAttribute('draggable', 'true');
+    row.setAttribute('data-index', index);
+    // Only set section attributes if we have a section
+    if (sectionName && sectionId) {
+        row.setAttribute('data-section', sectionName);
+        row.setAttribute('data-section-id', sectionId);
+    }
+    
+    // Determine row number based on current sort order
+    let rowNumber;
+    if (tableInDescendingOrder) {
+        rowNumber = editingFlow.asanas.length - index;
+    } else {
+        rowNumber = index + 1;
+    }
+    
+    row.innerHTML = `
+        <td title="Drag to reorder">${rowNumber}</td>
+        <td>
+            <input type="checkbox" class="asana-select" data-index="${index}"
+                   ${sectionName ? `data-section="${sectionName}"` : ''}
+                   ${sectionId ? `data-section-id="${sectionId}"` : ''}
+                   ${asana.selected ? 'checked' : ''}
+                   onchange="toggleAsanaSelection(this)">
+        </td>
+        <td>
+            <div class="table-asana">
+                <div style="position: relative; display: inline-block;">
+                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}"
+                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center';
+                         this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px';
+                         this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
+                    ${asana.chakra ? `<div class="chakra-indicator ${
+                        asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
+                        asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
+                        asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
+                        asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
+                        asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
+                        asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
+                        asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : ''
+                    }" title="${asana.chakra} Chakra"></div>` : ''}
+                </div>
+                <span>${typeof asana.getDisplayName === 'function' ?
+                        asana.getDisplayName(useSanskritNames) :
+                        (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
+            </div>
+        </td>
+        <td>
+            <div class="duration-wrapper">
+                <input type="number" value="${asana.duration || 3}" min="1" max="300" onchange="updateFlowDuration()"/>
+                <span class="duration-unit">s</span>
+            </div>
+        </td>
+        <td>${createSideDropdown(asana.side)}</td>
+        <td>
+            <button class="table-btn remove-btn" onclick="removePose(this)">×</button>
+        </td>
+    `;
+    
+    // Add specific drag handle tooltip and style
+    const numCell = row.cells[0];
+    numCell.style.cursor = "grab";
+    
+    return row;
 }
 
 function rebuildCardView() {
@@ -4065,6 +4209,13 @@ function toggleAsanaSelection(checkbox) {
     if (!isNaN(index) && editingFlow.asanas[index]) {
         editingFlow.asanas[index].selected = checkbox.checked;
         
+        // Update section checkbox state if the pose belongs to a section
+        const sectionName = checkbox.getAttribute('data-section');
+        const sectionId = checkbox.getAttribute('data-section-id');
+        if (sectionName && sectionId) {
+            updateSectionCheckbox(sectionName, sectionId);
+        }
+        
         // Update action buttons state
         updateActionButtons();
         
@@ -4324,6 +4475,72 @@ function toggleSelectAll(checkbox) {
     showToastNotification(isChecked ? 'All poses selected' : 'All poses deselected');
 }
 
+// Function to handle section selection toggling
+function toggleSectionSelection(checkbox) {
+    const sectionName = checkbox.getAttribute('data-section');
+    const sectionId = checkbox.getAttribute('data-section-id');
+    const isChecked = checkbox.checked;
+    
+    // Find all asana checkboxes in this section
+    const table = document.getElementById('flowTable');
+    let sectionCheckboxes;
+    
+    if (sectionId === 'unsectioned') {
+        // Use section index for unsectioned poses
+        sectionCheckboxes = table.querySelectorAll(`.asana-select[data-section-index="unsectioned"]`);
+    } else {
+        // Use section ID for user-created sections
+        sectionCheckboxes = table.querySelectorAll(`.asana-select[data-section-id="${sectionId}"]`);
+    }
+    
+    // Update all checkboxes in this section
+    sectionCheckboxes.forEach(cb => {
+        cb.checked = isChecked;
+        
+        // Update the asana data model
+        const asanaIndex = parseInt(cb.getAttribute('data-index'));
+        if (!isNaN(asanaIndex) && editingFlow.asanas[asanaIndex]) {
+            editingFlow.asanas[asanaIndex].selected = isChecked;
+        }
+    });
+    
+    // Update action buttons state
+    updateActionButtons();
+    
+    // Update the select all checkbox state
+    updateSelectAllCheckbox();
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+    
+    // Show a brief notification
+    showToastNotification(isChecked ? `${sectionName} poses selected` : `${sectionName} poses deselected`);
+}
+
+// Function to update section checkbox state
+function updateSectionCheckbox(sectionName, sectionId) {
+    const table = document.getElementById('flowTable');
+    let sectionCheckbox, asanaCheckboxes;
+    
+    if (sectionId === 'unsectioned') {
+        // For unsectioned poses
+        sectionCheckbox = table.querySelector(`.section-select[data-section-index="unsectioned"]`);
+        asanaCheckboxes = table.querySelectorAll(`.asana-select[data-section-index="unsectioned"]`);
+    } else {
+        // For user-created sections
+        sectionCheckbox = table.querySelector(`.section-select[data-section-id="${sectionId}"]`);
+        asanaCheckboxes = table.querySelectorAll(`.asana-select[data-section-id="${sectionId}"]`);
+    }
+    
+    if (sectionCheckbox && asanaCheckboxes.length > 0) {
+        // Check if all asanas in this section are selected
+        const allChecked = Array.from(asanaCheckboxes).every(cb => cb.checked);
+        sectionCheckbox.checked = allChecked;
+    }
+}
+
 // Function to update select all checkbox state based on individual selections
 function updateSelectAllCheckbox() {
     const table = document.getElementById('flowTable');
@@ -4341,11 +4558,523 @@ function updateSelectAllCheckbox() {
 }
 
 // Function to update action buttons state
+// Function to show dialog for adding a new section/group
+function showAddSectionDialog() {
+    // Create a modal dialog
+    const modal = document.createElement('div');
+    modal.className = 'modal section-modal';
+    modal.style.display = 'block';
+    
+    // Create modal content
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close-modal" onclick="this.closest('.modal').remove()">&times;</span>
+            <h2>Create New Group</h2>
+            <p class="modal-description">Enter a name for your new group:</p>
+            <div class="section-name-input-container">
+                <input type="text" id="newSectionName" placeholder="Group Name" class="section-name-input">
+                <button class="create-section-btn" onclick="createNewSection()">Group</button>
+            </div>
+        </div>
+    `;
+    
+    // Add the modal to the document
+    document.body.appendChild(modal);
+    
+    // Focus the input field
+    setTimeout(() => {
+        const input = document.getElementById('newSectionName');
+        if (input) input.focus();
+        
+        // Add enter key event listener
+        input.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                createNewSection();
+            }
+        });
+    }, 100);
+}
+
+// Function to create a new section
+function createNewSection() {
+    const nameInput = document.getElementById('newSectionName');
+    const name = nameInput ? nameInput.value.trim() : '';
+    
+    if (!name) {
+        alert('Please enter a section name');
+        return;
+    }
+    
+    // Create a new section
+    const sectionId = editingFlow.addSection(name);
+    
+    // Close the modal
+    const modal = document.querySelector('.section-modal');
+    if (modal) modal.remove();
+    
+    // Rebuild the table view
+    rebuildTableView();
+    
+    // Show a notification
+    showToastNotification(`Group "${name}" created`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to show dialog for adding a pose to a section
+function showAddToSectionDialog(asanaIndex) {
+    // Only show if there are sections to add to
+    if (editingFlow.sections.length === 0) {
+        showAddSectionDialog();
+        return;
+    }
+    
+    // Create a modal dialog
+    const modal = document.createElement('div');
+    modal.className = 'modal section-modal';
+    modal.style.display = 'block';
+    
+    // Create section options
+    let sectionOptions = '';
+    editingFlow.sections.forEach(section => {
+        sectionOptions += `<option value="${section.id}">${section.name}</option>`;
+    });
+    
+    // Create modal content
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close-modal" onclick="this.closest('.modal').remove()">&times;</span>
+            <h2>Add to Section</h2>
+            <p class="modal-description">Select a section to add this pose to:</p>
+            <div class="section-select-container">
+                <select id="sectionSelect" class="section-select-dropdown">
+                    ${sectionOptions}
+                </select>
+                <button class="add-to-section-btn" onclick="addPoseToSection(${asanaIndex})">Add</button>
+            </div>
+            <div class="create-new-section-link">
+                <a href="#" onclick="this.closest('.modal').remove(); showAddSectionDialog();">Create New Section</a>
+            </div>
+        </div>
+    `;
+    
+    // Add the modal to the document
+    document.body.appendChild(modal);
+}
+
+// Function to add a pose to a section
+function addPoseToSection(asanaIndex) {
+    const select = document.getElementById('sectionSelect');
+    const sectionId = select ? select.value : null;
+    
+    if (!sectionId) {
+        alert('Please select a section');
+        return;
+    }
+    
+    // Check if the pose is already in a section
+    let alreadyInSection = false;
+    editingFlow.sections.forEach(section => {
+        if (section.asanaIds.includes(asanaIndex)) {
+            alreadyInSection = true;
+        }
+    });
+    
+    if (alreadyInSection) {
+        alert('This pose is already in a group. A pose can only be in one group at a time.');
+        
+        // Close the modal
+        const modal = document.querySelector('.section-modal');
+        if (modal) modal.remove();
+        return;
+    }
+    
+    // Add the pose to the section
+    editingFlow.addAsanaToSection(asanaIndex, sectionId);
+    
+    // Close the modal
+    const modal = document.querySelector('.section-modal');
+    if (modal) modal.remove();
+    
+    // Rebuild the table view
+    rebuildTableView();
+    
+    // Show a notification
+    const section = editingFlow.getSectionById(sectionId);
+    showToastNotification(`Pose added to "${section.name}"`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to remove a pose from a section
+function removeFromSection(asanaIndex, sectionId) {
+    // Get the section
+    const section = editingFlow.getSectionById(sectionId);
+    if (!section) return;
+    
+    // Remove the pose from the section
+    editingFlow.removeAsanaFromSection(asanaIndex, sectionId);
+    
+    // Rebuild the table view
+    rebuildTableView();
+    
+    // Show a notification
+    showToastNotification(`Pose removed from "${section.name}"`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to edit a section name
+function editSectionName(sectionId) {
+    // Get the section
+    const section = editingFlow.getSectionById(sectionId);
+    if (!section) return;
+    
+    // Create a modal dialog
+    const modal = document.createElement('div');
+    modal.className = 'modal section-modal';
+    modal.style.display = 'block';
+    
+    // Create modal content
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close-modal" onclick="this.closest('.modal').remove()">&times;</span>
+            <h2>Edit Section Name</h2>
+            <p class="modal-description">Enter a new name for the section:</p>
+            <div class="section-name-input-container">
+                <input type="text" id="editSectionName" value="${section.name}" class="section-name-input">
+                <button class="save-section-btn" onclick="saveSectionName('${sectionId}')">Save</button>
+            </div>
+        </div>
+    `;
+    
+    // Add the modal to the document
+    document.body.appendChild(modal);
+    
+    // Focus the input field
+    setTimeout(() => {
+        const input = document.getElementById('editSectionName');
+        if (input) {
+            input.focus();
+            input.select();
+        }
+        
+        // Add enter key event listener
+        input.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                saveSectionName(sectionId);
+            }
+        });
+    }, 100);
+}
+
+// Function to save a section name
+function saveSectionName(sectionId) {
+    const nameInput = document.getElementById('editSectionName');
+    const name = nameInput ? nameInput.value.trim() : '';
+    
+    if (!name) {
+        alert('Please enter a section name');
+        return;
+    }
+    
+    // Get the section
+    const section = editingFlow.getSectionById(sectionId);
+    if (!section) return;
+    
+    // Update the section name
+    const oldName = section.name;
+    section.name = name;
+    
+    // Close the modal
+    const modal = document.querySelector('.section-modal');
+    if (modal) modal.remove();
+    
+    // Rebuild the table view
+    rebuildTableView();
+    
+    // Show a notification
+    showToastNotification(`Section renamed from "${oldName}" to "${name}"`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to delete a section
+function deleteSection(sectionId) {
+    // Get the section
+    const section = editingFlow.getSectionById(sectionId);
+    if (!section) return;
+    
+    // Get the poses in this section
+    const asanasInSection = editingFlow.getAsanasInSection(sectionId);
+    const poseCount = asanasInSection.length;
+    
+    // Confirm deletion with pose count information
+    if (!confirm(`Are you sure you want to delete the group "${section.name}" with ${poseCount} pose${poseCount !== 1 ? 's' : ''}?\n\nThe poses will remain in your flow but will no longer be grouped.`)) {
+        return;
+    }
+    
+    // Remove the section with animation
+    const sectionHeader = document.querySelector(`tr.section-header[data-section-id="${sectionId}"]`);
+    if (sectionHeader) {
+        // Apply a highlight animation to the row before deletion
+        sectionHeader.style.transition = 'background-color 0.3s ease';
+        sectionHeader.style.backgroundColor = '#ffcccc';
+        
+        // Get all the section's rows for animation
+        const sectionRows = document.querySelectorAll(`tr[data-section-id="${sectionId}"]`);
+        sectionRows.forEach(row => {
+            row.style.transition = 'background-color 0.3s ease';
+            row.style.backgroundColor = '#ffcccc';
+        });
+        
+        // Delay the actual deletion to show the animation
+        setTimeout(() => {
+            // Remove the section
+            const sectionIndex = editingFlow.sections.findIndex(s => s.id === sectionId);
+            if (sectionIndex !== -1) {
+                editingFlow.sections.splice(sectionIndex, 1);
+            }
+            
+            // Rebuild the table view
+            rebuildTableView();
+            
+            // Show a notification
+            showToastNotification(`Group "${section.name}" deleted`);
+            
+            // Auto-save if in edit mode
+            if (editMode) {
+                autoSaveFlow();
+            }
+        }, 300);
+    } else {
+        // Fallback if no animation is possible
+        // Remove the section
+        const sectionIndex = editingFlow.sections.findIndex(s => s.id === sectionId);
+        if (sectionIndex !== -1) {
+            editingFlow.sections.splice(sectionIndex, 1);
+        }
+        
+        // Rebuild the table view
+        rebuildTableView();
+        
+        // Show a notification
+        showToastNotification(`Group "${section.name}" deleted`);
+        
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+    }
+}
+
+// Function to add selected poses to a section/group
+function addSelectedToSection() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+    
+    // Get indices of selected poses
+    const selectedIndices = [];
+    editingFlow.asanas.forEach((asana, index) => {
+        if (asana.selected) {
+            selectedIndices.push(index);
+        }
+    });
+    
+    // Create a simplified modal for direct group creation
+    const modal = document.createElement('div');
+    modal.className = 'modal section-modal';
+    modal.style.display = 'block';
+    
+    // Get the count of selected poses
+    const selectedCount = selectedIndices.length;
+    
+    // Create modal content with just a name input for simplicity
+    modal.innerHTML = `
+        <div class="modal-content">
+            <span class="close-modal" onclick="this.closest('.modal').remove()">&times;</span>
+            <h2>Group Selected Poses</h2>
+            <p class="modal-description">Enter a name for this group of ${selectedCount} pose${selectedCount !== 1 ? 's' : ''}:</p>
+            <div class="section-name-input-container">
+                <input type="text" id="newGroupName" placeholder="Group Name" class="section-name-input">
+                <button class="create-section-btn" onclick="createGroupFromSelection()">Group</button>
+            </div>
+        </div>
+    `;
+    
+    // Add the modal to the document
+    document.body.appendChild(modal);
+    
+    // Focus the input field
+    setTimeout(() => {
+        const input = document.getElementById('newGroupName');
+        if (input) {
+            input.focus();
+            
+            // Add enter key event listener
+            input.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    createGroupFromSelection();
+                }
+            });
+        }
+    }, 100);
+}
+
+// Function to create a new group from selected poses
+function createGroupFromSelection() {
+    const nameInput = document.getElementById('newGroupName');
+    const groupName = nameInput ? nameInput.value.trim() : '';
+    
+    if (!groupName) {
+        alert('Please enter a group name');
+        return;
+    }
+    
+    // Get indices of selected poses
+    const validSelectedIndices = [];
+    const alreadyGroupedPoses = [];
+    editingFlow.asanas.forEach((asana, index) => {
+        if (asana.selected) {
+            // Check if this pose is already in a section
+            let isInAnotherSection = false;
+            editingFlow.sections.forEach(section => {
+                if (section.asanaIds.includes(index)) {
+                    isInAnotherSection = true;
+                    alreadyGroupedPoses.push(index);
+                }
+            });
+            
+            if (!isInAnotherSection) {
+                validSelectedIndices.push(index);
+            }
+        }
+    });
+    
+    // Notify if some poses were skipped because they're already in groups
+    if (alreadyGroupedPoses.length > 0) {
+        alert(`${alreadyGroupedPoses.length} pose${alreadyGroupedPoses.length !== 1 ? 's were' : ' was'} skipped because ${alreadyGroupedPoses.length !== 1 ? 'they are' : 'it is'} already in a group. A pose can only be in one group at a time.`);
+    }
+    
+    if (validSelectedIndices.length === 0) {
+        alert('No valid poses selected that can be grouped');
+        
+        // Close the modal
+        const modal = document.querySelector('.section-modal');
+        if (modal) modal.remove();
+        return;
+    }
+    
+    // Create a new section
+    const sectionId = editingFlow.addSection(groupName);
+    
+    // Add all valid selected poses to the section
+    validSelectedIndices.forEach(index => {
+        editingFlow.addAsanaToSection(index, sectionId);
+    });
+    
+    // Close the modal
+    const modal = document.querySelector('.section-modal');
+    if (modal) modal.remove();
+    
+    // Rebuild the table view
+    rebuildTableView();
+    
+    // Show a notification
+    showToastNotification(`Created group "${groupName}" with ${validSelectedIndices.length} pose${validSelectedIndices.length !== 1 ? 's' : ''}`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
+// Function to add multiple poses to a section
+function addMultiplePosesToSection() {
+    const select = document.getElementById('sectionSelect');
+    const sectionId = select ? select.value : null;
+    
+    if (!sectionId) {
+        alert('Please select a section');
+        return;
+    }
+    
+    // Get the section
+    const section = editingFlow.getSectionById(sectionId);
+    if (!section) return;
+    
+    // Get indices of selected poses
+    const selectedIndices = [];
+    const alreadyGroupedPoses = [];
+    editingFlow.asanas.forEach((asana, index) => {
+        if (asana.selected) {
+            // Check if this pose is already in a section
+            let isInAnotherSection = false;
+            editingFlow.sections.forEach(sect => {
+                if (sect.asanaIds.includes(index)) {
+                    isInAnotherSection = true;
+                    alreadyGroupedPoses.push(index);
+                }
+            });
+            
+            if (!isInAnotherSection) {
+                selectedIndices.push(index);
+            }
+        }
+    });
+    
+    // Notify if some poses were skipped because they're already in groups
+    if (alreadyGroupedPoses.length > 0) {
+        alert(`${alreadyGroupedPoses.length} pose${alreadyGroupedPoses.length !== 1 ? 's were' : ' was'} skipped because ${alreadyGroupedPoses.length !== 1 ? 'they are' : 'it is'} already in a group. A pose can only be in one group at a time.`);
+    }
+    
+    // If no valid poses to add, return
+    if (selectedIndices.length === 0) {
+        // Close the modal
+        const modal = document.querySelector('.section-modal');
+        if (modal) modal.remove();
+        return;
+    }
+    
+    // Add selected poses to the section
+    selectedIndices.forEach(index => {
+        editingFlow.addAsanaToSection(index, sectionId);
+    });
+    
+    // Close the modal
+    const modal = document.querySelector('.section-modal');
+    if (modal) modal.remove();
+    
+    // Rebuild the table view
+    rebuildTableView();
+    
+    // Show a notification
+    showToastNotification(`${selectedIndices.length} pose${selectedIndices.length !== 1 ? 's' : ''} added to "${section.name}"`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+}
+
 function updateActionButtons() {
     const copyBtn = document.getElementById('copySelectedBtn');
     const pasteBtn = document.getElementById('pasteSelectedBtn');
     const deleteBtn = document.getElementById('deleteSelectedBtn');
     const saveSequenceBtn = document.getElementById('saveSequenceBtn');
+    const addToSectionBtn = document.getElementById('addToSectionBtn');
     
     const selectedPoses = getSelectedAsanas();
     const hasSelectedPoses = selectedPoses.length > 0;
@@ -4355,6 +5084,7 @@ function updateActionButtons() {
     if (pasteBtn) pasteBtn.disabled = !hasCopiedPoses;
     if (deleteBtn) deleteBtn.disabled = !hasSelectedPoses;
     if (saveSequenceBtn) saveSequenceBtn.disabled = !hasSelectedPoses;
+    if (addToSectionBtn) addToSectionBtn.disabled = !hasSelectedPoses;
 }
 
 // Function to copy selected poses
