@@ -407,6 +407,9 @@
             <button id="saveSequenceBtn" class="action-btn" onclick="saveSequence()" disabled>
               <span>Save</span>
             </button>
+            <button id="addSectionBtn" class="action-btn" onclick="addSection()">
+              <span>+ Section</span>
+            </button>
             <button id="addCustomPoseBtn" class="action-btn" onclick="addCustomPose()">
               <span>+ Custom</span>
             </button>
@@ -429,6 +432,7 @@
                   <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
                   <label for="selectAllCheckbox" style="display: none;">Select All</label>
                 </th>
+                <th>Section</th>
                 <th>Asana</th>
                 <th>Duration</th>
                 <th>Side</th>
