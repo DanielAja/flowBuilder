@@ -2296,17 +2296,9 @@ function sortTableByLargestNumber() {
     // Toggle the sort order
     tableInDescendingOrder = !tableInDescendingOrder;
     
-    // Get all rows except the header
-    const rows = Array.from(table.rows).slice(1);
-    const totalRows = rows.length;
-    
-    // Keep a copy of the original asanas array
-    const originalAsanas = [...editingFlow.asanas];
-    
-    // Reverse the asanas array
-    editingFlow.asanas = originalAsanas.slice().reverse();
-    
-    // Rebuild the table
+    // Rebuild the flow table with the new sort order
+    // Our rebuildTableView function will handle the ordering
+    // of poses and groups according to the tableInDescendingOrder value
     rebuildFlowTable();
     
     // Auto-save if in edit mode
@@ -3145,17 +3137,20 @@ function handleTableDragStart(e) {
         return false; // Ignore header row
     }
     
-    // Check if the pose is part of a section/group
-    const sectionId = row.getAttribute('data-section-id');
-    if (sectionId) {
-        // Show notification instead of allowing drag
-        showToastNotification('Cannot move poses that are already in a group');
+    // Check if the row is a section header
+    if (row.classList.contains('section-header')) {
         e.preventDefault();
-        return false;
+        return false; // Don't allow dragging section headers
     }
     
-    console.log('Drag started on row:', row.rowIndex);
+    // Store the section ID for later use during drop
+    // This will only allow drag and drop within the same section
+    const sectionId = row.getAttribute('data-section-id');
+    
+    console.log('Drag started on row:', row.rowIndex, 'Section ID:', sectionId);
     dragSource = row;
+    // Store section ID with the drag source
+    dragSource.sectionId = sectionId;
     row.classList.add('dragging');
     
     // Set the drag data
@@ -3247,23 +3242,60 @@ function handleTableDrop(e) {
         return; // Ignore header row
     }
     
-    console.log('Drop target row:', row.rowIndex);
-    
-    // Get source and target indices
-    const sourceIndex = dragSource.rowIndex - 1; // Adjust for header row
-    const targetIndex = row.rowIndex - 1; // Adjust for header row
-    
-    if (sourceIndex === targetIndex) {
-        console.log('Source and target are the same, no action needed');
+    // Don't allow dropping on section headers
+    if (row.classList.contains('section-header')) {
+        console.log('Cannot drop on a section header');
         return;
     }
     
-    console.log('Moving asana from', sourceIndex, 'to', targetIndex);
+    // Get the section IDs for source and target rows
+    const sourceSectionId = dragSource.sectionId;
+    const targetSectionId = row.getAttribute('data-section-id');
+    
+    // Only allow dropping within the same section or if both are unsectioned
+    if (sourceSectionId !== targetSectionId) {
+        console.log('Cannot move poses between different groups');
+        showToastNotification('Poses can only be reordered within the same group');
+        return;
+    }
+    
+    console.log('Drop target row:', row.rowIndex);
+    
+    // Get source and target indices
+    const sourceIndex = parseInt(dragSource.getAttribute('data-index'));
+    const targetIndex = parseInt(row.getAttribute('data-index'));
+    
+    if (isNaN(sourceIndex) || isNaN(targetIndex) || sourceIndex === targetIndex) {
+        console.log('Invalid indices or source and target are the same');
+        return;
+    }
+    
+    console.log('Moving asana from index', sourceIndex, 'to', targetIndex);
     
     try {
         // Update the asanas array
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
         editingFlow.asanas.splice(targetIndex, 0, movedAsana);
+
+        // If the poses are in a section, we need to update the section's asanaIds array
+        // to reflect the new indices
+        if (sourceSectionId) {
+            const section = editingFlow.getSectionById(sourceSectionId);
+            if (section) {
+                // Update all of section.asanaIds to point to the correct indices after the move
+                section.asanaIds = section.asanaIds.map(id => {
+                    if (id === sourceIndex) return targetIndex;
+                    if (sourceIndex < targetIndex) {
+                        // Moving down - shift indices in between down by 1
+                        if (id > sourceIndex && id <= targetIndex) return id - 1;
+                    } else {
+                        // Moving up - shift indices in between up by 1
+                        if (id >= targetIndex && id < sourceIndex) return id + 1;
+                    }
+                    return id;
+                });
+            }
+        }
 
         // Only rebuild the table view - don't rebuild the card view to prevent loss of cards
         rebuildTableView();
@@ -3279,8 +3311,8 @@ function handleTableDrop(e) {
         
         // Add highlight animation to the moved row
         setTimeout(() => {
-            const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
-            const targetRow = rows[targetIndex];
+            // Find the row with the target index
+            const targetRow = document.querySelector(`tr[data-index="${targetIndex}"]`);
             if (targetRow) {
                 targetRow.classList.add('drag-highlight');
                 setTimeout(() => {
@@ -3729,73 +3761,121 @@ function rebuildTableView() {
         table.deleteRow(1);
     }
     
-    // First add all unsectioned asanas
+    // First identify all poses that are in sections and which ones are unsectioned
     let unsectionedAsanas = new Set();
     for (let i = 0; i < editingFlow.asanas.length; i++) {
         unsectionedAsanas.add(i);
     }
     
-    // Remove asanas that are already in a section
-    editingFlow.sections.forEach(section => {
-        section.asanaIds.forEach(asanaId => {
-            unsectionedAsanas.delete(asanaId);
+    // Track section info by the lowest index pose they contain
+    // This allows us to place sections in proper order
+    const sectionPositions = [];
+    
+    // Remove asanas that are already in a section and calculate section positions
+    editingFlow.sections.forEach((section, sectionIndex) => {
+        // Get asanas in this section
+        const asanasInSection = editingFlow.getAsanasInSection(section.id)
+            .sort((a, b) => a.index - b.index);
+            
+        if (asanasInSection.length === 0) return;
+        
+        // Find lowest index in the section to determine its position
+        const lowestIndex = Math.min(...asanasInSection.map(a => a.index));
+        
+        // Store section with its position info
+        sectionPositions.push({
+            section,
+            lowestIndex,
+            sectionIndex
+        });
+        
+        // Remove these asanas from unsectioned list
+        asanasInSection.forEach(({index}) => {
+            unsectionedAsanas.delete(index);
         });
     });
     
-    // Add all unsectioned asanas without a section header
-    if (unsectionedAsanas.size > 0) {
-        // Add asana rows for unsectioned asanas directly (no section header)
-        Array.from(unsectionedAsanas).forEach(index => {
+    // Sort sectionPositions by lowestIndex to place sections in the correct order
+    // This ensures sections appear in order relative to their positions in the flow
+    if (tableInDescendingOrder) {
+        sectionPositions.sort((a, b) => b.lowestIndex - a.lowestIndex);
+    } else {
+        sectionPositions.sort((a, b) => a.lowestIndex - b.lowestIndex);
+    }
+    
+    // Create an array to track all asana indices in order
+    let allAsanaIndices = [...Array(editingFlow.asanas.length).keys()];
+    
+    // Respect the current sort order
+    if (tableInDescendingOrder) {
+        allAsanaIndices.reverse();
+    }
+    
+    // Process each index in order, adding either individual asanas or entire sections
+    let processedSections = new Set();
+    
+    allAsanaIndices.forEach(index => {
+        // If this is an unsectioned asana, add it
+        if (unsectionedAsanas.has(index)) {
             const asana = editingFlow.asanas[index];
             if (!asana) return;
             
             addAsanaRow(table, asana, index, '', '');
-        });
-    }
-    
-    // Now add each user-created section
-    editingFlow.sections.forEach((section, sectionIndex) => {
-        const asanasInSection = editingFlow.getAsanasInSection(section.id);
-        if (asanasInSection.length === 0) return;
-        
-        // Add section header row
-        const headerRow = table.insertRow(-1);
-        headerRow.className = 'section-header';
-        headerRow.setAttribute('data-section', section.name);
-        headerRow.setAttribute('data-section-id', section.id);
-        
-        // Add a section color class for consistent coloring
-        // This ensures poses in the same section have the same color
-        const colorClass = `section-color-${sectionIndex % 3}`;
-        headerRow.classList.add(colorClass);
-        
-        // Calculate if all poses in this section are selected
-        const allSelected = asanasInSection.every(asanaInfo => asanaInfo.asana.selected);
-        
-        // Create section header with checkbox
-        headerRow.innerHTML = `
-            <td colspan="2">
-                <input type="checkbox" class="section-select" 
-                       data-section="${section.name}" 
-                       data-section-id="${section.id}" 
-                       ${allSelected ? 'checked' : ''}
-                       onchange="toggleSectionSelection(this)">
-            </td>
-            <td colspan="3" class="section-name">
-                <span>${section.name}</span>
-                <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
-            </td>
-            <td>
-                <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">×</button>
-            </td>
-        `;
-        
-        // Add asana rows for this section
-        asanasInSection.forEach(({asana, index}) => {
-            const row = addAsanaRow(table, asana, index, section.name, section.id);
-            // Add the same color class to ensure visual consistency
-            row.classList.add(colorClass);
-        });
+        } 
+        // If this is the first asana in a section we haven't processed yet, add the entire section
+        else {
+            // Find which section contains this asana
+            const sectionPosition = sectionPositions.find(sp => 
+                sp.lowestIndex === index && !processedSections.has(sp.section.id)
+            );
+            
+            if (sectionPosition) {
+                const {section, sectionIndex} = sectionPosition;
+                processedSections.add(section.id);
+                
+                // Add section header row
+                const headerRow = table.insertRow(-1);
+                headerRow.className = 'section-header';
+                headerRow.setAttribute('data-section', section.name);
+                headerRow.setAttribute('data-section-id', section.id);
+                
+                // Add a section color class for consistent coloring
+                const colorClass = `section-color-${sectionIndex % 3}`;
+                headerRow.classList.add(colorClass);
+                
+                // Get asanas in this section and sort them by their indices
+                const asanasInSection = editingFlow.getAsanasInSection(section.id)
+                    .sort((a, b) => a.index - b.index);
+                
+                // Calculate if all poses in this section are selected
+                const allSelected = asanasInSection.every(asanaInfo => asanaInfo.asana.selected);
+                
+                // Create section header with checkbox
+                headerRow.innerHTML = `
+                    <td colspan="2">
+                        <input type="checkbox" class="section-select" 
+                               data-section="${section.name}" 
+                               data-section-id="${section.id}" 
+                               ${allSelected ? 'checked' : ''}
+                               onchange="toggleSectionSelection(this)">
+                    </td>
+                    <td colspan="3" class="section-name">
+                        <span>${section.name}</span>
+                        <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
+                    </td>
+                    <td>
+                        <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">×</button>
+                    </td>
+                `;
+                
+                // Add asana rows for this section
+                asanasInSection.forEach(({asana, index}) => {
+                    const row = addAsanaRow(table, asana, index, section.name, section.id);
+                    // Add the same color class to ensure visual consistency
+                    row.classList.add(colorClass);
+                });
+            }
+        }
     });
     
     // We're removing the "Create New Section" button at the bottom as requested
@@ -3817,7 +3897,8 @@ function addAsanaRow(table, asana, index, sectionName, sectionId) {
         row.setAttribute('data-section-id', sectionId);
     }
     
-    // Determine row number based on current sort order
+    // Always use the original index+1 for display, regardless of grouping
+    // This ensures consistent numbering throughout the flow
     let rowNumber;
     if (tableInDescendingOrder) {
         rowNumber = editingFlow.asanas.length - index;
@@ -4693,6 +4774,7 @@ function addPoseToSection(asanaIndex) {
     }
     
     // Add the pose to the section
+    // When adding a single pose, we preserve the position by simply adding the ID
     editingFlow.addAsanaToSection(asanaIndex, sectionId);
     
     // Close the modal
@@ -4980,8 +5062,11 @@ function createGroupFromSelection() {
     // Create a new section
     const sectionId = editingFlow.addSection(groupName);
     
-    // Add all valid selected poses to the section
-    validSelectedIndices.forEach(index => {
+    // Sort the indices to preserve the original order of poses in the flow
+    const sortedIndices = [...validSelectedIndices].sort((a, b) => a - b);
+    
+    // Add all valid selected poses to the section in their sorted order
+    sortedIndices.forEach(index => {
         editingFlow.addAsanaToSection(index, sectionId);
     });
     
@@ -5048,8 +5133,11 @@ function addMultiplePosesToSection() {
         return;
     }
     
-    // Add selected poses to the section
-    selectedIndices.forEach(index => {
+    // Sort indices to preserve the original flow order
+    const sortedIndices = [...selectedIndices].sort((a, b) => a - b);
+    
+    // Add selected poses to the section in their original order
+    sortedIndices.forEach(index => {
         editingFlow.addAsanaToSection(index, sectionId);
     });
     
