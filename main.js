@@ -5057,6 +5057,13 @@ function deleteSection(sectionId) {
     }
 }
 
+// Handle enter key press in group name input
+function handleGroupNameKeypress(event) {
+    if (event.key === 'Enter') {
+        createGroupFromSelection();
+    }
+}
+
 // Function to add selected poses to a section/group
 function addSelectedToSection() {
     const selectedPoses = getSelectedAsanas();
@@ -5070,49 +5077,54 @@ function addSelectedToSection() {
         }
     });
     
-    // Create a simplified modal for direct group creation
-    const modal = document.createElement('div');
-    modal.className = 'modal section-modal';
-    modal.style.display = 'block';
-    
     // Get the count of selected poses
     const selectedCount = selectedIndices.length;
     
-    // Create modal content with just a name input for simplicity
-    modal.innerHTML = `
-        <div class="modal-content">
-            <span class="close-modal" onclick="this.closest('.modal').remove()">&times;</span>
-            <h2>Group Selected Poses</h2>
-            <p class="modal-description">Enter a name for this group of ${selectedCount} pose${selectedCount !== 1 ? 's' : ''}:</p>
-            <div class="section-name-input-container">
-                <input type="text" id="newGroupName" placeholder="Group Name" class="section-name-input">
-                <button class="create-section-btn" onclick="createGroupFromSelection()">Group</button>
-            </div>
-        </div>
-    `;
+    // Update the modal description to show the pose count
+    const modalDescription = document.querySelector('#groupNamingModal .modal-description');
+    if (modalDescription) {
+        modalDescription.textContent = `Enter a name for this group of ${selectedCount} pose${selectedCount !== 1 ? 's' : ''}:`;
+    }
     
-    // Add the modal to the document
-    document.body.appendChild(modal);
-    
-    // Focus the input field
-    setTimeout(() => {
-        const input = document.getElementById('newGroupName');
+    // Display the modal
+    const modal = document.getElementById('groupNamingModal');
+    if (modal) {
+        modal.style.display = 'block';
+        
+        // Focus the input field
+        setTimeout(() => {
+            const input = document.getElementById('groupNameInput');
+            if (input) {
+                input.value = ''; // Clear previous input
+                input.focus();
+                
+                // Remove any existing listeners to prevent duplicates
+                input.removeEventListener('keyup', handleGroupNameKeypress);
+                
+                // Add enter key event listener
+                input.addEventListener('keyup', handleGroupNameKeypress);
+            }
+        }, 100);
+    }
+}
+
+// Function to close the group naming modal
+function closeGroupNamingModal() {
+    const modal = document.getElementById('groupNamingModal');
+    if (modal) {
+        modal.style.display = 'none';
+        
+        // Clean up event listener
+        const input = document.getElementById('groupNameInput');
         if (input) {
-            input.focus();
-            
-            // Add enter key event listener
-            input.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    createGroupFromSelection();
-                }
-            });
+            input.removeEventListener('keyup', handleGroupNameKeypress);
         }
-    }, 100);
+    }
 }
 
 // Function to create a new group from selected poses
 function createGroupFromSelection() {
-    const nameInput = document.getElementById('newGroupName');
+    const nameInput = document.getElementById('groupNameInput');
     const groupName = nameInput ? nameInput.value.trim() : '';
     
     if (!groupName) {
@@ -5149,8 +5161,7 @@ function createGroupFromSelection() {
         alert('No valid poses selected that can be grouped');
         
         // Close the modal
-        const modal = document.querySelector('.section-modal');
-        if (modal) modal.remove();
+        closeGroupNamingModal();
         return;
     }
     
@@ -5166,8 +5177,7 @@ function createGroupFromSelection() {
     });
     
     // Close the modal
-    const modal = document.querySelector('.section-modal');
-    if (modal) modal.remove();
+    closeGroupNamingModal();
     
     // Rebuild the table view
     rebuildTableView();
