@@ -995,12 +995,16 @@ function updateFlowDuration() {
     });
 
     // Update durations in the flow object
-    const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
-    rows.forEach((row, index) => {
-        if (index < editingFlow.asanas.length) {
+    const rows = document.querySelectorAll('#flowTable tr:not(:first-child):not(.section-header)');
+    rows.forEach(row => {
+        // Use the data-index attribute to get the correct asana index
+        const asanaIndex = parseInt(row.getAttribute('data-index'));
+        
+        // Make sure the index is valid and the asana exists
+        if (!isNaN(asanaIndex) && asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
             const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
             if (durationInput) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 7;
+                editingFlow.asanas[asanaIndex].duration = parseInt(durationInput.value) || 7;
             }
         }
     });
@@ -3724,7 +3728,15 @@ function handleTableDrop(e) {
         // Now move the actual pose in the asanas array
         // When moving down, we need to adjust the target index since removing the source element shifts everything
         let adjustedTargetIndex = targetIndex;
-        if (sourceIndex < targetIndex && !isFirstPositionDrop) {
+        
+        // Special handling for dragging to immediately following position (e.g., from 1 to 2)
+        if (sourceIndex + 1 === targetIndex && !isFirstPositionDrop) {
+            // When dragging to immediately following position, we need to keep targetIndex as is
+            // This ensures the positions swap correctly
+            console.log(`Dragging to immediately following position: ${sourceIndex} -> ${targetIndex}`);
+        }
+        // Regular adjustment for other downward moves
+        else if (sourceIndex < targetIndex && !isFirstPositionDrop) {
             adjustedTargetIndex = targetIndex - 1;
         }
         
@@ -3754,6 +3766,9 @@ function handleTableDrop(e) {
         
         // Ensure draggable attributes are set again
         setTimeout(updateRowDragAttributes, 0);
+        
+        // Auto-save flow after every drag and drop change
+        autoSaveFlow();
         
         // Log completion status
         console.log('✅ Pose movement completed successfully');
