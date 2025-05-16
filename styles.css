@@ -3464,6 +3464,7 @@ tr.section-header td[colspan] {
 /* Section header layout structure */
 .section-header-content {
   padding: 0 !important;
+  margin-right: 20 px;
 }
 
 .section-header-flex {
@@ -3482,6 +3483,7 @@ tr.section-header td[colspan] {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-left: 6.5%;
 }
 
 .section-remove {
@@ -3489,12 +3491,14 @@ tr.section-header td[colspan] {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 5.5%;
 }
 
 /* Reset section name positioning */
 .section-header .section-name {
   position: static;
   flex: 1;
+  max-width: 70%;
 }
 
 /* Add more visible border to last row in a section */
