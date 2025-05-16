@@ -91,7 +91,6 @@ class Flow {
         this.time = time;
         this.peakPose = peakPose;
         this.asanas = [];
-        this.sections = {}; // Map asana indexes to section names
         this.flowID = generateUniqueID();
         this.lastEdited = new Date().toISOString();
         this.lastFlowed = null; // Will be set when flow is practiced
@@ -117,56 +116,6 @@ class Flow {
 
     getAsanas() {
         return this.asanas;
-    }
-
-    addSection(sectionName, startIndex) {
-        // If a section with this name already exists, remove it first
-        this.removeSection(sectionName);
-        this.sections[sectionName] = { startIndex, selected: false };
-    }
-    
-    removeSection(sectionName) {
-        if (this.sections[sectionName]) {
-            delete this.sections[sectionName];
-        }
-    }
-    
-    getSectionForIndex(index) {
-        for (const [name, section] of Object.entries(this.sections)) {
-            const nextSectionIndex = this.getNextSectionStartIndex(section.startIndex);
-            if (index >= section.startIndex && (nextSectionIndex === -1 || index < nextSectionIndex)) {
-                return { name, ...section };
-            }
-        }
-        return null;
-    }
-    
-    getNextSectionStartIndex(currentSectionStartIndex) {
-        let nextIndex = -1;
-        
-        for (const section of Object.values(this.sections)) {
-            if (section.startIndex > currentSectionStartIndex && (nextIndex === -1 || section.startIndex < nextIndex)) {
-                nextIndex = section.startIndex;
-            }
-        }
-        
-        return nextIndex;
-    }
-    
-    toggleSectionSelection(sectionName, selected) {
-        if (this.sections[sectionName]) {
-            this.sections[sectionName].selected = selected;
-        }
-    }
-    
-    isSectionSelected(sectionName) {
-        return this.sections[sectionName] ? this.sections[sectionName].selected : false;
-    }
-    
-    getSectionsInOrder() {
-        return Object.entries(this.sections)
-            .sort(([, a], [, b]) => a.startIndex - b.startIndex)
-            .map(([name, section]) => ({ name, ...section }));
     }
 }
 
