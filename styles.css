@@ -1047,6 +1047,7 @@ h1 {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
+  table-layout: fixed;
 }
 
 #flowTable th {
@@ -3265,26 +3266,34 @@ input:checked + .slider:before {
 .section-header {
   background-color: #f8f4f0;
   font-weight: bold;
+  margin: 0;
+  border-top: none;
+  padding: 0;
 }
 
 .section-header .section-name {
   color: #ff8c00;
   font-size: 1.05em;
   text-align: left;
-  padding-left: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
   display: flex;
   align-items: center;
-  gap: 10px;
   background-color: transparent;
   box-shadow: none;
   transition: all 0.2s ease;
+  height: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  width: 100%;
+  position: relative; /* For absolute positioning of children */
 }
 
 .section-header .section-name span {
   font-size: 18px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  padding: 6px 10px;
+  padding: 6px 15px;
   border-radius: 0;
   border: none;
   border-bottom: 1px solid transparent;
@@ -3294,16 +3303,23 @@ input:checked + .slider:before {
   transition: all 0.2s ease;
   background-color: transparent;
   box-shadow: none;
+  vertical-align: middle;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: visible;
+  min-width: 180px;
 }
 
 .section-header .section-name .section-count {
   font-size: 14px;
   font-weight: 400;
-  color: #999;
-  opacity: 0.8;
-  margin-left: 10px;
-  padding: 3px 8px;
+  color: #666;
+  padding: 4px 12px;
   border-radius: 12px;
+  white-space: nowrap;
+  margin-left: auto;
+  background-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .section-header:hover .section-name span {
@@ -3322,15 +3338,20 @@ input:checked + .slider:before {
 }
 
 .section-header td {
-  padding: 8px 5px;
+  padding: 12px 10px;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+  white-space: nowrap;
+  min-width: 200px; /* Ensure wider cells for section headers */
 }
 
 /* Style for rows in the same section */
 tr[data-section-id] {
   border-left: 3px solid #ff8c00;
   background-color: rgba(255, 140, 0, 0.05);
+  margin-top: 0;
+  border-top: none;
 }
 
 /* Add visual grouping for sections */
@@ -3393,27 +3414,87 @@ tr.section-color-2[data-section-id] {
   background-color: rgba(33, 150, 243, 0.05);
 }
 
-/* Add spacing between sections */
+/* Section header styling */
 tr.section-header {
-  margin-top: 15px;
-  border-top: 10px solid white;
+  height: 46px; /* Set a fixed height for the section header */
 }
 
-/* Curved top border for section header rows */
+/* Section header row cell styling */
 tr.section-header td {
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+  height: 46px; /* Set a fixed height for consistency */
+  box-sizing: border-box;
+  padding: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin: 0;
 }
 
 /* Add shadow to section header */
 tr.section-header {
-  box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
   position: relative;
+  display: table-row; /* Ensure proper table row display */
+  width: 100%;
+  table-layout: fixed;
+  margin: 0;
+  padding: 0;
+}
+
+/* Make section header span full width */
+tr.section-header td:first-child {
+  width: 100%;
+  min-width: 500px;
+  padding-right: 30px; /* Extra padding on the right side */
+  white-space: nowrap;
+  overflow: visible; /* Allow content to extend beyond cell if needed */
 }
 
 /* Style for section grouping to make it more obvious */
 tr.section-header + tr[data-section-id] {
   box-shadow: inset 0 4px 6px -6px rgba(0,0,0,0.1);
+}
+
+/* Fix for section header to ensure single row */
+tr.section-header td[colspan] {
+  height: 46px;
+  vertical-align: middle;
+  padding: 0;
+}
+
+/* Section header layout structure */
+.section-header-content {
+  padding: 0 !important;
+}
+
+.section-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 15px;
+  margin: 0;
+  border: none;
+}
+
+.section-checkbox {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.section-remove {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Reset section name positioning */
+.section-header .section-name {
+  position: static;
+  flex: 1;
 }
 
 /* Add more visible border to last row in a section */

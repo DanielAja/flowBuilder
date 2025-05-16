@@ -3852,19 +3852,23 @@ function rebuildTableView() {
                 
                 // Create section header with checkbox
                 headerRow.innerHTML = `
-                    <td colspan="2">
-                        <input type="checkbox" class="section-select" 
-                               data-section="${section.name}" 
-                               data-section-id="${section.id}" 
-                               ${allSelected ? 'checked' : ''}
-                               onchange="toggleSectionSelection(this)">
-                    </td>
-                    <td colspan="3" class="section-name">
-                        <span>${section.name}</span>
-                        <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
-                    </td>
-                    <td>
-                        <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">×</button>
+                    <td colspan="6" class="section-header-content">
+                        <div class="section-header-flex">
+                            <div class="section-checkbox">
+                                <input type="checkbox" class="section-select" 
+                                   data-section="${section.name}" 
+                                   data-section-id="${section.id}" 
+                                   ${allSelected ? 'checked' : ''}
+                                   onchange="toggleSectionSelection(this)">
+                            </div>
+                            <div class="section-name">
+                                <span>${section.name}</span>
+                                <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div class="section-remove">
+                                <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">×</button>
+                            </div>
+                        </div>
                     </td>
                 `;
                 
