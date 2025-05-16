@@ -806,7 +806,7 @@ function updateAsanaImageOrientation(selectElement) {
 }
 
 // Track whether table is in descending order (initialized to true so the first click sorts ascending)
-let tableInDescendingOrder = true;
+let tableInDescendingOrder = false;
 
 // UI update functions
 function updateRowNumbers() {
@@ -3773,7 +3773,8 @@ function rebuildTableView() {
     
     // Remove asanas that are already in a section and calculate section positions
     editingFlow.sections.forEach((section, sectionIndex) => {
-        // Get asanas in this section
+        // Get asanas in this section - use natural order here regardless of display order
+        // This is just for determining section position
         const asanasInSection = editingFlow.getAsanasInSection(section.id)
             .sort((a, b) => a.index - b.index);
             
@@ -3786,7 +3787,8 @@ function rebuildTableView() {
         sectionPositions.push({
             section,
             lowestIndex,
-            sectionIndex
+            sectionIndex,
+            asanas: asanasInSection // Store the asanas in this section
         });
         
         // Remove these asanas from unsectioned list
@@ -3806,13 +3808,15 @@ function rebuildTableView() {
     // Create an array to track all asana indices in order
     let allAsanaIndices = [...Array(editingFlow.asanas.length).keys()];
     
-    // Respect the current sort order
+    // Respect the current sort order to ensure unsectioned poses appear in the right order
     if (tableInDescendingOrder) {
         allAsanaIndices.reverse();
     }
     
     // Process each index in order, adding either individual asanas or entire sections
     let processedSections = new Set();
+    // Track the sequential position to ensure consistent numbering across groups
+    let sequentialPosition = 0;
     
     allAsanaIndices.forEach(index => {
         // If this is an unsectioned asana, add it
@@ -3820,7 +3824,19 @@ function rebuildTableView() {
             const asana = editingFlow.asanas[index];
             if (!asana) return;
             
-            addAsanaRow(table, asana, index, '', '');
+            // Increment the position counter
+            sequentialPosition++;
+            
+            // Calculate appropriate row number based on sort order and sequential position
+            let displayNumber;
+            if (tableInDescendingOrder) {
+                displayNumber = editingFlow.asanas.length - sequentialPosition + 1;
+            } else {
+                displayNumber = sequentialPosition;
+            }
+            
+            // Pass the display number to addAsanaRow
+            addAsanaRow(table, asana, index, '', '', displayNumber);
         } 
         // If this is the first asana in a section we haven't processed yet, add the entire section
         else {
@@ -3830,7 +3846,7 @@ function rebuildTableView() {
             );
             
             if (sectionPosition) {
-                const {section, sectionIndex} = sectionPosition;
+                const {section, sectionIndex, asanas: sectionAsanas} = sectionPosition;
                 processedSections.add(section.id);
                 
                 // Add section header row
@@ -3844,8 +3860,9 @@ function rebuildTableView() {
                 headerRow.classList.add(colorClass);
                 
                 // Get asanas in this section and sort them by their indices
+                // Use the correct sort order based on tableInDescendingOrder
                 const asanasInSection = editingFlow.getAsanasInSection(section.id)
-                    .sort((a, b) => a.index - b.index);
+                    .sort((a, b) => tableInDescendingOrder ? b.index - a.index : a.index - b.index);
                 
                 // Calculate if all poses in this section are selected
                 const allSelected = asanasInSection.every(asanaInfo => asanaInfo.asana.selected);
@@ -3874,7 +3891,19 @@ function rebuildTableView() {
                 
                 // Add asana rows for this section
                 asanasInSection.forEach(({asana, index}) => {
-                    const row = addAsanaRow(table, asana, index, section.name, section.id);
+                    // Increment the position counter for each asana in the section
+                    sequentialPosition++;
+                    
+                    // Calculate appropriate row number based on sort order and sequential position
+                    let displayNumber;
+                    if (tableInDescendingOrder) {
+                        displayNumber = editingFlow.asanas.length - sequentialPosition + 1;
+                    } else {
+                        displayNumber = sequentialPosition;
+                    }
+                    
+                    // Pass the display number to addAsanaRow
+                    const row = addAsanaRow(table, asana, index, section.name, section.id, displayNumber);
                     // Add the same color class to ensure visual consistency
                     row.classList.add(colorClass);
                 });
@@ -3886,7 +3915,7 @@ function rebuildTableView() {
 }
 
 // Helper function to add an asana row to the table
-function addAsanaRow(table, asana, index, sectionName, sectionId) {
+function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber) {
     if (!asana) return;
     
     const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
@@ -3901,10 +3930,11 @@ function addAsanaRow(table, asana, index, sectionName, sectionId) {
         row.setAttribute('data-section-id', sectionId);
     }
     
-    // Always use the original index+1 for display, regardless of grouping
-    // This ensures consistent numbering throughout the flow
+    // Use the provided display number if available, otherwise calculate based on index
     let rowNumber;
-    if (tableInDescendingOrder) {
+    if (displayNumber !== undefined) {
+        rowNumber = displayNumber;
+    } else if (tableInDescendingOrder) {
         rowNumber = editingFlow.asanas.length - index;
     } else {
         rowNumber = index + 1;
@@ -3973,16 +4003,77 @@ function rebuildCardView() {
         return;
     }
 
-    // Rebuild cards from editingFlow.asanas
-    editingFlow.asanas.forEach((asana, index) => {
+    // First determine if poses are in sections to maintain consistent numbering with table view
+    let unsectionedAsanas = new Set();
+    for (let i = 0; i < editingFlow.asanas.length; i++) {
+        unsectionedAsanas.add(i);
+    }
+    
+    // Map of sections
+    const sectionMap = {};
+    
+    // Identify which poses belong to sections
+    editingFlow.sections.forEach(section => {
+        const asanasInSection = editingFlow.getAsanasInSection(section.id);
+        asanasInSection.forEach(({index}) => {
+            unsectionedAsanas.delete(index);
+            if (!sectionMap[section.id]) {
+                sectionMap[section.id] = [];
+            }
+            sectionMap[section.id].push(index);
+        });
+    });
+    
+    // Create an array to hold poses in order as they would appear in the table
+    let orderedPoses = [];
+    
+    // Add unsectioned poses first
+    for (let i = 0; i < editingFlow.asanas.length; i++) {
+        if (unsectionedAsanas.has(i)) {
+            orderedPoses.push(i);
+        }
+    }
+    
+    // Add sectioned poses in order of their lowest index
+    const sectionsByLowestIndex = [];
+    Object.keys(sectionMap).forEach(sectionId => {
+        const indices = sectionMap[sectionId];
+        if (indices.length > 0) {
+            const lowestIndex = Math.min(...indices);
+            sectionsByLowestIndex.push({ 
+                sectionId, 
+                lowestIndex,
+                indices
+            });
+        }
+    });
+    
+    // Sort sections by their position in the flow
+    if (tableInDescendingOrder) {
+        sectionsByLowestIndex.sort((a, b) => b.lowestIndex - a.lowestIndex);
+    } else {
+        sectionsByLowestIndex.sort((a, b) => a.lowestIndex - b.lowestIndex);
+    }
+    
+    // Add all sectioned poses in order
+    sectionsByLowestIndex.forEach(section => {
+        let sectionIndices = [...section.indices];
+        // Always sort indices in the same direction as table view
+        sectionIndices.sort((a, b) => tableInDescendingOrder ? b - a : a - b);
+        sectionIndices.forEach(index => {
+            orderedPoses.push(index);
+        });
+    });
+    
+    // Now rebuild cards in the determined order
+    orderedPoses.forEach((index, position) => {
+        const asana = editingFlow.asanas[index];
         if (!asana) return;
 
-        // Determine card number based on current sort order
-        let cardNumber;
+        // Determine card number based on position in the ordered list
+        let cardNumber = position + 1;
         if (tableInDescendingOrder) {
-            cardNumber = editingFlow.asanas.length - index;
-        } else {
-            cardNumber = index + 1;
+            cardNumber = editingFlow.asanas.length - position;
         }
 
         // Create the card element
