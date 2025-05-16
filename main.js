@@ -5368,8 +5368,35 @@ function deleteSelectedPoses() {
     const selectedPoses = getSelectedAsanas();
     if (selectedPoses.length === 0) return;
     
+    // Create a map of deleted indices to track which poses are being removed
+    const deletedIndices = new Set();
+    editingFlow.asanas.forEach((asana, index) => {
+        if (asana.selected) {
+            deletedIndices.add(index);
+        }
+    });
+    
     // Remove selected poses from the flow
     editingFlow.asanas = editingFlow.asanas.filter(asana => !asana.selected);
+    
+    // Update section references to account for the removed poses
+    editingFlow.sections.forEach(section => {
+        // First, remove any direct references to deleted poses
+        section.asanaIds = section.asanaIds.filter(asanaId => !deletedIndices.has(asanaId));
+        
+        // Then, adjust the indices of the remaining poses to account for removed poses
+        section.asanaIds = section.asanaIds.map(asanaId => {
+            // Count how many deleted poses were before this index
+            let offset = 0;
+            for (let deletedIndex of deletedIndices) {
+                if (deletedIndex < asanaId) {
+                    offset++;
+                }
+            }
+            // Adjust the index by subtracting the offset
+            return asanaId - offset;
+        });
+    });
     
     // Rebuild the table
     rebuildFlowTable();
@@ -5380,10 +5407,8 @@ function deleteSelectedPoses() {
     // Show notification
     showToastNotification(`Deleted ${selectedPoses.length} pose${selectedPoses.length !== 1 ? 's' : ''}`);
     
-    // Auto-save if in edit mode
-    if (editMode) {
-        autoSaveFlow();
-    }
+    // Always save after deletion
+    autoSaveFlow();
 }
 
 // Function to save a sequence
