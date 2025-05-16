@@ -5019,7 +5019,14 @@ function deleteSection(sectionId) {
         
         // Delay the actual deletion to show the animation
         setTimeout(() => {
-            // Remove the section
+            // First, manually remove all section-related rows from the table
+            // This ensures no group headers remain
+            const allSectionElements = document.querySelectorAll(`tr[data-section-id="${sectionId}"]`);
+            allSectionElements.forEach(element => {
+                element.remove();
+            });
+            
+            // Remove the section from the data model
             const sectionIndex = editingFlow.sections.findIndex(s => s.id === sectionId);
             if (sectionIndex !== -1) {
                 editingFlow.sections.splice(sectionIndex, 1);
@@ -5031,18 +5038,22 @@ function deleteSection(sectionId) {
             // Show a notification
             showToastNotification(`Group "${section.name}" deleted`);
             
-            // Auto-save if in edit mode
-            if (editMode) {
-                autoSaveFlow();
-            }
+            // Always save after deleting a section
+            autoSaveFlow();
         }, 300);
     } else {
         // Fallback if no animation is possible
-        // Remove the section
+        // Remove the section from the data model
         const sectionIndex = editingFlow.sections.findIndex(s => s.id === sectionId);
         if (sectionIndex !== -1) {
             editingFlow.sections.splice(sectionIndex, 1);
         }
+        
+        // Make sure to remove any UI elements related to this section
+        const allSectionElements = document.querySelectorAll(`tr[data-section-id="${sectionId}"]`);
+        allSectionElements.forEach(element => {
+            element.remove();
+        });
         
         // Rebuild the table view
         rebuildTableView();
@@ -5050,10 +5061,8 @@ function deleteSection(sectionId) {
         // Show a notification
         showToastNotification(`Group "${section.name}" deleted`);
         
-        // Auto-save if in edit mode
-        if (editMode) {
-            autoSaveFlow();
-        }
+        // Always save after deleting a section
+        autoSaveFlow();
     }
 }
 
