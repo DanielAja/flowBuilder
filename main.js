@@ -657,8 +657,20 @@ function clearBuildAFlow() {
     // Reset form fields
     const titleInput = document.getElementById('title');
     const descriptionInput = document.getElementById('description');
-    if (titleInput) titleInput.value = '';
-    if (descriptionInput) descriptionInput.value = '';
+    
+    if (titleInput) {
+        titleInput.value = '';
+        // Setup input event listeners for autosave
+        titleInput.removeEventListener('input', autoSaveFlow);
+        titleInput.addEventListener('input', autoSaveFlow);
+    }
+    
+    if (descriptionInput) {
+        descriptionInput.value = '';
+        // Setup input event listeners for autosave
+        descriptionInput.removeEventListener('input', autoSaveFlow);
+        descriptionInput.addEventListener('input', autoSaveFlow);
+    }
     
     // Clear flow table
     const table = document.getElementById('flowTable');
@@ -2266,8 +2278,19 @@ function editFlow(flowID) {
     const titleInput = document.getElementById('title');
     const descriptionInput = document.getElementById('description');
 
-    if (titleInput) titleInput.value = editingFlow.name || '';
-    if (descriptionInput) descriptionInput.value = editingFlow.description || '';
+    if (titleInput) {
+        titleInput.value = editingFlow.name || '';
+        // Setup input event listeners for autosave
+        titleInput.removeEventListener('input', autoSaveFlow);
+        titleInput.addEventListener('input', autoSaveFlow);
+    }
+    
+    if (descriptionInput) {
+        descriptionInput.value = editingFlow.description || '';
+        // Setup input event listeners for autosave
+        descriptionInput.removeEventListener('input', autoSaveFlow);
+        descriptionInput.addEventListener('input', autoSaveFlow);
+    }
 
     // Ensure all asanas have getDisplayName method
     editingFlow.asanas = editingFlow.asanas.map(asana => {
