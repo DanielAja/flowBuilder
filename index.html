@@ -22,11 +22,10 @@
         top: 20px;
         left: 20px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         gap: 10px;
         z-index: 1000;
         width: auto;
-        max-width: 120px;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global {
@@ -120,6 +119,7 @@
         width: auto;
         min-width: 70px;
         text-align: center;
+        white-space: nowrap;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn:hover,
@@ -368,7 +368,7 @@
             </label>
             <span class="toggle-hint"></span>
           </div>
-          <button onclick="saveFlow()" class="save-flow-btn">Back</button>
+          <button onclick="saveFlow()" class="save-flow-btn">Done</button>
         </div>
         <div class="asana-selection">
           <h3 class="asana-section-title">Select poses for your flow</h3>
