@@ -124,6 +124,9 @@ class Flow {
             return false;
         }
         
+        // Get the source section
+        const sourceSection = this.sections[sourceIndex];
+        
         // Determine the target position for the section
         let targetIndex;
         
@@ -166,7 +169,101 @@ class Flow {
             return false;
         }
         
-        // Move the section
+        // Store the poses that need to be moved with the section
+        const posesInSection = [...sourceSection.asanaIds];
+        if (posesInSection.length > 0) {
+            console.log(`Moving ${posesInSection.length} poses with section "${sourceSection.name}"`);
+            
+            // Sort poses by their index to ensure we preserve their order
+            posesInSection.sort((a, b) => a - b);
+            
+            // Calculate the position where we'll insert the section's poses
+            // This is either:
+            // 1. Before the first pose of the target section (if moving before another section)
+            // 2. After the last pose of the previous section (if moving after a section)
+            // 3. At the beginning of the asanas array (if moving to the beginning)
+            
+            let targetAsanaPosition = 0; // Default to beginning
+            
+            // If we're moving after a specific section
+            if (targetIndex > 0 && targetIndex <= this.sections.length) {
+                const sectionBefore = this.sections[targetIndex - 1];
+                if (sectionBefore && sectionBefore.asanaIds.length > 0) {
+                    // Find the highest index in the section before the target
+                    const maxIndex = Math.max(...sectionBefore.asanaIds);
+                    targetAsanaPosition = maxIndex + 1;
+                }
+            } 
+            // If we're moving before a specific section
+            else if (targetIndex < this.sections.length) {
+                const sectionAfter = this.sections[targetIndex];
+                if (sectionAfter && sectionAfter.asanaIds.length > 0) {
+                    // Find the lowest index in the target section
+                    const minIndex = Math.min(...sectionAfter.asanaIds);
+                    targetAsanaPosition = minIndex;
+                }
+            }
+            
+            // Create a temporary array of asanas to be moved
+            const asanasToMove = [];
+            
+            // Remove the poses from their current positions and save them
+            for (let i = posesInSection.length - 1; i >= 0; i--) {
+                const asanaIndex = posesInSection[i];
+                if (asanaIndex >= 0 && asanaIndex < this.asanas.length) {
+                    // Remove the asana
+                    const [removedAsana] = this.asanas.splice(asanaIndex, 1);
+                    asanasToMove.unshift(removedAsana);
+                    
+                    // Adjust indices of asanas that will be moved
+                    for (let j = 0; j < posesInSection.length; j++) {
+                        if (posesInSection[j] > asanaIndex) {
+                            posesInSection[j] -= 1;
+                        }
+                    }
+                    
+                    // Adjust target position if needed
+                    if (asanaIndex < targetAsanaPosition) {
+                        targetAsanaPosition -= 1;
+                    }
+                    
+                    // Update all section asanaIds to account for removed asana
+                    this.sections.forEach(section => {
+                        section.asanaIds = section.asanaIds.map(id => {
+                            if (id === asanaIndex) {
+                                return -1; // Mark for removal
+                            } else if (id > asanaIndex) {
+                                return id - 1; // Shift down by one
+                            }
+                            return id;
+                        }).filter(id => id >= 0);
+                    });
+                }
+            }
+            
+            // Insert the asanas at the target position
+            this.asanas.splice(targetAsanaPosition, 0, ...asanasToMove);
+            
+            // Update the section's asanaIds to reflect the new positions
+            sourceSection.asanaIds = [];
+            for (let i = 0; i < asanasToMove.length; i++) {
+                sourceSection.asanaIds.push(targetAsanaPosition + i);
+            }
+            
+            // Update all other sections' asanaIds to account for inserted asanas
+            this.sections.forEach(section => {
+                if (section.id !== sourceSectionId) {
+                    section.asanaIds = section.asanaIds.map(id => {
+                        if (id >= targetAsanaPosition) {
+                            return id + asanasToMove.length;
+                        }
+                        return id;
+                    });
+                }
+            });
+        }
+        
+        // Move the section in the sections array
         const [movedSection] = this.sections.splice(sourceIndex, 1);
         this.sections.splice(targetIndex, 0, movedSection);
         
@@ -3453,11 +3550,27 @@ function handleTableDrop(e) {
     if (row.classList.contains('section-header')) {
         const sectionId = row.getAttribute('data-section-id');
         if (sectionId) {
-            // Find the first row in this section
-            const sectionRows = Array.from(document.querySelectorAll(`tr[data-section-id="${sectionId}"]`));
+            // Create a special row to handle dropping at the first position of a group
+            const specialFirstPositionRow = document.createElement('tr');
+            specialFirstPositionRow.setAttribute('data-special-drop', 'true');
+            specialFirstPositionRow.setAttribute('data-first-position-drop', 'true');
+            specialFirstPositionRow.setAttribute('data-section-id', sectionId);
+            
+            // Find the section to determine the first position
+            const section = editingFlow.getSectionById(sectionId);
+            const sectionRows = Array.from(document.querySelectorAll(`tr[data-section-id="${sectionId}"]:not(.section-header)`));
+            
             if (sectionRows.length > 0) {
-                // Use the first actual row in the section instead
-                row = sectionRows[0];
+                // Get the first pose in this section - we always want to place at the beginning of the section
+                const firstRow = sectionRows[0];
+                const firstIndex = parseInt(firstRow.getAttribute('data-index'));
+                
+                // Set this as the target index for the special row
+                specialFirstPositionRow.setAttribute('data-index', firstIndex);
+                console.log(`Setting first position drop target to index ${firstIndex} in section ${sectionId}`);
+                
+                // Use our special row instead of the actual first row
+                row = specialFirstPositionRow;
             } else {
                 console.log('Cannot drop on an empty section header');
                 return;
@@ -3574,15 +3687,25 @@ function handleTableDrop(e) {
             
             // If this is the target section and we're moving from outside this section
             if (section.id === targetSectionId && (!sourceSectionId || sourceSectionId !== targetSectionId)) {
+                // Check if this is a first position drop
+                const isFirstPositionDrop = row && row.hasAttribute('data-first-position-drop');
+                
                 // Add the pose at the target index if it's not already there
                 if (!updatedIds.includes(targetIndex)) {
-                    // Insert at the correct position rather than just pushing to the end
-                    let insertPosition = 0;
-                    while (insertPosition < updatedIds.length && updatedIds[insertPosition] < targetIndex) {
-                        insertPosition++;
+                    if (isFirstPositionDrop) {
+                        // For first position drops, always put the pose at the beginning of the section
+                        console.log(`First position drop - adding at beginning of section ${section.id}`);
+                        updatedIds.unshift(targetIndex);
+                    } else {
+                        // For regular drops, insert at the target position indicated by the drag number
+                        // This ensures that a pose dragged to position #3 takes that exact position
+                        let insertPosition = 0;
+                        while (insertPosition < updatedIds.length && updatedIds[insertPosition] < targetIndex) {
+                            insertPosition++;
+                        }
+                        updatedIds.splice(insertPosition, 0, targetIndex);
+                        console.log(`Inserting pose at position ${insertPosition} in group`);
                     }
-                    updatedIds.splice(insertPosition, 0, targetIndex);
-                    console.log(`Inserting pose at position ${insertPosition} in group`);
                 }
             }
             
@@ -3595,9 +3718,30 @@ function handleTableDrop(e) {
             console.log(`Updated section ${section.id}: ${originalIds} -> ${updatedIds}`);
         });
         
+        // Check if this is a special first position drop onto a section header
+        const isFirstPositionDrop = row.hasAttribute('data-first-position-drop');
+        
         // Now move the actual pose in the asanas array
+        // When moving down, we need to adjust the target index since removing the source element shifts everything
+        let adjustedTargetIndex = targetIndex;
+        if (sourceIndex < targetIndex && !isFirstPositionDrop) {
+            adjustedTargetIndex = targetIndex - 1;
+        }
+        
+        // First, remove the pose from its current position
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
-        editingFlow.asanas.splice(targetIndex, 0, movedAsana);
+        
+        // For special first position drops, always use the exact target index regardless of source index
+        if (isFirstPositionDrop) {
+            console.log(`Special handling for first position drop into section ${targetSectionId}`);
+            // We intentionally don't adjust the target index for first position drops
+            // to ensure it's placed at exactly that position
+            adjustedTargetIndex = targetIndex;
+        }
+        
+        // When a pose is dragged onto a number, it should take the exact position indicated by that number
+        // This will push the pose currently at that position (and all following poses) down by one
+        editingFlow.asanas.splice(adjustedTargetIndex, 0, movedAsana);
 
         // Fully rebuild the table view with all the new indices and section memberships
         rebuildFlowTable();
@@ -3716,29 +3860,34 @@ function handleSectionReordering(e, targetRow) {
     
     // Get source section details
     const sourceSection = editingFlow.getSectionById(sourceSectionId);
-    if (sourceSection) {
-        console.log(`🔄 Moving GROUP: "${sourceSection.name}" (ID: ${sourceSectionId})`);
-        console.log(`   Contains ${sourceSection.asanaIds.length} poses`);
-        
-        // Log the poses in this section
-        if (sourceSection.asanaIds.length > 0) {
-            console.log('   Poses in this group:');
-            sourceSection.asanaIds.forEach(asanaId => {
-                if (asanaId >= 0 && asanaId < editingFlow.asanas.length) {
-                    console.log(`     - "${editingFlow.asanas[asanaId].name}" (Index: ${asanaId})`);
-                }
-            });
-        }
+    if (!sourceSection) {
+        console.error('⛔ Error: Source section not found');
+        return;
+    }
+    
+    console.log(`🔄 Moving GROUP: "${sourceSection.name}" (ID: ${sourceSectionId})`);
+    console.log(`   Contains ${sourceSection.asanaIds.length} poses`);
+    
+    // Log the poses in this section
+    if (sourceSection.asanaIds.length > 0) {
+        console.log('   Poses in this group:');
+        sourceSection.asanaIds.forEach(asanaId => {
+            if (asanaId >= 0 && asanaId < editingFlow.asanas.length) {
+                console.log(`     - "${editingFlow.asanas[asanaId].name}" (Index: ${asanaId})`);
+            }
+        });
     }
     
     // Determine target position
     let targetPosition = 'Unknown';
+    let targetSectionId = null;
+    
     if (targetRow.classList.contains('section-header')) {
-        const targetSectionId = targetRow.getAttribute('data-section-id');
+        targetSectionId = targetRow.getAttribute('data-section-id');
         const targetSectionName = targetRow.getAttribute('data-section');
         targetPosition = `before group "${targetSectionName}" (ID: ${targetSectionId})`;
     } else {
-        const targetSectionId = targetRow.getAttribute('data-section-id');
+        targetSectionId = targetRow.getAttribute('data-section-id');
         if (targetSectionId) {
             const targetSection = editingFlow.getSectionById(targetSectionId);
             if (targetSection) {
@@ -3758,8 +3907,119 @@ function handleSectionReordering(e, targetRow) {
     
     console.log(`📍 Target position: ${targetPosition}`);
     
-    // Call the flow's reorderSection method
-    const success = editingFlow.reorderSection(sourceSectionId, targetRow);
+    let success = false;
+    
+    // For non-section targets (ungrouped poses), we need special handling
+    if (!targetRow.classList.contains('section-header') && !targetSectionId) {
+        // Get the target index for pose insertion
+        const targetIndex = parseInt(targetRow.getAttribute('data-index'));
+        if (isNaN(targetIndex)) {
+            console.error('⛔ Error: Invalid target index');
+            return false;
+        }
+        
+        // 1. Save the section and all its poses
+        const sourceSectionIndex = editingFlow.sections.findIndex(section => section.id === sourceSectionId);
+        if (sourceSectionIndex === -1) {
+            console.error('⛔ Error: Source section not found');
+            return false;
+        }
+        
+        // Remove the section from the array (we'll add it back later)
+        const [movedSection] = editingFlow.sections.splice(sourceSectionIndex, 1);
+        
+        // 2. Store all the asanas in this section
+        const asanasToMove = [];
+        const asanaIndices = [...movedSection.asanaIds].sort((a, b) => a - b);
+        
+        // Collect the asanas and their information
+        asanaIndices.forEach(asanaIndex => {
+            if (asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
+                asanasToMove.push({
+                    asana: editingFlow.asanas[asanaIndex],
+                    originalIndex: asanaIndex
+                });
+            }
+        });
+        
+        // 3. Remove all asanas from the highest index down to avoid invalidating indices
+        const sortedIndices = [...asanaIndices].sort((a, b) => b - a);
+        sortedIndices.forEach(asanaIndex => {
+            if (asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
+                editingFlow.asanas.splice(asanaIndex, 1);
+                
+                // Update all section asanaIds to account for removed asana
+                editingFlow.sections.forEach(section => {
+                    section.asanaIds = section.asanaIds.map(id => {
+                        if (id === asanaIndex) {
+                            return -1; // Mark for removal
+                        } else if (id > asanaIndex) {
+                            return id - 1; // Shift down by one
+                        }
+                        return id;
+                    }).filter(id => id >= 0);
+                });
+            }
+        });
+        
+        // 4. Adjust the target index if necessary
+        let adjustedTargetIndex = targetIndex;
+        sortedIndices.forEach(asanaIndex => {
+            if (asanaIndex < targetIndex) {
+                adjustedTargetIndex--;
+            }
+        });
+        
+        // 5. Insert all the asanas at the target position
+        const asanaObjects = asanasToMove.map(item => item.asana);
+        editingFlow.asanas.splice(adjustedTargetIndex, 0, ...asanaObjects);
+        
+        // 6. Update the section with the new asana indices
+        movedSection.asanaIds = [];
+        for (let i = 0; i < asanaObjects.length; i++) {
+            movedSection.asanaIds.push(adjustedTargetIndex + i);
+        }
+        
+        // 7. Insert the section at an appropriate position in the sections array
+        // Determine where to insert the section based on the target index
+        let insertAtSectionIndex = 0;
+        
+        // Look for the last section that has asanaIds less than adjustedTargetIndex
+        let lastSectionBeforeTarget = -1;
+        for (let i = 0; i < editingFlow.sections.length; i++) {
+            const section = editingFlow.sections[i];
+            if (section.asanaIds.length > 0) {
+                const maxIndex = Math.max(...section.asanaIds);
+                if (maxIndex < adjustedTargetIndex) {
+                    lastSectionBeforeTarget = i;
+                }
+            }
+        }
+        
+        // Insert after the last section with poses before our target
+        insertAtSectionIndex = lastSectionBeforeTarget + 1;
+        
+        // 8. Reinsert the section
+        editingFlow.sections.splice(insertAtSectionIndex, 0, movedSection);
+        
+        // 9. Update all other section asanaIds to account for inserted asanas
+        editingFlow.sections.forEach(section => {
+            if (section.id !== sourceSectionId) {
+                section.asanaIds = section.asanaIds.map(id => {
+                    if (id >= adjustedTargetIndex) {
+                        return id + asanaObjects.length;
+                    }
+                    return id;
+                });
+            }
+        });
+        
+        console.log('✅ Section and poses moved successfully');
+        success = true;
+    } else {
+        // Regular section-to-section move using the built-in reorderSection method
+        success = editingFlow.reorderSection(sourceSectionId, targetRow);
+    }
     
     if (success) {
         console.log('✅ Section reordering successful');
@@ -3786,9 +4046,12 @@ function handleSectionReordering(e, targetRow) {
         if (editMode) {
             autoSaveFlow();
         }
-    } else {
-        console.error('⛔ Failed to reorder section');
+        
+        return true;
     }
+    
+    console.error('⛔ Failed to reorder section');
+    return false;
 }
 
 function handleTableDragEnd(e) {
@@ -4136,15 +4399,25 @@ function handleCardDrop(e) {
             
             // If this is the target section and we're moving from outside this section
             if (section.id === targetSectionId && (!sourceSectionId || sourceSectionId !== targetSectionId)) {
+                // Check if this is a first position drop
+                const isFirstPositionDrop = row && row.hasAttribute('data-first-position-drop');
+                
                 // Add the pose at the target index if it's not already there
                 if (!updatedIds.includes(targetIndex)) {
-                    // Insert at the correct position rather than just pushing to the end
-                    let insertPosition = 0;
-                    while (insertPosition < updatedIds.length && updatedIds[insertPosition] < targetIndex) {
-                        insertPosition++;
+                    if (isFirstPositionDrop) {
+                        // For first position drops, always put the pose at the beginning of the section
+                        console.log(`First position drop - adding at beginning of section ${section.id}`);
+                        updatedIds.unshift(targetIndex);
+                    } else {
+                        // For regular drops, insert at the target position indicated by the drag number
+                        // This ensures that a pose dragged to position #3 takes that exact position
+                        let insertPosition = 0;
+                        while (insertPosition < updatedIds.length && updatedIds[insertPosition] < targetIndex) {
+                            insertPosition++;
+                        }
+                        updatedIds.splice(insertPosition, 0, targetIndex);
+                        console.log(`Inserting pose at position ${insertPosition} in group`);
                     }
-                    updatedIds.splice(insertPosition, 0, targetIndex);
-                    console.log(`Inserting pose at position ${insertPosition} in group`);
                 }
             }
             
@@ -4155,9 +4428,30 @@ function handleCardDrop(e) {
             section.asanaIds = updatedIds;
         });
         
+        // Check if this is a special first position drop onto a section header
+        const isFirstPositionDrop = row.hasAttribute('data-first-position-drop');
+        
         // Now move the actual pose in the asanas array
+        // When moving down, we need to adjust the target index since removing the source element shifts everything
+        let adjustedTargetIndex = targetIndex;
+        if (sourceIndex < targetIndex && !isFirstPositionDrop) {
+            adjustedTargetIndex = targetIndex - 1;
+        }
+        
+        // First, remove the pose from its current position
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
-        editingFlow.asanas.splice(targetIndex, 0, movedAsana);
+        
+        // For special first position drops, always use the exact target index regardless of source index
+        if (isFirstPositionDrop) {
+            console.log(`Special handling for first position drop into section ${targetSectionId}`);
+            // We intentionally don't adjust the target index for first position drops
+            // to ensure it's placed at exactly that position
+            adjustedTargetIndex = targetIndex;
+        }
+        
+        // When a pose is dragged onto a number, it should take the exact position indicated by that number
+        // This will push the pose currently at that position (and all following poses) down by one
+        editingFlow.asanas.splice(adjustedTargetIndex, 0, movedAsana);
 
         // Temporarily disable transition to avoid animation glitches
         allCards.forEach(card => {
