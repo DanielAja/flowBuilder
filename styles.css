@@ -1047,6 +1047,7 @@ h1 {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   overflow: hidden;
+  table-layout: fixed;
 }
 
 #flowTable th {
@@ -1246,8 +1247,76 @@ h1 {
   transform: translateY(-50%) scale(1.2);
 }
 
+/* Styles for section drop target */
+#flowTable tr.drop-target-section {
+  border-top: 4px solid #ff8c00;
+  border-bottom: 4px solid #ff8c00;
+  background-color: rgba(255, 140, 0, 0.15);
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+  position: relative;
+  z-index: 5;
+}
+
+#flowTable tr.drop-target-section td {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+#flowTable tr.drop-target-section.section-header {
+  background-color: rgba(255, 140, 0, 0.2);
+}
+
+/* Pose number drag indicator */
+.pose-drag-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  background-color: #ff8c00;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  pointer-events: none;
+  transition: transform 0.1s ease;
+  animation: pulse-indicator 1s infinite alternate;
+}
+
+@keyframes pulse-indicator {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(255, 140, 0, 0.5);
+  }
+  100% {
+    transform: scale(1.1);
+    box-shadow: 0 3px 12px rgba(255, 140, 0, 0.8);
+  }
+}
+
 #flowTable tr.drag-highlight, #flowTable tr.highlight-added {
   animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Last moved pose indicator */
+#flowTable tr.last-moved-pose {
+  background-color: rgba(255, 140, 0, 0.15);
+  border-left: 4px solid #ff8c00;
+  position: relative;
+  animation: highlight-last-moved 2s ease-in-out;
+}
+
+#flowTable tr.last-moved-pose td:first-child {
+  color: #ff8c00;
+  font-weight: bold;
+}
+
+
+@keyframes highlight-last-moved {
+  0%, 100% { background-color: rgba(255, 140, 0, 0.15); }
+  50% { background-color: rgba(255, 140, 0, 0.3); }
+}
 }
 
 @keyframes pulse {
@@ -1591,11 +1660,12 @@ h1 {
 
 #flowTable select.side-select {
   padding: 6px 10px;
-  border-radius: 15px;
-  border: 1px solid #e0e0e0;
-  background-color: #f8f8f8;
-  font-size: 12px;
-  font-weight: 500;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+  font-size: 14px;
+  font-weight: 600;
   color: #333;
   appearance: none;
   -webkit-appearance: none;
@@ -1606,21 +1676,26 @@ h1 {
   background-size: 14px;
   padding-right: 24px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   min-width: 80px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #flowTable select.side-select:hover {
-  border-color: #ccc;
-  background-color: #f0f0f0;
+  background-color: rgba(255, 140, 0, 0.05);
+  color: #ff8c00;
 }
 
 #flowTable select.side-select:focus {
   outline: none;
-  border-color: #ff8c00;
-  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+  border-bottom: 1px solid #ff8c00;
+  background-color: rgba(255, 140, 0, 0.05);
+  box-shadow: none;
+  color: #ff8c00;
 }
 
 /* Special styling for different sides */
@@ -1639,17 +1714,60 @@ h1 {
 #flowTable input[type="number"] {
   width: 60px;
   padding: 6px 10px;
-  border-radius: 15px;
-  border: 1px solid #e0e0e0;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid transparent;
   text-align: center;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   color: #333;
-  background-color: #f8f8f8;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  background-color: transparent;
+  box-shadow: none;
+  transition: all 0.2s ease;
   -moz-appearance: textfield; /* Hide the spinner on Firefox */
   margin: 0; /* Remove all margins */
+  height: 100%; /* Take full vertical height */
+  box-sizing: border-box;
+}
+
+/* Match styling with section-name */
+input[type="number"][value="7"][min="1"][max="300"][onchange="updateFlowDuration()"] {
+  width: auto;
+  padding: 6px 10px;
+  border-radius: 0;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  background-color: transparent;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  margin: 0;
+  box-sizing: border-box;
+  letter-spacing: 0.5px;
+  text-align: left;
+  -moz-appearance: textfield;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Add section-count-like style for the span that follows the input */
+input[type="number"][value="7"][min="1"][max="300"][onchange="updateFlowDuration()"]:not(:focus) + span,
+input[type="number"][min="1"][max="300"][onchange="updateFlowDuration()"]:not(:focus) + span {
+  font-size: 14px;
+  font-weight: 400;
+  color: #999;
+  opacity: 0.8;
+  margin-left: 10px;
+}
+
+/* Style for container that has both input and span */
+.container-with-input-and-span {
+  display: flex;
+  align-items: center;
+  background-color: #f8f4f0;
+  padding: 8px 12px;
+  border-radius: 4px;
 }
 
 #flowTable input[type="number"]::-webkit-inner-spin-button, 
@@ -1659,35 +1777,42 @@ h1 {
 }
 
 #flowTable input[type="number"]:hover {
-  border-color: #ccc;
-  background-color: #f0f0f0;
+  background-color: rgba(255, 140, 0, 0.05);
+  color: #ff8c00;
 }
 
 #flowTable input[type="number"]:focus {
   outline: none;
-  border-color: #ff8c00;
-  box-shadow: 0 0 0 2px rgba(255, 140, 0, 0.2);
+  border-bottom: 1px solid #ff8c00;
+  background-color: rgba(255, 140, 0, 0.05);
+  box-shadow: none;
+  color: #ff8c00;
 }
 
 /* Duration wrapper and unit styling */
 .duration-wrapper {
   position: relative;
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
 }
 
 .duration-unit {
   position: absolute;
   right: 12px;
-  color: #999;
-  font-weight: 500;
+  color: inherit;
+  font-weight: inherit;
   font-size: 12px;
+  opacity: 0.7;
   pointer-events: none; /* Make sure the unit doesn't interfere with the input */
 }
 
 /* Make sure there's room for the unit */
 #flowTable .duration-wrapper input[type="number"] {
   padding-right: 20px;
+  width: 100%;
 }
 
 #flowScreen {
@@ -3203,6 +3328,561 @@ input:checked + .slider:before {
   .table-asana .chakra-indicator {
     display: none !important;
   }
+}
+
+/* Section headers in flow table */
+.section-header {
+  background-color: #f8f4f0;
+  font-weight: bold;
+  margin: 0;
+  border-top: none;
+  padding: 0;
+}
+
+.section-header .section-name {
+  color: #ff8c00;
+  font-size: 1.05em;
+  text-align: left;
+  padding-left: 15px;
+  padding-right: 15px;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  box-shadow: none;
+  transition: all 0.2s ease;
+  height: 100%;
+  box-sizing: border-box;
+  white-space: nowrap;
+  width: 100%;
+  position: relative; /* For absolute positioning of children */
+}
+
+.section-header .section-name span {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 6px 15px;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: #333;
+  position: relative;
+  display: inline-block;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  box-shadow: none;
+  vertical-align: middle;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: visible;
+  min-width: 180px;
+}
+
+.section-header .section-name .section-count {
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  padding: 4px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+  margin-left: auto;
+  background-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.section-header:hover .section-name span {
+  background-color: rgba(255, 140, 0, 0.05);
+  color: #ff8c00;
+}
+
+.section-header .section-name span:hover {
+  background-color: rgba(255, 140, 0, 0.05);
+  color: #ff8c00;
+}
+
+.section-header:active .section-name span {
+  background-color: rgba(255, 255, 255, 0.5);
+  letter-spacing: normal;
+}
+
+.section-header td {
+  padding: 12px 10px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+  white-space: nowrap;
+  min-width: 200px; /* Ensure wider cells for section headers */
+}
+
+/* Style for rows in the same section */
+tr[data-section-id] {
+  border-left: 3px solid #ff8c00;
+  background-color: rgba(255, 140, 0, 0.05);
+  margin-top: 0;
+  border-top: none;
+}
+
+/* Add visual grouping for sections */
+tr[data-section-id] td:first-child {
+  padding-left: 8px;
+}
+
+/* Section color classes for consistent coloring */
+.section-color-0,
+tr.section-color-0[data-section-id] {
+  border-left-color: #ff8c00; /* Orange */
+}
+
+.section-color-1,
+tr.section-color-1[data-section-id] {
+  border-left-color: #4CAF50; /* Green */
+}
+
+.section-color-2,
+tr.section-color-2[data-section-id] {
+  border-left-color: #2196F3; /* Blue */
+}
+
+/* Add highlight background to section headers */
+tr.section-header.section-color-0 {
+  background-color: rgba(255, 140, 0, 0.15);
+}
+
+tr.section-header.section-color-1 {
+  background-color: rgba(76, 175, 80, 0.15);
+}
+
+tr.section-header.section-color-2 {
+  background-color: rgba(33, 150, 243, 0.15);
+}
+
+/* Section name span styles based on color */
+tr.section-header.section-color-0 .section-name span {
+  color: #ff8c00;
+}
+
+tr.section-header.section-color-1 .section-name span {
+  color: #4CAF50;
+}
+
+tr.section-header.section-color-2 .section-name span {
+  color: #2196F3;
+}
+
+/* Add slight background color to rows in the same section */
+tr.section-color-0[data-section-id] {
+  background-color: rgba(255, 140, 0, 0.05);
+}
+
+tr.section-color-1[data-section-id] {
+  background-color: rgba(76, 175, 80, 0.05);
+}
+
+tr.section-color-2[data-section-id] {
+  background-color: rgba(33, 150, 243, 0.05);
+}
+
+/* Section header styling */
+tr.section-header {
+  height: 46px; /* Set a fixed height for the section header */
+}
+
+/* Section header row cell styling */
+tr.section-header td {
+  height: 46px; /* Set a fixed height for consistency */
+  box-sizing: border-box;
+  padding: 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* Add shadow to section header */
+tr.section-header {
+  position: relative;
+  display: table-row; /* Ensure proper table row display */
+  width: 100%;
+  table-layout: fixed;
+  margin: 0;
+  padding: 0;
+}
+
+/* Make section header span full width */
+tr.section-header td:first-child {
+  width: 100%;
+  min-width: 500px;
+  padding-right: 30px; /* Extra padding on the right side */
+  white-space: nowrap;
+  overflow: visible; /* Allow content to extend beyond cell if needed */
+}
+
+/* Style for section grouping to make it more obvious */
+tr.section-header + tr[data-section-id] {
+  box-shadow: inset 0 4px 6px -6px rgba(0,0,0,0.1);
+}
+
+/* Fix for section header to ensure single row */
+tr.section-header td[colspan] {
+  height: 46px;
+  vertical-align: middle;
+  padding: 0;
+}
+
+/* Section header layout structure */
+.section-header-content {
+  padding: 0 !important;
+  margin-right: 20 px;
+}
+
+.section-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 15px;
+  margin: 0;
+  border: none;
+}
+
+.section-checkbox {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6.5%;
+}
+
+.section-toggle {
+  flex: 0 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.section-toggle-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  font-size: 16px;
+  color: #666;
+}
+
+.section-header.collapsed .section-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+/* Hide section rows when collapsed */
+tr.section-header.collapsed ~ tr[data-section-id][data-hidden="true"] {
+  display: none;
+}
+
+.section-remove {
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5.5%;
+}
+
+/* Reset section name positioning */
+.section-header .section-name {
+  position: static;
+  flex: 1;
+  max-width: 70%;
+}
+
+/* Add more visible border to last row in a section */
+tr[data-section-id]:last-of-type {
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.section-header .section-select {
+  margin-left: 5px;
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+/* Style section checkboxes */
+.section-select {
+  accent-color: #ff8c00;
+}
+
+/* Add hover effect to section header */
+.section-header:hover {
+  background-color: #f2e9e0;
+}
+
+/* Section buttons */
+.add-section-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.add-section-btn:hover {
+  background-color: #45a049;
+  transform: translateY(-2px);
+}
+
+.edit-section-name-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  padding: 3px;
+  opacity: 0.6;
+}
+
+.edit-section-name-btn:hover {
+  color: #333;
+  opacity: 1;
+}
+
+.delete-section-btn {
+  background: none;
+  border: none;
+  color: #ff5252;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  padding: 3px;
+  opacity: 0.6;
+}
+
+.delete-section-btn:hover {
+  color: #ff0000;
+  opacity: 1;
+}
+
+/* Section modal */
+.section-modal .modal-content {
+  max-width: 400px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  border: none;
+  padding: 25px;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-modal h2 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.section-modal .modal-description {
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.section-modal .close-modal {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.section-modal .close-modal:hover {
+  color: #333;
+}
+
+.section-name-input-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.section-name-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: none;
+  max-width: 250px ;
+}
+
+.section-name-input:focus {
+  border-bottom: 1px solid #ff8c00;
+  background-color: rgba(255, 140, 0, 0.05);
+  box-shadow: none;
+  color: #ff8c00;
+}
+
+.section-name-input::placeholder {
+  color: #aaa;
+  font-weight: 400;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.create-section-btn, .save-section-btn {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  outline: none;
+  box-shadow: 0 2px 4px rgba(255, 140, 0, 0.3);
+  min-width: 100px;
+  text-transform: uppercase;
+}
+
+.create-section-btn:hover, .save-section-btn:hover {
+  background-color: #ff7200;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.4);
+}
+
+.create-section-btn:active, .save-section-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(255, 140, 0, 0.4);
+}
+
+.section-select-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.section-select-dropdown {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.add-to-section-btn {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.add-to-section-btn:hover {
+  background-color: #ff7200;
+}
+
+.create-new-section-link {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.create-new-section-link a {
+  color: #ff8c00;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.create-new-section-link a:hover {
+  text-decoration: underline;
+}
+
+/* New section row */
+.new-section-row {
+  background-color: #f8f8f8;
+}
+
+.add-section-container {
+  padding: 15px;
+  text-align: center;
+}
+
+.add-section-btn-large {
+  background-color: #f0f0f0;
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  transition: all 0.3s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.add-section-btn-large:hover {
+  background-color: #e8e8e8;
+  border-color: #999;
+  color: #333;
+}
+
+.add-section-btn-large span {
+  font-weight: bold;
+}
+
+/* Asana action buttons */
+.asana-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.remove-from-section-btn, .add-to-section-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 3px;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+}
+
+.remove-from-section-btn:hover, .add-to-section-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 /* Asana list chakra indicator */
