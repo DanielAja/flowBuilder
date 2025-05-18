@@ -3554,6 +3554,35 @@ tr.section-header td[colspan] {
   margin-left: 6.5%;
 }
 
+.section-toggle {
+  flex: 0 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px;
+  cursor: pointer;
+}
+
+.section-toggle-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  font-size: 16px;
+  color: #666;
+}
+
+.section-header.collapsed .section-toggle-icon {
+  transform: rotate(-90deg);
+}
+
+/* Hide section rows when collapsed */
+tr.section-header.collapsed ~ tr[data-section-id][data-hidden="true"] {
+  display: none;
+}
+
 .section-remove {
   flex: 0 0 40px;
   display: flex;

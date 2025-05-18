@@ -4889,7 +4889,7 @@ function rebuildTableView() {
                 // Calculate if all poses in this section are selected
                 const allSelected = asanasInSection.every(asanaInfo => asanaInfo.asana.selected);
                 
-                // Create section header with checkbox
+                // Create section header with checkbox and collapse/expand toggle
                 headerRow.innerHTML = `
                     <td colspan="6" class="section-header-content">
                         <div class="section-header-flex">
@@ -4900,7 +4900,10 @@ function rebuildTableView() {
                                    ${allSelected ? 'checked' : ''}
                                    onchange="toggleSectionSelection(this)">
                             </div>
-                            <div class="section-name">
+                            <div class="section-toggle" onclick="toggleSectionCollapse('${section.id}')" title="Collapse/Expand group">
+                                <div class="section-toggle-icon">▼</div>
+                            </div>
+                            <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" style="cursor: pointer;">
                                 <span>${section.name}</span>
                                 <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
                             </div>
@@ -4928,12 +4931,38 @@ function rebuildTableView() {
                     const row = addAsanaRow(table, asana, index, section.name, section.id, displayNumber);
                     // Add the same color class to ensure visual consistency
                     row.classList.add(colorClass);
+                    
+                    // Set the hidden attribute if the section is collapsed
+                    if (headerRow.classList.contains('collapsed')) {
+                        row.setAttribute('data-hidden', 'true');
+                    } else {
+                        row.setAttribute('data-hidden', 'false');
+                    }
                 });
             }
         }
     });
     
     // We're removing the "Create New Section" button at the bottom as requested
+}
+
+// Function to toggle the collapse/expand state of a section
+function toggleSectionCollapse(sectionId) {
+    // Find the section header
+    const sectionHeader = document.querySelector(`tr.section-header[data-section-id="${sectionId}"]`);
+    if (!sectionHeader) return;
+    
+    // Toggle the collapsed class on the header
+    sectionHeader.classList.toggle('collapsed');
+    
+    // Get all rows in this section
+    const sectionRows = document.querySelectorAll(`tr[data-section-id="${sectionId}"]:not(.section-header)`);
+    
+    // Toggle the hidden state for each row
+    const isCollapsed = sectionHeader.classList.contains('collapsed');
+    sectionRows.forEach(row => {
+        row.setAttribute('data-hidden', isCollapsed);
+    });
 }
 
 // Helper function to add an asana row to the table
