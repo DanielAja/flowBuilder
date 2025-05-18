@@ -3286,9 +3286,10 @@ function setupCardDragAndDrop() {
 // Ensures all rows have proper drag attributes
 function updateRowDragAttributes() {
     const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
-    rows.forEach((row, index) => {
+    rows.forEach((row) => { // Removed 'index' from parameters
         row.setAttribute('draggable', 'true');
-        row.setAttribute('data-index', index);
+        // row.setAttribute('data-index', index); // BUGFIX: data-index should not be reset here.
+                                                // It's correctly set by rebuildTableView/addAsanaRow based on actual array index.
         
         // If this is a section header, make it draggable and style it
         if (row.classList.contains('section-header')) {
