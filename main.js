@@ -333,6 +333,9 @@ let editMode = false;
 let currentScreenId = 'homeScreen';
 let asanas = [];
 let dragSource = null;
+
+// Track the last moved pose for highlighting
+let lastMovedPoseIndex = null;
 let currentAsanaIndex = 0;
 let isReversed = false;
 let paused = false;
@@ -3311,6 +3314,9 @@ function updateRowDragAttributes() {
 function handleTableDragStart(e) {
     console.log('------ DRAG START ------');
     
+    // Clear the last moved pose indicator when starting a new drag
+    lastMovedPoseIndex = null;
+    
     // Find the row being dragged - either the target itself or its parent row
     let row = null;
     
@@ -3727,6 +3733,9 @@ function handleTableDrop(e) {
         // Now that the asanas array is in its final state, update all section indices
         // This is the key fix - we update sections AFTER moving the asana
         console.log(`AFTER MOVE: asana moved from index ${sourceIndex} to final index ${adjustedTargetIndex}`);
+        
+        // Set the last moved pose index for highlighting
+        lastMovedPoseIndex = adjustedTargetIndex;
         
         // Update all section asanaIds to reflect the new state of the asanas array
         editingFlow.sections.forEach(section => {
@@ -4932,6 +4941,11 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
     if (sectionName && sectionId) {
         row.setAttribute('data-section', sectionName);
         row.setAttribute('data-section-id', sectionId);
+    }
+    
+    // Add last-moved-pose class if this is the last moved pose
+    if (lastMovedPoseIndex !== null && lastMovedPoseIndex === index) {
+        row.classList.add('last-moved-pose');
     }
     
     // Use the provided display number if available, otherwise calculate based on index
