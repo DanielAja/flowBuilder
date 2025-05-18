@@ -3700,26 +3700,40 @@ function handleTableDrop(e) {
         // Check if this is a special first position drop onto a section header
         const isFirstPositionDrop = row.hasAttribute('data-first-position-drop');
         
-        // Calculate the adjusted target index based on source and target positions
+        // For our improved implementation, we want to ensure the pose is placed EXACTLY where it was dropped
+        // Simplify the logic for determining the target position
+        
+        // Start with the exact target index from the drop location
         let adjustedTargetIndex = targetIndex;
         
-        // Special handling for dragging to immediately following position (e.g., from 1 to 2)
-        if (sourceIndex + 1 === targetIndex && !isFirstPositionDrop) {
-            // When dragging to immediately following position, we need to keep targetIndex as is
-            // This ensures the positions swap correctly
-            console.log(`Dragging to immediately following position: ${sourceIndex} -> ${targetIndex}`);
-        }
-        // Regular adjustment for other downward moves
-        else if (sourceIndex < targetIndex && !isFirstPositionDrop) {
-            adjustedTargetIndex = targetIndex - 1;
+        // Adjust target index only if we're moving downward
+        // If the source index is before the target, we need to account for the removed item
+        if (sourceIndex < targetIndex && !isFirstPositionDrop) {
+            adjustedTargetIndex--;
+            console.log(`Adjusted downward drop target: ${targetIndex} -> ${adjustedTargetIndex}`);
         }
         
-        // For special first position drops, always use the exact target index regardless of source index
+        // Special case for first position drops within a section
         if (isFirstPositionDrop) {
             console.log(`Special handling for first position drop into section ${targetSectionId}`);
-            // We intentionally don't adjust the target index for first position drops
-            // to ensure it's placed at exactly that position
+            // Use the exact first position index for the section
             adjustedTargetIndex = targetIndex;
+        }
+        
+        console.log(`Final target position: ${adjustedTargetIndex}`);
+        
+        // Extra validation to ensure target index is in valid range
+        if (adjustedTargetIndex < 0) {
+            console.log(`Correcting negative target index to 0`);
+            adjustedTargetIndex = 0;
+        } else if (adjustedTargetIndex > editingFlow.asanas.length - 1 && editingFlow.asanas.length > 0) {
+            // If dropping at end, place at the end (after removing source)
+            // But only for non-empty arrays
+            const lastValidIndex = sourceIndex < editingFlow.asanas.length - 1 ? 
+                                   editingFlow.asanas.length - 1 : 
+                                   editingFlow.asanas.length - 2;
+            console.log(`Correcting out-of-bounds target index to ${lastValidIndex}`);
+            adjustedTargetIndex = Math.max(0, lastValidIndex);
         }
         
         console.log(`Calculated adjusted target index: ${adjustedTargetIndex}`);
@@ -3737,90 +3751,84 @@ function handleTableDrop(e) {
         // Set the last moved pose index for highlighting
         lastMovedPoseIndex = adjustedTargetIndex;
         
-        // Update all section asanaIds to reflect the new state of the asanas array
+        // Completely rebuild the section memberships based on the final state of the asanas array
+        // This ensures all sections correctly reference poses at their new positions
+        
+        console.log('------ REBUILDING SECTION MEMBERSHIPS ------');
+        
+        // Create a map to track all poses and their section membership
+        const poseSectionMap = new Map();
+        
+        // First, remove all poses from their sections and map the old indices to new ones
         editingFlow.sections.forEach(section => {
-            // Create a copy of the section's asana IDs for reference and logging
+            // Get the original asana IDs for this section
             const originalIds = [...section.asanaIds];
-            let updatedIds = [];
+            console.log(`Section ${section.id} original asana IDs: ${originalIds.join(', ')}`);
             
-            // For each asanaId in this section, calculate its new position
-            for (const id of originalIds) {
-                // Skip the source index as it's been moved and will be added back if needed
-                if (id === sourceIndex) {
-                    // Skip and don't add to updatedIds
-                    console.log(`Skipping source index ${sourceIndex} in section ${section.id}`);
-                    continue;
+            // Clear the section's asana IDs (we'll rebuild them)
+            section.asanaIds = [];
+            
+            // Process each asana ID in this section
+            originalIds.forEach(oldIndex => {
+                // Skip the source index (it's been moved)
+                if (oldIndex === sourceIndex) {
+                    console.log(`Skipping source index ${sourceIndex} from section ${section.id}`);
+                    return;
                 }
                 
-                // Calculate the new index after the move operations
-                let newIndex = id;
+                // Calculate the new index for this asana
+                let newIndex = oldIndex;
                 
-                // If the original index was greater than sourceIndex, it moved up by 1 position
-                if (id > sourceIndex) {
+                // If the old index was after sourceIndex, it shifted up by 1
+                if (oldIndex > sourceIndex) {
                     newIndex--;
-                    console.log(`Adjusted index ${id} to ${newIndex} (after source removal)`);
+                    console.log(`Adjusted index ${oldIndex} to ${newIndex} (after source removal)`);
                 }
                 
-                // If the (now adjusted) index is at or after the target position, it moved down
+                // If the new index is at or after the adjustedTargetIndex, it shifted down by 1
                 if (newIndex >= adjustedTargetIndex) {
                     newIndex++;
                     console.log(`Adjusted index ${newIndex-1} to ${newIndex} (after target insertion)`);
                 }
                 
-                // Ensure we have a valid index
+                // Store the section ID for this new index
                 if (newIndex >= 0 && newIndex < editingFlow.asanas.length) {
-                    updatedIds.push(newIndex);
+                    poseSectionMap.set(newIndex, section.id);
+                    console.log(`Mapped pose index ${newIndex} to section ${section.id}`);
                 } else {
-                    console.error(`Invalid index ${newIndex} calculated for original id ${id}`);
+                    console.error(`Invalid index ${newIndex} calculated for original id ${oldIndex}`);
                 }
-            }
-            
-            // Handle section membership changes
-            if (section.id === sourceSectionId && section.id !== targetSectionId) {
-                // If this is the source section but not the target, remove the moved pose entirely
-                // The pose has been skipped above (we don't add it back to updatedIds)
-                console.log(`Removing pose from source section ${section.id}`);
-            } else if (section.id === targetSectionId && section.id !== sourceSectionId) {
-                // If this is the target section but not the source, add the moved pose
-                if (!updatedIds.includes(adjustedTargetIndex)) {
-                    if (isFirstPositionDrop) {
-                        // For first position drops, insert at the beginning of the section
-                        console.log(`First position drop - adding at beginning of section ${section.id}`);
-                        updatedIds.unshift(adjustedTargetIndex);
-                    } else {
-                        // For regular drops, insert it in order based on its index
-                        let insertPosition = 0;
-                        while (insertPosition < updatedIds.length && updatedIds[insertPosition] < adjustedTargetIndex) {
-                            insertPosition++;
-                        }
-                        updatedIds.splice(insertPosition, 0, adjustedTargetIndex);
-                        console.log(`Inserting pose at position ${insertPosition} in group ${section.id}`);
-                    }
-                }
-            } else if (section.id === sourceSectionId && section.id === targetSectionId) {
-                // If same section, add back the moved pose at its new position
-                if (!updatedIds.includes(adjustedTargetIndex)) {
-                    let insertPosition = 0;
-                    while (insertPosition < updatedIds.length && updatedIds[insertPosition] < adjustedTargetIndex) {
-                        insertPosition++;
-                    }
-                    updatedIds.splice(insertPosition, 0, adjustedTargetIndex);
-                    console.log(`Moving pose within same section ${section.id}`);
-                }
-            } else if (targetSectionId === null && sourceSectionId !== null) {
-                // Special case: Moving from a section to the ungrouped area
-                // Already handled by skipping the source index above
-                console.log(`Moving pose from section ${sourceSectionId} to ungrouped area`);
-            }
-            
-            // Sort ids to ensure they're in order within the section
-            updatedIds.sort((a, b) => a - b);
-            
-            // Update the section with the new IDs
-            section.asanaIds = updatedIds;
-            
-            console.log(`Updated section ${section.id}: ${originalIds} -> ${updatedIds}`);
+            });
         });
+        
+        // Now handle the moved pose's section membership
+        if (targetSectionId) {
+            // If dropped in a section, add it to that section
+            poseSectionMap.set(adjustedTargetIndex, targetSectionId);
+            console.log(`Mapped moved pose at index ${adjustedTargetIndex} to target section ${targetSectionId}`);
+        } else {
+            // If dropped in ungrouped area, ensure it's not in any section
+            poseSectionMap.delete(adjustedTargetIndex);
+            console.log(`Removed moved pose at index ${adjustedTargetIndex} from all sections (now ungrouped)`);
+        }
+        
+        // Now rebuild all section memberships based on the map
+        editingFlow.sections.forEach(section => {
+            const sectionAsanaIds = [];
+            
+            // Check each pose to see if it belongs to this section
+            for (let i = 0; i < editingFlow.asanas.length; i++) {
+                if (poseSectionMap.get(i) === section.id) {
+                    sectionAsanaIds.push(i);
+                }
+            }
+            
+            // Update the section with the new asana IDs
+            section.asanaIds = sectionAsanaIds;
+            console.log(`Updated section ${section.id} with asana IDs: ${sectionAsanaIds.join(', ')}`);
+        });
+        
+        console.log('------ SECTION MEMBERSHIPS UPDATED ------');
 
         // Fully rebuild the table view with all the new indices and section memberships
         rebuildFlowTable();
