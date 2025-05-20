@@ -15721,4 +15721,96 @@
     <transition>Garland Pose</transition>
   </transitions>
 </asana>
-</asanas>
+  <asana>
+    <n>Prayer Twist</n>
+    <sanskrit>Parivrtta Namaskar</sanskrit>
+    <side>Right</side>
+    <image>images/webp/prayer-twist.webp</image>
+    <description>A standing twisting pose with hands in prayer position. Deepens the twist, improves spinal flexibility, and aids in detoxification. Often performed from Chair or Crescent Lunge.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Twist</tag>
+      <tag>Balance</tag>
+      <tag>Detox</tag>
+      <tag>Core</tag>
+    </tags>
+    <transitions>
+      <transition>Chair Pose</transition>
+      <transition>Crescent Lunge</transition>
+      <transition>Revolved Chair Pose</transition>
+      <transition>Mountain Pose</transition>
+      <transition>Forward Fold</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Belly Down Rest</n>
+    <sanskrit>Advasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/bell-down-rest.webp</image>
+    <description>A restorative pose lying face down with arms extended and head turned to one side. Promotes deep relaxation, helps release tension in the lower back, and provides a gentle stretch to the front of the body.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Prone</tag>
+      <tag>Restorative</tag>
+      <tag>Relaxation</tag>
+      <tag>Resting</tag>
+    </tags>
+    <transitions>
+      <transition>Cobra Pose</transition>
+      <transition>Locust Pose</transition>
+      <transition>Child's Pose</transition>
+      <transition>Corpse Pose</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Cosmic Egg</n>
+    <sanskrit>Vishnu Mudrasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/cosmic-egg.webp</image>
+    <description>A restorative pose lying on the back with arms and legs spread wide, like a star or cosmic being. Promotes complete surrender, deep relaxation, and a sense of expansion and connection to the universe.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Crown</chakra>
+    <tags>
+      <tag>Supine</tag>
+      <tag>Restorative</tag>
+      <tag>Relaxation</tag>
+      <tag>Surrender</tag>
+      <tag>Expansion</tag>
+    </tags>
+    <transitions>
+      <transition>Corpse Pose</transition>
+      <transition>Happy Baby</transition>
+      <transition>Reclined Twist</transition>
+      <transition>Supine Twist</transition>
+    </transitions>
+  </asana>
+
+  <asana>
+    <n>Fetal Pose</n>
+    <sanskrit>Garbha Pindasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/fetal-pose.webp</image>
+    <description>A calming resting pose lying on your side with knees drawn toward chest and arms wrapped around legs or pillowing the head. Promotes feelings of security, comfort, and relaxation.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Side Lying</tag>
+      <tag>Restorative</tag>
+      <tag>Relaxation</tag>
+      <tag>Introspection</tag>
+      <tag>Calming</tag>
+    </tags>
+    <transitions>
+      <transition>Corpse Pose</transition>
+      <transition>Happy Baby</transition>
+      <transition>Child's Pose</transition>
+      <transition>Cosmic Egg</transition>
+    </transitions>
+  </asana>
+
+

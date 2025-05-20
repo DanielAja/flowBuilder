@@ -22,35 +22,41 @@
         top: 20px;
         left: 20px;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
         gap: 10px;
         z-index: 1000;
         width: auto;
-        max-width: 120px;
+        min-width: 280px;
+        max-width: 320px;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: 3px;
         background: rgba(255, 255, 255, 0.9);
-        padding: 6px 10px;
-        border-radius: 20px;
+        padding: 4px 6px;
+        border-radius: 15px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        width: fit-content;
+        min-width: fit-content;
+        flex: 1;
+        justify-content: center;
+        height: 32px;
+        box-sizing: border-box;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.toggle-label {
         color: #333;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: 500;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch {
         position: relative;
         display: inline-block;
-        width: 44px;
-        height: 24px;
+        width: 36px;
+        height: 20px;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input {
@@ -73,8 +79,8 @@
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider:before {
         position: absolute;
         content: "";
-        height: 18px;
-        width: 18px;
+        height: 14px;
+        width: 14px;
         left: 3px;
         bottom: 3px;
         background-color: white;
@@ -90,7 +96,7 @@
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input:checked + span.slider:before {
-        transform: translateX(20px);
+        transform: translateX(16px);
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider.round {
@@ -100,26 +106,44 @@
       #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider.round:before {
         border-radius: 50%;
       }
+      
+      #buildScreen > div.build-content > div.language-toggle-container > div.view-toggle-global {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 4px 6px;
+        border-radius: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        min-width: fit-content;
+        flex: 1;
+        justify-content: center;
+        height: 32px;
+        box-sizing: border-box;
+      }
 
       #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn,
       #buildScreen > div.build-content > div.language-toggle-container > button.home-btn {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 5px;
         background: rgba(255, 255, 255, 0.9);
-        padding: 8px 12px;
-        border-radius: 20px;
+        padding: 4px 8px;
+        border-radius: 15px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border: none;
         color: #333;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.2s ease;
-        width: auto;
-        min-width: 70px;
+        min-width: 60px;
         text-align: center;
+        white-space: nowrap;
+        flex: 1;
+        height: 32px;
+        box-sizing: border-box;
       }
 
       #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn:hover,
@@ -304,6 +328,54 @@
           transform: translateY(0);
         }
       }
+      
+      /* Group Naming Modal Styles */
+      #groupNamingModal .section-name-input-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        margin: 0 auto;
+      }
+      
+      #groupNamingModal.section-modal .section-name-input {
+        padding: 10px 15px;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.9);
+        transition: all 0.2s ease;
+        flex: 1;
+      }
+      
+      #groupNamingModal.section-modal .section-name-input:focus {
+        border-color: #ff8c00;
+        box-shadow: 0 4px 8px rgba(255, 140, 0, 0.1);
+        background: rgba(255, 255, 255, 1);
+      }
+      
+      #groupNamingModal.section-modal .create-section-btn {
+        background: #ff8c00;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.2s ease;
+      }
+      
+      #groupNamingModal.section-modal .create-section-btn:hover {
+        background: #e67e00;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      
+      #groupNamingModal.section-modal .create-section-btn:active {
+        transform: translateY(1px);
+      }
     </style>
   </head>
   <body>
@@ -368,7 +440,7 @@
             </label>
             <span class="toggle-hint"></span>
           </div>
-          <button onclick="saveFlow()" class="save-flow-btn">Back</button>
+          <button onclick="saveFlow()" class="save-flow-btn">Done</button>
         </div>
         <div class="asana-selection">
           <h3 class="asana-section-title">Select poses for your flow</h3>
@@ -403,6 +475,9 @@
             </button>
             <button id="deleteSelectedBtn" class="action-btn" onclick="deleteSelectedPoses()" disabled>
               <span>Delete</span>
+            </button>
+            <button id="addToSectionBtn" class="action-btn" onclick="addSelectedToSection()" disabled>
+              <span>Group</span>
             </button>
             <button id="saveSequenceBtn" class="action-btn" onclick="saveSequence()" disabled>
               <span>Save</span>
@@ -549,6 +624,19 @@
           <button class="import-btn" onclick="processImportFlow()">Import Flow</button>
         </div>
         <div id="importError" class="import-error">Invalid flow code. Please check and try again.</div>
+      </div>
+    </div>
+
+    <!-- Group Naming Modal -->
+    <div id="groupNamingModal" class="modal section-modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeGroupNamingModal()">&times;</span>
+        <h2>Group Selected Poses</h2>
+        <p class="modal-description">Enter a name for this group:</p>
+        <div class="section-name-input-container">
+          <input type="text" id="groupNameInput" placeholder="Group Name" class="section-name-input">
+          <button class="create-section-btn" onclick="createGroupFromSelection()">Group</button>
+        </div>
       </div>
     </div>
 
