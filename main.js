@@ -315,7 +315,24 @@ class Flow {
     }
 
     addAsana(asana) {
-        this.asanas.push(asana);
+        // Access the global tableInDescendingOrder variable
+        if (typeof tableInDescendingOrder !== 'undefined' && tableInDescendingOrder) {
+            // In descending mode, add to the end (highest number)
+            this.asanas.push(asana);
+        } else {
+            // In ascending mode (default), add to the beginning (position 1)
+            this.asanas.unshift(asana);
+            
+            // Update section indices when adding to the beginning
+            if (this.sections && Array.isArray(this.sections)) {
+                this.sections.forEach(section => {
+                    if (section.asanaIds && Array.isArray(section.asanaIds)) {
+                        // Bump all section asanaIds by 1
+                        section.asanaIds = section.asanaIds.map(id => id + 1);
+                    }
+                });
+            }
+        }
     }
 
     getAsana(name) {
@@ -897,14 +914,28 @@ function selectAsana(asana) {
     );
     newAsana.setDuration(7); // Default 7 seconds
     
-    // Always add to the beginning of the array
-    editingFlow.asanas.unshift(newAsana);
+    // Add pose based on table ordering
+    if (tableInDescendingOrder) {
+        // When table is in descending order (largest to smallest),
+        // add pose to the end of the array so it appears at the largest position number
+        editingFlow.asanas.push(newAsana);
+    } else {
+        // When table is in ascending order (smallest to largest),
+        // add pose to the beginning of the array so it appears at position 1
+        editingFlow.asanas.unshift(newAsana);
+        
+        // Update section indices to account for the new pose at the beginning
+        editingFlow.sections.forEach(section => {
+            // Bump all section asanaIds by 1
+            section.asanaIds = section.asanaIds.map(id => id + 1);
+        });
+    }
     
     // Rebuild the table to ensure proper order and numbering
     rebuildFlowTable();
     
-    // The new row will always be the first row since we add to the beginning
-    let rowIndex = 1; // First row after header
+    // Get the row corresponding to the newly added pose
+    let rowIndex = tableInDescendingOrder ? table.rows.length - 1 : 1; // First or last row based on order
     let row = table.rows[rowIndex];
     
     updateFlowDuration();
@@ -6389,8 +6420,25 @@ function pasteSelectedPoses() {
         return newAsana;
     });
     
-    // Always add poses to the beginning of the array
-    editingFlow.asanas.unshift(...newAsanas);
+    // Add poses based on table ordering
+    if (tableInDescendingOrder) {
+        // When table is in descending order (largest to smallest),
+        // add poses to the end of the array so they appear at the largest position number
+        editingFlow.asanas.push(...newAsanas);
+    } else {
+        // When table is in ascending order (smallest to largest),
+        // add poses to the beginning of the array so they appear at position 1
+        editingFlow.asanas.unshift(...newAsanas);
+    }
+    
+    // Update section indices to account for new poses at the beginning
+    if (!tableInDescendingOrder) {
+        // Only need to adjust sections when adding to the beginning
+        editingFlow.sections.forEach(section => {
+            // Bump all section asanaIds by the number of added poses
+            section.asanaIds = section.asanaIds.map(id => id + newAsanas.length);
+        });
+    }
     
     // Rebuild the table
     rebuildFlowTable();
@@ -6891,26 +6939,46 @@ function loadSequence(sequenceId) {
         return newAsana;
     });
 
-    // Always add poses to the beginning of the array
-    editingFlow.asanas.unshift(...newAsanas);
-    // Add poses based on sort order
+    // Add poses based on table ordering
     if (tableInDescendingOrder) {
-        editingFlow.asanas.unshift(...newAsanas);
-    } else {
+        // When table is in descending order (largest to smallest),
+        // add poses to the end of the array so they appear at the largest position number
         editingFlow.asanas.push(...newAsanas);
+    } else {
+        // When table is in ascending order (smallest to largest),
+        // add poses to the beginning of the array so they appear at position 1
+        editingFlow.asanas.unshift(...newAsanas);
+        
+        // Update section indices to account for new poses at the beginning
+        editingFlow.sections.forEach(section => {
+            // Bump all section asanaIds by the number of added poses
+            section.asanaIds = section.asanaIds.map(id => id + newAsanas.length);
+        });
     }
     
     // Create a new section for the sequence
     const sectionId = editingFlow.addSection(sequence.name);
     
     // Get the indices of the newly added asanas
-    const startIndex = tableInDescendingOrder ? 0 : editingFlow.asanas.length - newAsanas.length;
-    const endIndex = tableInDescendingOrder ? newAsanas.length - 1 : editingFlow.asanas.length - 1;
+    let asanaIndices = [];
+    
+    if (tableInDescendingOrder) {
+        // In descending mode, asanas were added at the end
+        const startIndex = editingFlow.asanas.length - newAsanas.length;
+        for (let i = 0; i < newAsanas.length; i++) {
+            asanaIndices.push(startIndex + i);
+        }
+    } else {
+        // In ascending mode, asanas were added at the beginning (position 0 to n-1)
+        for (let i = 0; i < newAsanas.length; i++) {
+            asanaIndices.push(i);
+        }
+    }
     
     // Add all asanas from the sequence to the section
-    for (let i = startIndex; i <= endIndex; i++) {
-        editingFlow.addAsanaToSection(i, sectionId);
-    }
+    asanaIndices.forEach(index => {
+        editingFlow.addAsanaToSection(index, sectionId);
+    });
 
     // Rebuild the table
     rebuildFlowTable();
@@ -6989,8 +7057,22 @@ function addCustomPose() {
     );
     customPose.setDuration(7); // Default duration
 
-    // Always add to the beginning of the array
-    editingFlow.asanas.unshift(customPose);
+    // Add pose based on table ordering
+    if (tableInDescendingOrder) {
+        // When table is in descending order (largest to smallest),
+        // add pose to the end of the array so it appears at the largest position number
+        editingFlow.asanas.push(customPose);
+    } else {
+        // When table is in ascending order (smallest to largest),
+        // add pose to the beginning of the array so it appears at position 1
+        editingFlow.asanas.unshift(customPose);
+        
+        // Update section indices to account for the new pose at the beginning
+        editingFlow.sections.forEach(section => {
+            // Bump all section asanaIds by 1
+            section.asanaIds = section.asanaIds.map(id => id + 1);
+        });
+    }
 
     // Rebuild the table
     rebuildFlowTable();
