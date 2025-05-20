@@ -897,20 +897,14 @@ function selectAsana(asana) {
     );
     newAsana.setDuration(7); // Default 7 seconds
     
-    // Add to the beginning or end of the array based on sort order
-    if (tableInDescendingOrder) {
-        // If in descending order, add to the beginning
-        editingFlow.asanas.unshift(newAsana);
-    } else {
-        // If in ascending order, add to the end
-        editingFlow.addAsana(newAsana);
-    }
+    // Always add to the beginning of the array
+    editingFlow.asanas.unshift(newAsana);
     
     // Rebuild the table to ensure proper order and numbering
     rebuildFlowTable();
     
-    // The new row will be either the first or last depending on sort order
-    let rowIndex = tableInDescendingOrder ? 1 : table.rows.length - 1;
+    // The new row will always be the first row since we add to the beginning
+    let rowIndex = 1; // First row after header
     let row = table.rows[rowIndex];
     
     updateFlowDuration();
@@ -6395,14 +6389,8 @@ function pasteSelectedPoses() {
         return newAsana;
     });
     
-    // Add poses based on sort order
-    if (tableInDescendingOrder) {
-        // If in descending order, add to the beginning of the array
-        editingFlow.asanas.unshift(...newAsanas);
-    } else {
-        // If in ascending order, add to the end of the array
-        editingFlow.asanas.push(...newAsanas);
-    }
+    // Always add poses to the beginning of the array
+    editingFlow.asanas.unshift(...newAsanas);
     
     // Rebuild the table
     rebuildFlowTable();
@@ -6903,6 +6891,8 @@ function loadSequence(sequenceId) {
         return newAsana;
     });
 
+    // Always add poses to the beginning of the array
+    editingFlow.asanas.unshift(...newAsanas);
     // Add poses based on sort order
     if (tableInDescendingOrder) {
         editingFlow.asanas.unshift(...newAsanas);
@@ -6999,12 +6989,8 @@ function addCustomPose() {
     );
     customPose.setDuration(7); // Default duration
 
-    // Add to the flow based on sort order
-    if (tableInDescendingOrder) {
-        editingFlow.asanas.unshift(customPose);
-    } else {
-        editingFlow.addAsana(customPose);
-    }
+    // Always add to the beginning of the array
+    editingFlow.asanas.unshift(customPose);
 
     // Rebuild the table
     rebuildFlowTable();
