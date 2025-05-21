@@ -1271,16 +1271,19 @@ function saveFlow() {
     // Update lastEdited timestamp
     editingFlow.lastEdited = new Date().toISOString();
 
-    // Update asana durations and sides from input fields
-    const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
-    rows.forEach((row, index) => {
-        if (index < editingFlow.asanas.length) {
+    // Update asana durations and sides from input fields using data-index
+    const rows = document.querySelectorAll('#flowTable tr:not(:first-child):not(.section-header)');
+    rows.forEach((row) => {
+        const asanaIndex = parseInt(row.getAttribute('data-index'));
+        if (!isNaN(asanaIndex) && asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
             const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
             const sideSelect = row.querySelector('select.side-select');
             
             if (durationInput && sideSelect) {
-                editingFlow.asanas[index].duration = parseInt(durationInput.value) || 7;
-                editingFlow.asanas[index].side = sideSelect.value;
+                editingFlow.asanas[asanaIndex].duration = parseInt(durationInput.value) || 7;
+                // Map Front back to Center for internal storage consistency with XML
+                const mappedSide = sideSelect.value === "Front" ? "Center" : sideSelect.value;
+                editingFlow.asanas[asanaIndex].side = mappedSide;
             }
         }
     });
@@ -1470,6 +1473,7 @@ function playFlow(flowID) {
                 asana.chakra || ""
             );
             newAsana.setDuration(asana.duration || 15);
+            newAsana.setSide(asana.side || "Center");
             return newAsana;
         });
     }
@@ -2346,6 +2350,7 @@ function editFlow(flowID) {
                     asana.chakra || ""
                 );
                 newAsana.setDuration(asana.duration || 7);
+                newAsana.setSide(asana.side || "Center");
                 return newAsana;
             }
             return asana;
