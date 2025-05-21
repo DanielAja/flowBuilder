@@ -2069,6 +2069,7 @@ function exportFlow(flowID) {
                 duration: asana.duration || 7,
                 chakra: asana.chakra || ""
             })),
+            sections: flowToExport.sections || [], // Include sections (groups) in export
             timestamp: new Date().toISOString(),
             version: "1.0" // For future compatibility
         };
@@ -2127,6 +2128,15 @@ function importFlow(shareCode) {
             newAsana.setDuration(asana.duration || 7);
             newFlow.addAsana(newAsana);
         });
+
+        // Import sections (groups) if they exist
+        if (importData.sections && Array.isArray(importData.sections)) {
+            newFlow.sections = importData.sections.map(section => ({
+                id: section.id || generateUniqueID(), // Generate new ID if missing
+                name: section.name || "Unnamed Section",
+                asanaIds: section.asanaIds || [] // Preserve asana IDs in sections
+            }));
+        }
 
         // Calculate total duration
         newFlow.calculateTotalDuration();
