@@ -964,10 +964,12 @@ function selectAsana(asana) {
 
 // Function to create a side dropdown menu
 function createSideDropdown(side) {
-    if (side === "Center") {
-        return '<select class="side-select" onchange="updateAsanaImageOrientation(this)"><option value="Center" selected>Center</option></select>';
-    }
+    // Convert Center to Front for display, but maintain compatibility
+    const displaySide = side === "Center" ? "Front" : side;
+    
     return `<select class="side-select" onchange="updateAsanaImageOrientation(this)">
+        <option value="Front" ${(side === "Center" || side === "Front") ? "selected" : ""}>Front</option>
+        <option value="Back" ${side === "Back" ? "selected" : ""}>Back</option>
         <option value="Right" ${side === "Right" ? "selected" : ""}>Right</option>
         <option value="Left" ${side === "Left" ? "selected" : ""}>Left</option>
     </select>`;
@@ -992,7 +994,9 @@ function updateAsanaImageOrientation(selectElement) {
     // Update the asana in the editingFlow
     const rowIndex = row.rowIndex - 1; // Adjust for header row
     if (editingFlow && editingFlow.asanas && editingFlow.asanas[rowIndex]) {
-        editingFlow.asanas[rowIndex].side = selectElement.value;
+        // Map Front back to Center for internal storage consistency with XML
+        const mappedSide = selectElement.value === "Front" ? "Center" : selectElement.value;
+        editingFlow.asanas[rowIndex].side = mappedSide;
         
         // Auto-save if in edit mode
         if (editMode) {
@@ -5394,25 +5398,30 @@ function rebuildCardView() {
         sideSelect.onchange = function() { updateAsanaImageOrientation(this); };
         sideSelect.onclick = function(e) { e.stopPropagation(); }; // Prevent clicks from bubbling
 
-        if (asana.side === "Center") {
-            const option = document.createElement('option');
-            option.value = "Center";
-            option.textContent = "Center";
-            option.selected = true;
-            sideSelect.appendChild(option);
-        } else {
-            const rightOption = document.createElement('option');
-            rightOption.value = "Right";
-            rightOption.textContent = "Right";
-            rightOption.selected = asana.side === "Right";
-            sideSelect.appendChild(rightOption);
+        // Create all four side options consistently
+        const frontOption = document.createElement('option');
+        frontOption.value = "Front";
+        frontOption.textContent = "Front";
+        frontOption.selected = (asana.side === "Center" || asana.side === "Front");
+        sideSelect.appendChild(frontOption);
 
-            const leftOption = document.createElement('option');
-            leftOption.value = "Left";
-            leftOption.textContent = "Left";
-            leftOption.selected = asana.side === "Left";
-            sideSelect.appendChild(leftOption);
-        }
+        const backOption = document.createElement('option');
+        backOption.value = "Back";
+        backOption.textContent = "Back";
+        backOption.selected = asana.side === "Back";
+        sideSelect.appendChild(backOption);
+
+        const rightOption = document.createElement('option');
+        rightOption.value = "Right";
+        rightOption.textContent = "Right";
+        rightOption.selected = asana.side === "Right";
+        sideSelect.appendChild(rightOption);
+
+        const leftOption = document.createElement('option');
+        leftOption.value = "Left";
+        leftOption.textContent = "Left";
+        leftOption.selected = asana.side === "Left";
+        sideSelect.appendChild(leftOption);
 
         sideP.appendChild(sideLabel);
         sideP.appendChild(sideSelect);
