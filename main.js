@@ -1139,6 +1139,18 @@ function removePose(button) {
             if (!isNaN(dataIndex) && dataIndex >= 0 && dataIndex < editingFlow.asanas.length) {
                 editingFlow.asanas.splice(dataIndex, 1);
 
+                // Update section references to account for the removed pose
+                editingFlow.sections.forEach(section => {
+                    // First, remove any direct references to the deleted pose
+                    section.asanaIds = section.asanaIds.filter(asanaId => asanaId !== dataIndex);
+                    
+                    // Then, adjust the indices of the remaining poses to account for the removed pose
+                    section.asanaIds = section.asanaIds.map(asanaId => {
+                        // If this asana index is after the deleted index, decrement it
+                        return asanaId > dataIndex ? asanaId - 1 : asanaId;
+                    });
+                });
+
                 // Rebuild the entire view to ensure proper order and numbering
                 rebuildFlowTable();
 
@@ -1163,11 +1175,35 @@ function removePose(button) {
         // If data-index is valid, use it to remove from array
         if (!isNaN(dataIndex) && dataIndex >= 0 && dataIndex < editingFlow.asanas.length) {
             editingFlow.asanas.splice(dataIndex, 1);
+            
+            // Update section references to account for the removed pose
+            editingFlow.sections.forEach(section => {
+                // First, remove any direct references to the deleted pose
+                section.asanaIds = section.asanaIds.filter(asanaId => asanaId !== dataIndex);
+                
+                // Then, adjust the indices of the remaining poses to account for the removed pose
+                section.asanaIds = section.asanaIds.map(asanaId => {
+                    // If this asana index is after the deleted index, decrement it
+                    return asanaId > dataIndex ? asanaId - 1 : asanaId;
+                });
+            });
         } else {
             // Fallback to using row index if data-index is invalid
             const arrayIndex = rowIndex - 1;
             if (arrayIndex >= 0 && arrayIndex < editingFlow.asanas.length) {
                 editingFlow.asanas.splice(arrayIndex, 1);
+                
+                // Update section references to account for the removed pose
+                editingFlow.sections.forEach(section => {
+                    // First, remove any direct references to the deleted pose
+                    section.asanaIds = section.asanaIds.filter(asanaId => asanaId !== arrayIndex);
+                    
+                    // Then, adjust the indices of the remaining poses to account for the removed pose
+                    section.asanaIds = section.asanaIds.map(asanaId => {
+                        // If this asana index is after the deleted index, decrement it
+                        return asanaId > arrayIndex ? asanaId - 1 : asanaId;
+                    });
+                });
             }
         }
 
