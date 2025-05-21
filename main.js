@@ -2088,14 +2088,19 @@ function endFlow() {
 
 // Function to export a flow as a shareable string
 function exportFlow(flowID) {
+    console.log('exportFlow called with flowID:', flowID);
+    
     // Get all flows from storage
     const flows = getFlows();
+    console.log('All flows:', flows);
+    console.log('Available flow IDs:', flows.map(f => f.flowID));
 
     // Find the flow with the given ID
     const flowToExport = flows.find(flow => flow.flowID === flowID);
 
     if (!flowToExport) {
         console.error(`Flow with ID ${flowID} not found`);
+        console.error('Available flows:', flows.map(f => ({ id: f.flowID, name: f.name })));
         return null;
     }
 
@@ -2126,12 +2131,17 @@ function exportFlow(flowID) {
 
         // Convert to JSON string and encode as base64
         const jsonStr = JSON.stringify(exportData);
+        console.log('JSON string length:', jsonStr.length);
+        
         // Use btoa for base64 encoding (it's built into browsers)
-        const encoded = btoa(jsonStr);
+        // First encode to handle UTF-8 characters properly
+        const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+        console.log('Successfully encoded share code, length:', encoded.length);
 
         return encoded;
     } catch (error) {
         console.error('Error exporting flow:', error);
+        console.error('Export data that failed:', exportData);
         return null;
     }
 }
@@ -2139,8 +2149,8 @@ function exportFlow(flowID) {
 // Function to import a flow from a shareable string
 function importFlow(shareCode) {
     try {
-        // Decode the base64 string
-        const jsonStr = atob(shareCode);
+        // Decode the base64 string and handle UTF-8 characters properly
+        const jsonStr = decodeURIComponent(escape(atob(shareCode)));
 
         // Parse the JSON
         const importData = JSON.parse(jsonStr);
