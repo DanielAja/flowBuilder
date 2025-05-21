@@ -1064,6 +1064,46 @@ function updateFlowDuration() {
     if (editMode) {
         autoSaveFlow();
     }
+    
+    // Update group header durations
+    updateGroupHeaderDurations();
+}
+
+// Function to update all group header durations
+function updateGroupHeaderDurations() {
+    const sectionHeaders = document.querySelectorAll('#flowTable tr.section-header');
+    
+    sectionHeaders.forEach(headerRow => {
+        const sectionId = headerRow.getAttribute('data-section-id');
+        if (!sectionId) return;
+        
+        // Get all poses in this section
+        const sectionRows = document.querySelectorAll(`#flowTable tr[data-section-id="${sectionId}"]:not(.section-header)`);
+        
+        // Calculate total duration for this section
+        let sectionDuration = 0;
+        let poseCount = 0;
+        
+        sectionRows.forEach(row => {
+            const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
+            if (durationInput) {
+                sectionDuration += parseInt(durationInput.value) || 7;
+                poseCount++;
+            }
+        });
+        
+        // Update the section header display
+        const sectionDurationDisplay = displayFlowDuration(sectionDuration);
+        const sectionCountSpan = headerRow.querySelector('.section-count');
+        const sectionDurationSpan = headerRow.querySelector('.section-duration');
+        
+        if (sectionCountSpan) {
+            sectionCountSpan.textContent = `${poseCount} pose${poseCount !== 1 ? 's' : ''}`;
+        }
+        if (sectionDurationSpan) {
+            sectionDurationSpan.textContent = sectionDurationDisplay;
+        }
+    });
 }
 
 // Function to automatically save flow changes
