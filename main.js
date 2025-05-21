@@ -106,7 +106,8 @@ class Flow {
         const section = {
             id: sectionId,
             name: name,
-            asanaIds: [] // Store IDs of asanas in this section
+            asanaIds: [], // Store IDs of asanas in this section
+            collapsed: false // Track collapsed state
         };
         
         // Add the section to the flow
@@ -4916,6 +4917,11 @@ function rebuildTableView() {
                 const colorClass = `section-color-${sectionIndex % 3}`;
                 headerRow.classList.add(colorClass);
                 
+                // Restore collapsed state from section data
+                if (section.collapsed) {
+                    headerRow.classList.add('collapsed');
+                }
+                
                 // Get asanas in this section and sort them by their indices
                 // Use the correct sort order based on tableInDescendingOrder
                 const asanasInSection = editingFlow.getAsanasInSection(section.id)
@@ -4936,7 +4942,7 @@ function rebuildTableView() {
                                    onchange="toggleSectionSelection(this)">
                             </div>
                             <div class="section-toggle" onclick="toggleSectionCollapse('${section.id}')" title="Collapse/Expand group">
-                                <div class="section-toggle-icon">▼</div>
+                                <div class="section-toggle-icon">${section.collapsed ? '▶' : '▼'}</div>
                             </div>
                             <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" style="cursor: pointer;">
                                 <span>${section.name}</span>
@@ -4998,6 +5004,22 @@ function toggleSectionCollapse(sectionId) {
     sectionRows.forEach(row => {
         row.setAttribute('data-hidden', isCollapsed);
     });
+    
+    // Update the toggle icon
+    const toggleIcon = sectionHeader.querySelector('.section-toggle-icon');
+    if (toggleIcon) {
+        toggleIcon.textContent = isCollapsed ? '▶' : '▼';
+    }
+    
+    // Save the collapsed state to the section data
+    const section = editingFlow.sections.find(s => s.id === sectionId);
+    if (section) {
+        section.collapsed = isCollapsed;
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+    }
 }
 
 // Helper function to add an asana row to the table
