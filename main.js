@@ -948,12 +948,12 @@ function updateAsanaImageOrientation(selectElement) {
         img.style.transform = 'scaleX(1)';
     }
     
-    // Update the asana in the editingFlow
-    const rowIndex = row.rowIndex - 1; // Adjust for header row
-    if (editingFlow && editingFlow.asanas && editingFlow.asanas[rowIndex]) {
+    // Update the asana in the editingFlow using data-index attribute
+    const asanaIndex = parseInt(row.getAttribute('data-index'));
+    if (!isNaN(asanaIndex) && asanaIndex >= 0 && editingFlow && editingFlow.asanas && asanaIndex < editingFlow.asanas.length) {
         // Map Front back to Center for internal storage consistency with XML
         const mappedSide = selectElement.value === "Front" ? "Center" : selectElement.value;
-        editingFlow.asanas[rowIndex].side = mappedSide;
+        editingFlow.asanas[asanaIndex].side = mappedSide;
         
         // Auto-save if in edit mode
         if (editMode) {
@@ -974,6 +974,12 @@ function updateRowNumbers() {
     const totalRows = rows.length;
     
     rows.forEach((row, index) => {
+        // Skip section headers for numbering
+        if (row.classList.contains('section-header')) {
+            row.setAttribute("draggable", "true");
+            return;
+        }
+        
         // If in descending order, number from highest to lowest
         if (tableInDescendingOrder) {
             row.cells[0].innerHTML = totalRows - index;
@@ -981,9 +987,11 @@ function updateRowNumbers() {
             row.cells[0].innerHTML = index + 1;
         }
         
-        // Add drag attributes for every row
+        // Add drag attributes for every row but DON'T overwrite data-index
+        // because it's already correctly set during table creation
         row.setAttribute("draggable", "true");
-        row.setAttribute("data-index", index);
+        // REMOVED: row.setAttribute("data-index", index); 
+        // The data-index should already be correctly set to the actual asana index
     });
 }
 
