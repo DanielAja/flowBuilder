@@ -118,6 +118,8 @@ class Flow {
     
     // Reorder a section by moving it from one position to another
     reorderSection(sourceSectionId, targetRow) {
+        // FIXED: Completely rewritten with a robust rebuild approach
+        
         // Find the source section
         const sourceIndex = this.sections.findIndex(section => section.id === sourceSectionId);
         if (sourceIndex === -1) {
@@ -125,13 +127,12 @@ class Flow {
             return false;
         }
         
-        // Get the source section
         const sourceSection = this.sections[sourceIndex];
+        console.log(`Moving section "${sourceSection.name}" with ${sourceSection.asanaIds.length} poses`);
         
         // Determine the target position for the section
         let targetIndex;
         
-        // If the target is a section header, place it before that section
         if (targetRow.classList.contains('section-header')) {
             const targetSectionId = targetRow.getAttribute('data-section-id');
             targetIndex = this.sections.findIndex(section => section.id === targetSectionId);
@@ -139,24 +140,17 @@ class Flow {
                 console.error('Target section not found:', targetSectionId);
                 return false;
             }
-        } 
-        // If the target is a regular row, find what section it belongs to
-        else {
+        } else {
             const targetSectionId = targetRow.getAttribute('data-section-id');
-            
-            // If it's in a section, place it after that section
             if (targetSectionId) {
                 targetIndex = this.sections.findIndex(section => section.id === targetSectionId);
                 if (targetIndex === -1) {
                     console.error('Target section not found:', targetSectionId);
                     return false;
                 }
-                // Place after this section
-                targetIndex += 1;
-            } 
-            // If it's not in a section, place the section at the beginning
-            else {
-                targetIndex = 0;
+                targetIndex += 1; // Place after this section
+            } else {
+                targetIndex = 0; // Place at beginning for ungrouped poses
             }
         }
         
@@ -170,103 +164,66 @@ class Flow {
             return false;
         }
         
-        // Store the poses that need to be moved with the section
-        const posesInSection = [...sourceSection.asanaIds];
-        if (posesInSection.length > 0) {
-            console.log(`Moving ${posesInSection.length} poses with section "${sourceSection.name}"`);
-            
-            // Sort poses by their index to ensure we preserve their order
-            posesInSection.sort((a, b) => a - b);
-            
-            // Calculate the position where we'll insert the section's poses
-            // This is either:
-            // 1. Before the first pose of the target section (if moving before another section)
-            // 2. After the last pose of the previous section (if moving after a section)
-            // 3. At the beginning of the asanas array (if moving to the beginning)
-            
-            let targetAsanaPosition = 0; // Default to beginning
-            
-            // If we're moving after a specific section
-            if (targetIndex > 0 && targetIndex <= this.sections.length) {
-                const sectionBefore = this.sections[targetIndex - 1];
-                if (sectionBefore && sectionBefore.asanaIds.length > 0) {
-                    // Find the highest index in the section before the target
-                    const maxIndex = Math.max(...sectionBefore.asanaIds);
-                    targetAsanaPosition = maxIndex + 1;
-                }
-            } 
-            // If we're moving before a specific section
-            else if (targetIndex < this.sections.length) {
-                const sectionAfter = this.sections[targetIndex];
-                if (sectionAfter && sectionAfter.asanaIds.length > 0) {
-                    // Find the lowest index in the target section
-                    const minIndex = Math.min(...sectionAfter.asanaIds);
-                    targetAsanaPosition = minIndex;
-                }
-            }
-            
-            // Create a temporary array of asanas to be moved
-            const asanasToMove = [];
-            
-            // Remove the poses from their current positions and save them
-            for (let i = posesInSection.length - 1; i >= 0; i--) {
-                const asanaIndex = posesInSection[i];
-                if (asanaIndex >= 0 && asanaIndex < this.asanas.length) {
-                    // Remove the asana
-                    const [removedAsana] = this.asanas.splice(asanaIndex, 1);
-                    asanasToMove.unshift(removedAsana);
-                    
-                    // Adjust indices of asanas that will be moved
-                    for (let j = 0; j < posesInSection.length; j++) {
-                        if (posesInSection[j] > asanaIndex) {
-                            posesInSection[j] -= 1;
-                        }
-                    }
-                    
-                    // Adjust target position if needed
-                    if (asanaIndex < targetAsanaPosition) {
-                        targetAsanaPosition -= 1;
-                    }
-                    
-                    // Update all section asanaIds to account for removed asana
-                    this.sections.forEach(section => {
-                        section.asanaIds = section.asanaIds.map(id => {
-                            if (id === asanaIndex) {
-                                return -1; // Mark for removal
-                            } else if (id > asanaIndex) {
-                                return id - 1; // Shift down by one
-                            }
-                            return id;
-                        }).filter(id => id >= 0);
-                    });
-                }
-            }
-            
-            // Insert the asanas at the target position
-            this.asanas.splice(targetAsanaPosition, 0, ...asanasToMove);
-            
-            // Update the section's asanaIds to reflect the new positions
-            sourceSection.asanaIds = [];
-            for (let i = 0; i < asanasToMove.length; i++) {
-                sourceSection.asanaIds.push(targetAsanaPosition + i);
-            }
-            
-            // Update all other sections' asanaIds to account for inserted asanas
-            this.sections.forEach(section => {
-                if (section.id !== sourceSectionId) {
-                    section.asanaIds = section.asanaIds.map(id => {
-                        if (id >= targetAsanaPosition) {
-                            return id + asanasToMove.length;
-                        }
-                        return id;
-                    });
-                }
+        // ROBUST APPROACH: Instead of complex index manipulation, 
+        // we'll rebuild the entire data structure from scratch
+        
+        // 1. Save all current asanas with their section membership
+        const allAsanasWithSections = [];
+        for (let i = 0; i < this.asanas.length; i++) {
+            const belongsToSection = this.sections.find(section => 
+                section.asanaIds.includes(i)
+            );
+            allAsanasWithSections.push({
+                asana: this.asanas[i],
+                sectionId: belongsToSection ? belongsToSection.id : null,
+                originalIndex: i
             });
         }
         
-        // Move the section in the sections array
+        // 2. Move the section in the sections array
         const [movedSection] = this.sections.splice(sourceIndex, 1);
         this.sections.splice(targetIndex, 0, movedSection);
+        
+        // 3. Rebuild the asanas array and all section asanaIds from scratch
+        // based on the new section order
+        const newAsanas = [];
+        
+        // Clear all section asanaIds - we'll rebuild them
+        this.sections.forEach(section => {
+            section.asanaIds = [];
+        });
+        
+        // Process sections in their new order
+        this.sections.forEach(section => {
+            // Find all asanas that belong to this section
+            const sectionAsanas = allAsanasWithSections.filter(item => 
+                item.sectionId === section.id
+            );
+            
+            // Add them to the new asanas array and update section asanaIds
+            sectionAsanas.forEach(item => {
+                const newIndex = newAsanas.length;
+                newAsanas.push(item.asana);
+                section.asanaIds.push(newIndex);
+            });
+        });
+        
+        // Add any ungrouped asanas at the end
+        const ungroupedAsanas = allAsanasWithSections.filter(item => 
+            item.sectionId === null
+        );
+        ungroupedAsanas.forEach(item => {
+            newAsanas.push(item.asana);
+        });
+        
+        // 4. Replace the asanas array with the rebuilt one
+        this.asanas = newAsanas;
+        
+        console.log('Section reordering completed with full rebuild');
+        console.log('New section order:');
+        this.sections.forEach((section, index) => {
+            console.log(`  ${index + 1}. "${section.name}" - ${section.asanaIds.length} poses`);
+        });
         
         return true;
     }
@@ -3873,76 +3830,52 @@ function handleTableDrop(e) {
         
         console.log('------ REBUILDING SECTION MEMBERSHIPS ------');
         
-        // Create a map to track all poses and their section membership
-        const poseSectionMap = new Map();
+        // FIXED: Simple and robust section membership update
+        // Instead of complex index mapping, we use a direct approach:
+        // 1. Remove the moved pose from its original section (if any)
+        // 2. Add the moved pose to its new section (if any) 
+        // 3. Update all other poses' indices due to the array shift
         
-        // First, remove all poses from their sections and map the old indices to new ones
+        console.log('Updating section memberships after pose move...');
+        
+        // Step 1: Remove the moved pose from its original section
+        if (sourceSectionId) {
+            const sourceSection = editingFlow.getSectionById(sourceSectionId);
+            if (sourceSection) {
+                sourceSection.asanaIds = sourceSection.asanaIds.filter(id => id !== sourceIndex);
+                console.log(`Removed pose from source section ${sourceSectionId}`);
+            }
+        }
+        
+        // Step 2: Update all section indices due to the removal and insertion
         editingFlow.sections.forEach(section => {
-            // Get the original asana IDs for this section
-            const originalIds = [...section.asanaIds];
-            console.log(`Section ${section.id} original asana IDs: ${originalIds.join(', ')}`);
-            
-            // Clear the section's asana IDs (we'll rebuild them)
-            section.asanaIds = [];
-            
-            // Process each asana ID in this section
-            originalIds.forEach(oldIndex => {
-                // Skip the source index (it's been moved)
-                if (oldIndex === sourceIndex) {
-                    console.log(`Skipping source index ${sourceIndex} from section ${section.id}`);
-                    return;
+            section.asanaIds = section.asanaIds.map(id => {
+                // First adjust for the removal of sourceIndex
+                if (id > sourceIndex) {
+                    id--;
                 }
-                
-                // Calculate the new index for this asana
-                let newIndex = oldIndex;
-                
-                // If the old index was after sourceIndex, it shifted up by 1
-                if (oldIndex > sourceIndex) {
-                    newIndex--;
-                    console.log(`Adjusted index ${oldIndex} to ${newIndex} (after source removal)`);
+                // Then adjust for the insertion at adjustedTargetIndex
+                if (id >= adjustedTargetIndex) {
+                    id++;
                 }
-                
-                // If the new index is at or after the adjustedTargetIndex, it shifted down by 1
-                if (newIndex >= adjustedTargetIndex) {
-                    newIndex++;
-                    console.log(`Adjusted index ${newIndex-1} to ${newIndex} (after target insertion)`);
-                }
-                
-                // Store the section ID for this new index
-                if (newIndex >= 0 && newIndex < editingFlow.asanas.length) {
-                    poseSectionMap.set(newIndex, section.id);
-                    console.log(`Mapped pose index ${newIndex} to section ${section.id}`);
-                } else {
-                    console.error(`Invalid index ${newIndex} calculated for original id ${oldIndex}`);
-                }
+                return id;
             });
         });
         
-        // Now handle the moved pose's section membership
+        // Step 3: Add the moved pose to its new section (if any)
         if (targetSectionId) {
-            // If dropped in a section, add it to that section
-            poseSectionMap.set(adjustedTargetIndex, targetSectionId);
-            console.log(`Mapped moved pose at index ${adjustedTargetIndex} to target section ${targetSectionId}`);
-        } else {
-            // If dropped in ungrouped area, ensure it's not in any section
-            poseSectionMap.delete(adjustedTargetIndex);
-            console.log(`Removed moved pose at index ${adjustedTargetIndex} from all sections (now ungrouped)`);
+            const targetSection = editingFlow.getSectionById(targetSectionId);
+            if (targetSection) {
+                targetSection.asanaIds.push(adjustedTargetIndex);
+                // Keep the section's poses in index order for consistency
+                targetSection.asanaIds.sort((a, b) => a - b);
+                console.log(`Added pose to target section ${targetSectionId} at index ${adjustedTargetIndex}`);
+            }
         }
         
-        // Now rebuild all section memberships based on the map
+        // Log updated section contents for verification
         editingFlow.sections.forEach(section => {
-            const sectionAsanaIds = [];
-            
-            // Check each pose to see if it belongs to this section
-            for (let i = 0; i < editingFlow.asanas.length; i++) {
-                if (poseSectionMap.get(i) === section.id) {
-                    sectionAsanaIds.push(i);
-                }
-            }
-            
-            // Update the section with the new asana IDs
-            section.asanaIds = sectionAsanaIds;
-            console.log(`Updated section ${section.id} with asana IDs: ${sectionAsanaIds.join(', ')}`);
+            console.log(`Section ${section.id} updated asana IDs: ${section.asanaIds.join(', ')}`);
         });
         
         console.log('------ SECTION MEMBERSHIPS UPDATED ------');
@@ -4114,119 +4047,9 @@ function handleSectionReordering(e, targetRow) {
     
     console.log(`📍 Target position: ${targetPosition}`);
     
-    let success = false;
-    
-    // For non-section targets (ungrouped poses), we need special handling
-    if (!targetRow.classList.contains('section-header') && !targetSectionId) {
-        // Get the target index for pose insertion
-        const targetIndex = parseInt(targetRow.getAttribute('data-index'));
-        if (isNaN(targetIndex)) {
-            console.error('⛔ Error: Invalid target index');
-            return false;
-        }
-        
-        // 1. Save the section and all its poses
-        const sourceSectionIndex = editingFlow.sections.findIndex(section => section.id === sourceSectionId);
-        if (sourceSectionIndex === -1) {
-            console.error('⛔ Error: Source section not found');
-            return false;
-        }
-        
-        // Remove the section from the array (we'll add it back later)
-        const [movedSection] = editingFlow.sections.splice(sourceSectionIndex, 1);
-        
-        // 2. Store all the asanas in this section
-        const asanasToMove = [];
-        const asanaIndices = [...movedSection.asanaIds].sort((a, b) => a - b);
-        
-        // Collect the asanas and their information
-        asanaIndices.forEach(asanaIndex => {
-            if (asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
-                asanasToMove.push({
-                    asana: editingFlow.asanas[asanaIndex],
-                    originalIndex: asanaIndex
-                });
-            }
-        });
-        
-        // 3. Remove all asanas from the highest index down to avoid invalidating indices
-        const sortedIndices = [...asanaIndices].sort((a, b) => b - a);
-        sortedIndices.forEach(asanaIndex => {
-            if (asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
-                editingFlow.asanas.splice(asanaIndex, 1);
-                
-                // Update all section asanaIds to account for removed asana
-                editingFlow.sections.forEach(section => {
-                    section.asanaIds = section.asanaIds.map(id => {
-                        if (id === asanaIndex) {
-                            return -1; // Mark for removal
-                        } else if (id > asanaIndex) {
-                            return id - 1; // Shift down by one
-                        }
-                        return id;
-                    }).filter(id => id >= 0);
-                });
-            }
-        });
-        
-        // 4. Adjust the target index if necessary
-        let adjustedTargetIndex = targetIndex;
-        sortedIndices.forEach(asanaIndex => {
-            if (asanaIndex < targetIndex) {
-                adjustedTargetIndex--;
-            }
-        });
-        
-        // 5. Insert all the asanas at the target position
-        const asanaObjects = asanasToMove.map(item => item.asana);
-        editingFlow.asanas.splice(adjustedTargetIndex, 0, ...asanaObjects);
-        
-        // 6. Update the section with the new asana indices
-        movedSection.asanaIds = [];
-        for (let i = 0; i < asanaObjects.length; i++) {
-            movedSection.asanaIds.push(adjustedTargetIndex + i);
-        }
-        
-        // 7. Insert the section at an appropriate position in the sections array
-        // Determine where to insert the section based on the target index
-        let insertAtSectionIndex = 0;
-        
-        // Look for the last section that has asanaIds less than adjustedTargetIndex
-        let lastSectionBeforeTarget = -1;
-        for (let i = 0; i < editingFlow.sections.length; i++) {
-            const section = editingFlow.sections[i];
-            if (section.asanaIds.length > 0) {
-                const maxIndex = Math.max(...section.asanaIds);
-                if (maxIndex < adjustedTargetIndex) {
-                    lastSectionBeforeTarget = i;
-                }
-            }
-        }
-        
-        // Insert after the last section with poses before our target
-        insertAtSectionIndex = lastSectionBeforeTarget + 1;
-        
-        // 8. Reinsert the section
-        editingFlow.sections.splice(insertAtSectionIndex, 0, movedSection);
-        
-        // 9. Update all other section asanaIds to account for inserted asanas
-        editingFlow.sections.forEach(section => {
-            if (section.id !== sourceSectionId) {
-                section.asanaIds = section.asanaIds.map(id => {
-                    if (id >= adjustedTargetIndex) {
-                        return id + asanaObjects.length;
-                    }
-                    return id;
-                });
-            }
-        });
-        
-        console.log('✅ Section and poses moved successfully');
-        success = true;
-    } else {
-        // Regular section-to-section move using the built-in reorderSection method
-        success = editingFlow.reorderSection(sourceSectionId, targetRow);
-    }
+    // FIXED: Use the improved reorderSection method for all cases
+    // No need for special handling - the reorderSection method now handles all scenarios robustly
+    const success = editingFlow.reorderSection(sourceSectionId, targetRow);
     
     if (success) {
         console.log('✅ Section reordering successful');
