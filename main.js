@@ -4985,7 +4985,7 @@ function rebuildTableView() {
                                 <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
                             </div>
                             <div class="section-remove">
-                                <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">×</button>
+                                <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">⛓️‍💥</button>
                             </div>
                         </div>
                     </td>
