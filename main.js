@@ -1293,21 +1293,11 @@ function saveFlow() {
 
     // Require title only if there are poses
     if (!title) {
-        const userChoice = confirm('Would you like to add a title to save this flow, or return home without saving?\n\nClick OK to return home\nClick Cancel to add a title');
-        if (userChoice) {
-            // User clicked OK - return home without saving
-            changeScreen('homeScreen');
-            editingFlow = new Flow();
-            editMode = false;
-            return;
-        } else {
-            // User clicked Cancel - focus the title input
-            const titleInput = document.getElementById('title');
-            if (titleInput) {
-                titleInput.focus();
-            }
-            return;
+        const modal = document.getElementById('saveFlowTitleModal');
+        if (modal) {
+            modal.style.display = 'block';
         }
+        return;
     }
 
     editingFlow.name = title;
@@ -1473,12 +1463,31 @@ function displayFlows() {
     }
 }
 
+let flowToDelete = null;
+
 function deleteFlow(flowID) {
-    if (confirm('Are you sure you want to delete this flow?')) {
+    flowToDelete = flowID;
+    const modal = document.getElementById('deleteFlowModal');
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
+
+function closeDeleteFlowModal() {
+    const modal = document.getElementById('deleteFlowModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    flowToDelete = null;
+}
+
+function confirmDeleteFlow() {
+    if (flowToDelete) {
         let flows = getFlows();
-        flows = flows.filter(flow => flow.flowID !== flowID);
+        flows = flows.filter(flow => flow.flowID !== flowToDelete);
         saveFlows(flows);
         displayFlows();
+        closeDeleteFlowModal();
     }
 }
 
@@ -2105,30 +2114,82 @@ function createConfetti() {
 }
 
 function endFlow() {
-    // Show a confirmation message
-    if (confirm('Are you sure you want to end this flow?')) {
-        // Clear the timer if it exists
-        if (animationFrameId) {
-            clearTimeout(animationFrameId);
-            animationFrameId = null;
-        }
+    const modal = document.getElementById('endFlowModal');
+    if (modal) {
+        modal.style.display = 'block';
+    }
+}
 
-        // If the flow has a lastFlowed timestamp, keep it
-        // Since the user is manually ending the flow, we consider it "completed"
-        const flows = getFlows();
-        const flowIndex = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
+function closeEndFlowModal() {
+    const modal = document.getElementById('endFlowModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
 
-        if (flowIndex !== -1) {
-            // Only update if the flow was already saved
-            flows[flowIndex].lastFlowed = new Date().toISOString();
-            saveFlows(flows);
-        }
+function confirmEndFlow() {
+    // Clear the timer if it exists
+    if (animationFrameId) {
+        clearTimeout(animationFrameId);
+        animationFrameId = null;
+    }
 
-        // Clean up flow controls event listeners
-        cleanupFlowControlsAutoHide();
+    // If the flow has a lastFlowed timestamp, keep it
+    // Since the user is manually ending the flow, we consider it "completed"
+    const flows = getFlows();
+    const flowIndex = flows.findIndex(flow => flow.flowID === editingFlow.flowID);
 
-        // Return to home screen
-        changeScreen('homeScreen');
+    if (flowIndex !== -1) {
+        // Only update if the flow was already saved
+        flows[flowIndex].lastFlowed = new Date().toISOString();
+        saveFlows(flows);
+    }
+
+    // Clean up flow controls event listeners
+    cleanupFlowControlsAutoHide();
+
+    // Close the modal
+    closeEndFlowModal();
+
+    // Return to home screen
+    changeScreen('homeScreen');
+}
+
+function closeSaveFlowTitleModal() {
+    const modal = document.getElementById('saveFlowTitleModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+}
+
+function returnHomeWithoutSaving() {
+    closeSaveFlowTitleModal();
+    changeScreen('homeScreen');
+    editingFlow = new Flow();
+    editMode = false;
+}
+
+function focusTitleInput() {
+    closeSaveFlowTitleModal();
+    const titleInput = document.getElementById('title');
+    if (titleInput) {
+        titleInput.focus();
+    }
+}
+
+function showGroupSkipAlert(message) {
+    const modal = document.getElementById('groupSkipAlertModal');
+    const messageElement = document.getElementById('groupSkipMessage');
+    if (modal && messageElement) {
+        messageElement.textContent = message;
+        modal.style.display = 'block';
+    }
+}
+
+function closeGroupSkipAlertModal() {
+    const modal = document.getElementById('groupSkipAlertModal');
+    if (modal) {
+        modal.style.display = 'none';
     }
 }
 
@@ -6015,7 +6076,7 @@ function addPoseToSection(asanaIndex) {
     });
     
     if (alreadyInSection) {
-        alert('This pose is already in a group. A pose can only be in one group at a time.');
+        showGroupSkipAlert('This pose is already in a group. A pose can only be in one group at a time.');
         
         // Close the modal
         const modal = document.querySelector('.section-modal');
@@ -6228,6 +6289,12 @@ function handleGroupNameKeypress(event) {
     }
 }
 
+function handleCustomPoseNameKeypress(event) {
+    if (event.key === 'Enter') {
+        createCustomPoseFromModal();
+    }
+}
+
 // Function to add selected poses to a section/group
 function addSelectedToSection() {
     const selectedPoses = getSelectedAsanas();
@@ -6282,6 +6349,19 @@ function closeGroupNamingModal() {
         const input = document.getElementById('groupNameInput');
         if (input) {
             input.removeEventListener('keyup', handleGroupNameKeypress);
+        }
+    }
+}
+
+function closeCustomPoseNamingModal() {
+    const modal = document.getElementById('customPoseNamingModal');
+    if (modal) {
+        modal.style.display = 'none';
+        
+        // Clean up event listener
+        const input = document.getElementById('customPoseNameInput');
+        if (input) {
+            input.removeEventListener('keyup', handleCustomPoseNameKeypress);
         }
     }
 }
@@ -6369,7 +6449,7 @@ function createGroupFromSelection() {
     
     // Notify if some poses were skipped because they're already in groups
     if (alreadyGroupedPoses.length > 0) {
-        alert(`${alreadyGroupedPoses.length} pose${alreadyGroupedPoses.length !== 1 ? 's were' : ' was'} skipped because ${alreadyGroupedPoses.length !== 1 ? 'they are' : 'it is'} already in a group. A pose can only be in one group at a time.`);
+        showGroupSkipAlert(`${alreadyGroupedPoses.length} pose${alreadyGroupedPoses.length !== 1 ? 's were' : ' was'} skipped because ${alreadyGroupedPoses.length !== 1 ? 'they are' : 'it is'} already in a group. A pose can only be in one group at a time.`);
     }
     
     if (validSelectedIndices.length === 0) {
@@ -6442,7 +6522,7 @@ function addMultiplePosesToSection() {
     
     // Notify if some poses were skipped because they're already in groups
     if (alreadyGroupedPoses.length > 0) {
-        alert(`${alreadyGroupedPoses.length} pose${alreadyGroupedPoses.length !== 1 ? 's were' : ' was'} skipped because ${alreadyGroupedPoses.length !== 1 ? 'they are' : 'it is'} already in a group. A pose can only be in one group at a time.`);
+        showGroupSkipAlert(`${alreadyGroupedPoses.length} pose${alreadyGroupedPoses.length !== 1 ? 's were' : ' was'} skipped because ${alreadyGroupedPoses.length !== 1 ? 'they are' : 'it is'} already in a group. A pose can only be in one group at a time.`);
     }
     
     // If no valid poses to add, return
@@ -7256,9 +7336,40 @@ function displaySequences() {
 
 // Function to add a custom pose
 function addCustomPose() {
-    // Show a prompt for the pose name
-    const poseName = prompt('Enter the name of your custom pose:');
-    if (!poseName) return; // User cancelled
+    // Show the custom pose naming modal
+    const modal = document.getElementById('customPoseNamingModal');
+    if (modal) {
+        modal.style.display = 'block';
+        
+        // Focus the input field
+        setTimeout(() => {
+            const input = document.getElementById('customPoseNameInput');
+            if (input) {
+                input.focus();
+                input.value = '';
+                
+                // Remove existing event listener
+                input.removeEventListener('keyup', handleCustomPoseNameKeypress);
+                
+                // Add enter key event listener
+                input.addEventListener('keyup', handleCustomPoseNameKeypress);
+            }
+        }, 100);
+    }
+}
+
+// Function to create custom pose from modal
+function createCustomPoseFromModal() {
+    const input = document.getElementById('customPoseNameInput');
+    const poseName = input ? input.value.trim() : '';
+    
+    if (!poseName) {
+        alert('Please enter a pose name');
+        return;
+    }
+
+    // Close the modal
+    closeCustomPoseNamingModal();
 
     // Create a new YogaAsana instance
     const customPose = new YogaAsana(
