@@ -4966,6 +4966,10 @@ function rebuildTableView() {
                 // Calculate if all poses in this section are selected
                 const allSelected = asanasInSection.every(asanaInfo => asanaInfo.asana.selected);
                 
+                // Calculate total duration for this section
+                const sectionDuration = asanasInSection.reduce((total, {asana}) => total + (asana.duration || 7), 0);
+                const sectionDurationDisplay = displayFlowDuration(sectionDuration);
+                
                 // Create section header with checkbox and collapse/expand toggle
                 headerRow.innerHTML = `
                     <td colspan="6" class="section-header-content">
@@ -4983,6 +4987,7 @@ function rebuildTableView() {
                             <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" style="cursor: pointer;">
                                 <span>${section.name}</span>
                                 <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
+                                <span class="section-duration">${sectionDurationDisplay}</span>
                             </div>
                             <div class="section-remove">
                                 <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">⛓️‍💥</button>
