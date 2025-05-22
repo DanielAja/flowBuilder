@@ -1059,14 +1059,10 @@ function updateGroupHeaderDurations() {
         
         // Update the section header display
         const sectionDurationDisplay = displayFlowDuration(sectionDuration);
-        const sectionCountSpan = headerRow.querySelector('.section-count');
-        const sectionDurationSpan = headerRow.querySelector('.section-duration');
+        const sectionCountDurationSpan = headerRow.querySelector('.section-count-duration');
         
-        if (sectionCountSpan) {
-            sectionCountSpan.textContent = `${poseCount} pose${poseCount !== 1 ? 's' : ''}`;
-        }
-        if (sectionDurationSpan) {
-            sectionDurationSpan.textContent = sectionDurationDisplay;
+        if (sectionCountDurationSpan) {
+            sectionCountDurationSpan.textContent = `${poseCount} pose${poseCount !== 1 ? 's' : ''} - ${sectionDurationDisplay}`;
         }
     });
 }
@@ -4876,8 +4872,7 @@ function rebuildTableView() {
                             </div>
                             <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" style="cursor: pointer;">
                                 <span>${section.name}</span>
-                                <span class="section-count">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''}</span>
-                                <span class="section-duration">${sectionDurationDisplay}</span>
+                                <span class="section-count-duration">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''} - ${sectionDurationDisplay}</span>
                             </div>
                             <div class="section-remove">
                                 <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">⛓️‍💥</button>
