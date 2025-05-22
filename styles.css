@@ -1513,6 +1513,11 @@ h1 {
   color: white;
 }
 
+/* Sequence badge styling */
+.difficulty-badge.sequence {
+  color: white;
+}
+
 .no-matches, .empty-message {
   padding: 20px;
   text-align: center;

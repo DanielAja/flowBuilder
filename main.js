@@ -3155,7 +3155,7 @@ function populateAsanaList() {
             
             // Create sequence badge
             const sequenceBadge = document.createElement('span');
-            sequenceBadge.className = 'difficulty-badge';
+            sequenceBadge.className = 'difficulty-badge sequence';
             sequenceBadge.style.backgroundColor = '#ff8c00';
             sequenceBadge.textContent = 'Sequence';
             
@@ -6588,7 +6588,7 @@ function saveSequence() {
         
         // Create sequence badge
         const sequenceBadge = document.createElement('span');
-        sequenceBadge.className = 'difficulty-badge';
+        sequenceBadge.className = 'difficulty-badge sequence';
         sequenceBadge.style.backgroundColor = '#ff8c00';
         sequenceBadge.textContent = 'Sequence';
         
