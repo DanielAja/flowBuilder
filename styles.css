@@ -3600,6 +3600,37 @@ tr.section-header.collapsed ~ tr[data-section-id][data-hidden="true"] {
   display: none;
 }
 
+.section-side-control {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.section-side-select {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: white;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 60px;
+}
+
+.section-side-select:hover {
+  border-color: #ff8c00;
+  box-shadow: 0 2px 4px rgba(255, 140, 0, 0.1);
+}
+
+.section-side-select:focus {
+  outline: none;
+  border-color: #ff8c00;
+  box-shadow: 0 2px 6px rgba(255, 140, 0, 0.2);
+}
+
 .section-remove {
   flex: 0 0 40px;
   display: flex;

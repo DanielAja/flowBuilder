@@ -479,6 +479,9 @@
             <button id="addToSectionBtn" class="action-btn" onclick="addSelectedToSection()" disabled>
               <span>Group</span>
             </button>
+            <button id="changeSideBtn" class="action-btn" onclick="showChangeSideModal()" disabled>
+              <span>Side</span>
+            </button>
             <button id="saveSequenceBtn" class="action-btn" onclick="saveSequence()" disabled>
               <span>Save</span>
             </button>
@@ -636,6 +639,24 @@
         <div class="section-name-input-container">
           <input type="text" id="groupNameInput" placeholder="Group Name" class="section-name-input">
           <button class="create-section-btn" onclick="createGroupFromSelection()">Group</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Side Modal -->
+    <div id="changeSideModal" class="modal section-modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeChangeSideModal()">&times;</span>
+        <h2>Change Side for Selected Poses</h2>
+        <p class="modal-description">Select the side for all selected poses:</p>
+        <div class="section-name-input-container">
+          <select id="sideSelectModal" class="section-name-input">
+            <option value="Left">Left</option>
+            <option value="Right">Right</option>
+            <option value="Front">Front</option>
+            <option value="Back">Back</option>
+          </select>
+          <button class="create-section-btn" onclick="changeSelectedPosesSide()">Change Side</button>
         </div>
       </div>
     </div>

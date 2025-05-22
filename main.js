@@ -4874,6 +4874,15 @@ function rebuildTableView() {
                                 <span>${section.name}</span>
                                 <span class="section-count-duration">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''} - ${sectionDurationDisplay}</span>
                             </div>
+                            <div class="section-side-control">
+                                <select class="section-side-select" data-section-id="${section.id}" onchange="changeSectionSide(this)" title="Change side for all poses in this group">
+                                    <option value="--" selected>--</option>
+                                    <option value="Left">Left</option>
+                                    <option value="Right">Right</option>
+                                    <option value="Front">Front</option>
+                                    <option value="Back">Back</option>
+                                </select>
+                            </div>
                             <div class="section-remove">
                                 <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">⛓️‍💥</button>
                             </div>
@@ -6176,6 +6185,57 @@ function closeGroupNamingModal() {
 }
 
 // Function to create a new group from selected poses
+// Function to change the side for all poses in a section
+function changeSectionSide(selectElement) {
+    const sectionId = selectElement.getAttribute('data-section-id');
+    const newSide = selectElement.value;
+    
+    // If "--" is selected, don't do anything
+    if (newSide === '--') {
+        return;
+    }
+    
+    console.log(`Changing all poses in section ${sectionId} to side: ${newSide}`);
+    
+    // Get all poses in this section
+    const section = editingFlow.getSectionById(sectionId);
+    if (!section) {
+        console.error('Section not found:', sectionId);
+        return;
+    }
+    
+    // Update the side for all asanas in this section
+    section.asanaIds.forEach(asanaIndex => {
+        if (asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
+            // Map Front to Center for internal storage consistency with XML
+            const mappedSide = newSide === "Front" ? "Center" : newSide;
+            editingFlow.asanas[asanaIndex].side = mappedSide;
+        }
+    });
+    
+    // Update the individual side dropdowns in the table to reflect the change
+    const sectionRows = document.querySelectorAll(`tr[data-section-id="${sectionId}"]:not(.section-header)`);
+    sectionRows.forEach(row => {
+        const sideSelect = row.querySelector('select.side-select');
+        if (sideSelect) {
+            sideSelect.value = newSide;
+        }
+    });
+    
+    // Reset the section side dropdown back to "--"
+    selectElement.value = '--';
+    
+    // Update flow duration and auto-save
+    updateFlowDuration();
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+    
+    console.log(`Successfully changed all poses in section "${section.name}" to side: ${newSide}`);
+}
+
 function createGroupFromSelection() {
     const nameInput = document.getElementById('groupNameInput');
     const groupName = nameInput ? nameInput.value.trim() : '';
@@ -6321,6 +6381,7 @@ function updateActionButtons() {
     const deleteBtn = document.getElementById('deleteSelectedBtn');
     const saveSequenceBtn = document.getElementById('saveSequenceBtn');
     const addToSectionBtn = document.getElementById('addToSectionBtn');
+    const changeSideBtn = document.getElementById('changeSideBtn');
     
     const selectedPoses = getSelectedAsanas();
     const hasSelectedPoses = selectedPoses.length > 0;
@@ -6331,6 +6392,7 @@ function updateActionButtons() {
     if (deleteBtn) deleteBtn.disabled = !hasSelectedPoses;
     if (saveSequenceBtn) saveSequenceBtn.disabled = !hasSelectedPoses;
     if (addToSectionBtn) addToSectionBtn.disabled = !hasSelectedPoses;
+    if (changeSideBtn) changeSideBtn.disabled = !hasSelectedPoses;
 }
 
 // Function to copy selected poses
@@ -6464,6 +6526,96 @@ function deleteSelectedPoses() {
     
     // Always save after deletion
     autoSaveFlow();
+}
+
+// Function to show the change side modal
+function showChangeSideModal() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) {
+        showToastNotification('Please select poses first');
+        return;
+    }
+    
+    // Show the modal
+    const modal = document.getElementById('changeSideModal');
+    const sideSelect = document.getElementById('sideSelectModal');
+    
+    // Reset the select to default
+    sideSelect.value = 'Left';
+    
+    // Display the modal
+    modal.style.display = 'block';
+    
+    // Focus on the select element
+    setTimeout(() => sideSelect.focus(), 100);
+}
+
+// Function to close the change side modal
+function closeChangeSideModal() {
+    const modal = document.getElementById('changeSideModal');
+    modal.style.display = 'none';
+}
+
+// Function to change the side of all selected poses
+function changeSelectedPosesSide() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) {
+        showToastNotification('No poses selected');
+        closeChangeSideModal();
+        return;
+    }
+    
+    const sideSelect = document.getElementById('sideSelectModal');
+    const newSide = sideSelect.value;
+    
+    if (!newSide) {
+        showToastNotification('Please select a side');
+        return;
+    }
+    
+    console.log(`Changing ${selectedPoses.length} selected poses to side: ${newSide}`);
+    
+    // Update the side for all selected asanas
+    let changedCount = 0;
+    editingFlow.asanas.forEach((asana, index) => {
+        if (asana.selected) {
+            // Map Front to Center for internal storage consistency with XML
+            const mappedSide = newSide === "Front" ? "Center" : newSide;
+            asana.side = mappedSide;
+            changedCount++;
+        }
+    });
+    
+    // Update the individual side dropdowns in the table to reflect the change
+    const tableRows = document.querySelectorAll('#flowTable tr:not(:first-child):not(.section-header)');
+    tableRows.forEach(row => {
+        const asanaIndex = parseInt(row.getAttribute('data-index'));
+        if (!isNaN(asanaIndex) && asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
+            const asana = editingFlow.asanas[asanaIndex];
+            if (asana.selected) {
+                const sideSelect = row.querySelector('select.side-select');
+                if (sideSelect) {
+                    sideSelect.value = newSide;
+                }
+            }
+        }
+    });
+    
+    // Close the modal
+    closeChangeSideModal();
+    
+    // Update flow duration and auto-save
+    updateFlowDuration();
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+    
+    // Show notification
+    showToastNotification(`Changed ${changedCount} pose${changedCount !== 1 ? 's' : ''} to ${newSide} side`);
+    
+    console.log(`Successfully changed ${changedCount} poses to side: ${newSide}`);
 }
 
 // Function to save a sequence
