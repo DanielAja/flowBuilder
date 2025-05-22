@@ -48,6 +48,57 @@ function saveFlows(flows) {
     }
 }
 
+function getCustomPoses() {
+    try {
+        const customPosesJson = localStorage.getItem('customPoses');
+        console.log('Raw custom poses data from localStorage:', customPosesJson);
+        
+        if (!customPosesJson) {
+            console.log('No custom poses found in localStorage');
+            return [];
+        }
+        
+        const customPoses = JSON.parse(customPosesJson);
+        console.log('Parsed custom poses:', customPoses);
+        
+        if (!Array.isArray(customPoses)) {
+            console.error('Custom poses is not an array:', customPoses);
+            return [];
+        }
+        
+        // Convert plain objects back to YogaAsana instances
+        return customPoses.map(pose => new YogaAsana(
+            pose.name,
+            pose.side,
+            pose.image,
+            pose.description,
+            pose.difficulty,
+            pose.tags,
+            pose.transitionsAsana,
+            pose.sanskrit,
+            pose.chakra
+        ));
+    } catch (error) {
+        console.error('Error getting custom poses from localStorage:', error);
+        return [];
+    }
+}
+
+function saveCustomPoses(customPoses) {
+    try {
+        if (!Array.isArray(customPoses)) {
+            console.error('Cannot save custom poses: not an array', customPoses);
+            return;
+        }
+        
+        const customPosesJson = JSON.stringify(customPoses);
+        localStorage.setItem('customPoses', customPosesJson);
+        console.log('Saved custom poses to localStorage:', customPosesJson);
+    } catch (error) {
+        console.error('Error saving custom poses to localStorage:', error);
+    }
+}
+
 // YogaAsana class definition
 class YogaAsana {
     constructor(name, side, image, description, difficulty, tags, transitionsAsana, sanskrit = "", chakra = "") {
@@ -2726,6 +2777,12 @@ async function loadAsanasFromXML() {
         }
         
         console.log('Successfully loaded asanas from XML:', asanas.length);
+        
+        // Load custom poses from localStorage and add them to the asanas array
+        const customPoses = getCustomPoses();
+        asanas.push(...customPoses);
+        console.log('Added custom poses from localStorage:', customPoses.length);
+        
         populateAsanaList();
         
     } catch (error) {
@@ -2778,6 +2835,12 @@ async function loadAsanasFromXML() {
             )
         ];
         console.log('Loaded fallback asanas');
+        
+        // Load custom poses from localStorage and add them to the asanas array
+        const customPoses = getCustomPoses();
+        asanas.push(...customPoses);
+        console.log('Added custom poses from localStorage:', customPoses.length);
+        
         populateAsanaList();
     }
 }
@@ -3007,8 +3070,11 @@ function populateAsanaList() {
             
             // Create difficulty badge
             const difficultyBadge = document.createElement('span');
-            difficultyBadge.className = `difficulty-badge ${asana.difficulty.toLowerCase()}`;
-            difficultyBadge.textContent = asana.difficulty;
+            const isCustomPose = asana.tags.includes('Custom');
+            const badgeText = isCustomPose ? 'Custom' : asana.difficulty;
+            const badgeClass = isCustomPose ? 'custom' : asana.difficulty.toLowerCase();
+            difficultyBadge.className = `difficulty-badge ${badgeClass}`;
+            difficultyBadge.textContent = badgeText;
             
             // Create image container (for positioning the chakra indicator)
             const imgContainer = document.createElement('div');
@@ -3061,6 +3127,19 @@ function populateAsanaList() {
             // Create name label - use getDisplayName for consistent naming
             const asanaName = document.createElement('p');
             asanaName.textContent = asana.getDisplayName(useSanskritNames);
+            
+            // Add delete button for custom poses
+            if (isCustomPose) {
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'custom-pose-delete-btn';
+                deleteButton.innerHTML = '×';
+                deleteButton.title = `Delete custom pose: ${asana.name}`;
+                deleteButton.onclick = function(e) {
+                    e.stopPropagation(); // Prevent selecting the pose when clicking delete
+                    deleteCustomPose(asana.name);
+                };
+                asanaElement.appendChild(deleteButton);
+            }
             
             // Append elements
             asanaElement.appendChild(difficultyBadge);
@@ -7172,6 +7251,13 @@ function addCustomPose() {
     );
     customPose.setDuration(7); // Default duration
 
+    // Add pose to global asanas array so it appears in the asana selection list
+    asanas.push(customPose);
+
+    // Save all custom poses to localStorage
+    const customPoses = asanas.filter(asana => asana.tags.includes('Custom'));
+    saveCustomPoses(customPoses);
+
     // Add pose based on table ordering
     if (tableInDescendingOrder) {
         // When table is in descending order (largest to smallest),
@@ -7195,11 +7281,73 @@ function addCustomPose() {
     // Update flow duration
     updateFlowDuration();
 
+    // Refresh the asana selection list to show the new custom pose
+    populateAsanaList();
+
     // Show notification
     showToastNotification(`Added custom pose: ${poseName}`);
+    
+    // Log success for debugging
+    console.log(`Successfully added custom pose "${poseName}" to both flow and asana selection list`);
 
     // Auto-save if in edit mode
     if (editMode) {
         autoSaveFlow();
+    }
+}
+
+// Function to delete a custom pose
+function deleteCustomPose(poseName) {
+    // Show confirmation dialog
+    if (!confirm(`Are you sure you want to delete the custom pose "${poseName}"? This action cannot be undone.`)) {
+        return; // User cancelled
+    }
+
+    try {
+        // Remove from global asanas array
+        const asanaIndex = asanas.findIndex(asana => asana.name === poseName && asana.tags.includes('Custom'));
+        if (asanaIndex !== -1) {
+            asanas.splice(asanaIndex, 1);
+            console.log(`Removed custom pose "${poseName}" from asanas array`);
+        }
+
+        // Remove from current flow if it exists there
+        if (editingFlow && editingFlow.asanas) {
+            const flowAsanaIndices = [];
+            editingFlow.asanas.forEach((asana, index) => {
+                if (asana.name === poseName && asana.tags.includes('Custom')) {
+                    flowAsanaIndices.push(index);
+                }
+            });
+            
+            // Remove in reverse order to avoid index shifting issues
+            flowAsanaIndices.reverse().forEach(index => {
+                editingFlow.asanas.splice(index, 1);
+            });
+
+            if (flowAsanaIndices.length > 0) {
+                console.log(`Removed ${flowAsanaIndices.length} instances of custom pose "${poseName}" from current flow`);
+                // Rebuild the flow table to reflect changes
+                rebuildFlowTable();
+                // Update flow duration
+                updateFlowDuration();
+            }
+        }
+
+        // Update localStorage with remaining custom poses
+        const customPoses = asanas.filter(asana => asana.tags.includes('Custom'));
+        saveCustomPoses(customPoses);
+
+        // Refresh the asana selection list
+        populateAsanaList();
+
+        // Show success notification
+        showToastNotification(`Deleted custom pose: ${poseName}`);
+        
+        console.log(`Successfully deleted custom pose "${poseName}"`);
+        
+    } catch (error) {
+        console.error('Error deleting custom pose:', error);
+        showToastNotification(`Error deleting custom pose: ${poseName}`);
     }
 }
