@@ -367,6 +367,9 @@ let paused = false;
 let pausedBeforeEndFlow = false; // Track pause state before showing End Flow modal
 let lastUpdateTime = 0;
 let animationFrameId = null;
+let startTimerInterval = null; // Track the starting countdown interval
+let startCountdownValue = 0; // Track current countdown value
+let isInStartingCountdown = false; // Track if we're in the 3-2-1 countdown
 let speechEnabled = false; // Default to speech disabled
 let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
@@ -726,6 +729,39 @@ function changeScreen(screenId) {
     console.log(`Changing screen to: ${screenId}`);
     // Remove flow-mode class when changing screens
     document.body.classList.remove('flow-mode');
+    
+    // Clear all timers when leaving flow screen
+    if (currentScreenId === 'flowScreen' && screenId !== 'flowScreen') {
+        // Clear the regular countdown timer
+        if (animationFrameId) {
+            clearTimeout(animationFrameId);
+            animationFrameId = null;
+        }
+        
+        // Clear the starting countdown timer
+        if (startTimerInterval) {
+            clearInterval(startTimerInterval);
+            startTimerInterval = null;
+            isInStartingCountdown = false;
+        }
+        
+        // Reset pause state
+        paused = false;
+        pausedBeforeEndFlow = false;
+        
+        // Clear the resume timer function
+        if (window.resumeTimer) {
+            window.resumeTimer = null;
+        }
+        
+        // Stop any speech synthesis
+        if (speechSynthesis) {
+            speechSynthesis.cancel();
+        }
+        
+        // Clean up flow controls event listeners
+        cleanupFlowControlsAutoHide();
+    }
     
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
     const targetScreen = document.getElementById(screenId);
@@ -1729,12 +1765,13 @@ function playFlow(flowID) {
             }
 
             // Start 3-second countdown
-            let startCountdown = 3;
-            const startTimer = setInterval(() => {
-                startCountdown--;
+            startCountdownValue = 3;
+            isInStartingCountdown = true;
+            startTimerInterval = setInterval(() => {
+                startCountdownValue--;
                 const countdownElement = document.getElementById('countdown');
                 if (countdownElement) {
-                    countdownElement.textContent = startCountdown;
+                    countdownElement.textContent = startCountdownValue;
                 }
 
                 // Update the large countdown display in the image container with animation
@@ -1764,15 +1801,15 @@ function playFlow(flowID) {
                         };
 
                         // Apply border color
-                        if (borderColors[startCountdown]) {
-                            circleContainer.style.border = borderColors[startCountdown];
+                        if (borderColors[startCountdownValue]) {
+                            circleContainer.style.border = borderColors[startCountdownValue];
                         }
 
                         // Keep text color constant - using the orange theme color
                         countdownDisplay.style.color = '#ff8c00';
 
-                        if (colors[startCountdown]) {
-                            circleContainer.style.background = colors[startCountdown];
+                        if (colors[startCountdownValue]) {
+                            circleContainer.style.background = colors[startCountdownValue];
                         }
                     }
 
@@ -1781,7 +1818,7 @@ function playFlow(flowID) {
 
                     // Set new number and apply entrance animation after short delay
                     setTimeout(() => {
-                        countdownDisplay.textContent = startCountdown;
+                        countdownDisplay.textContent = startCountdownValue;
 
                         // Slight delay before entrance animation
                         setTimeout(() => {
@@ -1790,20 +1827,21 @@ function playFlow(flowID) {
                     }, 250);
                 }
 
-                asanaSide.textContent = "Starting in " + startCountdown;
+                asanaSide.textContent = "Starting in " + startCountdownValue;
 
                 // Update circle animation
                 const countdownCircle = document.getElementById('countdown-circle');
                 if (countdownCircle) {
                     const circumference = 2 * Math.PI * 45;
-                    const progress = startCountdown / 3;
+                    const progress = startCountdownValue / 3;
                     const dashOffset = circumference * (1 - progress);
                     countdownCircle.style.strokeDasharray = circumference;
                     countdownCircle.style.strokeDashoffset = dashOffset;
                 }
 
-                if (startCountdown <= 0) {
-                    clearInterval(startTimer);
+                if (startCountdownValue <= 0) {
+                    clearInterval(startTimerInterval);
+                    isInStartingCountdown = false;
 
                     // Animate the countdown display and circle container out with a final animation
                     const countdownDisplay = document.getElementById('countdown-display');
@@ -2136,6 +2174,12 @@ function endFlow() {
             clearTimeout(animationFrameId);
             animationFrameId = null;
         }
+        
+        // If we're in the starting countdown, pause it
+        if (isInStartingCountdown && startTimerInterval) {
+            clearInterval(startTimerInterval);
+            startTimerInterval = null;
+        }
     }
 }
 
@@ -2147,11 +2191,159 @@ function closeEndFlowModal() {
         const wasUnpaused = !pausedBeforeEndFlow;
         paused = pausedBeforeEndFlow;
         
-        // If we're resuming (not paused), restart the timer update loop
-        if (wasUnpaused && typeof window.resumeTimer === 'function') {
+        // If we're resuming the starting countdown
+        if (isInStartingCountdown && wasUnpaused) {
+            resumeStartingCountdown();
+        }
+        // If we're resuming the normal flow timer
+        else if (wasUnpaused && typeof window.resumeTimer === 'function') {
             window.resumeTimer();
         }
     }
+}
+
+function resumeStartingCountdown() {
+    // Resume the starting countdown from where it left off
+    const asanaSide = document.getElementById('asanaSide');
+    const countdownContainer = document.querySelector('.countdown-container');
+    const asanaName = document.getElementById('asanaName');
+    const asanaImage = document.getElementById('asanaImage');
+    
+    if (!editingFlow || !editingFlow.asanas || editingFlow.asanas.length === 0) return;
+    
+    const asana = editingFlow.asanas[currentAsanaIndex];
+    
+    startTimerInterval = setInterval(() => {
+        startCountdownValue--;
+        const countdownElement = document.getElementById('countdown');
+        if (countdownElement) {
+            countdownElement.textContent = startCountdownValue;
+        }
+
+        // Update the large countdown display in the image container with animation
+        const countdownDisplay = document.getElementById('countdown-display');
+        if (countdownDisplay) {
+            // Add pulse animation to the circle container
+            const circleContainer = countdownDisplay.parentElement;
+            if (circleContainer) {
+                // Apply animations to the circle
+                circleContainer.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                setTimeout(() => {
+                    circleContainer.style.transform = 'translate(-50%, -50%) scale(1)';
+                }, 300);
+
+                // Border colors for each step
+                const borderColors = {
+                    2: '2px solid rgba(255, 140, 0, 0.6)',
+                    1: '2px solid rgba(255, 0, 0, 0.6)',
+                    0: '2px solid rgba(0, 200, 0, 0.6)'
+                };
+
+                // Apply border color
+                if (borderColors[startCountdownValue]) {
+                    circleContainer.style.border = borderColors[startCountdownValue];
+                }
+
+                // Keep text color constant - using the orange theme color
+                countdownDisplay.style.color = '#ff8c00';
+            }
+
+            // Apply exit animation
+            countdownDisplay.style.opacity = '0';
+
+            // Set new number and apply entrance animation after short delay
+            setTimeout(() => {
+                countdownDisplay.textContent = startCountdownValue;
+
+                // Slight delay before entrance animation
+                setTimeout(() => {
+                    countdownDisplay.style.opacity = '1';
+                }, 50);
+            }, 250);
+        }
+
+        asanaSide.textContent = "Starting in " + startCountdownValue;
+
+        // Update circle animation
+        const countdownCircle = document.getElementById('countdown-circle');
+        if (countdownCircle) {
+            const circumference = 2 * Math.PI * 45;
+            const progress = startCountdownValue / 3;
+            const dashOffset = circumference * (1 - progress);
+            countdownCircle.style.strokeDasharray = circumference;
+            countdownCircle.style.strokeDashoffset = dashOffset;
+        }
+
+        if (startCountdownValue <= 0) {
+            clearInterval(startTimerInterval);
+            isInStartingCountdown = false;
+
+            // Animate the countdown display and circle container out with a final animation
+            const countdownDisplay = document.getElementById('countdown-display');
+            if (countdownDisplay) {
+                // Get the circle container
+                const circleContainer = countdownDisplay.parentElement;
+
+                if (circleContainer) {
+                    // Add a celebratory animation to the circle
+                    circleContainer.style.transform = 'translate(-50%, -50%) scale(1.5)';
+                    circleContainer.style.opacity = '0';
+                    circleContainer.style.transition = 'transform 0.8s ease-out, opacity 0.8s ease-out';
+
+                    // Remove after animation completes
+                    setTimeout(() => {
+                        circleContainer.remove();
+                    }, 800);
+                } else {
+                    // Fallback in case the circle container isn't found
+                    countdownDisplay.style.opacity = '0';
+                    countdownDisplay.style.transform = 'scale(2)';
+
+                    // Remove after animation completes
+                    setTimeout(() => {
+                        countdownDisplay.remove();
+                    }, 500);
+                }
+            }
+
+            // Show the asana image again
+            if (asanaImage) {
+                asanaImage.style.display = '';
+            }
+
+            // Show the "Coming Up" section again
+            const comingUpSection = document.querySelector('.coming-up');
+            if (comingUpSection) {
+                comingUpSection.style.visibility = '';
+            }
+
+            // Reset any animation on the asana name
+            asanaName.style.animation = '';
+
+            // Update the display and get the duration for the first asana
+            const duration = updateAsanaDisplay(asana);
+            console.log("Display updated, duration:", duration);
+
+            // Update countdown display for the actual asana
+            if (countdownContainer) {
+                countdownContainer.innerHTML = `
+                    <svg class="countdown-svg" viewBox="0 0 100 100">
+                        <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
+                        <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent"
+                                stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
+                                stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
+                    </svg>
+                    <div id="countdown">${displayFlowDuration(duration)}</div>
+                `;
+            }
+
+            // Start the actual flow timer
+            setTimeout(() => {
+                console.log("Starting countdown timer for first asana");
+                startCountdownTimer(duration);
+            }, 100);
+        }
+    }, 1000);
 }
 
 function confirmEndFlow() {
@@ -2159,6 +2351,13 @@ function confirmEndFlow() {
     if (animationFrameId) {
         clearTimeout(animationFrameId);
         animationFrameId = null;
+    }
+    
+    // Clear starting countdown if it exists
+    if (startTimerInterval) {
+        clearInterval(startTimerInterval);
+        startTimerInterval = null;
+        isInStartingCountdown = false;
     }
 
     // If the flow has a lastFlowed timestamp, keep it
