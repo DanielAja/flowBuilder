@@ -169,8 +169,6 @@ class Flow {
     
     // Reorder a section by moving it from one position to another
     reorderSection(sourceSectionId, targetRow) {
-        // NEW APPROACH: Allow sections to be placed anywhere in the flow
-        
         // Find the source section
         const sourceSection = this.sections.find(section => section.id === sourceSectionId);
         if (!sourceSection) {
@@ -208,15 +206,25 @@ class Flow {
                 console.error('Invalid target index');
                 return false;
             }
-            
-            // If dropping after a pose, increment the target index
-            // This is determined by checking if we're in the bottom half of the drop target
-            // For now, we'll place it exactly at the dropped position
         }
         
         console.log(`Target index position: ${targetIndex}`);
         
-        // Extract all poses from the section (store them temporarily)
+        // Store references to all poses with their original section assignments
+        const poseToSectionMap = new Map();
+        
+        // First, map ALL poses to their current sections BEFORE any modifications
+        this.asanas.forEach((pose, index) => {
+            // Find which section this pose belongs to
+            const belongsToSection = this.sections.find(section => 
+                section.asanaIds.includes(index)
+            );
+            if (belongsToSection) {
+                poseToSectionMap.set(pose, belongsToSection.id);
+            }
+        });
+        
+        // Extract the poses we're moving
         const sectionPoses = sectionPoseIndices.map(idx => this.asanas[idx]);
         
         // Remove all section poses from their current positions (in reverse order to maintain indices)
@@ -241,52 +249,15 @@ class Flow {
         // Insert all section poses at the target position
         this.asanas.splice(adjustedTargetIndex, 0, ...sectionPoses);
         
-        // Now rebuild ALL section asanaIds from scratch based on current asana positions
-        // This is necessary because moving poses affects all indices
-        
-        // First, create a map of which asana belongs to which section
-        const asanaToSectionMap = new Map();
-        
-        // Mark the moved section's poses
-        sectionPoses.forEach((pose, i) => {
-            const newIndex = adjustedTargetIndex + i;
-            asanaToSectionMap.set(pose, sourceSectionId);
-        });
-        
-        // Mark poses from other sections (excluding the moved section)
-        this.sections.forEach(section => {
-            if (section.id !== sourceSectionId) {
-                // We need to find where each of this section's original poses ended up
-                // This is tricky because indices have shifted
-                // We'll match by pose properties (name, side, duration)
-                section.asanaIds.forEach(oldIdx => {
-                    // Find this pose in the current asanas array
-                    for (let i = 0; i < this.asanas.length; i++) {
-                        const currentPose = this.asanas[i];
-                        // Skip if already mapped
-                        if (asanaToSectionMap.has(currentPose)) continue;
-                        
-                        // Check if this might be the same pose
-                        // This is imperfect but necessary without unique IDs on poses
-                        const possibleMatch = this.asanas[i];
-                        if (possibleMatch && !sectionPoses.includes(possibleMatch)) {
-                            // Assume it's a match if not already assigned
-                            asanaToSectionMap.set(possibleMatch, section.id);
-                            break;
-                        }
-                    }
-                });
-            }
-        });
-        
-        // Clear all section asanaIds
+        // Now rebuild ALL section asanaIds from scratch
+        // Clear all section asanaIds first
         this.sections.forEach(section => {
             section.asanaIds = [];
         });
         
-        // Rebuild section asanaIds based on current positions
-        this.asanas.forEach((asana, index) => {
-            const sectionId = asanaToSectionMap.get(asana);
+        // Rebuild section asanaIds based on the pose-to-section mapping
+        this.asanas.forEach((pose, index) => {
+            const sectionId = poseToSectionMap.get(pose);
             if (sectionId) {
                 const section = this.sections.find(s => s.id === sectionId);
                 if (section) {
