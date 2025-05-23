@@ -364,6 +364,7 @@ let lastMovedPoseIndex = null;
 let currentAsanaIndex = 0;
 let isReversed = false;
 let paused = false;
+let pausedBeforeEndFlow = false; // Track pause state before showing End Flow modal
 let lastUpdateTime = 0;
 let animationFrameId = null;
 let speechEnabled = false; // Default to speech disabled
@@ -1877,8 +1878,7 @@ function playFlow(flowID) {
     }
 }
 
-function startCountdownTimer(duration) {
-    console.log("Starting countdown timer with duration:", duration);
+function startCountdownTimer(duration, isResuming = false) {
     const countdownElement = document.getElementById('countdown');
     const countdownCircle = document.getElementById('countdown-circle');
     if (!countdownElement || !countdownCircle) {
@@ -1892,8 +1892,10 @@ function startCountdownTimer(duration) {
         console.warn("Invalid duration, using default of 7 seconds");
     }
     
-    // Reset the pause state when starting a new timer
-    paused = false;
+    // Only reset the pause state when starting a new timer (not when resuming)
+    if (!isResuming) {
+        paused = false;
+    }
     
     // Initialize time left
     let timeLeft = duration;
@@ -1918,7 +1920,6 @@ function startCountdownTimer(duration) {
         // Only decrement if not paused
         if (!paused) {
             timeLeft -= 1;
-            console.log("Time left:", timeLeft);
             
             // Update the display
             if (countdownElement) {
@@ -1996,8 +1997,17 @@ function startCountdownTimer(duration) {
             }
         }
         
-        // Schedule the next update
-        animationFrameId = setTimeout(updateTimer, 1000);
+        // Schedule the next update only if not paused
+        if (!paused) {
+            animationFrameId = setTimeout(updateTimer, 1000);
+        }
+    };
+    
+    // Store the updateTimer function globally so we can resume it
+    window.resumeTimer = function() {
+        if (!paused && animationFrameId === null) {
+            updateTimer();
+        }
     };
     
     // Start the timer immediately with first update
@@ -2117,6 +2127,15 @@ function endFlow() {
     const modal = document.getElementById('endFlowModal');
     if (modal) {
         modal.style.display = 'block';
+        // Store the current pause state and pause the timer
+        pausedBeforeEndFlow = paused;
+        paused = true;
+        
+        // Clear the current timer to stop it immediately
+        if (animationFrameId) {
+            clearTimeout(animationFrameId);
+            animationFrameId = null;
+        }
     }
 }
 
@@ -2124,6 +2143,14 @@ function closeEndFlowModal() {
     const modal = document.getElementById('endFlowModal');
     if (modal) {
         modal.style.display = 'none';
+        // Restore the previous pause state
+        const wasUnpaused = !pausedBeforeEndFlow;
+        paused = pausedBeforeEndFlow;
+        
+        // If we're resuming (not paused), restart the timer update loop
+        if (wasUnpaused && typeof window.resumeTimer === 'function') {
+            window.resumeTimer();
+        }
     }
 }
 
@@ -2374,8 +2401,8 @@ function togglePause() {
                     }
                 }
                 
-                // Restart with the current remaining time
-                startCountdownTimer(remainingDuration);
+                // Restart with the current remaining time, marking as resuming
+                startCountdownTimer(remainingDuration, true);
             }
         }
     }

@@ -233,7 +233,7 @@ h1 {
 }
 
 .delete-btn::after {
-  content: "🗑";
+  content: "";
   font-size: 18px;
 }
 
