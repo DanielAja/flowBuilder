@@ -201,7 +201,9 @@ class Flow {
                 }
                 targetIndex += 1; // Place after this section
             } else {
-                targetIndex = 0; // Place at beginning for ungrouped poses
+                // If the pose row is ungrouped, target the end of current sections
+                // This means the dragged section will be placed after all other existing sections.
+                targetIndex = this.sections.length;
             }
         }
         
@@ -210,8 +212,11 @@ class Flow {
             targetIndex -= 1;
         }
         
+        console.log(`[reorderSection] Source section index in this.sections: ${sourceIndex}, Calculated final target section index in this.sections: ${targetIndex}`);
+
         // Don't do anything if source and target are the same
         if (sourceIndex === targetIndex) {
+            console.log('[reorderSection] Source and target section indices are the same. No reorder needed.');
             return false;
         }
         
@@ -3836,6 +3841,7 @@ function handleTableDrop(e) {
     }
     
     console.log('------ POSE MOVEMENT ------');
+    console.log(`Initial state: sourceIndex=${sourceIndex}, targetIndex=${targetIndex}, sourceSectionId=${sourceSectionId}, targetSectionId=${targetSectionId}`);
     
     // Get source pose details
     const sourcePose = editingFlow.asanas[sourceIndex];
@@ -3868,6 +3874,8 @@ function handleTableDrop(e) {
     
     try {
         console.log(`Moving asana index ${sourceIndex} to ${targetIndex}`);
+        console.log('Current editingFlow.asanas before any splice:', JSON.parse(JSON.stringify(editingFlow.asanas)));
+        console.log('Current editingFlow.sections before any splice:', JSON.parse(JSON.stringify(editingFlow.sections)));
         
         // Check if this is a special first position drop onto a section header
         const isFirstPositionDrop = row.hasAttribute('data-first-position-drop');
@@ -3911,10 +3919,14 @@ function handleTableDrop(e) {
         console.log(`Calculated adjusted target index: ${adjustedTargetIndex}`);
         
         // First, remove the pose from its current position (this modifies the asanas array)
+        console.log(`Splicing asana from sourceIndex: ${sourceIndex}`);
         const movedAsana = editingFlow.asanas.splice(sourceIndex, 1)[0];
+        console.log('editingFlow.asanas after removing source:', JSON.parse(JSON.stringify(editingFlow.asanas)));
         
         // Then insert it at the adjusted target position (this modifies the asanas array again)
+        console.log(`Splicing asana to adjustedTargetIndex: ${adjustedTargetIndex}`);
         editingFlow.asanas.splice(adjustedTargetIndex, 0, movedAsana);
+        console.log('editingFlow.asanas after inserting at target:', JSON.parse(JSON.stringify(editingFlow.asanas)));
         
         // Now that the asanas array is in its final state, update all section indices
         // This is the key fix - we update sections AFTER moving the asana
@@ -3927,6 +3939,7 @@ function handleTableDrop(e) {
         // This ensures all sections correctly reference poses at their new positions
         
         console.log('------ REBUILDING SECTION MEMBERSHIPS ------');
+        console.log('Initial sections before update:', JSON.parse(JSON.stringify(editingFlow.sections)));
         
         // FIXED: Simple and robust section membership update
         // Instead of complex index mapping, we use a direct approach:
@@ -3940,43 +3953,59 @@ function handleTableDrop(e) {
         if (sourceSectionId) {
             const sourceSection = editingFlow.getSectionById(sourceSectionId);
             if (sourceSection) {
+                console.log(`Section ${sourceSectionId} asanaIds BEFORE filtering ${sourceIndex}: ${JSON.stringify(sourceSection.asanaIds)}`);
                 sourceSection.asanaIds = sourceSection.asanaIds.filter(id => id !== sourceIndex);
-                console.log(`Removed pose from source section ${sourceSectionId}`);
+                console.log(`Removed pose (original index ${sourceIndex}) from source section ${sourceSectionId}. New asanaIds: ${JSON.stringify(sourceSection.asanaIds)}`);
             }
         }
         
         // Step 2: Update all section indices due to the removal and insertion
+        console.log('Remapping indices in all sections...');
         editingFlow.sections.forEach(section => {
+            const originalIds = [...section.asanaIds];
             section.asanaIds = section.asanaIds.map(id => {
+                let newId = id;
                 // First adjust for the removal of sourceIndex
                 if (id > sourceIndex) {
-                    id--;
+                    newId--;
                 }
                 // Then adjust for the insertion at adjustedTargetIndex
-                if (id >= adjustedTargetIndex) {
-                    id++;
+                if (newId >= adjustedTargetIndex) { // Note: use newId here for the condition
+                    newId++;
                 }
-                return id;
+                if (id !== newId) {
+                    console.log(`Section ${section.id}: Mapped index ${id} -> ${newId} (sourceIndex=${sourceIndex}, adjustedTargetIndex=${adjustedTargetIndex})`);
+                }
+                return newId;
             });
+            if (JSON.stringify(originalIds) !== JSON.stringify(section.asanaIds)) {
+                 console.log(`Section ${section.id} asanaIds AFTER remapping: ${JSON.stringify(section.asanaIds)} (was: ${JSON.stringify(originalIds)})`);
+            }
         });
         
         // Step 3: Add the moved pose to its new section (if any)
         if (targetSectionId) {
             const targetSection = editingFlow.getSectionById(targetSectionId);
             if (targetSection) {
-                targetSection.asanaIds.push(adjustedTargetIndex);
+                console.log(`Section ${targetSectionId} asanaIds BEFORE adding ${adjustedTargetIndex}: ${JSON.stringify(targetSection.asanaIds)}`);
+                if (!targetSection.asanaIds.includes(adjustedTargetIndex)) { // Avoid duplicates if already handled by remapping
+                    targetSection.asanaIds.push(adjustedTargetIndex);
+                }
                 // Keep the section's poses in index order for consistency
                 targetSection.asanaIds.sort((a, b) => a - b);
-                console.log(`Added pose to target section ${targetSectionId} at index ${adjustedTargetIndex}`);
+                console.log(`Added pose to target section ${targetSectionId} at new index ${adjustedTargetIndex}. New asanaIds: ${JSON.stringify(targetSection.asanaIds)}`);
             }
         }
         
         // Log updated section contents for verification
+        console.log('Final sections after update:');
         editingFlow.sections.forEach(section => {
-            console.log(`Section ${section.id} updated asana IDs: ${section.asanaIds.join(', ')}`);
+            console.log(`  Section ${section.id} ("${section.name}") updated asana IDs: ${section.asanaIds.join(', ')}`);
         });
         
         console.log('------ SECTION MEMBERSHIPS UPDATED ------');
+        console.log('Final editingFlow.asanas before rebuild:', JSON.parse(JSON.stringify(editingFlow.asanas)));
+        console.log('Final editingFlow.sections before rebuild:', JSON.parse(JSON.stringify(editingFlow.sections)));
 
         // Fully rebuild the table view with all the new indices and section memberships
         rebuildFlowTable();
