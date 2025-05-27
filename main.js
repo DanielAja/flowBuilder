@@ -732,22 +732,8 @@ function changeScreen(screenId) {
     
     // Clear all timers when leaving flow screen
     if (currentScreenId === 'flowScreen' && screenId !== 'flowScreen') {
-        // Clear the regular countdown timer
-        if (animationFrameId) {
-            clearTimeout(animationFrameId);
-            animationFrameId = null;
-        }
-        
-        // Clear the starting countdown timer
-        if (startTimerInterval) {
-            clearInterval(startTimerInterval);
-            startTimerInterval = null;
-            isInStartingCountdown = false;
-        }
-        
-        // Reset pause state
-        paused = false;
-        pausedBeforeEndFlow = false;
+        // Clear all flow timers
+        clearFlowTimers();
         
         // Clear the resume timer function
         if (window.resumeTimer) {
@@ -773,6 +759,32 @@ function changeScreen(screenId) {
     
     targetScreen.classList.add('active');
     currentScreenId = screenId;
+
+    // Clean up any lingering countdown elements when entering flow screen
+    if (screenId === 'flowScreen') {
+        // Remove any existing countdown display elements
+        const existingCountdownDisplay = document.getElementById('countdown-display');
+        if (existingCountdownDisplay) {
+            const circleContainer = existingCountdownDisplay.parentElement;
+            if (circleContainer && circleContainer.style.borderRadius === '50%') {
+                circleContainer.remove();
+            } else {
+                existingCountdownDisplay.remove();
+            }
+        }
+        
+        // Remove countdown animations
+        const countdownAnimations = document.getElementById('countdown-animations');
+        if (countdownAnimations) {
+            countdownAnimations.remove();
+        }
+        
+        // Make sure the asana image is visible
+        const asanaImage = document.getElementById('asanaImage');
+        if (asanaImage) {
+            asanaImage.style.display = 'block';
+        }
+    }
 
     if (screenId === 'homeScreen') {
         displayFlows();
@@ -2346,8 +2358,9 @@ function resumeStartingCountdown() {
     }, 1000);
 }
 
-function confirmEndFlow() {
-    // Clear the timer if it exists
+// Function to clear all flow-related timers
+function clearFlowTimers() {
+    // Clear the main flow timer
     if (animationFrameId) {
         clearTimeout(animationFrameId);
         animationFrameId = null;
@@ -2358,7 +2371,35 @@ function confirmEndFlow() {
         clearInterval(startTimerInterval);
         startTimerInterval = null;
         isInStartingCountdown = false;
+        startCountdownValue = 0;
     }
+    
+    // Clear any countdown display elements
+    const countdownDisplay = document.getElementById('countdown-display');
+    if (countdownDisplay) {
+        // Remove the parent circle container if it exists
+        const circleContainer = countdownDisplay.parentElement;
+        if (circleContainer && circleContainer.style.borderRadius === '50%') {
+            circleContainer.remove();
+        } else {
+            countdownDisplay.remove();
+        }
+    }
+    
+    // Also remove any lingering countdown animations
+    const countdownAnimations = document.getElementById('countdown-animations');
+    if (countdownAnimations) {
+        countdownAnimations.remove();
+    }
+    
+    // Reset timer states
+    paused = false;
+    pausedBeforeEndFlow = false;
+}
+
+function confirmEndFlow() {
+    // Clear all timers
+    clearFlowTimers()
 
     // If the flow has a lastFlowed timestamp, keep it
     // Since the user is manually ending the flow, we consider it "completed"
@@ -2389,6 +2430,9 @@ function closeSaveFlowTitleModal() {
 }
 
 function returnHomeWithoutSaving() {
+    // Clear any active timers
+    clearFlowTimers();
+    
     closeSaveFlowTitleModal();
     changeScreen('homeScreen');
     editingFlow = new Flow();
@@ -6440,10 +6484,38 @@ function deleteSection(sectionId) {
     const asanasInSection = editingFlow.getAsanasInSection(sectionId);
     const poseCount = asanasInSection.length;
     
-    // Confirm deletion with pose count information
-    if (!confirm(`Are you sure you want to delete the group "${section.name}" with ${poseCount} pose${poseCount !== 1 ? 's' : ''}?\n\nThe poses will remain in your flow but will no longer be grouped.`)) {
-        return;
-    }
+    // Create a modal dialog for confirmation
+    const modal = document.createElement('div');
+    modal.className = 'modal section-modal';
+    modal.style.display = 'block';
+    
+    // Create modal content
+    modal.innerHTML = `
+        <div class="modal-content delete-confirmation">
+            <span class="close-modal" onclick="this.closest('.modal').remove()">&times;</span>
+            <h2>Delete Group</h2>
+            <p class="modal-description">Are you sure you want to delete the group "<strong>${section.name}</strong>" with ${poseCount} pose${poseCount !== 1 ? 's' : ''}?</p>
+            <p class="modal-warning">The poses will remain in your flow but will no longer be grouped.</p>
+            <div class="confirmation-buttons">
+                <button class="cancel-btn" onclick="this.closest('.modal').remove()">Cancel</button>
+                <button class="delete-group-btn" onclick="confirmDeleteSection('${sectionId}')">Delete Group</button>
+            </div>
+        </div>
+    `;
+    
+    // Add the modal to the document
+    document.body.appendChild(modal);
+}
+
+// Function to confirm and execute section deletion
+function confirmDeleteSection(sectionId) {
+    // Close the modal
+    const modal = document.querySelector('.section-modal');
+    if (modal) modal.remove();
+    
+    // Get the section for the notification
+    const section = editingFlow.getSectionById(sectionId);
+    if (!section) return;
     
     // Remove the section with animation
     const sectionHeader = document.querySelector(`tr.section-header[data-section-id="${sectionId}"]`);

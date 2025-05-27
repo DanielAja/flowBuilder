@@ -3916,6 +3916,73 @@ tr[data-section-id]:last-of-type {
   text-decoration: underline;
 }
 
+/* Delete confirmation modal styles */
+.delete-confirmation .modal-warning {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+  text-align: center;
+  font-style: italic;
+}
+
+.delete-confirmation .modal-description strong {
+  color: #ff8c00;
+  font-weight: bold;
+}
+
+.confirmation-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cancel-btn,
+.delete-group-btn {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cancel-btn {
+  background-color: #e0e0e0;
+  color: #666;
+  border: 2px solid #e0e0e0;
+}
+
+.cancel-btn:hover {
+  background-color: #d0d0d0;
+  border-color: #d0d0d0;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.delete-group-btn {
+  background-color: #ff4444;
+  color: white;
+  border: 2px solid #ff4444;
+}
+
+.delete-group-btn:hover {
+  background-color: #ff3333;
+  border-color: #ff3333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(255, 68, 68, 0.3);
+}
+
+.cancel-btn:active,
+.delete-group-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
 /* New section row */
 .new-section-row {
   background-color: #f8f8f8;
