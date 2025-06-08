@@ -376,6 +376,9 @@ let speechUtterance = null;
 let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 let currentViewMode = localStorage.getItem('viewMode') || 'table'; // Default to table view
 let confettiAnimationId = null; // For tracking confetti animation
+let flowStartTime = null; // Track when flow started
+let totalFlowDuration = 0; // Total duration of all poses in flow
+let flowElapsedTime = 0; // Time elapsed since flow started
 
 // Global variable to store copied poses
 let copiedPoses = [];
@@ -1640,6 +1643,12 @@ function playFlow(flowID) {
         // Reset current asana index and pause state
         currentAsanaIndex = 0;
         paused = false;
+        
+        // Initialize flow tracking
+        flowStartTime = Date.now();
+        totalFlowDuration = editingFlow.asanas.reduce((sum, asana) => sum + (asana.duration || 7), 0);
+        flowElapsedTime = 0;
+        console.log("Total flow duration:", totalFlowDuration, "seconds");
 
         // Reset any animation classes on the title elements
         const asanaName = document.getElementById('asanaName');
@@ -1761,11 +1770,17 @@ function playFlow(flowID) {
             }
 
             countdownContainer.innerHTML = `
-                <svg class="countdown-svg" viewBox="0 0 100 100">
-                    <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
-                    <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent"
+                <svg class="countdown-svg" viewBox="0 0 120 120">
+                    <!-- Outer circle for flow progress -->
+                    <circle r="55" cx="60" cy="60" fill="transparent" stroke="#eee" stroke-width="6"></circle>
+                    <circle id="flow-progress-circle" r="55" cx="60" cy="60" fill="transparent"
+                            stroke="#ffb366" stroke-width="6" stroke-dasharray="345.6"
+                            stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
+                    <!-- Inner circle for pose timer -->
+                    <circle r="45" cx="60" cy="60" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
+                    <circle id="countdown-circle" r="45" cx="60" cy="60" fill="transparent"
                             stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
-                            stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
+                            stroke-dashoffset="282.7" transform="rotate(-90 60 60)"></circle>
                 </svg>
                 <div id="countdown">3</div>
             `;
@@ -1905,11 +1920,17 @@ function playFlow(flowID) {
                     // Update countdown display for the actual asana
                     if (countdownContainer) {
                         countdownContainer.innerHTML = `
-                            <svg class="countdown-svg" viewBox="0 0 100 100">
-                                <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
-                                <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent"
+                            <svg class="countdown-svg" viewBox="0 0 120 120">
+                                <!-- Outer circle for flow progress -->
+                                <circle r="55" cx="60" cy="60" fill="transparent" stroke="#eee" stroke-width="6"></circle>
+                                <circle id="flow-progress-circle" r="55" cx="60" cy="60" fill="transparent"
+                                        stroke="#ffb366" stroke-width="6" stroke-dasharray="345.6"
+                                        stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
+                                <!-- Inner circle for pose timer -->
+                                <circle r="45" cx="60" cy="60" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
+                                <circle id="countdown-circle" r="45" cx="60" cy="60" fill="transparent"
                                         stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
-                                        stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
+                                        stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
                             </svg>
                             <div id="countdown">${displayFlowDuration(duration)}</div>
                         `;
@@ -1953,10 +1974,25 @@ function startCountdownTimer(duration, isResuming = false) {
     
     // Calculate the circle circumference (2 * PI * radius)
     const circumference = 2 * Math.PI * 45; // The circle has r=45
+    const flowCircumference = 2 * Math.PI * 55; // The flow progress circle has r=55
+    
+    // Get flow progress circle
+    const flowProgressCircle = document.getElementById('flow-progress-circle');
     
     // Reset the countdown animation with the new duration
     countdownCircle.style.strokeDasharray = circumference;
     countdownCircle.style.strokeDashoffset = "0";
+    
+    // Update flow progress circle if starting fresh (not resuming)
+    if (!isResuming && flowProgressCircle) {
+        flowProgressCircle.style.strokeDasharray = flowCircumference;
+        // Calculate current flow progress
+        const elapsedBeforeThisPose = editingFlow.asanas.slice(0, currentAsanaIndex).reduce((sum, asana) => sum + (asana.duration || 7), 0);
+        const flowProgress = elapsedBeforeThisPose / totalFlowDuration;
+        // Reverse direction: start at 0 and increase offset as progress increases
+        const flowDashOffset = flowCircumference * flowProgress;
+        flowProgressCircle.style.strokeDashoffset = flowDashOffset;
+    }
     
     // Clear any existing timer
     if (animationFrameId) {
@@ -1984,6 +2020,20 @@ function startCountdownTimer(duration, isResuming = false) {
                 countdownCircle.style.strokeDashoffset = dashOffset;
             }
             
+            // Update flow progress circle
+            if (flowProgressCircle && totalFlowDuration > 0) {
+                // Calculate total elapsed time in the flow
+                const elapsedBeforeThisPose = editingFlow.asanas.slice(0, currentAsanaIndex).reduce((sum, asana) => sum + (asana.duration || 7), 0);
+                const currentPoseElapsed = duration - timeLeft;
+                const totalElapsed = elapsedBeforeThisPose + currentPoseElapsed;
+                
+                // Calculate flow progress (0 to 1)
+                const flowProgress = totalElapsed / totalFlowDuration;
+                // Reverse direction: increase offset as progress increases
+                const flowDashOffset = flowCircumference * flowProgress;
+                flowProgressCircle.style.strokeDashoffset = flowDashOffset;
+            }
+            
             // Check if time is up
             if (timeLeft <= 0) {
                 console.log("Time up! Moving to next asana");
@@ -2000,11 +2050,13 @@ function startCountdownTimer(duration, isResuming = false) {
                         animationFrameId = null;
                     }
                     
-                    // Reset the circle animation
+                    // Reset the pose timer circle animation
                     if (countdownCircle) {
                         countdownCircle.style.strokeDasharray = circumference;
                         countdownCircle.style.strokeDashoffset = "0";
                     }
+                    
+                    // Flow progress circle continues without reset
                     
                     // Start a new timer with the next asana's duration
                     setTimeout(() => {
