@@ -3681,7 +3681,7 @@ tr.section-header.collapsed ~ tr[data-section-id][data-hidden="true"] {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 5.5%;
+  margin-right: 3.9%;
 }
 
 /* Reset section name positioning */
@@ -4068,5 +4068,140 @@ tr[data-section-id]:last-of-type {
 .add-custom-pose-btn:active {
   transform: translateY(1px);
   box-shadow: 0 2px 4px rgba(255, 140, 0, 0.3);
+}
+
+/* Swap button styles */
+.swap-btn {
+  background-color: #ff8c00;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swap-btn:hover {
+  background-color: #e67e00;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(255, 140, 0, 0.3);
+}
+
+.swap-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(255, 140, 0, 0.4);
+}
+
+/* Card view swap button positioning */
+.flow-card .swap-btn {
+  position: absolute;
+  top: 10px;
+  right: 40px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 12px;
+  padding: 0;
+  z-index: 10;
+}
+
+/* Swap pose modal styles */
+.swap-pose-search-container {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.swap-pose-search-container #swapPoseSearch,
+.swap-pose-search-container .section-name-input {
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box;
+  margin: 0;
+  flex: 1;
+}
+
+.swap-pose-list-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.swap-pose-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.swap-pose-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  position: relative;
+}
+
+.swap-pose-item:hover {
+  border-color: #ff8c00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.2);
+}
+
+.swap-pose-item.recommended {
+  border-color: #4CAF50;
+  background: #f8fff8;
+}
+
+.swap-pose-item.recommended:hover {
+  border-color: #45a049;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+}
+
+.swap-pose-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.swap-pose-name {
+  font-size: 12px;
+  text-align: center;
+  color: #333;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.recommended-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #4CAF50;
+  color: white;
+  font-size: 8px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Center the cancel button in swap modal */
+#swapPoseModal .section-name-input-container {
+  justify-content: center;
 }
 

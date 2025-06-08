@@ -5343,7 +5343,7 @@ function rebuildTableView() {
                 
                 // Create section header with checkbox and collapse/expand toggle
                 headerRow.innerHTML = `
-                    <td colspan="6" class="section-header-content">
+                    <td colspan="7" class="section-header-content">
                         <div class="section-header-flex">
                             <div class="section-checkbox">
                                 <input type="checkbox" class="section-select" 
@@ -5511,6 +5511,9 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
             </div>
         </td>
         <td>${createSideDropdown(asana.side)}</td>
+        <td>
+            <button class="table-btn swap-btn" onclick="showSwapPoseModal(${index})" title="Swap for another pose">⇆</button>
+        </td>
         <td>
             <button class="table-btn remove-btn" onclick="removePose(this)">×</button>
         </td>
@@ -5852,6 +5855,16 @@ function rebuildCardView() {
             removePose(this);
         };
 
+        // Create swap button
+        const swapBtn = document.createElement('button');
+        swapBtn.className = 'swap-btn';
+        swapBtn.textContent = '⇆';
+        swapBtn.title = 'Swap for another pose';
+        swapBtn.onclick = function(e) {
+            e.stopPropagation(); // Prevent event bubbling
+            showSwapPoseModal(index);
+        };
+
         // Create actions container (we keep this for future actions)
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'flow-card-actions';
@@ -5862,6 +5875,7 @@ function rebuildCardView() {
         card.appendChild(imgContainer);
         card.appendChild(infoDiv);
         card.appendChild(actionsDiv);
+        card.appendChild(swapBtn); // Add the swap button directly to the card
         card.appendChild(removeBtn); // Add the remove button directly to the card
 
         // Add the card to the container
@@ -7833,5 +7847,182 @@ function deleteCustomPose(poseName) {
     } catch (error) {
         console.error('Error deleting custom pose:', error);
         showToastNotification(`Error deleting custom pose: ${poseName}`);
+    }
+}
+
+// Global variable to track which pose index is being swapped
+let swapPoseIndex = null;
+
+// Function to show the swap pose modal
+function showSwapPoseModal(index) {
+    swapPoseIndex = index;
+    const modal = document.getElementById('swapPoseModal');
+    const searchInput = document.getElementById('swapPoseSearch');
+    const poseList = document.getElementById('swapPoseList');
+    
+    if (!modal || !searchInput || !poseList) return;
+    
+    // Clear search input
+    searchInput.value = '';
+    
+    // Show modal
+    modal.style.display = 'block';
+    
+    // Populate initial pose list
+    populateSwapPoseList();
+    
+    // Focus search input
+    setTimeout(() => {
+        searchInput.focus();
+    }, 100);
+    
+    // Add search event listener
+    searchInput.oninput = function() {
+        populateSwapPoseList(this.value.toLowerCase());
+    };
+}
+
+// Function to close the swap pose modal
+function closeSwapPoseModal() {
+    const modal = document.getElementById('swapPoseModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    swapPoseIndex = null;
+}
+
+// Function to populate the swap pose list
+function populateSwapPoseList(searchTerm = '') {
+    const poseList = document.getElementById('swapPoseList');
+    if (!poseList) return;
+    
+    // Clear existing list
+    poseList.innerHTML = '';
+    
+    // Filter asanas based on search term
+    let filteredAsanas = asanas;
+    if (searchTerm) {
+        filteredAsanas = asanas.filter(asana => {
+            const nameMatch = asana.name.toLowerCase().includes(searchTerm);
+            const sanskritMatch = asana.sanskrit && asana.sanskrit.toLowerCase().includes(searchTerm);
+            return nameMatch || sanskritMatch;
+        });
+    }
+    
+    // Get recommended poses
+    const recommendedPoses = getRecommendedPoses();
+    const recommendedNames = recommendedPoses.map(p => p.name);
+    
+    // Sort to put recommended poses first
+    filteredAsanas.sort((a, b) => {
+        const aIsRecommended = recommendedNames.includes(a.name);
+        const bIsRecommended = recommendedNames.includes(b.name);
+        if (aIsRecommended && !bIsRecommended) return -1;
+        if (!aIsRecommended && bIsRecommended) return 1;
+        return 0;
+    });
+    
+    // Create pose items
+    filteredAsanas.forEach(asana => {
+        const poseItem = document.createElement('div');
+        poseItem.className = 'swap-pose-item';
+        if (recommendedNames.includes(asana.name)) {
+            poseItem.classList.add('recommended');
+        }
+        
+        // Create image
+        const img = document.createElement('img');
+        img.src = asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`;
+        img.alt = asana.name;
+        img.className = 'swap-pose-img';
+        img.onerror = function() {
+            this.onerror = null;
+            this.src = 'images/webp/default-pose.webp';
+            this.style.display = 'flex';
+            this.style.justifyContent = 'center';
+            this.style.alignItems = 'center';
+            this.style.background = '#f5f5f5';
+            this.style.fontSize = '20px';
+            this.innerText = '🧘‍♀️';
+        };
+        
+        // Create name
+        const name = document.createElement('span');
+        name.className = 'swap-pose-name';
+        name.textContent = typeof asana.getDisplayName === 'function' ?
+            asana.getDisplayName(useSanskritNames) :
+            (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name);
+        
+        // Create recommended badge if applicable
+        if (recommendedNames.includes(asana.name)) {
+            const badge = document.createElement('span');
+            badge.className = 'recommended-badge';
+            badge.textContent = 'Recommended';
+            poseItem.appendChild(badge);
+        }
+        
+        // Add click handler
+        poseItem.onclick = function() {
+            swapPose(asana);
+        };
+        
+        poseItem.appendChild(img);
+        poseItem.appendChild(name);
+        poseList.appendChild(poseItem);
+    });
+    
+    // Show message if no poses found
+    if (filteredAsanas.length === 0) {
+        poseList.innerHTML = '<div class="no-matches">No poses found</div>';
+    }
+}
+
+// Function to swap the pose
+function swapPose(newAsana) {
+    if (swapPoseIndex === null || swapPoseIndex < 0 || swapPoseIndex >= editingFlow.asanas.length) {
+        console.error('Invalid swap pose index');
+        return;
+    }
+    
+    // Get the current pose to preserve its duration and side
+    const currentPose = editingFlow.asanas[swapPoseIndex];
+    const preservedDuration = currentPose.duration || 7;
+    const preservedSide = currentPose.side || 'Center';
+    
+    // Create a new instance of the selected asana
+    const swappedAsana = new YogaAsana(
+        newAsana.name,
+        preservedSide, // Keep the current side
+        newAsana.image,
+        newAsana.description,
+        newAsana.difficulty,
+        [...(newAsana.tags || [])],
+        [...(newAsana.transitionsAsana || [])],
+        newAsana.sanskrit,
+        newAsana.chakra || ""
+    );
+    swappedAsana.setDuration(preservedDuration); // Keep the current duration
+    
+    // Replace the pose in the flow
+    editingFlow.asanas[swapPoseIndex] = swappedAsana;
+    
+    // Close the modal
+    closeSwapPoseModal();
+    
+    // Rebuild both views
+    rebuildFlowTable();
+    
+    // Update flow duration
+    updateFlowDuration();
+    
+    // Update recommended poses
+    updateRecommendedPoses();
+    
+    // Show notification
+    showToastNotification(`Swapped to ${newAsana.name}`);
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
     }
 }
