@@ -2562,6 +2562,68 @@ input:checked + .slider:before {
     width: 60px;
   }
 
+  /* Mobile-specific button sizing for table */
+  .swap-btn {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 11px !important;
+  }
+
+  .remove-btn {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 11px !important;
+  }
+
+  /* Replace table headers with emoji on mobile */
+  #flowTable th:nth-child(1) {
+    font-size: 0;
+  }
+  #flowTable th:nth-child(1)::after {
+    content: "#️⃣";
+    font-size: 16px;
+  }
+
+  #flowTable th:nth-child(3) {
+    font-size: 0;
+  }
+  #flowTable th:nth-child(3)::after {
+    content: "🧘";
+    font-size: 16px;
+  }
+
+  #flowTable th:nth-child(4) {
+    font-size: 0;
+  }
+  #flowTable th:nth-child(4)::after {
+    content: "⏱️";
+    font-size: 16px;
+  }
+
+  #flowTable th:nth-child(5) {
+    font-size: 0;
+  }
+  #flowTable th:nth-child(5)::after {
+    content: "🔄";
+    font-size: 16px;
+  }
+
+  #flowTable th:nth-child(6) {
+    font-size: 0;
+  }
+  #flowTable th:nth-child(6)::after {
+    content: "🔀";
+    font-size: 16px;
+  }
+
+  #flowTable th:nth-child(7) {
+    font-size: 0;
+  }
+  #flowTable th:nth-child(7)::after {
+    content: "🗑️";
+    font-size: 16px;
+  }
+
   .selected-actions {
     flex-wrap: wrap;
     gap: 8px;
