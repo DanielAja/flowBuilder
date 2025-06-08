@@ -3,3 +3,4 @@ CLAUDE.md
 .gitignore
 .claude
 **/.claude/settings.local.json
+landing
