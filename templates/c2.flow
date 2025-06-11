@@ -1,0 +1,60 @@
+{
+  "name": "Sun Salutation A",
+  "description": "Traditional Sun Salutation A sequence - a flowing warm-up sequence to energize the body and prepare for practice.",
+  "asanas": [
+    {
+      "id": "1",
+      "name": "mountain-pose",
+      "english": "Mountain Pose",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "both"
+    },
+    {
+      "id": "2",
+      "name": "forward-fold",
+      "english": "Forward Fold",
+      "sanskrit": "Uttanasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "both"
+    },
+    {
+      "id": "3",
+      "name": "half-forward-fold",
+      "english": "Half Forward Fold",
+      "sanskrit": "Ardha Uttanasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "both"
+    },
+    {
+      "id": "4",
+      "name": "low-plank",
+      "english": "Low Plank",
+      "sanskrit": "Chaturanga Dandasana",
+      "duration": 10,
+      "category": "Strength",
+      "side": "both"
+    },
+    {
+      "id": "5",
+      "name": "upward-facing-dog",
+      "english": "Upward Facing Dog",
+      "sanskrit": "Urdhva Mukha Svanasana",
+      "duration": 10,
+      "category": "Backbend",
+      "side": "both"
+    },
+    {
+      "id": "6",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Stretch",
+      "side": "both"
+    }
+  ]
+}

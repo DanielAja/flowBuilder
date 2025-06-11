@@ -618,6 +618,203 @@
       #groupSkipAlertModal.section-modal .create-section-btn:active {
         transform: translateY(1px);
       }
+      
+      /* Template Import Section Styles */
+      .template-import-section {
+        margin-bottom: 20px;
+      }
+      
+      .template-import-section h3 {
+        margin: 0 0 15px 0;
+        color: #333;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      
+      .template-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .template-btn {
+        background: #ff8c00;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 12px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        flex: 1;
+        min-width: 120px;
+      }
+      
+      .template-btn:hover {
+        background: #e67e00;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      
+      .template-btn:active {
+        transform: translateY(1px);
+      }
+      
+      .import-separator {
+        text-align: center;
+        margin: 20px 0;
+        position: relative;
+      }
+      
+      .import-separator::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #ddd;
+      }
+      
+      .import-separator span {
+        background: white;
+        padding: 0 15px;
+        color: #999;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      
+      /* Share Modal Styles */
+      .share-options {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .share-option {
+        padding: 20px;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.9);
+      }
+      
+      .share-option h3 {
+        margin: 0 0 8px 0;
+        color: #333;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      
+      .share-option p {
+        margin: 0 0 15px 0;
+        color: #666;
+        font-size: 14px;
+      }
+      
+      .share-separator {
+        text-align: center;
+        margin: 10px 0;
+        position: relative;
+      }
+      
+      .share-separator::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #ddd;
+      }
+      
+      .share-separator span {
+        background: white;
+        padding: 0 15px;
+        color: #999;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      
+      .export-json-btn {
+        background: #ff8c00;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 12px 24px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+      
+      .export-json-btn:hover {
+        background: #e67e00;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      
+      .export-json-btn:active {
+        transform: translateY(1px);
+      }
+      
+      /* Import Modal Styles */
+      .import-option {
+        padding: 20px;
+        border: 2px solid #eee;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.9);
+        margin-bottom: 15px;
+      }
+      
+      .import-option h3 {
+        margin: 0 0 8px 0;
+        color: #333;
+        font-size: 18px;
+        font-weight: 600;
+      }
+      
+      .import-option p {
+        margin: 0 0 15px 0;
+        color: #666;
+        font-size: 14px;
+      }
+      
+      .file-upload-container {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      
+      .upload-btn {
+        background: #ff8c00;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 12px 20px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+      
+      .upload-btn:hover {
+        background: #e67e00;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+      
+      .upload-btn:active {
+        transform: translateY(1px);
+      }
+      
+      .file-name {
+        color: #333;
+        font-size: 14px;
+        font-style: italic;
+      }
     </style>
   </head>
   <body>
@@ -851,12 +1048,30 @@
       <div class="modal-content">
         <span class="close-modal" onclick="closeShareModal()">&times;</span>
         <h2>Share Your Flow</h2>
-        <p class="modal-description">Copy this code to share your flow with others:</p>
-        <div class="share-code-container">
-          <textarea id="shareCodeOutput" readonly></textarea>
-          <button class="copy-btn" onclick="copyShareCode()">Copy Code</button>
+        <p class="modal-description">Choose how you want to share your flow:</p>
+        
+        <!-- Share Options -->
+        <div class="share-options">
+          <div class="share-option">
+            <h3>Share Code</h3>
+            <p>Copy this code to share your flow with others</p>
+            <div class="share-code-container">
+              <textarea id="shareCodeOutput" readonly></textarea>
+              <button class="copy-btn" onclick="copyShareCode()">Copy Code</button>
+            </div>
+            <div id="copyConfirmation" class="copy-confirmation">Copied to clipboard!</div>
+          </div>
+          
+          <div class="share-separator">
+            <span>OR</span>
+          </div>
+          
+          <div class="share-option">
+            <h3>Export as JSON</h3>
+            <p>Download as a template file that can be imported later</p>
+            <button class="export-json-btn" onclick="exportFlowAsJSONFromModal()">Download JSON</button>
+          </div>
         </div>
-        <div id="copyConfirmation" class="copy-confirmation">Copied to clipboard!</div>
       </div>
     </div>
 
@@ -865,11 +1080,50 @@
       <div class="modal-content">
         <span class="close-modal" onclick="closeImportModal()">&times;</span>
         <h2>Import Flow</h2>
-        <p class="modal-description">Paste a shared flow code below:</p>
-        <div class="import-code-container">
-          <textarea id="importCodeInput" placeholder="Paste flow code here..."></textarea>
-          <button class="import-btn" onclick="processImportFlow()">Import Flow</button>
+        <p class="modal-description">Choose how you want to import your flow:</p>
+        
+        <!-- File Upload Section -->
+        <div class="import-option">
+          <h3>Upload .flow File</h3>
+          <p>Select a .flow file to import</p>
+          <div class="file-upload-container">
+            <input type="file" id="flowFileInput" accept=".flow,.json" style="display: none;" onchange="handleFileUpload(event)">
+            <button class="upload-btn" onclick="document.getElementById('flowFileInput').click()">Choose File</button>
+            <span id="fileName" class="file-name"></span>
+          </div>
         </div>
+        
+        <!-- Separator -->
+        <div class="import-separator">
+          <span>OR</span>
+        </div>
+        
+        <!-- Code Import Section -->
+        <div class="import-option">
+          <h3>Paste Share Code</h3>
+          <p>Paste a shared flow code below</p>
+          <div class="import-code-container">
+            <textarea id="importCodeInput" placeholder="Paste flow code here..."></textarea>
+            <button class="import-btn" onclick="processImportFlow()">Import Flow</button>
+          </div>
+        </div>
+        
+        <!-- Separator -->
+        <div class="import-separator">
+          <span>OR</span>
+        </div>
+        
+        <!-- Template Import Section -->
+        <div class="import-option">
+          <h3>Use Template</h3>
+          <p>Choose from pre-made flow templates</p>
+          <div class="template-buttons">
+            <button class="template-btn" onclick="importTemplate('c1.flow')">Core Strength</button>
+            <button class="template-btn" onclick="importTemplate('c2.flow')">Sun Salutation A</button>
+            <button class="template-btn" onclick="importTemplate('hpf.flow')">Hip Opening</button>
+          </div>
+        </div>
+        
         <div id="importError" class="import-error">Invalid flow code. Please check and try again.</div>
       </div>
     </div>

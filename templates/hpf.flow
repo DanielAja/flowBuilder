@@ -1,0 +1,60 @@
+{
+  "name": "Hip Opening",
+  "description": "A gentle sequence focused on hip flexibility and mobility to release tension and improve range of motion.",
+  "asanas": [
+    {
+      "id": "1",
+      "name": "easy-pose",
+      "english": "Easy Pose",
+      "sanskrit": "Sukhasana",
+      "duration": 20,
+      "category": "Seated",
+      "side": "both"
+    },
+    {
+      "id": "2",
+      "name": "butterfly-pose",
+      "english": "Butterfly Pose",
+      "sanskrit": "Baddha Konasana",
+      "duration": 30,
+      "category": "Seated",
+      "side": "both"
+    },
+    {
+      "id": "3",
+      "name": "half-pigeon",
+      "english": "Half Pigeon",
+      "sanskrit": "Eka Pada Rajakapotasana",
+      "duration": 45,
+      "category": "Stretch",
+      "side": "right"
+    },
+    {
+      "id": "4",
+      "name": "half-pigeon",
+      "english": "Half Pigeon",
+      "sanskrit": "Eka Pada Rajakapotasana",
+      "duration": 45,
+      "category": "Stretch",
+      "side": "left"
+    },
+    {
+      "id": "5",
+      "name": "reclined-bound-angle",
+      "english": "Reclined Bound Angle",
+      "sanskrit": "Supta Baddha Konasana",
+      "duration": 60,
+      "category": "Stretch",
+      "side": "both"
+    },
+    {
+      "id": "6",
+      "name": "happy-baby",
+      "english": "Happy Baby",
+      "sanskrit": "Ananda Balasana",
+      "duration": 30,
+      "category": "Stretch",
+      "side": "both"
+    }
+  ]
+}

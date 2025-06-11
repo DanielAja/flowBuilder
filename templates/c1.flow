@@ -1,0 +1,72 @@
+{
+  "name": "Core Strength",
+  "description": "A focused flow designed to build core strength and stability with targeted poses and sequences.",
+  "asanas": [
+    {
+      "name": "mountain-pose",
+      "english": "Mountain Pose",
+      "sanskrit": "Tadasana",
+      "duration": 15,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Foundation pose for grounding and alignment",
+      "tags": ["Standing", "Foundation", "Grounding"],
+      "chakra": "Root"
+    },
+    {
+      "name": "plank",
+      "english": "Plank",
+      "sanskrit": "Phalakasana",
+      "duration": 30,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Core strengthening pose building full body stability",
+      "tags": ["Core", "Strength", "Stability"],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "boat-pose", 
+      "english": "Boat Pose",
+      "sanskrit": "Navasana",
+      "duration": 20,
+      "difficulty": "Intermediate",
+      "side": "both",
+      "description": "Deep core strengthener and balance challenge",
+      "tags": ["Core", "Strength", "Balance"],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "forearm-plank",
+      "english": "Forearm Plank", 
+      "sanskrit": "Dolphin Plank",
+      "duration": 30,
+      "difficulty": "Intermediate",
+      "side": "both",
+      "description": "Advanced core strengthener on forearms",
+      "tags": ["Core", "Strength", "Arm Strength"],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "side-plank",
+      "english": "Side Plank",
+      "sanskrit": "Vasisthasana", 
+      "duration": 20,
+      "difficulty": "Intermediate",
+      "side": "right",
+      "description": "Lateral core strengthener and stability challenge",
+      "tags": ["Core", "Strength", "Side Body"],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "side-plank",
+      "english": "Side Plank",
+      "sanskrit": "Vasisthasana",
+      "duration": 20,
+      "difficulty": "Intermediate", 
+      "side": "left",
+      "description": "Lateral core strengthener and stability challenge",
+      "tags": ["Core", "Strength", "Side Body"],
+      "chakra": "Solar Plexus"
+    }
+  ]
+}

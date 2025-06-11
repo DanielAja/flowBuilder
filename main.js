@@ -2847,8 +2847,14 @@ function editFlow(flowID) {
     console.log('Editing flow:', editingFlow.name, 'with', editingFlow.asanas.length, 'asanas');
 }
 
+// Global variable to store current flow ID for sharing
+let currentShareFlowID = null;
+
 // Show the share flow modal with export code
 function showShareFlow(flowID) {
+    // Store the flow ID for JSON export
+    currentShareFlowID = flowID;
+    
     // Generate the share code for the flow
     const shareCode = exportFlow(flowID);
 
@@ -2910,6 +2916,76 @@ function closeShareModal() {
     const modal = document.getElementById('shareFlowModal');
     if (modal) {
         modal.style.display = 'none';
+    }
+    // Clear the stored flow ID
+    currentShareFlowID = null;
+}
+
+// Export flow as JSON from the share modal
+function exportFlowAsJSONFromModal() {
+    if (!currentShareFlowID) {
+        alert('Error: No flow selected for export.');
+        return;
+    }
+    
+    try {
+        // Get all flows from storage
+        const flows = getFlows();
+        
+        // Find the flow with the given ID
+        const flowToExport = flows.find(flow => flow.flowID === currentShareFlowID);
+        
+        if (!flowToExport) {
+            console.error(`Flow with ID ${currentShareFlowID} not found`);
+            alert('Flow not found. Please try again.');
+            return;
+        }
+        
+        // Create simplified JSON structure similar to templates
+        const exportData = {
+            name: flowToExport.name,
+            description: flowToExport.description || "",
+            asanas: flowToExport.asanas.map(asana => ({
+                name: asana.imageName || asana.name.toLowerCase().replace(/\s+/g, '-'),
+                english: asana.name,
+                sanskrit: asana.sanskrit || "",
+                duration: asana.duration || 15,
+                difficulty: asana.difficulty || "Beginner",
+                side: asana.side || "both",
+                description: asana.description || "",
+                tags: asana.tags || [],
+                chakra: asana.chakra || "Root"
+            }))
+        };
+        
+        // Convert to JSON string with formatting
+        const jsonString = JSON.stringify(exportData, null, 2);
+        
+        // Create download link
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create temporary download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = `${flowToExport.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.flow`;
+        
+        // Trigger download
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // Clean up
+        URL.revokeObjectURL(url);
+        
+        console.log('Flow exported as JSON successfully');
+        
+        // Close the modal after successful export
+        closeShareModal();
+        
+    } catch (error) {
+        console.error('Error exporting flow as JSON:', error);
+        alert('Error exporting flow. Please try again.');
     }
 }
 
@@ -2995,6 +3071,189 @@ function closeImportModal() {
     const modal = document.getElementById('importFlowModal');
     if (modal) {
         modal.style.display = 'none';
+    }
+    
+    // Clear file input and filename display
+    const fileInput = document.getElementById('flowFileInput');
+    const fileName = document.getElementById('fileName');
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    if (fileName) {
+        fileName.textContent = '';
+    }
+    
+    // Clear import code input
+    const importCodeInput = document.getElementById('importCodeInput');
+    if (importCodeInput) {
+        importCodeInput.value = '';
+    }
+    
+    // Hide error message
+    const importError = document.getElementById('importError');
+    if (importError) {
+        importError.style.display = 'none';
+    }
+}
+
+// Handle file upload for .flow files
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    const fileName = document.getElementById('fileName');
+    const importError = document.getElementById('importError');
+    
+    // Hide any previous error messages
+    if (importError) {
+        importError.style.display = 'none';
+    }
+    
+    if (!file) {
+        if (fileName) {
+            fileName.textContent = '';
+        }
+        return;
+    }
+    
+    // Check file extension
+    const fileExtension = file.name.toLowerCase().split('.').pop();
+    if (fileExtension !== 'flow' && fileExtension !== 'json') {
+        if (importError) {
+            importError.textContent = 'Please select a .flow or .json file.';
+            importError.style.display = 'block';
+        }
+        return;
+    }
+    
+    // Display filename
+    if (fileName) {
+        fileName.textContent = file.name;
+    }
+    
+    // Read and process the file
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const fileContent = e.target.result;
+            const templateData = JSON.parse(fileContent);
+            
+            // Import the flow using the same logic as template import
+            importFlowFromData(templateData);
+            
+        } catch (error) {
+            console.error('Error reading file:', error);
+            if (importError) {
+                importError.textContent = 'Invalid file format. Please check the file and try again.';
+                importError.style.display = 'block';
+            }
+        }
+    };
+    
+    reader.onerror = function() {
+        console.error('Error reading file');
+        if (importError) {
+            importError.textContent = 'Error reading file. Please try again.';
+            importError.style.display = 'block';
+        }
+    };
+    
+    reader.readAsText(file);
+}
+
+// Import flow from template data (shared function for templates and file uploads)
+function importFlowFromData(templateData) {
+    try {
+        // Convert template data to the format expected by the app
+        const newFlow = new Flow(
+            templateData.name,
+            templateData.description || "",
+            0, // time will be calculated from asanas
+            "" // peakPose
+        );
+        
+        // Add asanas to the flow
+        templateData.asanas.forEach(asanaData => {
+            const newAsana = new YogaAsana(
+                asanaData.english || asanaData.name, // Use english name for display
+                asanaData.side || "both",
+                `images/webp/${asanaData.name}.webp`,
+                asanaData.description || "",
+                asanaData.difficulty || "Beginner",
+                asanaData.tags || [],
+                asanaData.transitionsAsana || [],
+                asanaData.sanskrit || "",
+                asanaData.chakra || "Root"
+            );
+            
+            // Set the duration
+            newAsana.setDuration(asanaData.duration || 15);
+            
+            // Store the original name for image reference
+            newAsana.imageName = asanaData.name;
+            
+            newFlow.addAsana(newAsana);
+        });
+        
+        // Calculate total time
+        newFlow.time = newFlow.asanas.reduce((total, asana) => total + asana.duration, 0);
+        
+        // Get existing flows
+        const flows = getFlows();
+        
+        // Check if a flow with the same name already exists
+        const existingNameIndex = flows.findIndex(flow => flow.name === newFlow.name);
+        if (existingNameIndex !== -1) {
+            // Append a suffix to make the name unique
+            newFlow.name = `${newFlow.name} (Imported)`;
+        }
+        
+        // Add new flow to storage
+        flows.push(newFlow);
+        saveFlows(flows);
+        
+        // Close the modal
+        closeImportModal();
+        
+        // Refresh the flow list
+        displayFlows();
+        
+        // Show success message
+        alert(`Flow "${newFlow.name}" has been imported successfully!`);
+        
+    } catch (error) {
+        console.error('Error importing flow data:', error);
+        
+        // Show error message
+        const importError = document.getElementById('importError');
+        if (importError) {
+            importError.textContent = 'Failed to import flow. Please check the file format and try again.';
+            importError.style.display = 'block';
+        }
+    }
+}
+
+// Import a flow from a template file
+async function importTemplate(templateFile) {
+    try {
+        const response = await fetch(`templates/${templateFile}`);
+        
+        if (!response.ok) {
+            throw new Error(`Failed to load template: ${response.status}`);
+        }
+        
+        const templateData = await response.json();
+        
+        // Use the shared import function
+        importFlowFromData(templateData);
+        
+    } catch (error) {
+        console.error('Error importing template:', error);
+        
+        // Show error message
+        const importError = document.getElementById('importError');
+        if (importError) {
+            importError.textContent = 'Failed to load template. Please try again.';
+            importError.style.display = 'block';
+        }
     }
 }
 
