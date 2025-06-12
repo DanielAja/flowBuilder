@@ -1,72 +1,602 @@
 {
-  "name": "Core Strength",
-  "description": "A focused flow designed to build core strength and stability with targeted poses and sequences.",
+  "name": "CorePower C1",
+  "description": "CorePower Yoga C1 class - A one-hour heated vinyasa flow that builds strength, flexibility, and mental focus through dynamic sequences.",
   "asanas": [
     {
-      "name": "mountain-pose",
-      "english": "Mountain Pose",
-      "sanskrit": "Tadasana",
-      "duration": 15,
+      "name": "corpse-pose",
+      "english": "Savasana",
+      "sanskrit": "Savasana",
+      "duration": 360,
       "difficulty": "Beginner",
       "side": "both",
-      "description": "Foundation pose for grounding and alignment",
-      "tags": ["Standing", "Foundation", "Grounding"],
+      "description": "Final relaxation and integration",
+      "tags": [
+        "Restorative",
+        "Relaxation",
+        "Meditation"
+      ],
+      "chakra": "Crown"
+    },
+    {
+      "name": "legs-up-wall",
+      "english": "Legs Up Wall",
+      "sanskrit": "Viparita Karani",
+      "duration": 240,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Gentle inversion for circulation and relaxation",
+      "tags": [
+        "Inversion",
+        "Restorative",
+        "Circulation"
+      ],
+      "chakra": "Crown"
+    },
+    {
+      "name": "reclined-bound-angle",
+      "english": "Reclined Bound Angle",
+      "sanskrit": "Supta Baddha Konasana",
+      "duration": 180,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Heart opening hip opener for relaxation",
+      "tags": [
+        "Hip Opener",
+        "Heart Opener",
+        "Restorative"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "reclined-twist",
+      "english": "Reclined Spinal Twist",
+      "sanskrit": "Supta Matsyendrasana",
+      "duration": 120,
+      "difficulty": "Beginner",
+      "side": "left",
+      "description": "Gentle twist for relaxation",
+      "tags": [
+        "Twist",
+        "Restorative",
+        "Relaxation"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "reclined-twist",
+      "english": "Reclined Spinal Twist",
+      "sanskrit": "Supta Matsyendrasana",
+      "duration": 120,
+      "difficulty": "Beginner",
+      "side": "right",
+      "description": "Gentle twist for relaxation",
+      "tags": [
+        "Twist",
+        "Restorative",
+        "Relaxation"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "happy-baby",
+      "english": "Happy Baby",
+      "sanskrit": "Ananda Balasana",
+      "duration": 120,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Gentle hip opener and lower back release",
+      "tags": [
+        "Hip Opener",
+        "Stretch",
+        "Restorative"
+      ],
       "chakra": "Root"
+    },
+    {
+      "name": "pigeon-pose",
+      "english": "Pigeon Pose",
+      "sanskrit": "Eka Pada Rajakapotasana",
+      "duration": 180,
+      "difficulty": "Intermediate",
+      "side": "left",
+      "description": "Deep hip opener and emotional release",
+      "tags": [
+        "Hip Opener",
+        "Stretch",
+        "Restorative"
+      ],
+      "chakra": "Sacral"
+    },
+    {
+      "name": "pigeon-pose",
+      "english": "Pigeon Pose",
+      "sanskrit": "Eka Pada Rajakapotasana",
+      "duration": 180,
+      "difficulty": "Intermediate",
+      "side": "right",
+      "description": "Deep hip opener and emotional release",
+      "tags": [
+        "Hip Opener",
+        "Stretch",
+        "Restorative"
+      ],
+      "chakra": "Sacral"
+    },
+    {
+      "name": "half-lord-of-the-fishes",
+      "english": "Seated Spinal Twist",
+      "sanskrit": "Ardha Matsyendrasana",
+      "duration": 90,
+      "difficulty": "Intermediate",
+      "side": "left",
+      "description": "Seated twist for spinal mobility",
+      "tags": [
+        "Seated",
+        "Twist",
+        "Spinal Mobility"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "half-lord-of-the-fishes",
+      "english": "Seated Spinal Twist",
+      "sanskrit": "Ardha Matsyendrasana",
+      "duration": 90,
+      "difficulty": "Intermediate",
+      "side": "right",
+      "description": "Seated twist for spinal mobility",
+      "tags": [
+        "Seated",
+        "Twist",
+        "Spinal Mobility"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "seated-forward-fold",
+      "english": "Seated Forward Fold",
+      "sanskrit": "Paschimottanasana",
+      "duration": 120,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Calming forward fold and hamstring stretch",
+      "tags": [
+        "Seated",
+        "Forward Fold",
+        "Calming"
+      ],
+      "chakra": "Sacral"
+    },
+    {
+      "name": "wheel-pose",
+      "english": "Wheel Pose",
+      "sanskrit": "Urdhva Dhanurasana",
+      "duration": 75,
+      "difficulty": "Advanced",
+      "side": "both",
+      "description": "Deep backbend and heart opener",
+      "tags": [
+        "Backbend",
+        "Heart Opener",
+        "Strength"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "bridge-pose",
+      "english": "Bridge Pose",
+      "sanskrit": "Setu Bandhasana",
+      "duration": 90,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Heart opening backbend and hip flexor stretch",
+      "tags": [
+        "Backbend",
+        "Heart Opener",
+        "Hip Opener"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "boat-pose",
+      "english": "Boat Pose",
+      "sanskrit": "Navasana",
+      "duration": 45,
+      "difficulty": "Intermediate",
+      "side": "both",
+      "description": "Core strengthening pose",
+      "tags": [
+        "Core",
+        "Strength",
+        "Balance"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "crow-pose",
+      "english": "Crow Pose",
+      "sanskrit": "Bakasana",
+      "duration": 60,
+      "difficulty": "Advanced",
+      "side": "both",
+      "description": "Arm balance building core and arm strength",
+      "tags": [
+        "Arm Balance",
+        "Core",
+        "Strength"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "warrior-3",
+      "english": "Warrior III",
+      "sanskrit": "Virabhadrasana III",
+      "duration": 45,
+      "difficulty": "Advanced",
+      "side": "left",
+      "description": "Challenging balance pose building full body strength",
+      "tags": [
+        "Standing",
+        "Balance",
+        "Strength"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "warrior-3",
+      "english": "Warrior III",
+      "sanskrit": "Virabhadrasana III",
+      "duration": 45,
+      "difficulty": "Advanced",
+      "side": "right",
+      "description": "Challenging balance pose building full body strength",
+      "tags": [
+        "Standing",
+        "Balance",
+        "Strength"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "eagle-pose",
+      "english": "Eagle Pose",
+      "sanskrit": "Garudasana",
+      "duration": 75,
+      "difficulty": "Intermediate",
+      "side": "left",
+      "description": "Balance pose with shoulder and hip stretch",
+      "tags": [
+        "Standing",
+        "Balance",
+        "Stretch"
+      ],
+      "chakra": "Third Eye"
+    },
+    {
+      "name": "eagle-pose",
+      "english": "Eagle Pose",
+      "sanskrit": "Garudasana",
+      "duration": 75,
+      "difficulty": "Intermediate",
+      "side": "right",
+      "description": "Balance pose with shoulder and hip stretch",
+      "tags": [
+        "Standing",
+        "Balance",
+        "Stretch"
+      ],
+      "chakra": "Third Eye"
+    },
+    {
+      "name": "chair-pose",
+      "english": "Chair Pose",
+      "sanskrit": "Utkatasana",
+      "duration": 60,
+      "difficulty": "Intermediate",
+      "side": "both",
+      "description": "Powerful leg and core strengthener",
+      "tags": [
+        "Standing",
+        "Strength",
+        "Heat Building"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "tree-pose",
+      "english": "Tree Pose",
+      "sanskrit": "Vrksasana",
+      "duration": 90,
+      "difficulty": "Beginner",
+      "side": "left",
+      "description": "Balance pose for focus and stability",
+      "tags": [
+        "Standing",
+        "Balance",
+        "Focus"
+      ],
+      "chakra": "Root"
+    },
+    {
+      "name": "tree-pose",
+      "english": "Tree Pose",
+      "sanskrit": "Vrksasana",
+      "duration": 90,
+      "difficulty": "Beginner",
+      "side": "right",
+      "description": "Balance pose for focus and stability",
+      "tags": [
+        "Standing",
+        "Balance",
+        "Focus"
+      ],
+      "chakra": "Root"
+    },
+    {
+      "name": "triangle-pose",
+      "english": "Triangle Pose",
+      "sanskrit": "Utthita Trikonasana",
+      "duration": 75,
+      "difficulty": "Beginner",
+      "side": "left",
+      "description": "Standing pose with deep side body stretch",
+      "tags": [
+        "Standing",
+        "Side Stretch",
+        "Hip Opener"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "triangle-pose",
+      "english": "Triangle Pose",
+      "sanskrit": "Utthita Trikonasana",
+      "duration": 75,
+      "difficulty": "Beginner",
+      "side": "right",
+      "description": "Standing pose with deep side body stretch",
+      "tags": [
+        "Standing",
+        "Side Stretch",
+        "Hip Opener"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "extended-side-angle",
+      "english": "Extended Side Angle",
+      "sanskrit": "Utthita Parsvakonasana",
+      "duration": 60,
+      "difficulty": "Intermediate",
+      "side": "left",
+      "description": "Deep side body stretch and strengthener",
+      "tags": [
+        "Standing",
+        "Side Stretch",
+        "Strength"
+      ],
+      "chakra": "Sacral"
+    },
+    {
+      "name": "extended-side-angle",
+      "english": "Extended Side Angle",
+      "sanskrit": "Utthita Parsvakonasana",
+      "duration": 60,
+      "difficulty": "Intermediate",
+      "side": "right",
+      "description": "Deep side body stretch and strengthener",
+      "tags": [
+        "Standing",
+        "Side Stretch",
+        "Strength"
+      ],
+      "chakra": "Sacral"
+    },
+    {
+      "name": "warrior-2",
+      "english": "Warrior II",
+      "sanskrit": "Virabhadrasana II",
+      "duration": 75,
+      "difficulty": "Beginner",
+      "side": "left",
+      "description": "Strong standing pose with open hips",
+      "tags": [
+        "Standing",
+        "Strength",
+        "Hip Opener"
+      ],
+      "chakra": "Sacral"
+    },
+    {
+      "name": "warrior-2",
+      "english": "Warrior II",
+      "sanskrit": "Virabhadrasana II",
+      "duration": 75,
+      "difficulty": "Beginner",
+      "side": "right",
+      "description": "Strong standing pose with open hips",
+      "tags": [
+        "Standing",
+        "Strength",
+        "Hip Opener"
+      ],
+      "chakra": "Sacral"
+    },
+    {
+      "name": "warrior-1",
+      "english": "Warrior I",
+      "sanskrit": "Virabhadrasana I",
+      "duration": 60,
+      "difficulty": "Beginner",
+      "side": "left",
+      "description": "Standing lunge with arms overhead",
+      "tags": [
+        "Standing",
+        "Strength",
+        "Hip Opener"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "warrior-1",
+      "english": "Warrior I",
+      "sanskrit": "Virabhadrasana I",
+      "duration": 60,
+      "difficulty": "Beginner",
+      "side": "right",
+      "description": "Standing lunge with arms overhead",
+      "tags": [
+        "Standing",
+        "Strength",
+        "Hip Opener"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "upward-facing-dog",
+      "english": "Upward Facing Dog",
+      "sanskrit": "Urdhva Mukha Svanasana",
+      "duration": 30,
+      "difficulty": "Intermediate",
+      "side": "both",
+      "description": "Heart opening backbend",
+      "tags": [
+        "Backbend",
+        "Heart Opener",
+        "Strength"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "low-plank",
+      "english": "Low Plank",
+      "sanskrit": "Chaturanga Dandasana",
+      "duration": 30,
+      "difficulty": "Intermediate",
+      "side": "both",
+      "description": "Low push-up position building arm strength",
+      "tags": [
+        "Strength",
+        "Arm Strength",
+        "Core"
+      ],
+      "chakra": "Solar Plexus"
     },
     {
       "name": "plank",
       "english": "Plank",
       "sanskrit": "Phalakasana",
+      "duration": 45,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Core strengthening foundation pose",
+      "tags": [
+        "Core",
+        "Strength",
+        "Arm Strength"
+      ],
+      "chakra": "Solar Plexus"
+    },
+    {
+      "name": "half-forward-fold",
+      "english": "Half Forward Fold",
+      "sanskrit": "Ardha Uttanasana",
       "duration": 30,
       "difficulty": "Beginner",
       "side": "both",
-      "description": "Core strengthening pose building full body stability",
-      "tags": ["Core", "Strength", "Stability"],
-      "chakra": "Solar Plexus"
+      "description": "Lengthening the spine in half lift",
+      "tags": [
+        "Standing",
+        "Spinal Extension"
+      ],
+      "chakra": "Sacral"
     },
     {
-      "name": "boat-pose", 
-      "english": "Boat Pose",
-      "sanskrit": "Navasana",
-      "duration": 20,
-      "difficulty": "Intermediate",
+      "name": "forward-fold",
+      "english": "Forward Fold",
+      "sanskrit": "Uttanasana",
+      "duration": 45,
+      "difficulty": "Beginner",
       "side": "both",
-      "description": "Deep core strengthener and balance challenge",
-      "tags": ["Core", "Strength", "Balance"],
-      "chakra": "Solar Plexus"
+      "description": "Standing forward fold to release hamstrings",
+      "tags": [
+        "Standing",
+        "Forward Fold",
+        "Stretch"
+      ],
+      "chakra": "Root"
     },
     {
-      "name": "forearm-plank",
-      "english": "Forearm Plank", 
-      "sanskrit": "Dolphin Plank",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 90,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Full body stretch and inversion",
+      "tags": [
+        "Inversion",
+        "Strength",
+        "Stretch"
+      ],
+      "chakra": "Third Eye"
+    },
+    {
+      "name": "cow-pose",
+      "english": "Cow Pose",
+      "sanskrit": "Bitilasana",
+      "duration": 45,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Spinal extension to warm the spine",
+      "tags": [
+        "Warm-up",
+        "Spinal Mobility"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "cat-pose",
+      "english": "Cat Pose",
+      "sanskrit": "Marjaryasana",
+      "duration": 45,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Spinal flexion to warm the spine",
+      "tags": [
+        "Warm-up",
+        "Spinal Mobility"
+      ],
+      "chakra": "Heart"
+    },
+    {
+      "name": "table-top",
+      "english": "Table Top",
+      "sanskrit": "Bharmanasana",
       "duration": 30,
-      "difficulty": "Intermediate",
+      "difficulty": "Beginner",
       "side": "both",
-      "description": "Advanced core strengthener on forearms",
-      "tags": ["Core", "Strength", "Arm Strength"],
-      "chakra": "Solar Plexus"
+      "description": "Neutral spine position for warm-up movements",
+      "tags": [
+        "Foundation",
+        "Warm-up"
+      ],
+      "chakra": "Sacral"
     },
     {
-      "name": "side-plank",
-      "english": "Side Plank",
-      "sanskrit": "Vasisthasana", 
-      "duration": 20,
-      "difficulty": "Intermediate",
-      "side": "right",
-      "description": "Lateral core strengthener and stability challenge",
-      "tags": ["Core", "Strength", "Side Body"],
-      "chakra": "Solar Plexus"
-    },
-    {
-      "name": "side-plank",
-      "english": "Side Plank",
-      "sanskrit": "Vasisthasana",
-      "duration": 20,
-      "difficulty": "Intermediate", 
-      "side": "left",
-      "description": "Lateral core strengthener and stability challenge",
-      "tags": ["Core", "Strength", "Side Body"],
-      "chakra": "Solar Plexus"
+      "name": "childs-pose",
+      "english": "Child's Pose",
+      "sanskrit": "Balasana",
+      "duration": 120,
+      "difficulty": "Beginner",
+      "side": "both",
+      "description": "Grounding and centering pose to begin practice",
+      "tags": [
+        "Resting",
+        "Restorative",
+        "Hip Opener"
+      ],
+      "chakra": "Root"
     }
   ]
 }

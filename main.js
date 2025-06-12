@@ -3096,6 +3096,132 @@ function closeImportModal() {
     }
 }
 
+// Security validation for imported files
+function validateFileSecurely(file) {
+    const errors = [];
+    
+    // File size validation (max 10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_FILE_SIZE) {
+        errors.push('File size exceeds maximum limit of 10MB.');
+    }
+    
+    // File type validation (MIME type check)
+    const allowedTypes = ['application/json', 'text/plain', ''];
+    if (file.type && !allowedTypes.includes(file.type)) {
+        errors.push('Invalid file type. Only .flow and .json files are allowed.');
+    }
+    
+    // File extension validation
+    const fileName = file.name.toLowerCase();
+    const fileExtension = fileName.split('.').pop();
+    if (fileExtension !== 'flow' && fileExtension !== 'json') {
+        errors.push('Please select a .flow or .json file.');
+    }
+    
+    // Filename validation (prevent path traversal)
+    if (fileName.includes('..') || fileName.includes('/') || fileName.includes('\\')) {
+        errors.push('Invalid filename detected.');
+    }
+    
+    return errors;
+}
+
+// Sanitize and validate JSON content
+function validateJSONContent(data) {
+    const errors = [];
+    
+    try {
+        // Check if it's an object
+        if (typeof data !== 'object' || data === null) {
+            errors.push('Invalid file structure.');
+            return errors;
+        }
+        
+        // Validate required properties for flow files
+        const requiredProps = ['flowID', 'title', 'asanas'];
+        for (const prop of requiredProps) {
+            if (!data.hasOwnProperty(prop)) {
+                errors.push(`Missing required property: ${prop}`);
+            }
+        }
+        
+        // Validate flowID format
+        if (data.flowID && typeof data.flowID !== 'string') {
+            errors.push('Invalid flowID format.');
+        }
+        
+        // Validate title
+        if (data.title && typeof data.title !== 'string') {
+            errors.push('Invalid title format.');
+        }
+        
+        // Sanitize title (remove potentially dangerous characters)
+        if (data.title) {
+            data.title = data.title.replace(/[<>]/g, '').substring(0, 100);
+        }
+        
+        // Validate description
+        if (data.description && typeof data.description !== 'string') {
+            errors.push('Invalid description format.');
+        }
+        
+        // Sanitize description
+        if (data.description) {
+            data.description = data.description.replace(/[<>]/g, '').substring(0, 500);
+        }
+        
+        // Validate asanas array
+        if (data.asanas && !Array.isArray(data.asanas)) {
+            errors.push('Invalid asanas format.');
+        }
+        
+        // Validate asanas content
+        if (data.asanas && Array.isArray(data.asanas)) {
+            // Limit number of asanas to prevent excessive data
+            if (data.asanas.length > 200) {
+                errors.push('Too many asanas in flow (maximum 200 allowed).');
+            }
+            
+            data.asanas.forEach((asana, index) => {
+                if (typeof asana !== 'object' || asana === null) {
+                    errors.push(`Invalid asana at position ${index + 1}.`);
+                    return;
+                }
+                
+                // Validate and sanitize asana name
+                if (asana.name && typeof asana.name === 'string') {
+                    asana.name = asana.name.replace(/[<>]/g, '').substring(0, 100);
+                } else if (asana.name) {
+                    errors.push(`Invalid asana name at position ${index + 1}.`);
+                }
+                
+                // Validate duration
+                if (asana.duration && (typeof asana.duration !== 'number' || asana.duration < 0 || asana.duration > 300)) {
+                    errors.push(`Invalid duration for asana at position ${index + 1}.`);
+                }
+            });
+        }
+        
+        // Remove any potentially dangerous properties
+        const dangerousProps = ['__proto__', 'constructor', 'prototype'];
+        dangerousProps.forEach(prop => {
+            delete data[prop];
+        });
+        
+        // Validate total file structure size
+        const jsonString = JSON.stringify(data);
+        if (jsonString.length > 1024 * 1024) { // 1MB JSON limit
+            errors.push('File content too large.');
+        }
+        
+    } catch (error) {
+        errors.push('Failed to validate file content.');
+    }
+    
+    return errors;
+}
+
 // Handle file upload for .flow files
 function handleFileUpload(event) {
     const file = event.target.files[0];
@@ -3114,11 +3240,11 @@ function handleFileUpload(event) {
         return;
     }
     
-    // Check file extension
-    const fileExtension = file.name.toLowerCase().split('.').pop();
-    if (fileExtension !== 'flow' && fileExtension !== 'json') {
+    // Security validation
+    const validationErrors = validateFileSecurely(file);
+    if (validationErrors.length > 0) {
         if (importError) {
-            importError.textContent = 'Please select a .flow or .json file.';
+            importError.textContent = validationErrors[0];
             importError.style.display = 'block';
         }
         return;
@@ -3134,7 +3260,23 @@ function handleFileUpload(event) {
     reader.onload = function(e) {
         try {
             const fileContent = e.target.result;
+            
+            // Additional content length check
+            if (fileContent.length > 1024 * 1024) { // 1MB
+                throw new Error('File content too large');
+            }
+            
             const templateData = JSON.parse(fileContent);
+            
+            // Validate JSON content
+            const contentErrors = validateJSONContent(templateData);
+            if (contentErrors.length > 0) {
+                if (importError) {
+                    importError.textContent = contentErrors[0];
+                    importError.style.display = 'block';
+                }
+                return;
+            }
             
             // Import the flow using the same logic as template import
             importFlowFromData(templateData);
@@ -3154,6 +3296,141 @@ function handleFileUpload(event) {
             importError.textContent = 'Error reading file. Please try again.';
             importError.style.display = 'block';
         }
+    };
+    
+    reader.readAsText(file);
+}
+
+// Drag and drop functionality
+function handleDragOver(event) {
+    event.preventDefault();
+    event.stopPropagation();
+}
+
+function handleDragEnter(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const dropZone = document.getElementById('fileDropZone');
+    if (dropZone) {
+        dropZone.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    // Only remove drag-over if we're leaving the entire drop zone
+    if (event.target === document.getElementById('fileDropZone')) {
+        const dropZone = document.getElementById('fileDropZone');
+        if (dropZone) {
+            dropZone.classList.remove('drag-over');
+        }
+    }
+}
+
+function handleFileDrop(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const dropZone = document.getElementById('fileDropZone');
+    if (dropZone) {
+        dropZone.classList.remove('drag-over');
+    }
+    
+    const importError = document.getElementById('importError');
+    
+    // Hide any previous error messages
+    if (importError) {
+        importError.style.display = 'none';
+    }
+    
+    const files = event.dataTransfer.files;
+    if (files.length === 0) {
+        if (importError) {
+            importError.textContent = 'No file detected. Please try again.';
+            importError.style.display = 'block';
+        }
+        return;
+    }
+    
+    // Only allow single file drops
+    if (files.length > 1) {
+        if (importError) {
+            importError.textContent = 'Please drop only one file at a time.';
+            importError.style.display = 'block';
+        }
+        return;
+    }
+    
+    const file = files[0];
+    
+    // Security validation using the same function as file upload
+    const validationErrors = validateFileSecurely(file);
+    if (validationErrors.length > 0) {
+        if (importError) {
+            importError.textContent = validationErrors[0];
+            importError.style.display = 'block';
+        }
+        return;
+    }
+    
+    const fileName = document.getElementById('fileName');
+    if (fileName) {
+        fileName.textContent = file.name;
+    }
+    
+    // Read and process the file directly
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const fileContent = e.target.result;
+            
+            // Additional content length check
+            if (fileContent.length > 1024 * 1024) { // 1MB
+                throw new Error('File content too large');
+            }
+            
+            const templateData = JSON.parse(fileContent);
+            
+            // Validate JSON content
+            const contentErrors = validateJSONContent(templateData);
+            if (contentErrors.length > 0) {
+                if (importError) {
+                    importError.textContent = contentErrors[0];
+                    importError.style.display = 'block';
+                }
+                return;
+            }
+            
+            importFlowFromData(templateData);
+        } catch (error) {
+            console.error('Error reading dropped file:', error);
+            if (importError) {
+                importError.textContent = 'Invalid file format. Please check the file and try again.';
+                importError.style.display = 'block';
+            }
+        }
+    };
+    
+    reader.onerror = function() {
+        console.error('Error reading dropped file');
+        if (importError) {
+            importError.textContent = 'Error reading file. Please try again.';
+            importError.style.display = 'block';
+        }
+    };
+    
+    // Add timeout for file reading operation
+    const timeoutId = setTimeout(() => {
+        reader.abort();
+        if (importError) {
+            importError.textContent = 'File reading timeout. Please try a smaller file.';
+            importError.style.display = 'block';
+        }
+    }, 30000); // 30 second timeout
+    
+    reader.onloadend = function() {
+        clearTimeout(timeoutId);
     };
     
     reader.readAsText(file);

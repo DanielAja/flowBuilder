@@ -281,7 +281,7 @@ h1 {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   overflow: auto;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .modal-content {

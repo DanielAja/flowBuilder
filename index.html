@@ -662,6 +662,27 @@
         transform: translateY(1px);
       }
       
+      .template-btn.disabled {
+        background: #ccc;
+        color: #666;
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      
+      .template-btn.disabled:hover {
+        background: #ccc;
+        transform: none;
+        box-shadow: none;
+      }
+      
+      .template-btn.disabled small {
+        display: block;
+        font-size: 12px;
+        font-weight: 400;
+        margin-top: 2px;
+        opacity: 0.8;
+      }
+      
       .import-separator {
         text-align: center;
         margin: 20px 0;
@@ -698,6 +719,7 @@
         border: 2px solid #eee;
         border-radius: 15px;
         background: rgba(255, 255, 255, 0.9);
+        text-align: center;
       }
       
       .share-option h3 {
@@ -767,6 +789,14 @@
         border-radius: 15px;
         background: rgba(255, 255, 255, 0.9);
         margin-bottom: 15px;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+      
+      .import-option.drag-over {
+        border-color: #ff8c00;
+        background: rgba(255, 140, 0, 0.1);
+        transform: scale(1.02);
       }
       
       .import-option h3 {
@@ -784,6 +814,7 @@
       
       .file-upload-container {
         display: flex;
+        flex-direction: column;
         align-items: center;
         gap: 15px;
       }
@@ -795,6 +826,7 @@
         border-radius: 15px;
         padding: 12px 20px;
         cursor: pointer;
+        width: 100%;
         font-weight: 600;
         font-size: 14px;
         transition: all 0.2s ease;
@@ -815,6 +847,7 @@
         font-size: 14px;
         font-style: italic;
       }
+      
     </style>
   </head>
   <body>
@@ -1053,23 +1086,7 @@
         <!-- Share Options -->
         <div class="share-options">
           <div class="share-option">
-            <h3>Share Code</h3>
-            <p>Copy this code to share your flow with others</p>
-            <div class="share-code-container">
-              <textarea id="shareCodeOutput" readonly></textarea>
-              <button class="copy-btn" onclick="copyShareCode()">Copy Code</button>
-            </div>
-            <div id="copyConfirmation" class="copy-confirmation">Copied to clipboard!</div>
-          </div>
-          
-          <div class="share-separator">
-            <span>OR</span>
-          </div>
-          
-          <div class="share-option">
-            <h3>Export as JSON</h3>
-            <p>Download as a template file that can be imported later</p>
-            <button class="export-json-btn" onclick="exportFlowAsJSONFromModal()">Download JSON</button>
+            <button class="export-json-btn" onclick="exportFlowAsJSONFromModal()">Download</button>
           </div>
         </div>
       </div>
@@ -1083,7 +1100,7 @@
         <p class="modal-description">Choose how you want to import your flow:</p>
         
         <!-- File Upload Section -->
-        <div class="import-option">
+        <div class="import-option" id="fileDropZone" ondrop="handleFileDrop(event)" ondragover="handleDragOver(event)" ondragenter="handleDragEnter(event)" ondragleave="handleDragLeave(event)">
           <h3>Upload .flow File</h3>
           <p>Select a .flow file to import</p>
           <div class="file-upload-container">
@@ -1098,29 +1115,14 @@
           <span>OR</span>
         </div>
         
-        <!-- Code Import Section -->
-        <div class="import-option">
-          <h3>Paste Share Code</h3>
-          <p>Paste a shared flow code below</p>
-          <div class="import-code-container">
-            <textarea id="importCodeInput" placeholder="Paste flow code here..."></textarea>
-            <button class="import-btn" onclick="processImportFlow()">Import Flow</button>
-          </div>
-        </div>
-        
-        <!-- Separator -->
-        <div class="import-separator">
-          <span>OR</span>
-        </div>
-        
         <!-- Template Import Section -->
         <div class="import-option">
           <h3>Use Template</h3>
           <p>Choose from pre-made flow templates</p>
           <div class="template-buttons">
-            <button class="template-btn" onclick="importTemplate('c1.flow')">Core Strength</button>
-            <button class="template-btn" onclick="importTemplate('c2.flow')">Sun Salutation A</button>
-            <button class="template-btn" onclick="importTemplate('hpf.flow')">Hip Opening</button>
+            <button class="template-btn" onclick="importTemplate('c1.flow')">CorePower C1</button>
+            <button class="template-btn disabled" disabled>SorePower C2 Template<br><small>Coming Soon</small></button>
+            <button class="template-btn disabled" disabled>Hot Yoga<br><small>Coming Soon</small></button>
           </div>
         </div>
         
@@ -1162,7 +1164,7 @@
         <p class="modal-description">Are you sure you want to delete this flow?</p>
         <div class="section-name-input-container">
           <button class="cancel-btn" onclick="closeDeleteFlowModal()">Cancel</button>
-          <button class="delete-btn" onclick="confirmDeleteFlow()">Delete</button>
+          <button class="delete-btn" onclick="confirmDeleteFlow()">DELETE</button>
         </div>
       </div>
     </div>
