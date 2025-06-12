@@ -440,21 +440,16 @@ function displayFlowDuration(duration) {
     let mins = Math.floor((duration % 3600) / 60);
     let sec = duration % 60;
     
-    let parts = [];
-    
+    // Only display the largest time increment
     if (hrs > 0) {
-        parts.push(hrs.toString() + "h");
+        return hrs.toString() + "h";
     }
     
-    if (mins > 0 || (hrs > 0 && sec > 0)) {
-        parts.push(mins.toString() + "min");
+    if (mins > 0) {
+        return mins.toString() + "m";
     }
     
-    if (sec > 0 || (hrs === 0 && mins === 0)) {
-        parts.push(sec.toString().padStart(2, '0') + "s");
-    }
-    
-    return parts.join(" ");
+    return sec.toString() + "s";
 }
 
 function updateAsanaDisplay(asana) {

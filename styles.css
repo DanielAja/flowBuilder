@@ -2005,7 +2005,7 @@ input[type="number"][min="1"][max="300"][onchange="updateFlowDuration()"]:not(:f
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 32px;
+  font-size: 24px;
   font-weight: bold;
   color: #333;
   letter-spacing: 0.05em;
@@ -2663,7 +2663,7 @@ input:checked + .slider:before {
   }
 
   #countdown {
-    font-size: 24px;
+    font-size: 18px;
   }
 
   .coming-up {
@@ -2855,7 +2855,7 @@ input:checked + .slider:before {
   }
 
   #countdown {
-    font-size: 20px;
+    font-size: 16px;
   }
 
   .coming-up {
