@@ -1430,7 +1430,7 @@ function formatRelativeTime(dateString) {
     return date.toLocaleDateString();
 }
 
-function displayFlows() {
+async function displayFlows() {
     let flows = getFlows();
     console.log('Raw flows:', flows); // Debug log
     
@@ -1460,8 +1460,46 @@ function displayFlows() {
     flowList.innerHTML = '';
 
     if (flows.length === 0) {
-        console.log('No flows available');
-        flowList.innerHTML = '<div class="empty-message"><p>No flows available.</p><button class="primary-btn" onclick="startNewFlow()">Build your first flow</button></div>';
+        console.log('No flows available - checking for default flow import');
+        await importDefaultFlowForNewUser();
+        // Refresh flows after potential import
+        flows = getFlows();
+        
+        if (flows.length === 0) {
+            flowList.innerHTML = '<div class="empty-message"><p>No flows available.</p><button class="primary-btn" onclick="startNewFlow()">Build your first flow</button></div>';
+        } else {
+            // Display the imported default flow using the same logic as the main section
+            console.log(`Adding ${flows.length} flows to the list`);
+            flows.forEach(flow => {
+                const flowItem = document.createElement('div');
+                flowItem.className = 'flow-item';
+                
+                const lastFlowed = flow.lastFlowed ? new Date(flow.lastFlowed) : null;
+                const lastEdited = flow.lastEdited ? new Date(flow.lastEdited) : null;
+                
+                const lastFlowedText = lastFlowed ? formatTimeAgo(lastFlowed) : 'Never';
+                const lastEditedText = lastEdited ? formatTimeAgo(lastEdited) : 'Unknown';
+                
+                flowItem.innerHTML = `
+                    <div class="flow-info">
+                        <h4>${flow.name}</h4>
+                        <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description || ''}</p>
+                        <div class="flow-timestamps">
+                            <span class="timestamp ${flow.lastFlowed ? 'active' : ''}">Last flowed: ${lastFlowedText}</span>
+                            <span class="timestamp">Last edited: ${lastEditedText}</span>
+                        </div>
+                    </div>
+                    <div class="flow-actions">
+                        <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
+                        <button class="share-btn" onclick="showShareFlow('${flow.flowID}')" title="Share this flow"></button>
+                        <button class="edit-btn" onclick="editFlow('${flow.flowID}')" title="Edit this flow"></button>
+                        <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')" title="Delete this flow">🗑️</button>
+                    </div>
+                `;
+                
+                flowList.appendChild(flowItem);
+            });
+        }
     } else {
         console.log(`Adding ${flows.length} flows to the list`);
         flows.forEach(flow => {
@@ -3533,6 +3571,41 @@ async function importTemplate(templateFile) {
             importError.textContent = 'Failed to load template. Please try again.';
             importError.style.display = 'block';
         }
+    }
+}
+
+// Import default C1 flow for new users
+async function importDefaultFlowForNewUser() {
+    try {
+        // Check if user has previously used the app
+        const hasUsedApp = localStorage.getItem('hasUsedApp');
+        if (hasUsedApp === 'true') {
+            console.log('User has used app before - not importing default flow');
+            return;
+        }
+        
+        console.log('Importing default C1 flow for new user');
+        
+        // Check if C1 flow template exists
+        const response = await fetch('templates/c1.flow');
+        if (!response.ok) {
+            console.error('C1 template not found:', response.status);
+            return;
+        }
+        
+        const templateData = await response.json();
+        
+        // Import the C1 flow data
+        importFlowFromData(templateData);
+        
+        // Mark user as having used the app
+        localStorage.setItem('hasUsedApp', 'true');
+        
+        console.log('Default C1 flow imported successfully');
+        
+    } catch (error) {
+        console.error('Error importing default C1 flow:', error);
+        // Silently fail - don't show error to user as this is background functionality
     }
 }
 
@@ -6624,9 +6697,9 @@ function toggleSequences() {
 // Initialize the app
 function initializeApp() {
     // Load asanas from XML
-    loadAsanasFromXML().then(() => {
+    loadAsanasFromXML().then(async () => {
         // Display flows
-        displayFlows();
+        await displayFlows();
 
         // Display sequences
         displaySequences();
