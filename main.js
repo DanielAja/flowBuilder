@@ -3070,9 +3070,6 @@ function processImportFlow() {
         // Refresh the flow list
         displayFlows();
 
-        // Show success message
-        alert(`Flow "${newFlow.name}" has been imported successfully!`);
-
     } catch (error) {
         console.error('Error importing flow:', error);
         importError.style.display = 'block';
@@ -3196,11 +3193,6 @@ function validateJSONContent(data) {
         
         // Validate asanas content
         if (data.asanas && Array.isArray(data.asanas)) {
-            // Limit number of asanas to prevent excessive data
-            if (data.asanas.length > 200) {
-                errors.push('Too many asanas in flow (maximum 200 allowed).');
-            }
-            
             data.asanas.forEach((asana, index) => {
                 if (typeof asana !== 'object' || asana === null) {
                     errors.push(`Invalid asana at position ${index + 1}.`);
@@ -3510,9 +3502,6 @@ function importFlowFromData(templateData) {
         
         // Refresh the flow list
         displayFlows();
-        
-        // Show success message
-        alert(`Flow "${newFlow.name}" has been imported successfully!`);
         
     } catch (error) {
         console.error('Error importing flow data:', error);
