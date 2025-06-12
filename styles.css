@@ -1170,9 +1170,21 @@ h1 {
   text-align: center;
 }
 
-#flowTable td:nth-child(5) { /* Remove column */
+#flowTable td:nth-child(5) { /* Side column */
+  width: 120px;
+  text-align: center;
+}
+
+#flowTable td:nth-child(6) { /* Swap column */
   width: 80px;
   text-align: center;
+  min-width: 60px;
+}
+
+#flowTable td:nth-child(7) { /* Remove column */
+  width: 80px;
+  text-align: center;
+  min-width: 60px;
 }
 
 /* Drag and Drop styling */
@@ -1673,8 +1685,9 @@ h1 {
 }
 
 .table-btn {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -1686,6 +1699,7 @@ h1 {
   margin: 0 auto; /* Add auto margins to center horizontally */
   padding: 0; /* Remove any padding */
   line-height: 1; /* Ensure text is vertically centered */
+  flex-shrink: 0; /* Prevent shrinking */
 }
 
 .reorder-btn {
@@ -2559,20 +2573,26 @@ input:checked + .slider:before {
   }
 
   #flowTable th:nth-child(6) {
-    width: 60px;
+    width: 70px;
+  }
+
+  #flowTable th:nth-child(7) {
+    width: 70px;
   }
 
   /* Mobile-specific button sizing for table */
   .swap-btn {
-    width: 20px !important;
-    height: 20px !important;
-    font-size: 11px !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    font-size: 12px !important;
   }
 
   .remove-btn {
-    width: 20px !important;
-    height: 20px !important;
-    font-size: 11px !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    font-size: 12px !important;
   }
 
   /* Replace table headers with emoji on mobile */
@@ -2769,25 +2789,33 @@ input:checked + .slider:before {
 
   #flowTable th:nth-child(3),
   #flowTable td:nth-child(3) {
-    width: 28% !important;
+    width: 24% !important;
   }
 
   #flowTable th:nth-child(4),
   #flowTable td:nth-child(4) {
-    width: 17% !important;
+    width: 15% !important;
     padding: 4px !important;
   }
 
   #flowTable th:nth-child(5),
   #flowTable td:nth-child(5) {
-    width: 17% !important;
+    width: 15% !important;
     padding: 4px !important;
   }
 
   #flowTable th:nth-child(6),
   #flowTable td:nth-child(6) {
-    width: 8% !important;
+    width: 12% !important;
     padding: 4px !important;
+    min-width: 35px !important;
+  }
+
+  #flowTable th:nth-child(7),
+  #flowTable td:nth-child(7) {
+    width: 12% !important;
+    padding: 4px !important;
+    min-width: 35px !important;
   }
 
   #flowTable th, 
@@ -4144,9 +4172,11 @@ tr[data-section-id]:last-of-type {
   transition: all 0.3s ease;
   width: 28px;
   height: 28px;
+  min-width: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .swap-btn:hover {
