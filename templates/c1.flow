@@ -273,7 +273,7 @@
       "chakra": "Root"
     },
     {
-      "name": "belly-down-rest",
+      "name": "bell-down-rest",
       "english": "Belly Down Rest",
       "sanskrit": "Advasana",
       "duration": 15,
@@ -306,7 +306,7 @@
       "chakra": "Heart"
     },
     {
-      "name": "belly-down-rest",
+      "name": "bell-down-rest",
       "english": "Belly Down Rest",
       "sanskrit": "Advasana",
       "duration": 15,
@@ -1189,7 +1189,7 @@
       "chakra": "Third Eye"
     },
     {
-      "name": "child's-pose",
+      "name": "childs-pose",
       "english": "Child's Pose",
       "sanskrit": "Balasana",
       "duration": 25,
@@ -3784,7 +3784,7 @@
       "chakra": "Sacral"
     },
     {
-      "name": "child's-pose",
+      "name": "childs-pose",
       "english": "Child's Pose",
       "sanskrit": "Balasana",
       "duration": 120,
