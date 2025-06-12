@@ -2943,20 +2943,33 @@ function exportFlowAsJSONFromModal() {
         
         // Create simplified JSON structure similar to templates
         const exportData = {
-            name: flowToExport.name,
+            name: flowToExport.name || "Untitled Flow",
             description: flowToExport.description || "",
-            asanas: flowToExport.asanas.map(asana => ({
-                name: asana.imageName || asana.name.toLowerCase().replace(/\s+/g, '-'),
-                english: asana.name,
-                sanskrit: asana.sanskrit || "",
-                duration: asana.duration || 15,
-                difficulty: asana.difficulty || "Beginner",
-                side: asana.side || "both",
-                description: asana.description || "",
-                tags: asana.tags || [],
-                chakra: asana.chakra || "Root"
-            }))
+            asanas: flowToExport.asanas.map(asana => {
+                // Ensure each asana has a valid name for validation
+                const asanaName = asana.imageName || asana.name.toLowerCase().replace(/\s+/g, '-');
+                
+                return {
+                    name: asanaName || "unknown-pose",
+                    english: asana.name || "Unknown Pose",
+                    sanskrit: asana.sanskrit || "",
+                    duration: Math.max(1, Math.min(300, asana.duration || 15)), // Ensure valid duration range
+                    difficulty: asana.difficulty || "Beginner",
+                    side: asana.side || "both",
+                    description: asana.description || "",
+                    tags: Array.isArray(asana.tags) ? asana.tags : [],
+                    chakra: asana.chakra || "Root"
+                };
+            })
         };
+        
+        // Validate the export data before creating file (ensure it would pass import validation)
+        const validationErrors = validateJSONContent(exportData);
+        if (validationErrors.length > 0) {
+            console.error('Export validation failed:', validationErrors);
+            alert(`Export failed: ${validationErrors[0]}`);
+            return;
+        }
         
         // Convert to JSON string with formatting
         const jsonString = JSON.stringify(exportData, null, 2);
@@ -3139,19 +3152,24 @@ function validateJSONContent(data) {
         }
         
         // Validate required properties for flow files
-        const requiredProps = ['flowID', 'title', 'asanas'];
+        const requiredProps = ['name', 'asanas'];
         for (const prop of requiredProps) {
             if (!data.hasOwnProperty(prop)) {
                 errors.push(`Missing required property: ${prop}`);
             }
         }
         
-        // Validate flowID format
-        if (data.flowID && typeof data.flowID !== 'string') {
-            errors.push('Invalid flowID format.');
+        // Validate name format
+        if (data.name && typeof data.name !== 'string') {
+            errors.push('Invalid name format.');
         }
         
-        // Validate title
+        // Sanitize name (remove potentially dangerous characters)
+        if (data.name) {
+            data.name = data.name.replace(/[<>]/g, '').substring(0, 100);
+        }
+        
+        // Validate title if present (optional for flow files)
         if (data.title && typeof data.title !== 'string') {
             errors.push('Invalid title format.');
         }
