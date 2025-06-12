@@ -6574,8 +6574,17 @@ function getSelectedAsanas() {
 }
 
 // Function to toggle Sanskrit names
+// Debounced Sanskrit toggle to prevent rapid consecutive updates
+let sanskritToggleTimeout = null;
+
 function toggleSanskritNames(event) {
     console.log("Toggle Sanskrit Names called");
+    
+    // Clear any pending toggle updates
+    if (sanskritToggleTimeout) {
+        clearTimeout(sanskritToggleTimeout);
+    }
+    
     const globalToggle = document.getElementById('sanskrit-toggle-global');
     const buildToggle = document.getElementById('sanskrit-toggle-build');
     const flowToggle = document.getElementById('sanskrit-toggle-flow');
@@ -6590,35 +6599,59 @@ function toggleSanskritNames(event) {
                       document.activeElement === flowToggle ? flowToggle : buildToggle;
     }
     
-    // Sync all toggles to match the source toggle
+    // Immediately sync all toggles to match the source toggle (visual feedback)
+    const newState = sourceToggle ? sourceToggle.checked : false;
     if (globalToggle && sourceToggle) {
-        globalToggle.checked = sourceToggle.checked;
+        globalToggle.checked = newState;
     }
     if (buildToggle && sourceToggle) {
-        buildToggle.checked = sourceToggle.checked;
+        buildToggle.checked = newState;
     }
     if (flowToggle && sourceToggle) {
-        flowToggle.checked = sourceToggle.checked;
+        flowToggle.checked = newState;
     }
     
-    // Update the global state
-    useSanskritNames = sourceToggle ? sourceToggle.checked : false;
+    // Update the global state immediately
+    useSanskritNames = newState;
     console.log("Sanskrit names toggled to:", useSanskritNames);
     
-    // Save to localStorage
+    // Save to localStorage immediately
     localStorage.setItem('useSanskritNames', useSanskritNames);
     
-    // Update UI elements that display pose names
-    updateAsanaDisplayNames();
+    // Immediately update flow screen names (highest priority for user experience)
+    updateFlowScreenNames();
     
-    // Always update the asana list regardless of current screen
-    populateAsanaList();
+    // Show notification immediately
+    const message = useSanskritNames ? 'Showing Sanskrit Names' : 'Showing English Names';
+    showToastNotification(message);
     
-    // Force rebuild of the flow table if we have a flow
-    if (editingFlow && editingFlow.asanas && editingFlow.asanas.length > 0) {
-        rebuildFlowTable();
-    }
-    
+    // Debounce the heavy UI updates
+    sanskritToggleTimeout = setTimeout(() => {
+        updateSanskritNamesOptimized();
+        sanskritToggleTimeout = null;
+    }, 150); // 150ms debounce
+}
+
+function updateSanskritNamesOptimized() {
+    // Batch DOM updates using requestAnimationFrame for better performance
+    requestAnimationFrame(() => {
+        // Update table names efficiently
+        updateAsanaDisplayNames();
+        
+        // Schedule asana list update for next frame to avoid blocking
+        requestAnimationFrame(() => {
+            // Only rebuild table if we're on build screen and have flows
+            if (currentScreenId === 'buildScreen' && editingFlow && editingFlow.asanas && editingFlow.asanas.length > 0) {
+                rebuildFlowTable();
+            } else {
+                // Otherwise just update the asana list
+                populateAsanaList();
+            }
+        });
+    });
+}
+
+function updateFlowScreenNames() {
     // If in flow screen, update the current asana display and next asana
     if (currentScreenId === 'flowScreen' && editingFlow.asanas && editingFlow.asanas.length > 0) {
         // Get current asana
@@ -6652,10 +6685,6 @@ function toggleSanskritNames(event) {
             speakAsanaName(currentAsana.name, currentAsana.side, currentAsana.sanskrit);
         }
     }
-    
-    // Show a brief notification about the language change
-    const message = useSanskritNames ? 'Showing Sanskrit Names' : 'Showing English Names';
-    showToastNotification(message);
 }
 
 // Function to update displayed asana names throughout the UI
