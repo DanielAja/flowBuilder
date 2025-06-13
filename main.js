@@ -684,6 +684,8 @@ function speakAsanaName(name, side, sanskrit = "") {
 
 // Function to clear the build flow screen
 function clearBuildAFlow() {
+    console.log('Clearing build flow...');
+    
     // Reset form fields
     const titleInput = document.getElementById('title');
     const descriptionInput = document.getElementById('description');
@@ -702,13 +704,29 @@ function clearBuildAFlow() {
         descriptionInput.addEventListener('input', autoSaveFlow);
     }
     
-    // Clear flow table
+    // Clear flow table completely
     const table = document.getElementById('flowTable');
     if (table) {
-        // Clear existing rows except header
-        while (table.rows.length > 1) {
-            table.deleteRow(1);
-        }
+        console.log('Clearing table, current rows:', table.rows.length);
+        // Clear all rows to ensure complete reset
+        table.innerHTML = '';
+        
+        // Recreate the header row
+        const headerRow = table.insertRow(0);
+        headerRow.innerHTML = `
+            <th onclick="sortTableByLargestNumber()" style="cursor: pointer;" title="Click to sort by largest number first">#</th>
+            <th>
+                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                <label for="selectAllCheckbox" style="display: none;">Select All</label>
+            </th>
+            <th>Asana</th>
+            <th>Duration</th>
+            <th>Side</th>
+            <th>Swap</th>
+            <th>Remove</th>
+        `;
+        
+        console.log('Table cleared and header recreated, final rows:', table.rows.length);
     }
     
     // Reset flow duration
@@ -717,9 +735,14 @@ function clearBuildAFlow() {
         flowTime.textContent = displayFlowDuration(0);
     }
     
-    // Create a new flow
+    // Create a completely new flow and ensure it's empty
     editingFlow = new Flow();
+    editingFlow.asanas = []; // Explicitly clear asanas array
+    editingFlow.sections = []; // Explicitly clear sections array
+    editingFlow.time = 0; // Reset time
     editMode = false;
+    
+    console.log('Flow cleared, new flow object:', editingFlow);
 }
 
 // Screen management
@@ -887,60 +910,69 @@ function changeScreen(screenId) {
 function startNewFlow() {
     console.log('Starting new flow...');
     
-    // Create a new flow object
+    // Create a completely new flow object and ensure it's empty
     editingFlow = new Flow();
+    editingFlow.asanas = []; // Explicitly clear asanas array
+    editingFlow.sections = []; // Explicitly clear sections array
+    editingFlow.time = 0; // Reset time
     editMode = false;
     
-    // Switch to build screen
+    console.log('Created new empty flow:', editingFlow);
+    
+    // Switch to build screen (this will call clearBuildAFlow automatically)
     console.log('Switching to build screen...');
     changeScreen('buildScreen');
     
-    // Reset form fields after switching screen
+    // Additional cleanup after screen change to ensure table is completely empty
     setTimeout(() => {
-        console.log('Resetting form fields...');
-        const titleInput = document.getElementById('title');
-        const descriptionInput = document.getElementById('description');
-        if (titleInput) {
-            console.log('Found title input, clearing...');
-            titleInput.value = '';
-        } else {
-            console.error('Title input not found');
-        }
+        console.log('Final cleanup after screen change...');
         
-        if (descriptionInput) {
-            console.log('Found description input, clearing...');
-            descriptionInput.value = '';
-        } else {
-            console.error('Description input not found');
-        }
+        // Ensure the flow object is still empty
+        editingFlow.asanas = [];
+        editingFlow.sections = [];
+        editingFlow.time = 0;
         
-        // Clear flow table
+        // Double-check table is empty and recreate if needed
         const table = document.getElementById('flowTable');
         if (table) {
-            console.log('Found flow table, clearing rows...');
-            // Clear existing rows except header
-            while (table.rows.length > 1) {
-                table.deleteRow(1);
+            console.log('Final table check. Current rows:', table.rows.length);
+            
+            // If there are more than 1 row (header), clear everything and recreate
+            if (table.rows.length > 1) {
+                console.log('Table has extra rows, clearing completely...');
+                table.innerHTML = '';
+                
+                // Recreate the header row
+                const headerRow = table.insertRow(0);
+                headerRow.innerHTML = `
+                    <th onclick="sortTableByLargestNumber()" style="cursor: pointer;" title="Click to sort by largest number first">#</th>
+                    <th>
+                        <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                        <label for="selectAllCheckbox" style="display: none;">Select All</label>
+                    </th>
+                    <th>Asana</th>
+                    <th>Duration</th>
+                    <th>Side</th>
+                    <th>Swap</th>
+                    <th>Remove</th>
+                `;
+                
+                console.log('Table completely reset. Final rows count:', table.rows.length);
             }
-        } else {
-            console.error('Flow table not found');
         }
         
-        // Reset flow duration
+        // Reset flow duration display
         const flowTime = document.getElementById('flowTime');
         if (flowTime) {
-            console.log('Resetting flow duration display...');
             flowTime.textContent = displayFlowDuration(0);
-        } else {
-            console.error('Flow time element not found');
         }
 
-        // Clear recommended poses
+        // Clear any highlighted poses
         const allPoses = document.querySelectorAll('.asana-item');
         allPoses.forEach(pose => {
             pose.classList.remove('recommended', 'highlight');
         });
-    }, 100);
+    }, 150); // Slight delay to ensure everything else has run
 }
 
 // Flow management
@@ -1433,6 +1465,30 @@ function formatRelativeTime(dateString) {
 async function displayFlows() {
     let flows = getFlows();
     console.log('Raw flows:', flows); // Debug log
+    
+    // Filter out any corrupted flow data that might contain table elements
+    flows = flows.filter(flow => {
+        if (!flow || typeof flow !== 'object') {
+            console.warn('Removing invalid flow object:', flow);
+            return false;
+        }
+        if (typeof flow.name === 'string' && flow.name.includes('<th>')) {
+            console.warn('Removing corrupted flow with table header in name:', flow.name);
+            return false;
+        }
+        if (typeof flow.description === 'string' && flow.description.includes('<th>')) {
+            console.warn('Removing corrupted flow with table header in description:', flow.description);
+            return false;
+        }
+        return true;
+    });
+    
+    // If we filtered out any corrupted flows, save the cleaned data back to localStorage
+    const originalFlowCount = getFlows().length;
+    if (flows.length < originalFlowCount) {
+        console.log(`Cleaned ${originalFlowCount - flows.length} corrupted flows from localStorage`);
+        saveFlows(flows);
+    }
     
     // Sort flows by lastFlowed (most recent first)
     flows.sort((a, b) => {
