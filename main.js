@@ -970,7 +970,7 @@ function startNewFlow() {
         // Clear any highlighted poses
         const allPoses = document.querySelectorAll('.asana-item');
         allPoses.forEach(pose => {
-            pose.classList.remove('recommended', 'highlight');
+            pose.classList.remove('highlight');
         });
     }, 150); // Slight delay to ensure everything else has run
 }
@@ -1028,9 +1028,6 @@ function selectAsana(asana) {
     updateFlowDuration();
     
     console.log(`Added asana: ${asana.name} to the flow. Current asanas:`, editingFlow.asanas);
-    
-    // Update recommended poses based on the new last pose
-    updateRecommendedPoses();
     
     // Restore scroll position after refreshing the list
     if (asanaList) {
@@ -1291,7 +1288,7 @@ function removePose(button) {
                 // Update flow duration
                 updateFlowDuration();
 
-                // Refresh the asana list to update recommended poses
+                // Refresh the asana list
                 populateAsanaList();
             }
         }, 300);
@@ -1347,7 +1344,7 @@ function removePose(button) {
         // Update flow duration
         updateFlowDuration();
 
-        // Refresh the asana list to update recommended poses
+        // Refresh the asana list
         populateAsanaList();
     } else {
         console.error('Remove button not in a card or table row');
@@ -3904,37 +3901,6 @@ async function loadAsanasFromXML() {
     }
 }
 
-// Function to get recommended poses based on the last pose in the flow
-function getRecommendedPoses() {
-    if (!editingFlow || !editingFlow.asanas || editingFlow.asanas.length === 0) {
-        return [];
-    }
-    
-    // Get the last pose based on the current table order
-    let lastAsana;
-    if (tableInDescendingOrder) {
-        // If in descending order, the last pose is at the beginning of the array
-        lastAsana = editingFlow.asanas[0];
-    } else {
-        // If in ascending order, the last pose is at the end of the array
-        lastAsana = editingFlow.asanas[editingFlow.asanas.length - 1];
-    }
-    
-    if (!lastAsana) {
-        return [];
-    }
-    
-    // Get transition asana names from the last asana
-    const transitionNames = lastAsana.getTransitions();
-    
-    // Find matching asanas from the full asana list
-    const matches = asanas.filter(asana => 
-        transitionNames.includes(asana.name)
-    );
-    
-    // Return all matching transitions (up to 2)
-    return matches.slice(0, 2);
-}
 
 // Track current filter and search
 let currentFilter = 'all';
@@ -4012,55 +3978,6 @@ function filterAsanas(category) {
     populateAsanaList();
 }
 
-// Function to update recommended poses styling and animation
-function updateRecommendedPoses() {
-    const asanaList = document.getElementById('asanaList');
-    if (!asanaList) return;
-
-    // Get recommended poses
-    const recommendedPoses = getRecommendedPoses();
-    const hasRecommendations = recommendedPoses.length > 0;
-
-    // Remove recommended class and highlight from all poses
-    const allPoses = document.querySelectorAll('.asana-item');
-    allPoses.forEach(pose => {
-        pose.classList.remove('recommended', 'highlight');
-    });
-
-    if (hasRecommendations) {
-        // Add recommended class to matching poses
-        const recommendedEls = [];
-        allPoses.forEach(pose => {
-            const asanaName = pose.getAttribute('data-name');
-            if (recommendedPoses.some(reco => reco.name === asanaName)) {
-                pose.classList.add('recommended');
-                recommendedEls.push(pose);
-            }
-        });
-
-        // Add animation to recommended poses
-        recommendedEls.forEach((el, index) => {
-            // Scroll to make the first recommendation visible
-            if (index === 0) {
-                const recoBounds = el.getBoundingClientRect();
-                const containerBounds = asanaList.getBoundingClientRect();
-                
-                // Only scroll if the recommended pose is not fully visible
-                if (recoBounds.left < containerBounds.left || recoBounds.right > containerBounds.right) {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }
-            }
-            
-            // Add slight delay between each recommendation animation
-            setTimeout(() => {
-                el.classList.add('highlight');
-                setTimeout(() => el.classList.remove('highlight'), 1500);
-            }, index * 200);
-        });
-
-        console.log('Recommended poses:', recommendedPoses.map(p => p.name));
-    }
-}
 
 // Populate the asana list with loaded asanas
 function populateAsanaList() {
@@ -5067,9 +4984,6 @@ function handleTableDrop(e) {
         // Just update the positions in the card view without rebuilding it
         updateCardIndices();
         
-        // Update recommended poses based on the new last pose
-        updateRecommendedPoses();
-        
         // Ensure draggable attributes are set again
         setTimeout(updateRowDragAttributes, 0);
         
@@ -5751,9 +5665,6 @@ function handleCardDrop(e) {
                 }, 800);
             }
         }, 550); // Just after the position transition completes
-
-        // Update recommended poses based on the new last pose
-        updateRecommendedPoses();
 
         // Auto-save if in edit mode
         if (editMode) {
@@ -9031,26 +8942,11 @@ function populateSwapPoseList(searchTerm = '') {
         });
     }
     
-    // Get recommended poses
-    const recommendedPoses = getRecommendedPoses();
-    const recommendedNames = recommendedPoses.map(p => p.name);
-    
-    // Sort to put recommended poses first
-    filteredAsanas.sort((a, b) => {
-        const aIsRecommended = recommendedNames.includes(a.name);
-        const bIsRecommended = recommendedNames.includes(b.name);
-        if (aIsRecommended && !bIsRecommended) return -1;
-        if (!aIsRecommended && bIsRecommended) return 1;
-        return 0;
-    });
     
     // Create pose items
     filteredAsanas.forEach(asana => {
         const poseItem = document.createElement('div');
         poseItem.className = 'swap-pose-item';
-        if (recommendedNames.includes(asana.name)) {
-            poseItem.classList.add('recommended');
-        }
         
         // Create image
         const img = document.createElement('img');
@@ -9075,13 +8971,6 @@ function populateSwapPoseList(searchTerm = '') {
             asana.getDisplayName(useSanskritNames) :
             (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name);
         
-        // Create recommended badge if applicable
-        if (recommendedNames.includes(asana.name)) {
-            const badge = document.createElement('span');
-            badge.className = 'recommended-badge';
-            badge.textContent = 'Recommended';
-            poseItem.appendChild(badge);
-        }
         
         // Add click handler
         poseItem.onclick = function() {
@@ -9136,9 +9025,6 @@ function swapPose(newAsana) {
     
     // Update flow duration
     updateFlowDuration();
-    
-    // Update recommended poses
-    updateRecommendedPoses();
     
     // Show notification
     showToastNotification(`Swapped to ${newAsana.name}`);
