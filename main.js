@@ -3235,6 +3235,436 @@ function exportFlowAsJSONFromModal() {
     }
 }
 
+// Export flow as PDF
+function exportFlowAsPDFFromModal() {
+    if (!currentShareFlowID) {
+        alert('Error: No flow selected for export.');
+        return;
+    }
+    
+    try {
+        // Get all flows from storage
+        const flows = getFlows();
+        
+        // Find the flow with the given ID
+        const flowToExport = flows.find(flow => flow.flowID === currentShareFlowID);
+        
+        if (!flowToExport) {
+            console.error(`Flow with ID ${currentShareFlowID} not found`);
+            alert('Flow not found. Please try again.');
+            return;
+        }
+        
+        // Create HTML content for PDF
+        const htmlContent = generatePDFContent(flowToExport);
+        
+        // Create a new window for PDF generation
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        
+        // Wait for content to load then print
+        printWindow.onload = function() {
+            setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 100);
+        };
+        
+        console.log('Flow exported as PDF successfully');
+        
+        // Close the modal after successful export
+        closeShareModal();
+        
+    } catch (error) {
+        console.error('Error exporting flow as PDF:', error);
+        alert('Error exporting flow as PDF. Please try again.');
+    }
+}
+
+// Generate HTML content for PDF export
+function generatePDFContent(flow) {
+    const totalDuration = flow.asanas.reduce((sum, asana) => sum + (asana.duration || 15), 0);
+    const formatDuration = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+    };
+    
+    // Function to calculate dynamic font size based on text length
+    const getDynamicFontSize = (text, baseSize, threshold = 15) => {
+        if (!text) return baseSize;
+        const length = text.length;
+        if (length <= threshold) return baseSize;
+        if (length <= threshold * 2) return Math.max(baseSize * 0.8, baseSize - 2);
+        if (length <= threshold * 3) return Math.max(baseSize * 0.7, baseSize - 3);
+        return Math.max(baseSize * 0.6, baseSize - 4);
+    };
+
+    // Generate visual pose cards instead of table rows
+    const asanasList = flow.asanas.map((asana, index) => {
+        const imagePath = asana.image || `images/webp/${(asana.imageName || asana.name.toLowerCase().replace(/\s+/g, '-'))}.webp`;
+        
+        // Calculate dynamic font sizes
+        const poseName = asana.name || 'Unknown Pose';
+        const sanskritName = asana.sanskrit || '';
+        const description = asana.description || '';
+        
+        const nameSize = getDynamicFontSize(poseName, 11, 12);
+        const sanskritSize = getDynamicFontSize(sanskritName, 9, 15);
+        const descSize = getDynamicFontSize(description, 8, 30);
+        
+        return `
+        <div class="pose-card">
+            <div class="pose-number">${index + 1}</div>
+            <div class="pose-content">
+                <div class="pose-image-container">
+                    <img src="${imagePath}" alt="${asana.name}" class="pose-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div class="pose-placeholder" style="display: none;">
+                        <div class="pose-icon">🧘</div>
+                    </div>
+                </div>
+                <div class="pose-details">
+                    <h3 class="pose-name" style="font-size: ${nameSize}px;">${poseName}</h3>
+                    ${sanskritName ? `<p class="pose-sanskrit" style="font-size: ${sanskritSize}px;">${sanskritName}</p>` : ''}
+                    <div class="pose-info">
+                        <div class="info-item">
+                            <span class="info-label">Duration:</span>
+                            <span class="info-value">${formatDuration(asana.duration || 15)}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Side:</span>
+                            <span class="info-value">${asana.side || 'both'}</span>
+                        </div>
+                    </div>
+                    ${description ? `<p class="pose-description" style="font-size: ${descSize}px;">${description}</p>` : ''}
+                </div>
+            </div>
+        </div>
+        `;
+    }).join('');
+    
+    return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>${flow.name || 'Yoga Flow'}</title>
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                margin: 0;
+                padding: 20px;
+                background: white;
+                color: #333;
+                line-height: 1.4;
+            }
+            .header {
+                text-align: center;
+                margin-bottom: 30px;
+                border-bottom: 3px solid #ff8c00;
+                padding-bottom: 20px;
+            }
+            .header h1 {
+                color: #ff8c00;
+                font-size: 32px;
+                margin: 0 0 10px 0;
+                font-weight: bold;
+            }
+            .header p {
+                color: #666;
+                font-size: 16px;
+                margin: 5px 0;
+                font-style: italic;
+            }
+            .flow-info {
+                display: flex;
+                justify-content: space-around;
+                margin-bottom: 40px;
+                background: linear-gradient(135deg, #fff5e6, #fff);
+                padding: 20px;
+                border-radius: 12px;
+                border: 2px solid #ff8c00;
+            }
+            .flow-info div {
+                text-align: center;
+            }
+            .flow-info .label {
+                font-size: 12px;
+                color: #666;
+                text-transform: uppercase;
+                margin-bottom: 8px;
+                font-weight: 600;
+                letter-spacing: 1px;
+            }
+            .flow-info .value {
+                font-size: 24px;
+                font-weight: bold;
+                color: #ff8c00;
+            }
+            .poses-container {
+                margin-top: 20px;
+            }
+            .section-title {
+                color: #ff8c00;
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 15px;
+                text-align: center;
+                border-bottom: 2px solid #ff8c00;
+                padding-bottom: 8px;
+            }
+            .poses-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-top: 15px;
+            }
+            .pose-card {
+                display: flex;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                overflow: hidden;
+                background: white;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+                page-break-inside: avoid;
+                position: relative;
+                height: 85px;
+            }
+            .pose-number {
+                position: absolute;
+                top: 4px;
+                left: 4px;
+                background: #ff8c00;
+                color: white;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 10px;
+                z-index: 10;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            }
+            .pose-content {
+                display: flex;
+                width: 100%;
+            }
+            .pose-image-container {
+                flex: 0 0 85px;
+                height: 85px;
+                position: relative;
+                background: #f8f8f8;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .pose-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 0;
+            }
+            .pose-placeholder {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+            }
+            .pose-icon {
+                font-size: 18px;
+                opacity: 0.5;
+            }
+            .pose-details {
+                flex: 1;
+                padding: 6px 8px;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                min-height: 0;
+                overflow: hidden;
+            }
+            .pose-name {
+                color: #333;
+                font-size: 10px;
+                font-weight: bold;
+                margin: 0 0 1px 0;
+                line-height: 1.0;
+                word-wrap: break-word;
+                hyphens: auto;
+                overflow-wrap: break-word;
+                max-height: 20px;
+                overflow: hidden;
+            }
+            .pose-sanskrit {
+                color: #ff8c00;
+                font-size: 8px;
+                font-style: italic;
+                margin: 0 0 3px 0;
+                font-weight: 500;
+                line-height: 1.0;
+                word-wrap: break-word;
+                hyphens: auto;
+                overflow-wrap: break-word;
+                max-height: 16px;
+                overflow: hidden;
+            }
+            .pose-info {
+                display: flex;
+                gap: 6px;
+                margin-bottom: 2px;
+                flex-wrap: wrap;
+            }
+            .info-item {
+                display: flex;
+                flex-direction: row;
+                gap: 1px;
+                align-items: baseline;
+                min-width: 0;
+            }
+            .info-label {
+                font-size: 6px;
+                color: #666;
+                text-transform: uppercase;
+                font-weight: 600;
+                letter-spacing: 0.1px;
+                white-space: nowrap;
+            }
+            .info-value {
+                font-size: 8px;
+                font-weight: bold;
+                color: #ff8c00;
+                word-wrap: break-word;
+                white-space: nowrap;
+            }
+            .pose-description {
+                color: #555;
+                font-size: 7px;
+                margin: 1px 0 0 0;
+                line-height: 1.1;
+                font-style: italic;
+                word-wrap: break-word;
+                hyphens: auto;
+                overflow-wrap: break-word;
+                flex: 1;
+                overflow: hidden;
+                max-height: 22px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+            }
+            .footer {
+                margin-top: 40px;
+                text-align: center;
+                font-size: 12px;
+                color: #666;
+                border-top: 2px solid #ff8c00;
+                padding-top: 20px;
+                font-weight: 500;
+            }
+            @media print {
+                body { 
+                    margin: 0; 
+                    padding: 10px;
+                    font-size: 85%;
+                }
+                .header { 
+                    page-break-after: avoid;
+                    margin-bottom: 15px;
+                }
+                .flow-info {
+                    page-break-after: avoid;
+                    margin-bottom: 20px;
+                    padding: 15px;
+                }
+                .section-title {
+                    page-break-after: avoid;
+                    margin-bottom: 12px;
+                }
+                .poses-grid {
+                    gap: 6px;
+                    grid-template-columns: repeat(4, 1fr);
+                }
+                .pose-card {
+                    page-break-inside: avoid;
+                    height: 70px;
+                }
+                .pose-image-container {
+                    flex: 0 0 70px;
+                    height: 70px;
+                }
+                .pose-details {
+                    padding: 3px 5px;
+                }
+                .pose-name {
+                    font-size: 7px !important;
+                    line-height: 0.9;
+                    max-height: 14px;
+                }
+                .pose-sanskrit {
+                    font-size: 6px !important;
+                    max-height: 12px;
+                }
+                .info-label {
+                    font-size: 5px;
+                }
+                .info-value {
+                    font-size: 6px;
+                }
+                .pose-description {
+                    font-size: 5px !important;
+                    line-height: 1.0;
+                    max-height: 15px;
+                }
+                .pose-number {
+                    width: 14px;
+                    height: 14px;
+                    font-size: 7px;
+                    top: 2px;
+                    left: 2px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>${flow.name || 'Untitled Flow'}</h1>
+            ${flow.description ? `<p>${flow.description}</p>` : ''}
+        </div>
+        
+        <div class="flow-info">
+            <div>
+                <div class="label">Total Poses</div>
+                <div class="value">${flow.asanas.length}</div>
+            </div>
+            <div>
+                <div class="label">Total Duration</div>
+                <div class="value">${formatDuration(totalDuration)}</div>
+            </div>
+            <div>
+                <div class="label">Created</div>
+                <div class="value">${new Date(flow.createdAt || Date.now()).toLocaleDateString()}</div>
+            </div>
+        </div>
+        
+        <div class="poses-container">
+            <div class="section-title">Yoga Flow Sequence</div>
+            <div class="poses-grid">
+                ${asanasList}
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated by Flow Builder • ${new Date().toLocaleDateString()}</p>
+        </div>
+    </body>
+    </html>
+    `;
+}
+
 // Show the import flow modal
 function showImportFlow() {
     // Get the modal and import code input elements

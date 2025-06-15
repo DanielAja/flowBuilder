@@ -767,6 +767,16 @@
         width: 100%;
       }
       
+      .share-option {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+      
+      .share-option .export-json-btn {
+        flex: 1;
+      }
+      
       .export-json-btn:hover {
         background: #e67e00;
         transform: translateY(-2px);
@@ -1367,7 +1377,8 @@
         <!-- Share Options -->
         <div class="share-options">
           <div class="share-option">
-            <button class="export-json-btn" onclick="exportFlowAsJSONFromModal()">Download</button>
+            <button class="export-json-btn" onclick="exportFlowAsJSONFromModal()">Download as .flow</button>
+            <button class="export-json-btn" onclick="exportFlowAsPDFFromModal()">Download as .pdf</button>
           </div>
         </div>
       </div>
