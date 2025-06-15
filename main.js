@@ -3665,6 +3665,119 @@ function generatePDFContent(flow) {
     `;
 }
 
+// Export flow as CSV
+function exportFlowAsCSVFromModal() {
+    if (!currentShareFlowID) {
+        alert('Error: No flow selected for export.');
+        return;
+    }
+    
+    try {
+        // Get all flows from storage
+        const flows = getFlows();
+        
+        // Find the flow with the given ID
+        const flowToExport = flows.find(flow => flow.flowID === currentShareFlowID);
+        
+        if (!flowToExport) {
+            console.error(`Flow with ID ${currentShareFlowID} not found`);
+            alert('Flow not found. Please try again.');
+            return;
+        }
+        
+        // Create CSV content
+        const csvContent = generateCSVContent(flowToExport);
+        
+        // Create download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        
+        // Create temporary download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = url;
+        downloadLink.download = `${flowToExport.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.csv`;
+        
+        // Trigger download
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        // Clean up
+        URL.revokeObjectURL(url);
+        
+        console.log('Flow exported as CSV successfully');
+        
+        // Close the modal after successful export
+        closeShareModal();
+        
+    } catch (error) {
+        console.error('Error exporting flow as CSV:', error);
+        alert('Error exporting flow as CSV. Please try again.');
+    }
+}
+
+// Generate CSV content for export
+function generateCSVContent(flow) {
+    const formatDuration = (seconds) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+    };
+    
+    // Escape CSV values (handle commas, quotes, newlines)
+    const escapeCSV = (value) => {
+        if (value === null || value === undefined) return '';
+        const str = String(value);
+        if (str.includes(',') || str.includes('"') || str.includes('\n') || str.includes('\r')) {
+            return `"${str.replace(/"/g, '""')}"`;
+        }
+        return str;
+    };
+    
+    // CSV Header
+    const headers = [
+        'Position',
+        'Pose Name',
+        'Sanskrit Name',
+        'Duration',
+        'Side',
+        'Difficulty',
+        'Tags',
+        'Description'
+    ];
+    
+    // CSV Rows
+    const rows = flow.asanas.map((asana, index) => [
+        index + 1,
+        escapeCSV(asana.name || 'Unknown Pose'),
+        escapeCSV(asana.sanskrit || ''),
+        escapeCSV(formatDuration(asana.duration || 15)),
+        escapeCSV(asana.side || 'both'),
+        escapeCSV(asana.difficulty || 'Beginner'),
+        escapeCSV(Array.isArray(asana.tags) ? asana.tags.join('; ') : ''),
+        escapeCSV(asana.description || '')
+    ]);
+    
+    // Combine headers and rows
+    const csvLines = [
+        headers.join(','),
+        ...rows.map(row => row.join(','))
+    ];
+    
+    // Add flow metadata at the top
+    const metadata = [
+        `Flow Name,${escapeCSV(flow.name || 'Untitled Flow')}`,
+        `Description,${escapeCSV(flow.description || '')}`,
+        `Total Poses,${flow.asanas.length}`,
+        `Total Duration,${formatDuration(flow.asanas.reduce((sum, asana) => sum + (asana.duration || 15), 0))}`,
+        `Created,${escapeCSV(new Date(flow.createdAt || Date.now()).toLocaleDateString())}`,
+        '', // Empty line separator
+        ...csvLines
+    ];
+    
+    return metadata.join('\n');
+}
+
 // Show the import flow modal
 function showImportFlow() {
     // Get the modal and import code input elements
