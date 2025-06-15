@@ -8092,6 +8092,7 @@ function updateActionButtons() {
     const saveSequenceBtn = document.getElementById('saveSequenceBtn');
     const addToSectionBtn = document.getElementById('addToSectionBtn');
     const changeSideBtn = document.getElementById('changeSideBtn');
+    const reverseBtn = document.getElementById('reverseOrderBtn');
     
     const selectedPoses = getSelectedAsanas();
     const hasSelectedPoses = selectedPoses.length > 0;
@@ -8103,6 +8104,7 @@ function updateActionButtons() {
     if (saveSequenceBtn) saveSequenceBtn.disabled = !hasSelectedPoses;
     if (addToSectionBtn) addToSectionBtn.disabled = !hasSelectedPoses;
     if (changeSideBtn) changeSideBtn.disabled = !hasSelectedPoses;
+    if (reverseBtn) reverseBtn.disabled = !hasSelectedPoses;
 }
 
 // Function to copy selected poses
@@ -8235,6 +8237,49 @@ function deleteSelectedPoses() {
     showToastNotification(`Deleted ${selectedPoses.length} pose${selectedPoses.length !== 1 ? 's' : ''}`);
     
     // Always save after deletion
+    autoSaveFlow();
+}
+
+// Function to reverse the order of selected poses
+function reverseSelectedPoses() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+    
+    // Get indices of selected poses
+    const selectedIndices = [];
+    editingFlow.asanas.forEach((asana, index) => {
+        if (asana.selected) {
+            selectedIndices.push(index);
+        }
+    });
+    
+    // Create array of selected poses with their original indices
+    const selectedWithIndices = selectedIndices.map(index => ({
+        asana: editingFlow.asanas[index],
+        originalIndex: index
+    }));
+    
+    // Reverse the array of selected poses
+    selectedWithIndices.reverse();
+    
+    // Replace the selected poses in their original positions with the reversed order
+    selectedWithIndices.forEach((item, reverseIndex) => {
+        const originalIndex = selectedIndices[reverseIndex];
+        editingFlow.asanas[originalIndex] = item.asana;
+    });
+    
+    // Update section references if needed (maintain same indices but with reversed poses)
+    editingFlow.sections.forEach(section => {
+        // Section references remain the same since we're not changing indices, just swapping poses
+    });
+    
+    // Rebuild the table to reflect the changes
+    rebuildFlowTable();
+    
+    // Show notification
+    showToastNotification(`Reversed ${selectedPoses.length} pose${selectedPoses.length !== 1 ? 's' : ''}`);
+    
+    // Save the changes
     autoSaveFlow();
 }
 
