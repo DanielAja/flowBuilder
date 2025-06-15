@@ -742,6 +742,9 @@ function clearBuildAFlow() {
     editingFlow.time = 0; // Reset time
     editMode = false;
     
+    // Hide recommended poses section
+    hideRecommendedPoses();
+    
     console.log('Flow cleared, new flow object:', editingFlow);
 }
 
@@ -917,6 +920,9 @@ function startNewFlow() {
     editingFlow.time = 0; // Reset time
     editMode = false;
     
+    // Hide recommended poses section
+    hideRecommendedPoses();
+    
     console.log('Created new empty flow:', editingFlow);
     
     // Switch to build screen (this will call clearBuildAFlow automatically)
@@ -1042,6 +1048,101 @@ function selectAsana(asana) {
         setTimeout(() => {
             row.classList.remove('highlight-added');
         }, 1500);
+    }
+    
+    // Show recommended poses based on the selected asana
+    showRecommendedPoses(asana);
+}
+
+// Function to show recommended poses based on the selected asana
+function showRecommendedPoses(selectedAsana) {
+    const recommendedSection = document.getElementById('recommendedPosesSection');
+    const recommendedList = document.getElementById('recommendedPosesList');
+    
+    if (!recommendedSection || !recommendedList) {
+        console.error('Recommended poses elements not found');
+        return;
+    }
+    
+    // Get transition recommendations from the selected asana
+    const transitions = selectedAsana.transitionsAsana || [];
+    
+    if (transitions.length === 0) {
+        // Hide the section if no recommendations
+        recommendedSection.style.display = 'none';
+        return;
+    }
+    
+    // Clear existing recommendations
+    recommendedList.innerHTML = '';
+    
+    // Update the description to show which pose the recommendations are based on
+    const description = recommendedSection.querySelector('.recommended-description');
+    if (description) {
+        description.textContent = `Based on "${selectedAsana.name}"`;
+    }
+    
+    // Create recommended pose items
+    transitions.forEach(transitionName => {
+        // Find the transition pose in the asanas array
+        const transitionPose = asanas.find(asana => 
+            asana.name.toLowerCase() === transitionName.toLowerCase()
+        );
+        
+        if (transitionPose) {
+            const poseItem = createRecommendedPoseItem(transitionPose);
+            recommendedList.appendChild(poseItem);
+        }
+    });
+    
+    // Show the section
+    recommendedSection.style.display = 'block';
+}
+
+// Function to create a recommended pose item element
+function createRecommendedPoseItem(asana) {
+    const poseItem = document.createElement('div');
+    poseItem.className = 'recommended-pose-item';
+    
+    // Create the pose image
+    const img = document.createElement('img');
+    img.className = 'recommended-pose-img';
+    img.src = asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`;
+    img.alt = asana.name;
+    
+    // Add error handling for missing images
+    img.onerror = function() {
+        this.src = asana.image.replace('webp', 'png').replace('.webp', '.png');
+    };
+    
+    // Create the pose name
+    const name = document.createElement('div');
+    name.className = 'recommended-pose-name';
+    name.textContent = asana.name;
+    
+    // Add click event to add the pose to the flow
+    poseItem.addEventListener('click', function() {
+        selectAsana(asana);
+        
+        // Add visual feedback
+        poseItem.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            poseItem.style.transform = '';
+        }, 150);
+    });
+    
+    // Append elements
+    poseItem.appendChild(img);
+    poseItem.appendChild(name);
+    
+    return poseItem;
+}
+
+// Function to hide recommended poses section
+function hideRecommendedPoses() {
+    const recommendedSection = document.getElementById('recommendedPosesSection');
+    if (recommendedSection) {
+        recommendedSection.style.display = 'none';
     }
 }
 

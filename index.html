@@ -837,6 +837,92 @@
         font-size: 14px;
         font-style: italic;
       }
+
+      /* Recommended Poses Section Styles */
+      .recommended-poses-section {
+        margin: 20px 0;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 2px solid #ff8c00;
+      }
+
+      .recommended-section-title {
+        margin: 0 0 5px 0;
+        color: #ff8c00;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .recommended-description {
+        margin: 0 0 15px 0;
+        color: #666;
+        font-size: 14px;
+        text-align: center;
+        font-style: italic;
+      }
+
+      .recommended-poses-container {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .recommended-poses-container::-webkit-scrollbar {
+        display: none;
+      }
+
+      .recommended-poses-list {
+        display: flex;
+        gap: 15px;
+        padding: 10px 0;
+        min-height: 120px;
+      }
+
+      .recommended-pose-item {
+        flex: 0 0 auto;
+        width: 100px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        padding: 8px;
+        border: 2px solid transparent;
+      }
+
+      .recommended-pose-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(255, 140, 0, 0.2);
+        border-color: #ff8c00;
+      }
+
+      .recommended-pose-item:active {
+        transform: translateY(-1px);
+      }
+
+      .recommended-pose-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 5px;
+      }
+
+      .recommended-pose-name {
+        font-size: 12px;
+        font-weight: 500;
+        color: #333;
+        line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       
     </style>
   </head>
@@ -925,6 +1011,15 @@
             <button class="scroll-btn scroll-left" onclick="scrollAsanaList(-300)">◀</button>
             <div id="asanaList"></div>
             <button class="scroll-btn scroll-right" onclick="scrollAsanaList(300)">▶</button>
+          </div>
+        </div>
+        
+        <!-- Recommended Poses Section -->
+        <div class="recommended-poses-section" id="recommendedPosesSection" style="display: none;">
+          <h3 class="recommended-section-title">Recommended Next Poses</h3>
+          <p class="recommended-description">Based on your last selected pose</p>
+          <div class="recommended-poses-container">
+            <div id="recommendedPosesList" class="recommended-poses-list"></div>
           </div>
         </div>
         
