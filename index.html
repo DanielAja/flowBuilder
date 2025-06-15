@@ -961,28 +961,51 @@
       /* Recommended Toggle Button */
       .recommended-toggle-btn {
         position: fixed;
-        top: 50%;
+        top: 70px;
         right: 10px;
-        transform: translateY(-50%);
+        transform: translateX(100px);
         background: #ff8c00;
         color: white;
         border: none;
-        border-radius: 20px 0 0 20px;
-        padding: 15px 8px;
+        border-radius: 15px;
+        padding: 10px 15px;
         cursor: pointer;
         font-weight: 600;
         font-size: 12px;
-        writing-mode: vertical-rl;
+        writing-mode: horizontal-tb;
         text-orientation: mixed;
-        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         transition: all 0.3s ease;
         z-index: 1400;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
-        gap: 5px;
-        min-height: 120px;
+        gap: 8px;
+        min-height: auto;
+        height: auto;
         justify-content: center;
+        opacity: 0;
+        animation: slideInFromRight 0.6s ease-out forwards;
+      }
+      
+      /* Animation for button entrance */
+      @keyframes slideInFromRight {
+        0% {
+          transform: translateX(100px);
+          opacity: 0;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      
+      /* When button is shown, apply animation */
+      .recommended-toggle-btn[style*="display: flex"] {
+        animation: slideInFromRight 0.6s ease-out forwards;
       }
 
       .recommended-toggle-btn:hover {
@@ -1006,10 +1029,10 @@
 
 
       .toggle-text {
-        writing-mode: vertical-rl;
+        writing-mode: horizontal-tb;
         text-orientation: mixed;
         font-size: 11px;
-        margin-top: 5px;
+        margin-top: 0;
       }
 
       /* Responsive adjustments */
@@ -1017,10 +1040,71 @@
         .recommended-side-panel {
           width: 100vw;
           right: -100vw;
+          height: 60vh;
+          bottom: 40vh;
+          top: auto;
+        }
+        
+        .recommended-panel-content {
+          max-height: calc(60vh - 120px);
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        
+        .recommended-poses-list {
+          max-height: none;
+          overflow-y: visible;
         }
         
         .recommended-toggle-btn.panel-open:hover {
           right: 15px;
+        }
+        
+        /* Move toggle button to top right corner on mobile */
+        .recommended-toggle-btn {
+          top: 70px;
+          right: 10px;
+          bottom: auto;
+          transform: translateX(80px);
+          padding: 8px 12px;
+          min-height: auto;
+          height: auto;
+          font-size: 10px;
+          border-radius: 15px;
+          writing-mode: horizontal-tb;
+          text-orientation: mixed;
+          flex-direction: row;
+          gap: 5px;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          animation: slideInFromRightMobile 0.6s ease-out forwards;
+        }
+        
+        /* Mobile-specific animation */
+        @keyframes slideInFromRightMobile {
+          0% {
+            transform: translateX(80px);
+            opacity: 0;
+          }
+          50% {
+            opacity: 0.5;
+          }
+          100% {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        
+        .recommended-toggle-btn .toggle-icon {
+          font-size: 12px;
+        }
+        
+        .recommended-toggle-btn .toggle-text {
+          font-size: 9px;
+          writing-mode: horizontal-tb;
+          text-orientation: mixed;
+          margin-top: 0;
         }
       }
       
