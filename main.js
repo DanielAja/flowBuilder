@@ -1056,10 +1056,10 @@ function selectAsana(asana) {
 
 // Function to show recommended poses based on the selected asana
 function showRecommendedPoses(selectedAsana) {
-    const recommendedSection = document.getElementById('recommendedPosesSection');
     const recommendedList = document.getElementById('recommendedPosesList');
+    const toggleBtn = document.getElementById('recommendedToggleBtn');
     
-    if (!recommendedSection || !recommendedList) {
+    if (!recommendedList || !toggleBtn) {
         console.error('Recommended poses elements not found');
         return;
     }
@@ -1068,8 +1068,8 @@ function showRecommendedPoses(selectedAsana) {
     const transitions = selectedAsana.transitionsAsana || [];
     
     if (transitions.length === 0) {
-        // Hide the section if no recommendations
-        recommendedSection.style.display = 'none';
+        // Hide the toggle button if no recommendations
+        hideRecommendedPoses();
         return;
     }
     
@@ -1077,7 +1077,7 @@ function showRecommendedPoses(selectedAsana) {
     recommendedList.innerHTML = '';
     
     // Update the description to show which pose the recommendations are based on
-    const description = recommendedSection.querySelector('.recommended-description');
+    const description = document.querySelector('.recommended-panel-description');
     if (description) {
         description.textContent = `Based on "${selectedAsana.name}"`;
     }
@@ -1095,8 +1095,8 @@ function showRecommendedPoses(selectedAsana) {
         }
     });
     
-    // Show the section
-    recommendedSection.style.display = 'block';
+    // Show the toggle button
+    toggleBtn.style.display = 'flex';
 }
 
 // Function to create a recommended pose item element
@@ -1140,9 +1140,39 @@ function createRecommendedPoseItem(asana) {
 
 // Function to hide recommended poses section
 function hideRecommendedPoses() {
-    const recommendedSection = document.getElementById('recommendedPosesSection');
-    if (recommendedSection) {
-        recommendedSection.style.display = 'none';
+    const toggleBtn = document.getElementById('recommendedToggleBtn');
+    const sidePanel = document.getElementById('recommendedSidePanel');
+    
+    if (toggleBtn) {
+        toggleBtn.style.display = 'none';
+        toggleBtn.classList.remove('panel-open');
+    }
+    
+    if (sidePanel) {
+        sidePanel.classList.remove('open');
+    }
+}
+
+// Function to toggle the recommended poses side panel
+function toggleRecommendedPanel() {
+    const sidePanel = document.getElementById('recommendedSidePanel');
+    const toggleBtn = document.getElementById('recommendedToggleBtn');
+    
+    if (!sidePanel || !toggleBtn) {
+        console.error('Panel elements not found');
+        return;
+    }
+    
+    const isOpen = sidePanel.classList.contains('open');
+    
+    if (isOpen) {
+        // Close panel
+        sidePanel.classList.remove('open');
+        toggleBtn.classList.remove('panel-open');
+    } else {
+        // Open panel
+        sidePanel.classList.add('open');
+        toggleBtn.classList.add('panel-open');
     }
 }
 
