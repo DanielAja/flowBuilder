@@ -435,21 +435,27 @@ function cleanupFlowControlsAutoHide() {
 }
 
 function displayFlowDuration(duration) {
-    duration = Math.max(0, Math.round(duration)); // Ensure non-negative integer
+    duration = Math.max(0, duration); // Ensure non-negative, but don't round
     let hrs = Math.floor(duration / 3600);
     let mins = Math.floor((duration % 3600) / 60);
-    let sec = duration % 60;
+    let sec = Math.floor(duration % 60);
     
-    // Only display the largest time increment
+    // Display full duration with all components
+    let result = [];
+    
     if (hrs > 0) {
-        return hrs.toString() + "h";
+        result.push(hrs.toString() + "h");
     }
     
     if (mins > 0) {
-        return mins.toString() + "m";
+        result.push(mins.toString() + "m");
     }
     
-    return sec.toString() + "s";
+    if (sec > 0 || result.length === 0) {
+        result.push(sec.toString() + "s");
+    }
+    
+    return result.join(" ");
 }
 
 function updateAsanaDisplay(asana) {
