@@ -377,6 +377,7 @@ let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 let currentViewMode = localStorage.getItem('viewMode') || 'table'; // Default to table view
 let confettiAnimationId = null; // For tracking confetti animation
 let flowStartTime = null; // Track when flow started
+let wakeLock = null; // Track the wake lock
 let totalFlowDuration = 0; // Total duration of all poses in flow
 let flowElapsedTime = 0; // Time elapsed since flow started
 
@@ -456,6 +457,24 @@ function displayFlowDuration(duration) {
     }
     
     return result.join(" ");
+}
+
+function displayTimerDuration(duration) {
+    duration = Math.max(0, duration); // Ensure non-negative, but don't round
+    let hrs = Math.floor(duration / 3600);
+    let mins = Math.floor((duration % 3600) / 60);
+    let sec = Math.floor(duration % 60);
+    
+    // Truncated display for timer - show only the largest unit
+    if (hrs > 0) {
+        return hrs.toString() + "h";
+    }
+    
+    if (mins > 0) {
+        return mins.toString() + "m";
+    }
+    
+    return sec.toString() + "s";
 }
 
 function updateAsanaDisplay(asana) {
@@ -755,6 +774,44 @@ function clearBuildAFlow() {
 }
 
 // Screen management
+// Wake Lock functions to prevent device sleep during flow
+async function requestWakeLock() {
+    try {
+        if ('wakeLock' in navigator) {
+            wakeLock = await navigator.wakeLock.request('screen');
+            console.log('Wake lock acquired');
+            
+            wakeLock.addEventListener('release', () => {
+                console.log('Wake lock released');
+            });
+        } else {
+            console.log('Wake Lock API not supported');
+        }
+    } catch (error) {
+        console.error('Error requesting wake lock:', error);
+    }
+}
+
+async function releaseWakeLock() {
+    try {
+        if (wakeLock) {
+            await wakeLock.release();
+            wakeLock = null;
+            console.log('Wake lock manually released');
+        }
+    } catch (error) {
+        console.error('Error releasing wake lock:', error);
+    }
+}
+
+// Re-acquire wake lock when page becomes visible (in case it was released when app went to background)
+document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible' && currentScreenId === 'flowScreen' && !wakeLock) {
+        console.log('Page became visible during flow, re-requesting wake lock');
+        await requestWakeLock();
+    }
+});
+
 function changeScreen(screenId) {
     console.log(`Changing screen to: ${screenId}`);
     // Remove flow-mode class when changing screens
@@ -762,6 +819,9 @@ function changeScreen(screenId) {
     
     // Clear all timers when leaving flow screen
     if (currentScreenId === 'flowScreen' && screenId !== 'flowScreen') {
+        // Release wake lock when leaving flow screen
+        releaseWakeLock();
+        
         // Clear all flow timers
         clearFlowTimers();
         
@@ -901,6 +961,9 @@ function changeScreen(screenId) {
             }
         }, 100); // Short delay to ensure DOM is ready
     } else if (screenId === 'flowScreen') {
+        // Request wake lock to prevent device sleep during flow
+        requestWakeLock();
+        
         // Show the Sanskrit toggle on flow screen
         const sanskritToggle = document.querySelector('.sanskrit-toggle-global');
         if (sanskritToggle) {
@@ -2155,7 +2218,7 @@ function playFlow(flowID) {
                                         stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
                                         stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
                             </svg>
-                            <div id="countdown">${displayFlowDuration(duration)}</div>
+                            <div id="countdown">${displayTimerDuration(duration)}</div>
                         `;
                     }
 
@@ -2193,7 +2256,7 @@ function startCountdownTimer(duration, isResuming = false) {
     
     // Initialize time left
     let timeLeft = duration;
-    countdownElement.textContent = displayFlowDuration(timeLeft);
+    countdownElement.textContent = displayTimerDuration(timeLeft);
     
     // Calculate the circle circumference (2 * PI * radius)
     const circumference = 2 * Math.PI * 45; // The circle has r=45
@@ -2232,7 +2295,7 @@ function startCountdownTimer(duration, isResuming = false) {
             
             // Update the display
             if (countdownElement) {
-                countdownElement.textContent = displayFlowDuration(timeLeft);
+                countdownElement.textContent = displayTimerDuration(timeLeft);
             }
             
             // Update the circle animation - offset increases as time decreases
@@ -2620,7 +2683,7 @@ function resumeStartingCountdown() {
                                 stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
                                 stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
                     </svg>
-                    <div id="countdown">${displayFlowDuration(duration)}</div>
+                    <div id="countdown">${displayTimerDuration(duration)}</div>
                 `;
             }
 
