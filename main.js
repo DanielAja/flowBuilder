@@ -6809,11 +6809,7 @@ function buildCardElementsOptimized(fragment, sectionData) {
             if (sectionInfo) {
                 processedSections.add(sectionInfo.section.id);
                 
-                // Add section header card
-                const sectionCard = createSectionCardElement(sectionInfo);
-                fragment.appendChild(sectionCard);
-                
-                // Add asana cards for this section
+                // Add asana cards for this section (section header card removed from card view)
                 sectionInfo.asanas.forEach(({asana, index: asanaIndex}) => {
                     sequentialPosition++;
                     const displayNumber = tableInDescendingOrder ? 
