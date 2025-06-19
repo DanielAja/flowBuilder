@@ -7590,25 +7590,6 @@
 
 
 
-  <n>Prayer Warrior 1</n>
-  <sanskrit>Virabhadrasana I Anjali Mudra</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Warrior 1 with palms touching overhead in prayer position and gaze upward, adding a heart-opening element.</description>
-  <difficulty>Beginner</difficulty>
-  <chakra>Heart</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Strength</tag>
-    <tag>Chest Opener</tag>
-    <tag>Hip Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Warrior 1</transition>
-    <transition>Mountain Pose</transition>
-    <transition>Crescent Lunge</transition>
-  </transitions>
-</asana>
 
 <!-- More poses follow with the same structure --><!-- NEW POSES TO ADD TO asanas.xml (CONTINUED) -->
 
@@ -7660,25 +7641,6 @@
 
 
 
-  <n>Needle Warrior</n>
-  <sanskrit>Virabhadrasana II Variation</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Warrior 2 where the front leg straightens and palms press together overhead, creating a dynamic stretch through the front leg.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Sacral</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Strength</tag>
-    <tag>Stretch</tag>
-    <tag>Balance</tag>
-  </tags>
-  <transitions>
-    <transition>Warrior 2</transition>
-    <transition>Triangle Pose</transition>
-    <transition>Half Moon</transition>
-  </transitions>
-</asana>
 
 <!-- Extended Side Angle Variations -->
 <asana>
@@ -7731,7 +7693,7 @@
   <n>Bound Side Angle</n>
   <sanskrit>Utthita Parsvakonasana Ardha Baddha</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/bound-side-angle.webp</image>
   <description>A binding variation of Extended Side Angle where the bottom arm threads under the front thigh and the top arm reaches around the back.</description>
   <difficulty>Intermediate</difficulty>
   <chakra>Sacral</chakra>
@@ -7795,26 +7757,6 @@
 
 
 
-  <n>Fully Bound Side Angle</n>
-  <sanskrit>Utthita Parsvakonasana Baddha</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A deep binding variation of Extended Side Angle where the arms connect in a full bind around the front leg, creating an intense shoulder and chest opening.</description>
-  <difficulty>Advanced</difficulty>
-  <chakra>Heart</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Bind</tag>
-    <tag>Chest Opener</tag>
-    <tag>Shoulder Opener</tag>
-    <tag>Hip Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Extended Side Angle</transition>
-    <transition>Extended Side Angle with Half Bind</transition>
-    <transition>Bound Half Moon</transition>
-  </transitions>
-</asana>
 
 <!-- Reverse Warrior Variations -->
 <asana>
@@ -7864,25 +7806,6 @@
 
 
 
-  <n>Tricep Warrior</n>
-  <sanskrit>Viparita Virabhadrasana Variation</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Reverse Warrior where the top arm bends behind the head in a tricep stretch, adding an upper body opening to the side bend.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Throat</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Side Stretch</tag>
-    <tag>Shoulder Opener</tag>
-    <tag>Tricep Stretch</tag>
-  </tags>
-  <transitions>
-    <transition>Reverse Warrior</transition>
-    <transition>Warrior 2</transition>
-    <transition>Extended Side Angle</transition>
-  </transitions>
-</asana>
 
 <!-- New Standing Poses -->
 <asana>
@@ -7932,10 +7855,10 @@
 
 
 
-  <n>Star</n>
+  <n>Star Pose</n>
   <sanskrit>Utthita Tadasana</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/star-pose.webp</image>
   <description>A wide-legged standing pose with arms extended to the sides like a star, creating a foundation for strength and stability.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Root</chakra>
@@ -7999,10 +7922,10 @@
 
 
 
-  <n>Horse</n>
+  <n>Horse Pose</n>
   <sanskrit>Vatayanasana</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/horse-pose.webp</image>
   <description>A wide-legged squat with feet turned out and torso upright, building strength in the lower body and opening the hips.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Root</chakra>
