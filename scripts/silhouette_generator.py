@@ -91,40 +91,27 @@ def crop_to_subject(img, padding=10, min_size=50):
         return img
 
 
-def create_silhouette(input_path, output_path, background_color='white', smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=False, padding=10):
+def apply_silhouette_filter(img, background_color='white', smooth_edges=True, blur_radius=1, vector_style=True):
     """
-    Create a smooth black silhouette from an input image.
+    Apply silhouette filter and edge smoothing to an image with transparent background.
     
     Args:
-        input_path (str): Path to input image
-        output_path (str): Path to save the silhouette
+        img (PIL.Image): Input image (should be RGBA with transparent background)
         background_color (str): Background color ('white' or 'transparent')
         smooth_edges (bool): Whether to smooth the edges of the silhouette
         blur_radius (int): Radius for edge smoothing blur (1-8)
         vector_style (bool): Whether to create clean vector-like edges
-        crop_to_subject_flag (bool): Whether to crop image to subject bounds
-        padding (int): Padding around subject when cropping
+    
+    Returns:
+        PIL.Image: Silhouette image
     """
     try:
-        # Load the input image
-        print(f"Loading image: {input_path}")
-        with open(input_path, 'rb') as input_file:
-            input_data = input_file.read()
-        
-        # Remove background using rembg
-        print("Removing background...")
-        output_data = remove(input_data)
-        
-        # Convert to PIL Image
-        img = Image.open(io.BytesIO(output_data)).convert("RGBA")
-        
-        # Create silhouette
-        print("Creating silhouette...")
+        print("Applying silhouette filter...")
         
         # Convert image to numpy array for easier manipulation
         img_array = np.array(img)
         
-        # Create mask from alpha channel with gradient for smoother edges
+        # Create mask from alpha channel
         alpha_channel = img_array[:, :, 3]
         
         if smooth_edges and not vector_style:
@@ -141,58 +128,48 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
             # Create clean, sharp edges for vector-like appearance
             alpha_mask = alpha_channel.astype(float) / 255.0
             
-            # Apply morphological operations for clean edges
-            from scipy.ndimage import binary_erosion, binary_dilation, binary_fill_holes
+            # Apply morphological operations for clean edges (but preserve important gaps)
+            from scipy.ndimage import binary_erosion, binary_dilation, binary_opening, binary_closing
             
-            # Create binary mask with threshold
-            binary_mask = alpha_mask > 0.5
+            # Create binary mask with higher threshold to preserve details
+            binary_mask = alpha_mask > 0.3
             
-            # Fill holes to create solid shapes
-            binary_mask = binary_fill_holes(binary_mask)
+            # Use opening/closing instead of fill_holes to preserve arm gaps
+            # Opening removes small noise, closing fills small gaps
+            binary_mask = binary_opening(binary_mask, iterations=1)
+            binary_mask = binary_closing(binary_mask, iterations=1)
             
-            # Slight erosion and dilation to clean edges
+            # Very minimal erosion/dilation to clean edges without losing details
             binary_mask = binary_erosion(binary_mask, iterations=1)
-            binary_mask = binary_dilation(binary_mask, iterations=2)
-            binary_mask = binary_erosion(binary_mask, iterations=1)
+            binary_mask = binary_dilation(binary_mask, iterations=1)
             
             # Convert back to float mask
             alpha_mask = binary_mask.astype(float)
             
             # Apply minimal gaussian blur for anti-aliasing only
-            alpha_mask = ndimage.gaussian_filter(alpha_mask, sigma=0.5)
-            
-            # Create gradient silhouette for smoother appearance
-            if background_color.lower() == 'transparent':
-                # Keep transparent background with soft edges
-                silhouette = np.zeros((img_array.shape[0], img_array.shape[1], 4), dtype=np.uint8)
-                # Create gradient from transparent to black
-                silhouette[:, :, 3] = (alpha_mask * 255).astype(np.uint8)  # Alpha channel
-                # Black color where alpha > 0 (adjust threshold based on style)
-                threshold = 0.05 if not vector_style else 0.25
-                black_mask = alpha_mask > threshold
-                silhouette[black_mask, 0:3] = 0  # RGB to black
-                silhouette_img = Image.fromarray(silhouette, 'RGBA')
-            else:
-                # White background with soft black silhouette
-                silhouette = np.ones((img_array.shape[0], img_array.shape[1], 3), dtype=np.uint8) * 255
-                # Apply gradient blend from white to black
-                for i in range(3):  # RGB channels
-                    silhouette[:, :, i] = (255 * (1 - alpha_mask)).astype(np.uint8)
-                silhouette_img = Image.fromarray(silhouette, 'RGB')
+            alpha_mask = ndimage.gaussian_filter(alpha_mask, sigma=0.3)
         else:
             # Original hard-edge method
-            alpha_mask = alpha_channel > 0
-            
-            if background_color.lower() == 'transparent':
-                # Keep transparent background
-                silhouette = np.zeros_like(img_array)
-                silhouette[alpha_mask] = [0, 0, 0, 255]  # Black with full alpha
-                silhouette_img = Image.fromarray(silhouette, 'RGBA')
-            else:
-                # White background with black silhouette
-                silhouette = np.ones((img_array.shape[0], img_array.shape[1], 3), dtype=np.uint8) * 255
-                silhouette[alpha_mask] = [0, 0, 0]  # Black silhouette
-                silhouette_img = Image.fromarray(silhouette, 'RGB')
+            alpha_mask = (alpha_channel > 0).astype(float)
+        
+        # Create silhouette based on background preference
+        if background_color.lower() == 'transparent':
+            # Keep transparent background with soft edges
+            silhouette = np.zeros((img_array.shape[0], img_array.shape[1], 4), dtype=np.uint8)
+            # Create gradient from transparent to black
+            silhouette[:, :, 3] = (alpha_mask * 255).astype(np.uint8)  # Alpha channel
+            # Black color where alpha > 0 (adjust threshold based on style)
+            threshold = 0.05 if not vector_style else 0.1  # Lower threshold for vector style to preserve details
+            black_mask = alpha_mask > threshold
+            silhouette[black_mask, 0:3] = 0  # RGB to black
+            silhouette_img = Image.fromarray(silhouette, 'RGBA')
+        else:
+            # White background with soft black silhouette
+            silhouette = np.ones((img_array.shape[0], img_array.shape[1], 3), dtype=np.uint8) * 255
+            # Apply gradient blend from white to black
+            for i in range(3):  # RGB channels
+                silhouette[:, :, i] = (255 * (1 - alpha_mask)).astype(np.uint8)
+            silhouette_img = Image.fromarray(silhouette, 'RGB')
         
         # Additional smoothing with PIL filters if requested
         if smooth_edges and blur_radius > 0 and not vector_style:
@@ -209,13 +186,58 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
             if background_color.lower() != 'transparent':
                 silhouette_img = silhouette_img.filter(ImageFilter.SMOOTH)
         
-        # Crop to subject if requested
+        return silhouette_img
+        
+    except Exception as e:
+        print(f"Error applying silhouette filter: {str(e)}")
+        return img
+
+
+def create_silhouette(input_path, output_path, background_color='white', smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=False, padding=10):
+    """
+    Create a smooth black silhouette from an input image.
+    
+    Args:
+        input_path (str): Path to input image
+        output_path (str): Path to save the silhouette
+        background_color (str): Background color ('white' or 'transparent')
+        smooth_edges (bool): Whether to smooth the edges of the silhouette
+        blur_radius (int): Radius for edge smoothing blur (1-8)
+        vector_style (bool): Whether to create clean vector-like edges
+        crop_to_subject_flag (bool): Whether to crop image to subject bounds
+        padding (int): Padding around subject when cropping
+    """
+    try:
+        # Step 1: Load the input image
+        print(f"Step 1: Loading image: {input_path}")
+        with open(input_path, 'rb') as input_file:
+            input_data = input_file.read()
+        
+        # Step 2: Remove background using rembg
+        print("Step 2: Removing background...")
+        output_data = remove(input_data)
+        
+        # Convert to PIL Image with transparent background
+        img_with_transparent_bg = Image.open(io.BytesIO(output_data)).convert("RGBA")
+        print("Background removal completed")
+        
+        # Step 3: Apply silhouette filter and edge smoothing
+        print("Step 3: Applying silhouette filter and edge smoothing...")
+        silhouette_img = apply_silhouette_filter(
+            img_with_transparent_bg, 
+            background_color=background_color,
+            smooth_edges=smooth_edges,
+            blur_radius=blur_radius,
+            vector_style=vector_style
+        )
+        
+        # Step 4: Crop to subject if requested
         if crop_to_subject_flag:
-            print("Cropping to subject...")
+            print("Step 4: Cropping to subject...")
             silhouette_img = crop_to_subject(silhouette_img, padding=padding)
         
-        # Save the result
-        print(f"Saving silhouette: {output_path}")
+        # Step 5: Save the result
+        print(f"Step 5: Saving silhouette: {output_path}")
         silhouette_img.save(output_path)
         print("Silhouette created successfully!")
         
@@ -226,7 +248,7 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
         return False
 
 
-def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=False, padding=10):
+def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=False, padding=10, background_color='white'):
     """
     Alternative method using simple thresholding with edge smoothing.
     
@@ -239,89 +261,49 @@ def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edge
         vector_style (bool): Whether to create clean vector-like edges
         crop_to_subject_flag (bool): Whether to crop image to subject bounds
         padding (int): Padding around subject when cropping
+        background_color (str): Background color ('white' or 'transparent')
     """
     try:
-        print(f"Loading image: {input_path}")
+        # Step 1: Load the input image
+        print(f"Step 1: Loading image: {input_path}")
         img = Image.open(input_path)
         
-        # Convert to grayscale
+        # Step 2: Remove background using threshold method
+        print("Step 2: Removing background using threshold...")
         gray_img = img.convert('L')
         
-        if smooth_edges and not vector_style:
-            print("Creating smooth silhouette...")
-            # Apply gaussian blur before thresholding for smoother edges
-            gray_img = gray_img.filter(ImageFilter.GaussianBlur(radius=blur_radius))
-            
-            # Create gradient threshold instead of hard binary
-            gray_array = np.array(gray_img)
-            
-            # Create soft transition around threshold (increased for smoother gradient)
-            transition_width = 60
-            lower_thresh = max(0, threshold - transition_width//2)
-            upper_thresh = min(255, threshold + transition_width//2)
-            
-            # Create gradient mask
-            silhouette_array = np.ones_like(gray_array, dtype=np.uint8) * 255
-            
-            # Hard black for dark areas
-            silhouette_array[gray_array < lower_thresh] = 0
-            
-            # Gradient transition
-            transition_mask = (gray_array >= lower_thresh) & (gray_array <= upper_thresh)
-            if np.any(transition_mask):
-                gradient_values = (gray_array[transition_mask] - lower_thresh) / transition_width * 255
-                silhouette_array[transition_mask] = gradient_values.astype(np.uint8)
-            
-            silhouette = Image.fromarray(silhouette_array, 'L')
-            
-            # Apply additional smoothing with multiple passes
-            silhouette = silhouette.filter(ImageFilter.SMOOTH_MORE)
-            silhouette = silhouette.filter(ImageFilter.SMOOTH)
-            silhouette = silhouette.filter(ImageFilter.GaussianBlur(radius=0.5))
-        elif vector_style:
-            print("Creating vector-style silhouette...")
-            # Create clean, sharp silhouette for vector-like appearance
-            gray_array = np.array(gray_img)
-            
-            # Apply morphological operations for clean shapes
-            from scipy.ndimage import binary_erosion, binary_dilation, binary_fill_holes
-            
-            # Create binary mask with threshold
-            binary_mask = gray_array < threshold
-            
-            # Fill holes and clean edges
-            binary_mask = binary_fill_holes(binary_mask)
-            binary_mask = binary_erosion(binary_mask, iterations=1)
-            binary_mask = binary_dilation(binary_mask, iterations=2)
-            binary_mask = binary_erosion(binary_mask, iterations=1)
-            
-            # Convert to image
-            silhouette_array = np.ones_like(gray_array, dtype=np.uint8) * 255
-            silhouette_array[binary_mask] = 0
-            
-            silhouette = Image.fromarray(silhouette_array, 'L')
-            
-            # Minimal anti-aliasing only
-            silhouette = silhouette.filter(ImageFilter.SMOOTH)
-        else:
-            # Original hard-edge method
-            # Apply threshold to create binary image
-            binary_img = gray_img.point(lambda x: 0 if x < threshold else 255, '1')
-            
-            # Invert to make subject black
-            silhouette = ImageOps.invert(binary_img)
+        # Apply threshold to create binary mask
+        binary_img = gray_img.point(lambda x: 0 if x < threshold else 255, '1')
         
-        # Convert back to RGB
-        silhouette_rgb = silhouette.convert('RGB')
+        # Create RGBA image with transparent background
+        img_rgba = img.convert('RGBA')
+        img_array = np.array(img_rgba)
+        binary_array = np.array(binary_img)
         
-        # Crop to subject if requested
+        # Set alpha channel based on threshold
+        img_array[:, :, 3] = np.where(binary_array, 0, 255)  # Transparent where binary is white (background)
+        
+        img_with_transparent_bg = Image.fromarray(img_array, 'RGBA')
+        print("Background removal completed")
+        
+        # Step 3: Apply silhouette filter and edge smoothing
+        print("Step 3: Applying silhouette filter and edge smoothing...")
+        silhouette_img = apply_silhouette_filter(
+            img_with_transparent_bg,
+            background_color=background_color,
+            smooth_edges=smooth_edges,
+            blur_radius=blur_radius,
+            vector_style=vector_style
+        )
+        
+        # Step 4: Crop to subject if requested
         if crop_to_subject_flag:
-            print("Cropping to subject...")
-            silhouette_rgb = crop_to_subject(silhouette_rgb, padding=padding)
+            print("Step 4: Cropping to subject...")
+            silhouette_img = crop_to_subject(silhouette_img, padding=padding)
         
-        # Save the result
-        print(f"Saving silhouette: {output_path}")
-        silhouette_rgb.save(output_path)
+        # Step 5: Save the result
+        print(f"Step 5: Saving silhouette: {output_path}")
+        silhouette_img.save(output_path)
         print("Simple silhouette created successfully!")
         
         return True
@@ -381,9 +363,9 @@ def main():
         except ImportError:
             print("rembg library not found. Install with: pip install rembg")
             print("Falling back to simple method...")
-            success = create_simple_silhouette(args.input, args.output, args.threshold, smooth_edges, blur_radius, vector_style, crop_to_subject_flag, padding)
+            success = create_simple_silhouette(args.input, args.output, args.threshold, smooth_edges, blur_radius, vector_style, crop_to_subject_flag, padding, args.background)
     else:
-        success = create_simple_silhouette(args.input, args.output, args.threshold, smooth_edges, blur_radius, vector_style, crop_to_subject_flag, padding)
+        success = create_simple_silhouette(args.input, args.output, args.threshold, smooth_edges, blur_radius, vector_style, crop_to_subject_flag, padding, args.background)
     
     if not success:
         sys.exit(1)
