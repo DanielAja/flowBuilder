@@ -22,7 +22,76 @@ from scipy import ndimage
 import argparse
 
 
-def create_silhouette(input_path, output_path, background_color='white', smooth_edges=True, blur_radius=4):
+def crop_to_subject(img, padding=10, min_size=50):
+    """
+    Crop image to the bounding box of the subject with optional padding.
+    
+    Args:
+        img (PIL.Image): Input image (RGBA or RGB)
+        padding (int): Pixels to add around the subject bounding box
+        min_size (int): Minimum dimensions for the cropped image
+    
+    Returns:
+        PIL.Image: Cropped image
+    """
+    try:
+        # Convert to numpy array
+        img_array = np.array(img)
+        
+        if img.mode == 'RGBA':
+            # Use alpha channel for detection
+            mask = img_array[:, :, 3] > 25  # Threshold for alpha
+        else:
+            # Use brightness for RGB images (detect non-white areas)
+            gray = np.mean(img_array, axis=2)
+            mask = gray < 240  # Detect darker areas (non-white/non-background)
+        
+        # Find bounding box of subject
+        rows = np.any(mask, axis=1)
+        cols = np.any(mask, axis=0)
+        
+        if not np.any(rows) or not np.any(cols):
+            # No subject found, return original image
+            print("Warning: No subject detected for cropping, returning original image")
+            return img
+        
+        # Get bounding box coordinates
+        top, bottom = np.where(rows)[0][[0, -1]]
+        left, right = np.where(cols)[0][[0, -1]]
+        
+        # Add padding
+        height, width = img_array.shape[:2]
+        top = max(0, top - padding)
+        bottom = min(height - 1, bottom + padding)
+        left = max(0, left - padding)
+        right = min(width - 1, right + padding)
+        
+        # Ensure minimum size
+        crop_width = right - left + 1
+        crop_height = bottom - top + 1
+        
+        if crop_width < min_size:
+            expand = (min_size - crop_width) // 2
+            left = max(0, left - expand)
+            right = min(width - 1, right + expand)
+        
+        if crop_height < min_size:
+            expand = (min_size - crop_height) // 2
+            top = max(0, top - expand)
+            bottom = min(height - 1, bottom + expand)
+        
+        # Crop the image
+        cropped = img.crop((left, top, right + 1, bottom + 1))
+        
+        print(f"Cropped from {width}x{height} to {cropped.width}x{cropped.height}")
+        return cropped
+        
+    except Exception as e:
+        print(f"Warning: Cropping failed ({str(e)}), returning original image")
+        return img
+
+
+def create_silhouette(input_path, output_path, background_color='white', smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=False, padding=10):
     """
     Create a smooth black silhouette from an input image.
     
@@ -32,6 +101,9 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
         background_color (str): Background color ('white' or 'transparent')
         smooth_edges (bool): Whether to smooth the edges of the silhouette
         blur_radius (int): Radius for edge smoothing blur (1-8)
+        vector_style (bool): Whether to create clean vector-like edges
+        crop_to_subject_flag (bool): Whether to crop image to subject bounds
+        padding (int): Padding around subject when cropping
     """
     try:
         # Load the input image
@@ -55,7 +127,7 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
         # Create mask from alpha channel with gradient for smoother edges
         alpha_channel = img_array[:, :, 3]
         
-        if smooth_edges:
+        if smooth_edges and not vector_style:
             print("Smoothing edges...")
             # Create a softer alpha mask with gradient edges
             alpha_mask = alpha_channel.astype(float) / 255.0
@@ -64,6 +136,30 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
             alpha_mask = ndimage.gaussian_filter(alpha_mask, sigma=blur_radius)
             alpha_mask = ndimage.gaussian_filter(alpha_mask, sigma=blur_radius/2)  # Second pass
             alpha_mask = ndimage.gaussian_filter(alpha_mask, sigma=blur_radius/4)  # Third pass
+        elif vector_style:
+            print("Creating vector-style edges...")
+            # Create clean, sharp edges for vector-like appearance
+            alpha_mask = alpha_channel.astype(float) / 255.0
+            
+            # Apply morphological operations for clean edges
+            from scipy.ndimage import binary_erosion, binary_dilation, binary_fill_holes
+            
+            # Create binary mask with threshold
+            binary_mask = alpha_mask > 0.5
+            
+            # Fill holes to create solid shapes
+            binary_mask = binary_fill_holes(binary_mask)
+            
+            # Slight erosion and dilation to clean edges
+            binary_mask = binary_erosion(binary_mask, iterations=1)
+            binary_mask = binary_dilation(binary_mask, iterations=2)
+            binary_mask = binary_erosion(binary_mask, iterations=1)
+            
+            # Convert back to float mask
+            alpha_mask = binary_mask.astype(float)
+            
+            # Apply minimal gaussian blur for anti-aliasing only
+            alpha_mask = ndimage.gaussian_filter(alpha_mask, sigma=0.5)
             
             # Create gradient silhouette for smoother appearance
             if background_color.lower() == 'transparent':
@@ -71,8 +167,9 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
                 silhouette = np.zeros((img_array.shape[0], img_array.shape[1], 4), dtype=np.uint8)
                 # Create gradient from transparent to black
                 silhouette[:, :, 3] = (alpha_mask * 255).astype(np.uint8)  # Alpha channel
-                # Black color where alpha > 0 (reduced threshold for gentler transition)
-                black_mask = alpha_mask > 0.05
+                # Black color where alpha > 0 (adjust threshold based on style)
+                threshold = 0.05 if not vector_style else 0.25
+                black_mask = alpha_mask > threshold
                 silhouette[black_mask, 0:3] = 0  # RGB to black
                 silhouette_img = Image.fromarray(silhouette, 'RGBA')
             else:
@@ -98,7 +195,7 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
                 silhouette_img = Image.fromarray(silhouette, 'RGB')
         
         # Additional smoothing with PIL filters if requested
-        if smooth_edges and blur_radius > 0:
+        if smooth_edges and blur_radius > 0 and not vector_style:
             if background_color.lower() == 'transparent':
                 # Apply multiple blur passes for even smoother edges
                 silhouette_img = silhouette_img.filter(ImageFilter.GaussianBlur(radius=1.5))
@@ -107,6 +204,15 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
                 # Apply multiple anti-aliasing filters
                 silhouette_img = silhouette_img.filter(ImageFilter.SMOOTH_MORE)
                 silhouette_img = silhouette_img.filter(ImageFilter.SMOOTH)
+        elif vector_style:
+            # Minimal anti-aliasing for vector-style edges
+            if background_color.lower() != 'transparent':
+                silhouette_img = silhouette_img.filter(ImageFilter.SMOOTH)
+        
+        # Crop to subject if requested
+        if crop_to_subject_flag:
+            print("Cropping to subject...")
+            silhouette_img = crop_to_subject(silhouette_img, padding=padding)
         
         # Save the result
         print(f"Saving silhouette: {output_path}")
@@ -120,7 +226,7 @@ def create_silhouette(input_path, output_path, background_color='white', smooth_
         return False
 
 
-def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edges=True, blur_radius=4):
+def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=False, padding=10):
     """
     Alternative method using simple thresholding with edge smoothing.
     
@@ -130,6 +236,9 @@ def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edge
         threshold (int): Brightness threshold for creating silhouette
         smooth_edges (bool): Whether to smooth the edges
         blur_radius (int): Radius for edge smoothing
+        vector_style (bool): Whether to create clean vector-like edges
+        crop_to_subject_flag (bool): Whether to crop image to subject bounds
+        padding (int): Padding around subject when cropping
     """
     try:
         print(f"Loading image: {input_path}")
@@ -138,7 +247,7 @@ def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edge
         # Convert to grayscale
         gray_img = img.convert('L')
         
-        if smooth_edges:
+        if smooth_edges and not vector_style:
             print("Creating smooth silhouette...")
             # Apply gaussian blur before thresholding for smoother edges
             gray_img = gray_img.filter(ImageFilter.GaussianBlur(radius=blur_radius))
@@ -169,6 +278,31 @@ def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edge
             silhouette = silhouette.filter(ImageFilter.SMOOTH_MORE)
             silhouette = silhouette.filter(ImageFilter.SMOOTH)
             silhouette = silhouette.filter(ImageFilter.GaussianBlur(radius=0.5))
+        elif vector_style:
+            print("Creating vector-style silhouette...")
+            # Create clean, sharp silhouette for vector-like appearance
+            gray_array = np.array(gray_img)
+            
+            # Apply morphological operations for clean shapes
+            from scipy.ndimage import binary_erosion, binary_dilation, binary_fill_holes
+            
+            # Create binary mask with threshold
+            binary_mask = gray_array < threshold
+            
+            # Fill holes and clean edges
+            binary_mask = binary_fill_holes(binary_mask)
+            binary_mask = binary_erosion(binary_mask, iterations=1)
+            binary_mask = binary_dilation(binary_mask, iterations=2)
+            binary_mask = binary_erosion(binary_mask, iterations=1)
+            
+            # Convert to image
+            silhouette_array = np.ones_like(gray_array, dtype=np.uint8) * 255
+            silhouette_array[binary_mask] = 0
+            
+            silhouette = Image.fromarray(silhouette_array, 'L')
+            
+            # Minimal anti-aliasing only
+            silhouette = silhouette.filter(ImageFilter.SMOOTH)
         else:
             # Original hard-edge method
             # Apply threshold to create binary image
@@ -179,6 +313,11 @@ def create_simple_silhouette(input_path, output_path, threshold=128, smooth_edge
         
         # Convert back to RGB
         silhouette_rgb = silhouette.convert('RGB')
+        
+        # Crop to subject if requested
+        if crop_to_subject_flag:
+            print("Cropping to subject...")
+            silhouette_rgb = crop_to_subject(silhouette_rgb, padding=padding)
         
         # Save the result
         print(f"Saving silhouette: {output_path}")
@@ -204,8 +343,14 @@ def main():
                        help='Threshold value for simple method (0-255)')
     parser.add_argument('--no-smooth', action='store_true',
                        help='Disable edge smoothing for sharp edges')
-    parser.add_argument('--blur-radius', type=int, default=4,
+    parser.add_argument('--blur-radius', type=int, default=1,
                        help='Blur radius for edge smoothing (1-8)')
+    parser.add_argument('--no-vector', action='store_true',
+                       help='Disable vector-style edges for softer appearance')
+    parser.add_argument('--crop', action='store_true',
+                       help='Crop image to subject bounds (removes excess background)')
+    parser.add_argument('--padding', type=int, default=10,
+                       help='Padding around subject when cropping (default: 10)')
     
     args = parser.parse_args()
     
@@ -224,16 +369,21 @@ def main():
     # Edge smoothing settings
     smooth_edges = not args.no_smooth
     blur_radius = max(1, min(8, args.blur_radius))
+    vector_style = not args.no_vector
+    
+    # Cropping settings
+    crop_to_subject_flag = args.crop
+    padding = max(0, args.padding)
     
     if args.method == 'auto':
         try:
-            success = create_silhouette(args.input, args.output, args.background, smooth_edges, blur_radius)
+            success = create_silhouette(args.input, args.output, args.background, smooth_edges, blur_radius, vector_style, crop_to_subject_flag, padding)
         except ImportError:
             print("rembg library not found. Install with: pip install rembg")
             print("Falling back to simple method...")
-            success = create_simple_silhouette(args.input, args.output, args.threshold, smooth_edges, blur_radius)
+            success = create_simple_silhouette(args.input, args.output, args.threshold, smooth_edges, blur_radius, vector_style, crop_to_subject_flag, padding)
     else:
-        success = create_simple_silhouette(args.input, args.output, args.threshold, smooth_edges, blur_radius)
+        success = create_simple_silhouette(args.input, args.output, args.threshold, smooth_edges, blur_radius, vector_style, crop_to_subject_flag, padding)
     
     if not success:
         sys.exit(1)

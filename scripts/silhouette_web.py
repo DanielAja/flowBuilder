@@ -403,12 +403,12 @@ def process_image():
         success = False
         
         if method == 'auto':
-            success = create_silhouette(input_path, output_path, background)
+            success = create_silhouette(input_path, output_path, background, smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=True, padding=10)
         else:
             if transparent:
                 # For simple method with transparency
                 temp_path = output_path.replace('.png', '_temp.png')
-                success = create_simple_silhouette(input_path, temp_path)
+                success = create_simple_silhouette(input_path, temp_path, smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=True, padding=10)
                 
                 if success:
                     try:
@@ -430,7 +430,7 @@ def process_image():
                         if os.path.exists(temp_path):
                             os.rename(temp_path, output_path)
             else:
-                success = create_simple_silhouette(input_path, output_path)
+                success = create_simple_silhouette(input_path, output_path, smooth_edges=True, blur_radius=1, vector_style=True, crop_to_subject_flag=True, padding=10)
         
         # Clean up input file
         os.remove(input_path)

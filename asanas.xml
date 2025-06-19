@@ -9748,73 +9748,6 @@
 
 
 
-  <n>Low Eagle</n>
-  <sanskrit>Garudasana Utkata</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Eagle Pose where the hips lower deeper into a squat position, increasing the strength demand in the legs and testing balance.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Root</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Balance</tag>
-    <tag>Strength</tag>
-    <tag>Hip Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Eagle Pose</transition>
-    <transition>Chair Pose</transition>
-    <transition>Garland Pose</transition>
-  </transitions>
-</asana>
-
-<asana>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <asana>
 
@@ -12158,7 +12091,7 @@
 
 
 
-  <n>Forearm Balance</n>
+  <n>Forearm Stand</n>
   <sanskrit>Pincha Mayurasana</sanskrit>
   <side>Center</side>
   <image>images/webp/no-image.webp</image>
@@ -13212,73 +13145,6 @@
     <transition>Tree Pose</transition>
     <transition>Eagle Pose</transition>
     <transition>Garland Pose</transition>
-  </transitions>
-</asana>
-
-<asana>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <n>King Dancer</n>
-  <sanskrit>Raja Natarajasana</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>The full expression of Dancer Pose where both hands grasp the elevated foot behind the head, creating a deep backbend with leg extension.</description>
-  <difficulty>Advanced</difficulty>
-  <chakra>Heart</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Balance</tag>
-    <tag>Backbend</tag>
-    <tag>Flexibility</tag>
-  </tags>
-  <transitions>
-    <transition>Dancer Pose</transition>
-    <transition>Standing Bow Pulling</transition>
-    <transition>Mountain Pose</transition>
   </transitions>
 </asana>
 
