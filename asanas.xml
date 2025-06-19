@@ -5529,7 +5529,7 @@
   <n>Hovering Table</n>
   <sanskrit>Utthita Chaturanga Dandasana</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/hovering-table-top.webp</image>
   <description>A challenging variation of Table Top with knees lifted slightly off the ground, engaging the core and building strength in the shoulders and arms.</description>
   <difficulty>Intermediate</difficulty>
   <chakra>Solar Plexus</chakra>
@@ -5644,7 +5644,7 @@
   <n>Broken Bridge Pose</n>
   <sanskrit>Setu Bandhasana Variation</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/broken-bridge.webp</image>
   <description>A gentler variation of Bridge Pose where one leg is extended while the other foot remains on the ground, creating an asymmetrical backbend.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Sacral</chakra>
@@ -6007,25 +6007,6 @@
 
 
 
-  <n>Bound Thread the Needle</n>
-  <sanskrit>Parsva Balasana Ardha Baddha</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Thread The Needle where the upper arm wraps around the back in a half bind, creating a deeper shoulder and upper back stretch.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Heart</chakra>
-  <tags>
-    <tag>Kneeling</tag>
-    <tag>Twist</tag>
-    <tag>Shoulder Opener</tag>
-    <tag>Bind</tag>
-  </tags>
-  <transitions>
-    <transition>Thread the Needle</transition>
-    <transition>Table Top</transition>
-    <transition>Child's Pose</transition>
-  </transitions>
-</asana>
 
 <asana>
 
@@ -6319,7 +6300,7 @@
   <n>Twisted Mountain</n>
   <sanskrit>Tadasana Parivrtti</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/twtisted-moutian.webp</image>
   <description>A standing twist variation of Mountain Pose where the arms are extended and the torso rotates while maintaining firm grounding through the feet.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Solar Plexus</chakra>
@@ -6383,10 +6364,10 @@
 
 
 
-  <n>Backbend Mountain</n>
+  <n>Backbend</n>
   <sanskrit>Tadasana Urdhva Hastasana</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/back-bend.webp</image>
   <description>A variation of Mountain Pose with arms extended overhead and a gentle backbend, opening the front body and stretching the shoulders.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Heart</chakra>
@@ -6450,10 +6431,10 @@
 
 
 
-  <n>Side Stretch Mountain</n>
+  <n>Side Bend</n>
   <sanskrit>Tadasana Parsva</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/side-bend.webp</image>
   <description>A side-bending variation of Mountain Pose with arms overhead and upper body extending to one side, stretching the intercostal muscles and lateral spine.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Sacral</chakra>
