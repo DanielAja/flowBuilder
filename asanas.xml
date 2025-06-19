@@ -8699,25 +8699,6 @@
 
 
 
-  <n>Fully Bound Triangle</n>
-  <sanskrit>Utthita Trikonasana Baddha</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A deep binding variation of Triangle where both arms connect in a full bind, creating an intense shoulder and chest opening.</description>
-  <difficulty>Advanced</difficulty>
-  <chakra>Heart</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Bind</tag>
-    <tag>Chest Opener</tag>
-    <tag>Shoulder Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Triangle Pose</transition>
-    <transition>Triangle with Half Bind</transition>
-    <transition>Bound Half Moon</transition>
-  </transitions>
-</asana>
 
 <asana>
 
@@ -8814,25 +8795,6 @@
 
 
 
-  <n>Prayer Forward Fold</n>
-  <sanskrit>Prasarita Padottanasana C</sanskrit>
-  <side>Center</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Wide-Legged Forward Fold where hands interlace behind the back and extend overhead, creating a deep shoulder and chest opening.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Heart</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Forward Fold</tag>
-    <tag>Chest Opener</tag>
-    <tag>Shoulder Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Wide-Legged Forward Fold</transition>
-    <transition>Triangle Pose</transition>
-    <transition>Star Pose</transition>
-  </transitions>
-</asana>
 
 <asana>
 
@@ -8881,25 +8843,6 @@
 
 
 
-  <n>Twisted Wide Fold</n>
-  <sanskrit>Prasarita Padottanasana Parivrtti</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A twisting variation of Wide-Legged Forward Fold where one hand reaches to the opposite foot while the other arm extends upward, creating a spinal rotation.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Solar Plexus</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Forward Fold</tag>
-    <tag>Twist</tag>
-    <tag>Shoulder Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Wide-Legged Forward Fold</transition>
-    <transition>Revolved Triangle</transition>
-    <transition>Pyramid Pose</transition>
-  </transitions>
-</asana>
 
 <asana>
 
@@ -8997,7 +8940,7 @@
 
 
 
-  <n>Knee to Nose Dog</n>
+  <n>Knee to Nose</n>
   <sanskrit>Eka Pada Adho Mukha Svanasana Janu Nasika</sanskrit>
   <side>Right</side>
   <image>images/webp/no-image.webp</image>
