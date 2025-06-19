@@ -5759,7 +5759,7 @@
   <n>Banana Stretch</n>
   <sanskrit>Chandrasana</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/banana-stretch.webp</image>
   <description>A restorative lateral stretch performed lying on the back with arms and legs extending to one side in a crescent shape, stretching the entire side body.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Sacral</chakra>
@@ -5872,10 +5872,10 @@
 
 
 
-  <n>Knee to Elbow Pose</n>
+  <n>Knee to Elbow</n>
   <sanskrit>Parsva Balasana Variation</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/knee-to-elbow.webp</image>
   <description>A dynamic core strengthening pose where opposite knee and elbow connect under the body from table top position, challenging balance and coordination.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Solar Plexus</chakra>
@@ -6499,25 +6499,6 @@
 
 
 
-  <n>Prayer Forward Fold</n>
-  <sanskrit>Uttanasana Anahatasana</sanskrit>
-  <side>Center</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Forward Fold where the hands interlace behind the back and extend overhead, creating a deep stretch for the shoulders and chest while in the fold.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Heart</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Forward Fold</tag>
-    <tag>Chest Opener</tag>
-    <tag>Shoulder Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Forward Fold</transition>
-    <transition>Half Forward Fold</transition>
-    <transition>Mountain Pose</transition>
-  </transitions>
-</asana>
 
 <!-- Half Splits Variations -->
 <asana>
@@ -6570,7 +6551,7 @@
   <n>Half Splits Pose</n>
   <sanskrit>Ardha Hanumanasana</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/half-splits.webp</image>
   <description>A preparatory hamstring stretch with the front leg extended forward, back knee down, and torso folding over the front leg.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Root</chakra>
@@ -6634,25 +6615,6 @@
 
 
 
-  <n>Airplane Half Splits</n>
-  <sanskrit>Ardha Hanumanasana Vimanasana</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Half Splits with arms extended to the sides like airplane wings, adding balance challenge and upper body engagement.</description>
-  <difficulty>Beginner</difficulty>
-  <chakra>Sacral</chakra>
-  <tags>
-    <tag>Kneeling</tag>
-    <tag>Forward Fold</tag>
-    <tag>Hamstring Stretch</tag>
-    <tag>Balance</tag>
-  </tags>
-  <transitions>
-    <transition>Half Splits</transition>
-    <transition>Low Lunge</transition>
-    <transition>Warrior 3</transition>
-  </transitions>
-</asana>
 
 <asana>
 
@@ -6701,25 +6663,6 @@
 
 
 
-  <n>Twisted Half Splits</n>
-  <sanskrit>Ardha Hanumanasana Parivrtta</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A twisting variation of Half Splits where the opposite hand reaches to the extended foot, adding a spinal rotation element to the hamstring stretch.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Solar Plexus</chakra>
-  <tags>
-    <tag>Kneeling</tag>
-    <tag>Twist</tag>
-    <tag>Hamstring Stretch</tag>
-    <tag>Balance</tag>
-  </tags>
-  <transitions>
-    <transition>Half Splits</transition>
-    <transition>Revolved Triangle</transition>
-    <transition>Revolved Low Lunge</transition>
-  </transitions>
-</asana>
 
 <!-- Crescent Moon Variations -->
 <asana>
@@ -6866,10 +6809,10 @@
 
 
 
-  <n>Plank on Knees</n>
+  <n>Kneeling Plank</n>
   <sanskrit>Ardha Phalakasana</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/kneeling-plank.webp</image>
   <description>A modified plank position with knees on the ground, making it accessible while still strengthening the upper body and core.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Solar Plexus</chakra>
@@ -7034,7 +6977,7 @@
   <n>Revolved Downward Dog</n>
   <sanskrit>Parivrtta Adho Mukha Svanasana</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/revolved-downward-dog.webp</image>
   <description>A twisting variation of Downward Facing Dog where one hand reaches under the body to the opposite shin, creating a rotational stretch through the spine and shoulders.</description>
   <difficulty>Intermediate</difficulty>
   <chakra>Heart</chakra>
@@ -7166,10 +7109,10 @@
 
 
 
-  <n>Lifted Heels Chair</n>
+  <n>Drinking Bird</n>
   <sanskrit>Utthita Utkatasana</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/drinking-bird.webp</image>
   <description>A variation of Chair Pose with heels lifted off the ground, increasing the challenge to balance and strengthening the calves and ankles.</description>
   <difficulty>Intermediate</difficulty>
   <chakra>Root</chakra>
@@ -7236,7 +7179,7 @@
   <n>Airplane Arms Chair</n>
   <sanskrit>Utkatasana Vimanasana</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/airplane-chair.webp</image>
   <description>A variation of Chair Pose with arms extended to the sides like airplane wings, adding upper body engagement and changing the weight distribution.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Solar Plexus</chakra>
@@ -7301,25 +7244,6 @@
 
 
 
-  <n>Side Stretch Crescent</n>
-  <sanskrit>Parsva Anjaneyasana</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A variation of Crescent Lunge with an added side bend toward the front leg, creating a deep stretch along the opposite side body.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Sacral</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Lunge</tag>
-    <tag>Side Stretch</tag>
-    <tag>Hip Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Crescent Lunge</transition>
-    <transition>Warrior 2</transition>
-    <transition>Extended Side Angle</transition>
-  </transitions>
-</asana>
 
 <asana>
 
@@ -7438,7 +7362,7 @@
   <n>Double Crescent</n>
   <sanskrit>Dvipada Anjaneyasana</sanskrit>
   <side>Center</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/double-lundge.webp</image>
   <description>A challenging variation of Crescent Lunge with both knees bent at 90 degrees and torso upright, building strength and balance.</description>
   <difficulty>Intermediate</difficulty>
   <chakra>Root</chakra>
