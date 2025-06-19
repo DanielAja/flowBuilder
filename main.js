@@ -4571,16 +4571,38 @@ async function loadAsanasFromXML() {
                 chakra
             );
             
-            // Add to asanas array
-            asanas.push(asana);
+            // Check for duplicates before adding
+            const isDuplicate = asanas.some(existingAsana => 
+                existingAsana.name === asana.name && existingAsana.side === asana.side
+            );
+            
+            if (!isDuplicate) {
+                asanas.push(asana);
+            } else {
+                console.warn(`Duplicate pose detected and skipped: ${asana.name} (${asana.side})`);
+            }
         }
         
         console.log('Successfully loaded asanas from XML:', asanas.length);
         
         // Load custom poses from localStorage and add them to the asanas array
         const customPoses = getCustomPoses();
-        asanas.push(...customPoses);
-        console.log('Added custom poses from localStorage:', customPoses.length);
+        let customPosesAdded = 0;
+        
+        customPoses.forEach(customPose => {
+            const isDuplicateCustom = asanas.some(existingAsana => 
+                existingAsana.name === customPose.name && existingAsana.side === customPose.side
+            );
+            
+            if (!isDuplicateCustom) {
+                asanas.push(customPose);
+                customPosesAdded++;
+            } else {
+                console.warn(`Duplicate custom pose detected and skipped: ${customPose.name} (${customPose.side})`);
+            }
+        });
+        
+        console.log('Added custom poses from localStorage:', customPosesAdded);
         
         populateAsanaList();
         
