@@ -5477,25 +5477,6 @@
 
 
 
-  <n>Embryo Child's Pose</n>
-  <sanskrit>Garbha Pindasana</sanskrit>
-  <side>Center</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A deep variation of Child's Pose with arms wrapped around the shins and forehead on the mat, creating a sense of protection and introspection.</description>
-  <difficulty>Beginner</difficulty>
-  <chakra>Root</chakra>
-  <tags>
-    <tag>Floor</tag>
-    <tag>Resting</tag>
-    <tag>Restorative</tag>
-    <tag>Forward Fold</tag>
-  </tags>
-  <transitions>
-    <transition>Child's Pose</transition>
-    <transition>Table Top</transition>
-    <transition>Happy Baby</transition>
-  </transitions>
-</asana>
 
 <!-- Table Top Variations -->
 <asana>
@@ -5891,7 +5872,7 @@
 
 
 
-  <n>Opposite Knee to Elbow Pose</n>
+  <n>Knee to Elbow Pose</n>
   <sanskrit>Parsva Balasana Variation</sanskrit>
   <side>Right</side>
   <image>images/webp/no-image.webp</image>
@@ -5961,7 +5942,7 @@
   <n>Tiger</n>
   <sanskrit>Vyaghrasana</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/tiger-pose.webp</image>
   <description>A dynamic backbending pose performed from Table Top where one leg extends backward and upward while grabbing the foot, creating a bow-like shape.</description>
   <difficulty>Intermediate</difficulty>
   <chakra>Sacral</chakra>
