@@ -7045,7 +7045,7 @@
   <n>Twisted Chair</n>
   <sanskrit>Parivrtta Utkatasana Variation</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/twtisted-chair.webp</image>
   <description>A twisting variation of Chair Pose with arms extended to either side, creating an open twist that challenges balance and core strength.</description>
   <difficulty>Intermediate</difficulty>
   <chakra>Solar Plexus</chakra>
@@ -7292,25 +7292,6 @@
 
 
 
-  <n>Twisted Crescent</n>
-  <sanskrit>Parivrtta Anjaneyasana Open Variation</sanskrit>
-  <side>Right</side>
-  <image>images/webp/no-image.webp</image>
-  <description>A twisting variation of Crescent Lunge where the arms extend to either side, creating an open chest twist while maintaining the lunge position.</description>
-  <difficulty>Intermediate</difficulty>
-  <chakra>Heart</chakra>
-  <tags>
-    <tag>Standing</tag>
-    <tag>Lunge</tag>
-    <tag>Twist</tag>
-    <tag>Chest Opener</tag>
-  </tags>
-  <transitions>
-    <transition>Crescent Lunge</transition>
-    <transition>Revolved Crescent Lunge</transition>
-    <transition>Warrior 1</transition>
-  </transitions>
-</asana>
 
 <asana>
 
@@ -7429,7 +7410,7 @@
   <n>Exalted Crescent</n>
   <sanskrit>Utthita Anjaneyasana</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/exalted-warrior.webp</image>
   <description>A powerful variation of Crescent Lunge with arms raised overhead, creating length through the side body and a deeper hip flexor stretch.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Heart</chakra>
@@ -7496,7 +7477,7 @@
   <n>Airplane Arms Crescent</n>
   <sanskrit>Anjaneyasana Vimanasana</sanskrit>
   <side>Right</side>
-  <image>images/webp/no-image.webp</image>
+  <image>images/webp/airplane-cresent-lunge.webp</image>
   <description>A variation of Crescent Lunge with arms extended to the sides, activating the upper back and helping to stabilize the posture.</description>
   <difficulty>Beginner</difficulty>
   <chakra>Solar Plexus</chakra>
