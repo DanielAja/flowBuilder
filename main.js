@@ -6639,8 +6639,14 @@ function buildTableRowsOptimized(fragment) {
     // Build rows based on calculated data
     let sequentialPosition = 0;
     const processedSections = new Set();
+    const processedIndices = new Set();
     
     sectionData.allIndices.forEach(index => {
+        // Skip if this index was already processed as part of a section
+        if (processedIndices.has(index)) {
+            return;
+        }
+        
         if (sectionData.unsectionedAsanas.has(index)) {
             // Add unsectioned asana
             sequentialPosition++;
@@ -6649,6 +6655,7 @@ function buildTableRowsOptimized(fragment) {
             
             const row = createAsanaRowElement(editingFlow.asanas[index], index, '', '', displayNumber);
             fragment.appendChild(row);
+            processedIndices.add(index);
         } else {
             // Add section if this is the first asana in the section
             const sectionInfo = sectionData.sectionPositions.find(sp => 
@@ -6662,7 +6669,7 @@ function buildTableRowsOptimized(fragment) {
                 const headerRow = createSectionHeaderRow(sectionInfo);
                 fragment.appendChild(headerRow);
                 
-                // Add all asanas in this section
+                // Add all asanas in this section and mark them as processed
                 sectionInfo.asanas.forEach(({asana, index: asanaIndex}) => {
                     sequentialPosition++;
                     const displayNumber = tableInDescendingOrder ? 
@@ -6677,6 +6684,7 @@ function buildTableRowsOptimized(fragment) {
                     }
                     
                     fragment.appendChild(row);
+                    processedIndices.add(asanaIndex);
                 });
             }
         }
@@ -8358,7 +8366,7 @@ function deleteSection(sectionId) {
             <p class="modal-warning">The poses will remain in your flow but will no longer be grouped.</p>
             <div class="confirmation-buttons">
                 <button class="cancel-btn" onclick="this.closest('.modal').remove()">Cancel</button>
-                <button class="delete-group-btn" onclick="confirmDeleteSection('${sectionId}')">Delete Group</button>
+                <button class="delete-group-btn" onclick="confirmDeleteSection('${sectionId}'); this.closest('.modal').remove();">Delete Group</button>
             </div>
         </div>
     `;
@@ -8369,10 +8377,6 @@ function deleteSection(sectionId) {
 
 // Function to confirm and execute section deletion
 function confirmDeleteSection(sectionId) {
-    // Close the modal
-    const modal = document.querySelector('.section-modal');
-    if (modal) modal.remove();
-    
     // Get the section for the notification
     const section = editingFlow.getSectionById(sectionId);
     if (!section) return;
@@ -8407,7 +8411,7 @@ function confirmDeleteSection(sectionId) {
             }
             
             // Rebuild the table view
-            rebuildTableView();
+            rebuildFlowTable();
             
             // Show a notification
             showToastNotification(`Group "${section.name}" deleted`);
@@ -8430,7 +8434,7 @@ function confirmDeleteSection(sectionId) {
         });
         
         // Rebuild the table view
-        rebuildTableView();
+        rebuildFlowTable();
         
         // Show a notification
         showToastNotification(`Group "${section.name}" deleted`);
@@ -8633,7 +8637,7 @@ function createGroupFromSelection() {
     closeGroupNamingModal();
     
     // Rebuild the table view
-    rebuildTableView();
+    rebuildFlowTable();
     
     // Show a notification
     showToastNotification(`Created group "${groupName}" with ${validSelectedIndices.length} pose${validSelectedIndices.length !== 1 ? 's' : ''}`);
