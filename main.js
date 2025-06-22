@@ -6540,6 +6540,46 @@ function toggleViewFromSwitch(isChecked) {
     toggleViewMode(isChecked ? 'card' : 'table');
 }
 
+function togglePinActions(isChecked) {
+    const selectedActions = document.querySelector('.selected-actions');
+    const recommendedBtn = document.getElementById('recommendedToggleBtn');
+    
+    if (!selectedActions) {
+        console.error('Selected actions element not found');
+        return;
+    }
+    
+    if (isChecked) {
+        // Pin the actions - add pinned class for floating behavior
+        selectedActions.classList.add('pinned');
+        
+        // Move recommended button down to avoid overlap
+        if (recommendedBtn) {
+            recommendedBtn.style.top = '130px';
+        }
+        
+        // Save pin state to localStorage
+        localStorage.setItem('actionsPinned', 'true');
+        
+        // Show toast notification
+        showToastNotification('Actions panel pinned to screen');
+    } else {
+        // Unpin the actions - remove pinned class
+        selectedActions.classList.remove('pinned');
+        
+        // Move recommended button back to original position
+        if (recommendedBtn) {
+            recommendedBtn.style.top = '70px';
+        }
+        
+        // Save pin state to localStorage
+        localStorage.setItem('actionsPinned', 'false');
+        
+        // Show toast notification
+        showToastNotification('Actions panel unpinned');
+    }
+}
+
 function rebuildFlowTable() {
     // Use optimized version if available, fallback to original
     if (typeof rebuildFlowTableOptimized === 'function') {
@@ -7894,6 +7934,17 @@ function initializeApp() {
 
         // Display sequences
         displaySequences();
+
+        // Restore pin toggle state
+        const pinToggle = document.getElementById('pin-toggle-build');
+        const actionsPinned = localStorage.getItem('actionsPinned') === 'true';
+        if (pinToggle) {
+            pinToggle.checked = actionsPinned;
+            // Apply the pin state immediately if it was previously pinned
+            if (actionsPinned) {
+                togglePinActions(true);
+            }
+        }
 
         // Initialize view toggle buttons with saved preference
         const tableBtn = document.getElementById('tableViewBtn');
