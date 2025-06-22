@@ -8005,6 +8005,59 @@ function toggleSelectAll(checkbox) {
     showToastNotification(isChecked ? 'All poses selected' : 'All poses deselected');
 }
 
+// Function to toggle select all poses from button
+function toggleSelectAllPoses() {
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    
+    // Check current state - are all poses currently selected?
+    const table = document.getElementById('flowTable');
+    const checkboxes = table.querySelectorAll('.asana-select');
+    
+    if (checkboxes.length === 0) {
+        return; // No poses to select
+    }
+    
+    const allSelected = Array.from(checkboxes).every(cb => cb.checked);
+    
+    // Toggle the state
+    const newState = !allSelected;
+    
+    // Update all checkboxes in the table
+    checkboxes.forEach(cb => {
+        cb.checked = newState;
+    });
+    
+    // Update the main select all checkbox
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = newState;
+    }
+    
+    // Update all asanas in the editingFlow
+    editingFlow.asanas.forEach(asana => {
+        if (asana) {
+            asana.selected = newState;
+        }
+    });
+    
+    // Update button text directly based on new state
+    const buttonSpan = selectAllBtn.querySelector('span');
+    if (buttonSpan) {
+        buttonSpan.textContent = newState ? 'Unselect All' : 'Select All';
+    }
+    
+    // Update action buttons state
+    updateActionButtons();
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+    
+    // Show a brief notification
+    showToastNotification(newState ? 'All poses selected' : 'All poses deselected');
+}
+
 // Function to handle section selection toggling
 function toggleSectionSelection(checkbox) {
     const sectionName = checkbox.getAttribute('data-section');
@@ -8076,15 +8129,36 @@ function updateSelectAllCheckbox() {
     const table = document.getElementById('flowTable');
     const checkboxes = table.querySelectorAll('.asana-select');
     const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    const selectAllBtn = document.getElementById('selectAllBtn');
     
     if (checkboxes.length === 0) {
-        selectAllCheckbox.checked = false;
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = false;
+        }
+        // Update button text when no poses
+        if (selectAllBtn) {
+            const buttonSpan = selectAllBtn.querySelector('span');
+            if (buttonSpan) {
+                buttonSpan.textContent = 'Select All';
+            }
+        }
         return;
     }
     
     // Check if all checkboxes are checked
     const allChecked = Array.from(checkboxes).every(cb => cb.checked);
-    selectAllCheckbox.checked = allChecked;
+    
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = allChecked;
+    }
+    
+    // Update Select All button text based on current state
+    if (selectAllBtn) {
+        const buttonSpan = selectAllBtn.querySelector('span');
+        if (buttonSpan) {
+            buttonSpan.textContent = allChecked ? 'Unselect All' : 'Select All';
+        }
+    }
 }
 
 // Function to update action buttons state
