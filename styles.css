@@ -2857,7 +2857,6 @@ input:checked + .slider:before {
   position: relative;
   transform: scale(1.05);
   z-index: 5;
-  box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2);
   transition: all 0.3s ease;
   animation: recommend-fade-in 0.3s ease-out;
 }
@@ -2887,7 +2886,6 @@ input:checked + .slider:before {
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   white-space: nowrap;
   z-index: 6;
   animation: recommend-label-fade-in 0.3s ease-out;
@@ -2909,16 +2907,15 @@ input:checked + .slider:before {
 }
 
 @keyframes recommend-highlight {
-  0% { transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2); }
-  25% { transform: scale(1.12); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4); }
-  50% { transform: scale(1.12); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.6); }
-  75% { transform: scale(1.12); box-shadow: 0 8px 20px rgba(255, 140, 0, 0.4); }
-  100% { transform: scale(1.05); box-shadow: 0 5px 15px rgba(255, 140, 0, 0.2); }
+  0% { transform: scale(1.05); }
+  25% { transform: scale(1.12); }
+  50% { transform: scale(1.12); }
+  75% { transform: scale(1.12); }
+  100% { transform: scale(1.05); }
 }
 
 .asana-item.recommended:hover {
   transform: scale(1.08);
-  box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
 }
 
 /* Highlight effect for sorting */
@@ -4774,7 +4771,6 @@ tr[data-section-id]:last-of-type {
 .swap-pose-item:hover {
   border-color: #ff8c00;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(255, 140, 0, 0.2);
 }
 
 .swap-pose-item.recommended {
@@ -4784,7 +4780,6 @@ tr[data-section-id]:last-of-type {
 
 .swap-pose-item.recommended:hover {
   border-color: #45a049;
-  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
 }
 
 .swap-pose-img {
