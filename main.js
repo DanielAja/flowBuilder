@@ -5160,6 +5160,11 @@ function setupTableDragAndDrop() {
     flowTable.removeEventListener('drop', handleTableDrop);
     flowTable.removeEventListener('dragend', handleTableDragEnd);
 
+    // Remove existing touch handlers to prevent duplicates
+    flowTable.removeEventListener('touchstart', handleTableTouchStart);
+    flowTable.removeEventListener('touchmove', handleTableTouchMove);
+    flowTable.removeEventListener('touchend', handleTableTouchEnd);
+
     // Now add fresh event listeners
     flowTable.addEventListener('dragstart', handleTableDragStart);
     flowTable.addEventListener('dragenter', handleTableDragEnter);
@@ -5167,6 +5172,11 @@ function setupTableDragAndDrop() {
     flowTable.addEventListener('dragleave', handleTableDragLeave);
     flowTable.addEventListener('drop', handleTableDrop);
     flowTable.addEventListener('dragend', handleTableDragEnd);
+
+    // Add touch event listeners for mobile support
+    flowTable.addEventListener('touchstart', handleTableTouchStart, { passive: false });
+    flowTable.addEventListener('touchmove', handleTableTouchMove, { passive: false });
+    flowTable.addEventListener('touchend', handleTableTouchEnd, { passive: false });
 
     // Make sure all rows are properly draggable
     updateRowDragAttributes();
@@ -5961,6 +5971,301 @@ function handleTableDragEnd(e) {
 
     // Re-setup drag and drop to ensure everything is bound correctly
     setTimeout(updateRowDragAttributes, 50);
+}
+
+// Mobile touch drag and drop handlers
+let touchDragSource = null;
+let touchStartY = 0;
+let touchStartTime = 0;
+let isDragging = false;
+let touchMoveTimer = null;
+let dragIndicator = null;
+
+function handleTableTouchStart(e) {
+    console.log('------ TOUCH START ------');
+
+    // Reset drag state
+    isDragging = false;
+    touchDragSource = null;
+    
+    // Find the row being touched
+    let row = null;
+    const touch = e.touches[0];
+    
+    if (e.target.tagName === 'TR') {
+        row = e.target;
+    } else {
+        row = e.target.closest('tr');
+        
+        // Check if this is a section header
+        const isSectionHeader = row && row.classList.contains('section-header');
+        
+        if (isSectionHeader) {
+            // For section headers, allow touch from multiple areas for better mobile UX
+            const sectionName = e.target.closest('.section-name');
+            const sectionHeaderContent = e.target.closest('.section-header-content');
+            const sectionToggle = e.target.closest('.section-toggle');
+            
+            // Allow touch from section name, header content, or toggle area (but not other controls)
+            if (!sectionName && !sectionHeaderContent && !sectionToggle) {
+                return; // Not touching draggable areas
+            }
+            
+            // Don't start drag if touching interactive controls
+            const isInteractiveControl = e.target.closest('.section-checkbox, .section-side-control, .section-remove');
+            if (isInteractiveControl) {
+                return; // Touching checkbox, dropdown, or delete button
+            }
+        } else {
+            // For regular rows, only allow touch from the first cell (position number)
+            const cell = e.target.closest('td');
+            if (!cell || cell.cellIndex !== 0) {
+                return; // Not touching first cell
+            }
+        }
+    }
+    
+    if (!row || row.rowIndex === 0) {
+        return; // Header row or no row
+    }
+    
+    // Store touch information
+    touchStartY = touch.clientY;
+    touchStartTime = Date.now();
+    
+    // Create touch drag source object
+    const sectionId = row.getAttribute('data-section-id');
+    const isSectionHeader = row.classList.contains('section-header');
+    const sectionHeaderId = isSectionHeader ? row.getAttribute('data-section-id') : null;
+    
+    touchDragSource = {
+        element: row,
+        sectionId: sectionId,
+        isSectionHeader: isSectionHeader,
+        sectionHeaderId: sectionHeaderId,
+        getAttribute: function(attr) {
+            return this.element.getAttribute(attr);
+        },
+        classList: {
+            add: function(cls) { row.classList.add(cls); },
+            remove: function(cls) { row.classList.remove(cls); },
+            contains: function(cls) { return row.classList.contains(cls); }
+        }
+    };
+    
+    console.log('🔄 Touch source type:', isSectionHeader ? 'GROUP HEADER' : 'POSE');
+    
+    // Start a timer to activate drag mode after a delay
+    touchMoveTimer = setTimeout(() => {
+        if (touchDragSource && !isDragging) {
+            startTouchDrag(touch);
+        }
+    }, 200); // 200ms delay before drag activation
+}
+
+function startTouchDrag(touch) {
+    isDragging = true;
+    const row = touchDragSource.element;
+    
+    // Add dragging class
+    row.classList.add('dragging');
+    
+    // Create visual drag indicator
+    createTouchDragIndicator(row, touch);
+    
+    // Provide haptic feedback if available
+    if (navigator.vibrate) {
+        navigator.vibrate(50);
+    }
+    
+    console.log('🔄 Touch drag started');
+}
+
+function createTouchDragIndicator(row, touch) {
+    // Remove existing indicator
+    if (dragIndicator) {
+        document.body.removeChild(dragIndicator);
+    }
+    
+    // Create floating indicator
+    dragIndicator = document.createElement('div');
+    dragIndicator.className = 'touch-drag-indicator';
+    
+    const isSectionHeader = row.classList.contains('section-header');
+    
+    if (isSectionHeader) {
+        const sectionName = row.getAttribute('data-section');
+        const sectionElement = row.querySelector('.section-name span');
+        const actualSectionName = sectionElement ? sectionElement.textContent : sectionName;
+        
+        // Get section info for better display
+        const sectionCountElement = row.querySelector('.section-count-duration');
+        const sectionInfo = sectionCountElement ? sectionCountElement.textContent : '';
+        
+        // Create enhanced group indicator
+        dragIndicator.innerHTML = `
+            <div style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <div style="font-size: 18px; margin-bottom: 2px;">📋</div>
+                <div style="font-size: 14px; font-weight: 600;">${actualSectionName}</div>
+                <div style="font-size: 10px; opacity: 0.9;">${sectionInfo}</div>
+            </div>
+        `;
+    } else {
+        const displayNumber = row.cells[0].textContent.trim();
+        dragIndicator.textContent = displayNumber;
+    }
+    
+    // Style the indicator
+    Object.assign(dragIndicator.style, {
+        position: 'fixed',
+        backgroundColor: '#ff8c00',
+        color: 'white',
+        padding: isSectionHeader ? '16px 20px' : '12px',
+        borderRadius: isSectionHeader ? '20px' : '50%',
+        fontWeight: 'bold',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+        zIndex: '10000',
+        fontSize: isSectionHeader ? '12px' : '16px',
+        pointerEvents: 'none',
+        transform: 'scale(1.1)',
+        opacity: '0.9',
+        left: (touch.clientX + 20) + 'px',
+        top: (touch.clientY - (isSectionHeader ? 50 : 30)) + 'px',
+        minWidth: isSectionHeader ? '120px' : 'auto',
+        maxWidth: isSectionHeader ? '200px' : 'auto',
+        textAlign: 'center',
+        border: '2px solid rgba(255, 255, 255, 0.3)'
+    });
+    
+    document.body.appendChild(dragIndicator);
+}
+
+function handleTableTouchMove(e) {
+    if (!touchDragSource) return;
+    
+    const touch = e.touches[0];
+    const moveDistance = Math.abs(touch.clientY - touchStartY);
+    const timeDiff = Date.now() - touchStartTime;
+    
+    // If not dragging yet but moved enough, check if we should start dragging
+    if (!isDragging && moveDistance > 15 && timeDiff > 100) {
+        if (touchMoveTimer) {
+            clearTimeout(touchMoveTimer);
+            touchMoveTimer = null;
+        }
+        startTouchDrag(touch);
+    }
+    
+    if (isDragging) {
+        e.preventDefault(); // Prevent scrolling
+        
+        // Update drag indicator position
+        if (dragIndicator) {
+            const isGroupHeader = touchDragSource && touchDragSource.isSectionHeader;
+            dragIndicator.style.left = (touch.clientX + 20) + 'px';
+            dragIndicator.style.top = (touch.clientY - (isGroupHeader ? 50 : 30)) + 'px';
+        }
+        
+        // Find the element under the touch point
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        const targetRow = elementBelow ? elementBelow.closest('tr') : null;
+        
+        // Update drop target visuals
+        updateTouchDropTarget(targetRow);
+    }
+}
+
+function updateTouchDropTarget(targetRow) {
+    // Remove all drop target classes
+    const allRows = Array.from(document.querySelectorAll('#flowTable tr:not(:first-child)'));
+    allRows.forEach(r => r.classList.remove('drop-target', 'drop-target-section'));
+    
+    if (targetRow && targetRow !== touchDragSource.element && targetRow.rowIndex > 0) {
+        const isDraggingSection = touchDragSource.isSectionHeader;
+        
+        if (isDraggingSection) {
+            targetRow.classList.add('drop-target-section');
+        } else {
+            targetRow.classList.add('drop-target');
+        }
+    }
+}
+
+function handleTableTouchEnd(e) {
+    console.log('------ TOUCH END ------');
+    
+    if (touchMoveTimer) {
+        clearTimeout(touchMoveTimer);
+        touchMoveTimer = null;
+    }
+    
+    if (!touchDragSource) return;
+    
+    if (isDragging) {
+        e.preventDefault();
+        
+        const touch = e.changedTouches[0];
+        const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+        const targetRow = elementBelow ? elementBelow.closest('tr') : null;
+        
+        if (targetRow && targetRow !== touchDragSource.element && targetRow.rowIndex > 0) {
+            // Perform the drop using existing logic
+            performTouchDrop(targetRow);
+        }
+        
+        // Provide completion haptic feedback
+        if (navigator.vibrate) {
+            navigator.vibrate(30);
+        }
+    }
+    
+    // Clean up
+    cleanupTouchDrag();
+}
+
+function performTouchDrop(targetRow) {
+    console.log('🎯 Performing touch drop');
+    
+    // Set the global dragSource to match touch drag source for compatibility
+    dragSource = touchDragSource;
+    
+    // Create a synthetic drop event to reuse existing drop logic
+    const syntheticEvent = {
+        target: targetRow,
+        preventDefault: () => {},
+        stopPropagation: () => {}
+    };
+    
+    // Call the existing drop handler
+    const result = handleTableDrop(syntheticEvent);
+    
+    if (result !== false) {
+        console.log('✅ Touch drop successful');
+        showToastNotification('Row reordered successfully');
+    } else {
+        console.log('❌ Touch drop failed');
+    }
+}
+
+function cleanupTouchDrag() {
+    // Remove all visual feedback
+    const allRows = Array.from(document.querySelectorAll('#flowTable tr'));
+    allRows.forEach(row => {
+        row.classList.remove('dragging', 'drop-target', 'drop-target-section');
+    });
+    
+    // Remove drag indicator
+    if (dragIndicator) {
+        document.body.removeChild(dragIndicator);
+        dragIndicator = null;
+    }
+    
+    // Reset state
+    touchDragSource = null;
+    isDragging = false;
+    dragSource = null;
+    
+    console.log('🧹 Touch drag cleanup complete');
 }
 
 // Card view drag and drop event handlers

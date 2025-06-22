@@ -1623,6 +1623,207 @@ h1 {
   }
 }
 
+/* Mobile touch drag indicator */
+.touch-drag-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ff8c00;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  pointer-events: none;
+  z-index: 10000;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  animation: mobile-drag-float 0.3s ease-out forwards;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+@keyframes mobile-drag-float {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.7;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 0.9;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+}
+
+/* Mobile drag enhancements */
+@media (max-width: 768px) {
+  /* Enhanced touch targets for mobile drag handles */
+  #flowTable tr[draggable] td:first-child {
+    min-width: 50px;
+    position: relative;
+    touch-action: none;
+  }
+  
+  #flowTable tr[draggable] td:first-child::before {
+    font-size: 18px;
+    color: #ff8c00;
+    opacity: 0.8;
+  }
+  
+  /* Enhanced touch targets for group headers */
+  #flowTable tr.section-header .section-header-content {
+    touch-action: none;
+    position: relative;
+  }
+  
+  #flowTable tr.section-header .section-name {
+    padding: 12px 8px;
+    border-radius: 8px;
+    position: relative;
+    transition: background-color 0.2s ease;
+  }
+  
+  #flowTable tr.section-header .section-name::before {
+    content: "⋮⋮";
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg);
+    color: #ff8c00;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+  }
+  
+  #flowTable tr.section-header .section-name:active {
+    background-color: rgba(255, 140, 0, 0.1);
+  }
+  
+  #flowTable tr.section-header .section-name:active::before {
+    opacity: 1;
+    color: #e67e00;
+  }
+  
+  /* Enhanced visual feedback for mobile dragging */
+  #flowTable tr.dragging {
+    transform: scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-left: 4px solid #ff8c00;
+    background-color: rgba(255, 248, 240, 0.95);
+  }
+  
+  /* Special mobile dragging styles for group headers */
+  #flowTable tr.section-header.dragging {
+    transform: scale(1.03);
+    box-shadow: 0 10px 30px rgba(255, 140, 0, 0.25);
+    border: 3px solid #ff8c00;
+    border-radius: 8px;
+    background-color: rgba(255, 248, 240, 0.98);
+    position: relative;
+    z-index: 100;
+  }
+  
+  #flowTable tr.section-header.dragging .section-name {
+    background-color: rgba(255, 140, 0, 0.15);
+    border-radius: 6px;
+  }
+  
+  #flowTable tr.section-header.dragging .section-name::before {
+    opacity: 1;
+    color: #ff8c00;
+    animation: mobile-group-drag-indicator 0.8s infinite alternate;
+  }
+  
+  @keyframes mobile-group-drag-indicator {
+    0% {
+      transform: translateY(-50%) rotate(90deg) scale(1);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-50%) rotate(90deg) scale(1.2);
+      opacity: 1;
+    }
+  }
+  
+  /* Mobile drop target styling */
+  #flowTable tr.drop-target {
+    border-top: 4px solid #ff8c00;
+    border-bottom: 4px solid #ff8c00;
+    background-color: rgba(255, 140, 0, 0.15);
+    transform: scale(1.02);
+    animation: mobile-drop-target-pulse 1s infinite alternate;
+  }
+  
+  #flowTable tr.drop-target-section {
+    border-top: 5px solid #ff8c00;
+    border-bottom: 5px solid #ff8c00;
+    background-color: rgba(255, 140, 0, 0.2);
+    transform: scale(1.03);
+    animation: mobile-section-drop-pulse 1s infinite alternate;
+  }
+  
+  @keyframes mobile-drop-target-pulse {
+    0% {
+      background-color: rgba(255, 140, 0, 0.15);
+      box-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
+    }
+    100% {
+      background-color: rgba(255, 140, 0, 0.25);
+      box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
+    }
+  }
+  
+  @keyframes mobile-section-drop-pulse {
+    0% {
+      background-color: rgba(255, 140, 0, 0.2);
+      box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+    }
+    100% {
+      background-color: rgba(255, 140, 0, 0.3);
+      box-shadow: 0 0 20px rgba(255, 140, 0, 0.6);
+    }
+  }
+  
+  /* Touch drag indicator specific styles for mobile */
+  .touch-drag-indicator {
+    font-size: 18px;
+    min-width: 45px;
+    min-height: 45px;
+    border-radius: 50%;
+    animation: mobile-touch-indicator-pulse 0.8s infinite alternate;
+  }
+  
+  /* Enhanced group header touch drag indicator */
+  .touch-drag-indicator:has(div) {
+    border-radius: 20px;
+    min-width: 140px;
+    min-height: 60px;
+    padding: 16px 20px;
+    animation: mobile-group-touch-indicator-pulse 0.8s infinite alternate;
+  }
+  
+  @keyframes mobile-touch-indicator-pulse {
+    0% {
+      transform: scale(1.1);
+      box-shadow: 0 4px 20px rgba(255, 140, 0, 0.4);
+    }
+    100% {
+      transform: scale(1.2);
+      box-shadow: 0 6px 30px rgba(255, 140, 0, 0.6);
+    }
+  }
+  
+  @keyframes mobile-group-touch-indicator-pulse {
+    0% {
+      transform: scale(1.05);
+      box-shadow: 0 6px 25px rgba(255, 140, 0, 0.4);
+    }
+    100% {
+      transform: scale(1.1);
+      box-shadow: 0 8px 35px rgba(255, 140, 0, 0.6);
+    }
+  }
+}
+
 #flowTable tr.drag-highlight, #flowTable tr.highlight-added {
   animation: pulse 1.5s ease-in-out infinite;
 }
