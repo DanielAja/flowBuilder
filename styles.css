@@ -4817,3 +4817,82 @@ tr[data-section-id]:last-of-type {
   justify-content: center;
 }
 
+/* Mobile Group Header Fixes */
+@media (max-width: 768px) {
+  /* Fix group header display on mobile */
+  .section-header .section-name {
+    white-space: normal;
+    flex-wrap: wrap;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 0.95em;
+    gap: 8px;
+    min-height: 40px;
+  }
+  
+  .section-header .section-name span {
+    font-size: 16px;
+    padding: 4px 8px;
+    flex: 1;
+    min-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100vw - 150px);
+  }
+  
+  .section-header .section-name .section-count {
+    font-size: 12px;
+    padding: 3px 8px;
+    margin-left: 0;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+  }
+  
+  .section-header .section-name .section-duration {
+    font-size: 11px;
+    padding: 3px 6px;
+    margin-left: 4px;
+    flex-shrink: 0;
+    background-color: rgba(255, 140, 0, 0.15);
+    border-radius: 8px;
+  }
+  
+  /* Better mobile layout for group headers */
+  .section-header {
+    min-height: 45px;
+  }
+  
+  .section-header td {
+    padding: 8px 4px;
+    vertical-align: middle;
+  }
+  
+  /* Ensure proper spacing between elements */
+  .section-header .section-name .section-count,
+  .section-header .section-name .section-duration {
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  
+  /* Fix for very small screens */
+  @media (max-width: 480px) {
+    .section-header .section-name span {
+      font-size: 14px;
+      min-width: 100px;
+      max-width: calc(100vw - 120px);
+    }
+    
+    .section-header .section-name .section-count {
+      font-size: 11px;
+      padding: 2px 6px;
+    }
+    
+    .section-header .section-name .section-duration {
+      font-size: 10px;
+      padding: 2px 5px;
+    }
+  }
+}
+
