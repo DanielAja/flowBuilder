@@ -9301,6 +9301,8 @@ function updateActionButtons() {
     if (saveSequenceBtn) saveSequenceBtn.disabled = !hasSelectedPoses;
     if (addToSectionBtn) addToSectionBtn.disabled = !hasSelectedPoses;
     if (changeSideBtn) changeSideBtn.disabled = !hasSelectedPoses;
+    const changeDurationBtn = document.getElementById('changeDurationBtn');
+    if (changeDurationBtn) changeDurationBtn.disabled = !hasSelectedPoses;
     if (reverseBtn) reverseBtn.disabled = !hasSelectedPoses;
 }
 
@@ -9506,6 +9508,102 @@ function showChangeSideModal() {
 function closeChangeSideModal() {
     const modal = document.getElementById('changeSideModal');
     modal.style.display = 'none';
+}
+
+// Duration change modal functions
+function showChangeDurationModal() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) {
+        showToastNotification('Please select poses first');
+        return;
+    }
+    
+    // Show the modal
+    const modal = document.getElementById('changeDurationModal');
+    const durationInput = document.getElementById('durationInput');
+    
+    // Set default value to 7 seconds
+    durationInput.value = 7;
+    
+    // Display the modal
+    modal.style.display = 'block';
+    
+    // Focus on the input element
+    setTimeout(() => durationInput.focus(), 100);
+}
+
+function closeChangeDurationModal() {
+    const modal = document.getElementById('changeDurationModal');
+    modal.style.display = 'none';
+}
+
+function applyDurationToSelected() {
+    const durationInput = document.getElementById('durationInput');
+    const newDuration = parseInt(durationInput.value);
+    
+    // Validate the duration
+    if (isNaN(newDuration) || newDuration < 1 || newDuration > 300) {
+        showToastNotification('Please enter a valid duration between 1 and 300 seconds');
+        return;
+    }
+    
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) {
+        showToastNotification('No poses selected');
+        return;
+    }
+    
+    // Update duration for all selected poses
+    let updatedCount = 0;
+    
+    // Get the indexes of selected poses
+    const selectedIndexes = [];
+    editingFlow.asanas.forEach((asana, index) => {
+        if (asana.selected) {
+            selectedIndexes.push(index);
+        }
+    });
+    
+    console.log('Selected pose indexes:', selectedIndexes);
+    
+    // Update each selected pose
+    selectedIndexes.forEach(asanaIndex => {
+        // Update the asana object
+        editingFlow.asanas[asanaIndex].setDuration(newDuration);
+        updatedCount++;
+        
+        // Update the corresponding DOM input field in table view
+        const tableRow = document.querySelector(`#flowTable tr[data-index="${asanaIndex}"]`);
+        if (tableRow) {
+            const durationInputField = tableRow.querySelector('.duration-wrapper input[type="number"]');
+            if (durationInputField) {
+                durationInputField.value = newDuration;
+                console.log(`Updated table input for pose ${asanaIndex} to ${newDuration}s`);
+            }
+        }
+        
+        // Update the corresponding DOM input field in card view
+        const cardElement = document.querySelector(`.flow-cards .flow-card input[data-index="${asanaIndex}"]`);
+        if (cardElement) {
+            const cardContainer = cardElement.closest('.flow-card');
+            if (cardContainer) {
+                const cardDurationInput = cardContainer.querySelector('.card-duration input[type="number"]');
+                if (cardDurationInput) {
+                    cardDurationInput.value = newDuration;
+                    console.log(`Updated card input for pose ${asanaIndex} to ${newDuration}s`);
+                }
+            }
+        }
+    });
+    
+    // Update the flow duration display
+    updateFlowDuration();
+    
+    // Close the modal
+    closeChangeDurationModal();
+    
+    // Show success notification
+    showToastNotification(`Updated duration for ${updatedCount} pose${updatedCount !== 1 ? 's' : ''} to ${newDuration} second${newDuration !== 1 ? 's' : ''}`);
 }
 
 // Function to change the side of all selected poses

@@ -1337,6 +1337,9 @@
             <button id="addToSectionBtn" class="action-btn" onclick="addSelectedToSection()" disabled>
               <span>Group</span>
             </button>
+            <button id="changeDurationBtn" class="action-btn" onclick="showChangeDurationModal()" disabled>
+              <span>Duration</span>
+            </button>
             <button id="changeSideBtn" class="action-btn" onclick="showChangeSideModal()" disabled>
               <span>Side</span>
             </button>
@@ -1634,6 +1637,19 @@
         </div>
         <div class="section-name-input-container">
           <button class="cancel-btn" onclick="closeSwapPoseModal()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Change Duration Modal -->
+    <div id="changeDurationModal" class="modal section-modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeChangeDurationModal()">&times;</span>
+        <h2>Change Duration</h2>
+        <p class="modal-description">Set the duration for all selected poses:</p>
+        <div class="section-name-input-container">
+          <input type="number" id="durationInput" placeholder="Duration (seconds)" class="section-name-input" min="1" max="300" value="7">
+          <button class="create-section-btn" onclick="applyDurationToSelected()">Apply</button>
         </div>
       </div>
     </div>
