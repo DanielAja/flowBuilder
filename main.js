@@ -6845,6 +6845,7 @@ function toggleViewFromSwitch(isChecked) {
     toggleViewMode(isChecked ? 'card' : 'table');
 }
 
+
 function togglePinActions(isChecked) {
     const selectedActions = document.querySelector('.selected-actions');
     const recommendedBtn = document.getElementById('recommendedToggleBtn');
