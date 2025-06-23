@@ -3317,8 +3317,18 @@ function exportFlowAsJSONFromModal() {
             name: flowToExport.name || "Untitled Flow",
             description: flowToExport.description || "",
             asanas: flowToExport.asanas.map(asana => {
-                // Ensure each asana has a valid name for validation
-                const asanaName = asana.imageName || asana.name.toLowerCase().replace(/\s+/g, '-');
+                // Extract actual image filename to ensure proper image loading on import
+                let asanaName;
+                if (asana.image && asana.image.includes('/')) {
+                    // Extract filename from path like "images/webp/mountain-pose.webp" -> "mountain-pose"
+                    const filename = asana.image.split('/').pop();
+                    asanaName = filename.replace(/\.(webp|png)$/i, '');
+                } else if (asana.imageName) {
+                    asanaName = asana.imageName;
+                } else {
+                    // Fallback to generated name for custom poses without images
+                    asanaName = asana.name.toLowerCase().replace(/\s+/g, '-');
+                }
                 
                 return {
                     name: asanaName || "unknown-pose",
