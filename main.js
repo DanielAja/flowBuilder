@@ -817,6 +817,7 @@ function changeScreen(screenId) {
     // Remove flow-mode class when changing screens
     document.body.classList.remove('flow-mode');
     
+    
     // Clear all timers when leaving flow screen
     if (currentScreenId === 'flowScreen' && screenId !== 'flowScreen') {
         // Release wake lock when leaving flow screen
@@ -1548,6 +1549,75 @@ function removePose(button) {
         populateAsanaList();
     } else {
         console.error('Remove button not in a card or table row');
+    }
+}
+
+// Dropdown functionality for more options button
+function togglePoseDropdown(index) {
+    const dropdown = document.getElementById(`pose-dropdown-${index}`);
+    const isCurrentlyVisible = dropdown.classList.contains('show');
+    
+    // Hide all other dropdowns first
+    hideAllPoseDropdowns();
+    
+    // Toggle the current dropdown
+    if (!isCurrentlyVisible) {
+        dropdown.classList.add('show');
+        
+        // Add click listener to document to close dropdown when clicking outside
+        document.addEventListener('click', handleClickOutsideDropdown);
+    }
+}
+
+function hidePoseDropdown(index) {
+    const dropdown = document.getElementById(`pose-dropdown-${index}`);
+    if (dropdown) {
+        dropdown.classList.remove('show');
+    }
+}
+
+function hideAllPoseDropdowns() {
+    const dropdowns = document.querySelectorAll('.pose-dropdown');
+    dropdowns.forEach(dropdown => {
+        dropdown.classList.remove('show');
+    });
+    
+    // Remove the document click listener
+    document.removeEventListener('click', handleClickOutsideDropdown);
+}
+
+function handleClickOutsideDropdown(event) {
+    // Check if the click was outside all dropdowns and their buttons
+    if (!event.target.closest('.more-options-container')) {
+        hideAllPoseDropdowns();
+    }
+}
+
+function removePoseFromDropdown(index) {
+    // Directly handle the removal since we have the index
+    if (index >= 0 && index < editingFlow.asanas.length) {
+        editingFlow.asanas.splice(index, 1);
+        
+        // Update section references to account for the removed pose
+        editingFlow.sections.forEach(section => {
+            // First, remove any direct references to the deleted pose
+            section.asanaIds = section.asanaIds.filter(asanaId => asanaId !== index);
+            
+            // Then, adjust the indices of the remaining poses to account for the removed pose
+            section.asanaIds = section.asanaIds.map(asanaId => {
+                // If this asana index is after the deleted index, decrement it
+                return asanaId > index ? asanaId - 1 : asanaId;
+            });
+        });
+        
+        // Rebuild the entire table to ensure proper order and numbering
+        rebuildFlowTable();
+        
+        // Update flow duration
+        updateFlowDuration();
+        
+        // Refresh the asana list
+        populateAsanaList();
     }
 }
 
@@ -7137,7 +7207,7 @@ function createSectionHeaderRow(sectionInfo) {
     const sectionDurationDisplay = displayFlowDuration(sectionDuration);
     
     headerRow.innerHTML = `
-        <td colspan="7" class="section-header-content">
+        <td colspan="6" class="section-header-content">
             <div class="section-header-flex">
                 <div class="section-checkbox">
                     <input type="checkbox" class="section-select" 
@@ -7212,10 +7282,15 @@ function createAsanaRowHTML(asana, index, sectionName, sectionId, displayNumber,
         </td>
         <td>${createSideDropdown(asana.side)}</td>
         <td>
-            <button class="table-btn swap-btn" onclick="showSwapPoseModal(${index})" title="Swap for another pose">⇆</button>
-        </td>
-        <td>
-            <button class="table-btn remove-btn" onclick="removePose(this)">×</button>
+            <div class="more-options-container">
+                <button class="table-btn more-options-btn" onclick="togglePoseDropdown(${index})" title="More options">⋮</button>
+                <div class="pose-dropdown" id="pose-dropdown-${index}">
+                    <div class="dropdown-item" onclick="showAddPoseModal(${index}, 'above'); hidePoseDropdown(${index})">Add pose above</div>
+                    <div class="dropdown-item" onclick="showAddPoseModal(${index}, 'below'); hidePoseDropdown(${index})">Add pose below</div>
+                    <div class="dropdown-item" onclick="showSwapPoseModal(${index}); hidePoseDropdown(${index})">Swap pose</div>
+                    <div class="dropdown-item delete-item" onclick="removePoseFromDropdown(${index}); hidePoseDropdown(${index})">Delete pose</div>
+                </div>
+            </div>
         </td>
     `;
 }
@@ -7478,7 +7553,7 @@ function rebuildTableView() {
                 
                 // Create section header with checkbox and collapse/expand toggle
                 headerRow.innerHTML = `
-                    <td colspan="7" class="section-header-content">
+                    <td colspan="8" class="section-header-content">
                         <div class="section-header-flex">
                             <div class="section-checkbox">
                                 <input type="checkbox" class="section-select" 
@@ -7675,6 +7750,12 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
             </div>
         </td>
         <td>${createSideDropdown(asana.side)}</td>
+        <td>
+            <div class="add-pose-buttons">
+                <button class="table-btn add-above-btn" onclick="showAddPoseModal(${index}, 'above')" title="Add pose above">⬆️</button>
+                <button class="table-btn add-below-btn" onclick="showAddPoseModal(${index}, 'below')" title="Add pose below">⬇️</button>
+            </div>
+        </td>
         <td>
             <button class="table-btn swap-btn" onclick="showSwapPoseModal(${index})" title="Swap for another pose">⇆</button>
         </td>
@@ -10177,15 +10258,31 @@ function deleteCustomPose(poseName) {
 
 // Global variable to track which pose index is being swapped
 let swapPoseIndex = null;
+let swapPoseMode = null; // 'swap', 'addAbove', 'addBelow'
 
 // Function to show the swap pose modal
 function showSwapPoseModal(index) {
-    swapPoseIndex = index;
+    swapPoseIndex = index; // Set the global swap index
     const modal = document.getElementById('swapPoseModal');
     const searchInput = document.getElementById('swapPoseSearch');
     const poseList = document.getElementById('swapPoseList');
+    const modalTitle = document.getElementById('swapModalTitle');
+    const modalDescription = document.getElementById('swapModalDescription');
     
     if (!modal || !searchInput || !poseList) return;
+    
+    // Update modal title and description based on swap pose mode
+    if (swapPoseMode === 'addAbove') {
+        modalTitle.textContent = 'Add Pose Above';
+        modalDescription.textContent = 'Select a pose to add above the current pose:';
+    } else if (swapPoseMode === 'addBelow') {
+        modalTitle.textContent = 'Add Pose Below';
+        modalDescription.textContent = 'Select a pose to add below the current pose:';
+    } else {
+        modalTitle.textContent = 'Swap Pose';
+        modalDescription.textContent = 'Select a pose to swap with:';
+        swapPoseMode = 'swap'; // Ensure mode is set for regular swap button clicks
+    }
     
     // Clear search input
     searchInput.value = '';
@@ -10214,6 +10311,20 @@ function closeSwapPoseModal() {
         modal.style.display = 'none';
     }
     swapPoseIndex = null;
+    swapPoseMode = null; // Reset swap pose mode when closing
+}
+
+// Function to show add pose modal (above or below)
+function showAddPoseModal(index, mode) {
+    // Set the swap pose mode to control modal behavior
+    if (mode === 'above') {
+        swapPoseMode = 'addAbove';
+    } else if (mode === 'below') {
+        swapPoseMode = 'addBelow';
+    }
+    
+    // Use the existing swap pose modal infrastructure
+    showSwapPoseModal(index);
 }
 
 // Function to populate the swap pose list
@@ -10282,20 +10393,27 @@ function populateSwapPoseList(searchTerm = '') {
 
 // Function to swap the pose
 function swapPose(newAsana) {
-    if (swapPoseIndex === null || swapPoseIndex < 0 || swapPoseIndex >= editingFlow.asanas.length) {
+    if (swapPoseIndex === null || swapPoseIndex < 0) {
         console.error('Invalid swap pose index');
         return;
     }
     
-    // Get the current pose to preserve its duration and side
-    const currentPose = editingFlow.asanas[swapPoseIndex];
-    const preservedDuration = currentPose.duration || 7;
-    const preservedSide = currentPose.side || 'Center';
+    // For addAbove and swap modes, index must be within current array bounds
+    // For addBelow mode, we allow inserting up to one position past the end
+    if (swapPoseMode === 'addBelow') {
+        if (swapPoseIndex >= editingFlow.asanas.length) {
+            console.error('Invalid swap pose index for addBelow mode');
+            return;
+        }
+    } else if (swapPoseIndex >= editingFlow.asanas.length) {
+        console.error('Invalid swap pose index');
+        return;
+    }
     
     // Create a new instance of the selected asana
-    const swappedAsana = new YogaAsana(
+    const newPoseAsana = new YogaAsana(
         newAsana.name,
-        preservedSide, // Keep the current side
+        'Center', // Default side for new poses
         newAsana.image,
         newAsana.description,
         newAsana.difficulty,
@@ -10304,10 +10422,34 @@ function swapPose(newAsana) {
         newAsana.sanskrit,
         newAsana.chakra || ""
     );
-    swappedAsana.setDuration(preservedDuration); // Keep the current duration
+    newPoseAsana.setDuration(7); // Default duration for new poses
     
-    // Replace the pose in the flow
-    editingFlow.asanas[swapPoseIndex] = swappedAsana;
+    let actionText;
+    
+    if (swapPoseMode === 'addAbove') {
+        // Insert the new pose above (before) the current pose
+        editingFlow.asanas.splice(swapPoseIndex, 0, newPoseAsana);
+        actionText = `Added ${newAsana.name} above`;
+    } else if (swapPoseMode === 'addBelow') {
+        // Insert the new pose directly below (after) the current pose
+        editingFlow.asanas.splice(swapPoseIndex + 1, 0, newPoseAsana);
+        actionText = `Added ${newAsana.name} below`;
+    } else {
+        // Default swap behavior - preserve duration and side from current pose
+        const currentPose = editingFlow.asanas[swapPoseIndex];
+        const preservedDuration = currentPose.duration || 7;
+        const preservedSide = currentPose.side || 'Center';
+        
+        newPoseAsana.setDuration(preservedDuration);
+        newPoseAsana.setSide(preservedSide);
+        
+        // Replace the pose in the flow
+        editingFlow.asanas[swapPoseIndex] = newPoseAsana;
+        actionText = `Swapped to ${newAsana.name}`;
+    }
+    
+    // Reset swap pose mode
+    swapPoseMode = null;
     
     // Close the modal
     closeSwapPoseModal();
@@ -10319,10 +10461,14 @@ function swapPose(newAsana) {
     updateFlowDuration();
     
     // Show notification
-    showToastNotification(`Swapped to ${newAsana.name}`);
+    showToastNotification(actionText);
     
     // Auto-save if in edit mode
     if (editMode) {
         autoSaveFlow();
     }
 }
+
+
+
+
