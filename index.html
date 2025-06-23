@@ -1374,6 +1374,7 @@
                 <th>Asana</th>
                 <th>Duration</th>
                 <th>Side</th>
+                <th>Add</th>
                 <th>Swap</th>
                 <th>Remove</th>
               </tr>
@@ -1618,12 +1619,13 @@
       </div>
     </div>
 
+
     <!-- Swap Pose Modal -->
     <div id="swapPoseModal" class="modal section-modal">
       <div class="modal-content">
         <span class="close-modal" onclick="closeSwapPoseModal()">&times;</span>
-        <h2>Swap Pose</h2>
-        <p class="modal-description">Select a pose to swap with:</p>
+        <h2 id="swapModalTitle">Swap Pose</h2>
+        <p class="modal-description" id="swapModalDescription">Select a pose to swap with:</p>
         <div class="swap-pose-search-container">
           <input type="text" id="swapPoseSearch" placeholder="Search poses..." class="section-name-input">
         </div>
