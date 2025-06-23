@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Dropdown Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .test-container {
+            border: 2px solid #ddd;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        .more-options-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        .more-options-btn {
+            background-color: #6c757d;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: manipulation;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .more-options-btn:active {
+            background-color: #495057;
+            transform: scale(0.95);
+        }
+        
+        .pose-dropdown {
+            position: fixed;
+            top: 100px;
+            right: 10px;
+            background-color: white;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            min-width: 200px;
+            max-width: calc(100vw - 20px);
+            display: none;
+        }
+        
+        .pose-dropdown.show {
+            display: block;
+            animation: slideDown 0.2s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .dropdown-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            touch-action: manipulation;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:hover,
+        .dropdown-item:active {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mobile Dropdown Debug Test</h1>
+    
+    <div class="test-container">
+        <h2>Test 1: Basic Button</h2>
+        <div class="more-options-container">
+            <button class="more-options-btn" data-pose-index="0" onclick="toggleTestDropdown(0)">⋮</button>
+            <div class="pose-dropdown" id="test-dropdown-0">
+                <div class="dropdown-item" onclick="alert('Add above clicked')">Add pose above</div>
+                <div class="dropdown-item" onclick="alert('Add below clicked')">Add pose below</div>
+                <div class="dropdown-item" onclick="alert('Swap clicked')">Swap pose</div>
+                <div class="dropdown-item" onclick="alert('Delete clicked')">Delete pose</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Test 2: Touch Events</h2>
+        <button onclick="testTouchEvents()" style="padding: 15px; font-size: 16px;">Test Touch Detection</button>
+        <div id="touch-log"></div>
+    </div>
+    
+    <div class="test-container">
+        <h2>Test 3: Viewport Info</h2>
+        <div id="viewport-info"></div>
+        <button onclick="updateViewportInfo()" style="padding: 15px; font-size: 16px;">Update Info</button>
+    </div>
+    
+    <script>
+        function toggleTestDropdown(index) {
+            console.log('Toggle dropdown called for index:', index);
+            const dropdown = document.getElementById('test-dropdown-' + index);
+            const isVisible = dropdown.classList.contains('show');
+            
+            if (isVisible) {
+                dropdown.classList.remove('show');
+                console.log('Dropdown hidden');
+            } else {
+                dropdown.classList.add('show');
+                console.log('Dropdown shown');
+            }
+        }
+        
+        function testTouchEvents() {
+            const log = document.getElementById('touch-log');
+            log.innerHTML = '<p>Touch test started...</p>';
+            
+            const isMobile = window.innerWidth <= 768;
+            const hasTouch = 'ontouchstart' in window;
+            
+            log.innerHTML += '<p>Is mobile width: ' + isMobile + '</p>';
+            log.innerHTML += '<p>Has touch support: ' + hasTouch + '</p>';
+            log.innerHTML += '<p>User agent: ' + navigator.userAgent + '</p>';
+        }
+        
+        function updateViewportInfo() {
+            const info = document.getElementById('viewport-info');
+            info.innerHTML = `
+                <p>Window width: ${window.innerWidth}px</p>
+                <p>Window height: ${window.innerHeight}px</p>
+                <p>Screen width: ${screen.width}px</p>
+                <p>Screen height: ${screen.height}px</p>
+                <p>Device pixel ratio: ${window.devicePixelRatio}</p>
+            `;
+        }
+        
+        // Initialize
+        updateViewportInfo();
+        testTouchEvents();
+        
+        // Add event listeners for debugging
+        document.addEventListener('click', function(e) {
+            console.log('Click event:', e.target.className, e.target.tagName);
+        });
+        
+        document.addEventListener('touchstart', function(e) {
+            console.log('Touch start event:', e.target.className, e.target.tagName);
+        });
+        
+        document.addEventListener('touchend', function(e) {
+            console.log('Touch end event:', e.target.className, e.target.tagName);
+        });
+    </script>
+</body>
+</html>

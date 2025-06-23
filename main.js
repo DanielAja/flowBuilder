@@ -1558,8 +1558,19 @@ function removePose(button) {
 }
 
 // Dropdown functionality for more options button
-function togglePoseDropdown(index) {
+function togglePoseDropdown(index, event) {
+    // Prevent event bubbling to avoid issues with touch events
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
     const dropdown = document.getElementById(`pose-dropdown-${index}`);
+    if (!dropdown) {
+        console.error(`Dropdown with id pose-dropdown-${index} not found`);
+        return;
+    }
+    
     const isCurrentlyVisible = dropdown.classList.contains('show');
     
     // Hide all other dropdowns first
@@ -1567,10 +1578,83 @@ function togglePoseDropdown(index) {
     
     // Toggle the current dropdown
     if (!isCurrentlyVisible) {
-        dropdown.classList.add('show');
+        console.log('Showing dropdown for pose:', index);
         
-        // Add click listener to document to close dropdown when clicking outside
+        // Position dropdown for mobile
+        positionDropdownForMobile(dropdown, event);
+        
+        dropdown.classList.add('show');
+        console.log('Dropdown classList after adding show:', dropdown.classList.toString());
+        console.log('Dropdown style after positioning:', dropdown.style.cssText);
+        
+        // Add listeners to document to close dropdown when clicking/touching outside
         document.addEventListener('click', handleClickOutsideDropdown);
+        document.addEventListener('touchstart', handleClickOutsideDropdown);
+    } else {
+        console.log('Dropdown was already visible for pose:', index);
+    }
+}
+
+// Position dropdown appropriately for mobile devices
+function positionDropdownForMobile(dropdown, event) {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        console.log('Positioning dropdown for mobile');
+        
+        // Apply mobile-specific positioning
+        dropdown.style.position = 'fixed';
+        dropdown.style.zIndex = '9999';
+        dropdown.style.right = '10px';
+        dropdown.style.left = 'auto';
+        dropdown.style.maxWidth = 'calc(100vw - 20px)';
+        
+        if (event && event.target) {
+            const button = event.target.closest('.more-options-btn');
+            if (button) {
+                try {
+                    const rect = button.getBoundingClientRect();
+                    const dropdownHeight = 200; // Approximate height
+                    const viewportHeight = window.innerHeight;
+                    
+                    // Calculate optimal position
+                    let top = rect.bottom + 5; // Below the button
+                    
+                    // If dropdown would go off bottom of screen, position above
+                    if (top + dropdownHeight > viewportHeight) {
+                        top = rect.top - dropdownHeight - 5;
+                    }
+                    
+                    // Ensure dropdown doesn't go off top of screen
+                    if (top < 10) {
+                        top = 10;
+                    }
+                    
+                    dropdown.style.top = `${top}px`;
+                    console.log('Positioned dropdown at top:', top);
+                } catch (error) {
+                    console.error('Error calculating button position:', error);
+                    // Fallback positioning
+                    dropdown.style.top = '100px';
+                }
+            } else {
+                // Fallback positioning if button not found
+                dropdown.style.top = '100px';
+                console.log('Button not found, using fallback positioning');
+            }
+        } else {
+            // Fallback positioning if no event
+            dropdown.style.top = '100px';
+            console.log('No event provided, using fallback positioning');
+        }
+    } else {
+        // Reset positioning for desktop
+        dropdown.style.position = '';
+        dropdown.style.top = '';
+        dropdown.style.right = '';
+        dropdown.style.left = '';
+        dropdown.style.zIndex = '';
+        dropdown.style.maxWidth = '';
     }
 }
 
@@ -1587,14 +1671,97 @@ function hideAllPoseDropdowns() {
         dropdown.classList.remove('show');
     });
     
-    // Remove the document click listener
+    // Remove the document listeners
     document.removeEventListener('click', handleClickOutsideDropdown);
+    document.removeEventListener('touchstart', handleClickOutsideDropdown);
 }
 
 function handleClickOutsideDropdown(event) {
     // Check if the click was outside all dropdowns and their buttons
     if (!event.target.closest('.more-options-container')) {
         hideAllPoseDropdowns();
+    }
+}
+
+// Set up event delegation for more options buttons - works better on mobile
+function setupMoreOptionsEventListeners() {
+    const flowTable = document.getElementById('flowTable');
+    const flowCardsContainer = document.querySelector('.flow-cards');
+    
+    // Handle table view
+    if (flowTable) {
+        // Remove existing listeners to prevent duplicates
+        flowTable.removeEventListener('click', handleMoreOptionsClick);
+        flowTable.removeEventListener('touchend', handleMoreOptionsTouch);
+        
+        // Add new listeners
+        flowTable.addEventListener('click', handleMoreOptionsClick);
+        flowTable.addEventListener('touchend', handleMoreOptionsTouch);
+    }
+    
+    // Handle card view
+    if (flowCardsContainer) {
+        // Remove existing listeners to prevent duplicates
+        flowCardsContainer.removeEventListener('click', handleMoreOptionsClick);
+        flowCardsContainer.removeEventListener('touchend', handleMoreOptionsTouch);
+        
+        // Add new listeners
+        flowCardsContainer.addEventListener('click', handleMoreOptionsClick);
+        flowCardsContainer.addEventListener('touchend', handleMoreOptionsTouch);
+    }
+}
+
+function handleMoreOptionsClick(event) {
+    handleMoreOptionsEvent(event, 'click');
+}
+
+function handleMoreOptionsTouch(event) {
+    // Prevent double firing of events on mobile
+    if (event.type === 'touchend') {
+        event.preventDefault();
+    }
+    handleMoreOptionsEvent(event, 'touch');
+}
+
+function handleMoreOptionsEvent(event, eventType) {
+    const target = event.target;
+    
+    // Handle more options button clicks
+    if (target.classList.contains('more-options-btn')) {
+        const poseIndex = parseInt(target.getAttribute('data-pose-index'));
+        console.log('More options button clicked:', poseIndex, 'Event type:', eventType);
+        if (!isNaN(poseIndex)) {
+            togglePoseDropdown(poseIndex, event);
+        }
+        return;
+    }
+    
+    // Handle dropdown item clicks
+    if (target.classList.contains('dropdown-item')) {
+        const action = target.getAttribute('data-action');
+        const poseIndex = parseInt(target.getAttribute('data-pose-index'));
+        
+        if (!isNaN(poseIndex) && action) {
+            // Hide the dropdown first
+            hidePoseDropdown(poseIndex);
+            
+            // Execute the action
+            switch (action) {
+                case 'add-above':
+                    showAddPoseModal(poseIndex, 'above');
+                    break;
+                case 'add-below':
+                    showAddPoseModal(poseIndex, 'below');
+                    break;
+                case 'swap':
+                    showSwapPoseModal(poseIndex);
+                    break;
+                case 'delete':
+                    removePoseFromDropdown(poseIndex);
+                    break;
+            }
+        }
+        return;
     }
 }
 
@@ -7085,6 +7252,9 @@ function rebuildTableViewOptimized() {
     } else {
         table.appendChild(fragment);
     }
+    
+    // Set up mobile-friendly event listeners
+    setupMoreOptionsEventListeners();
 }
 
 function buildTableRowsOptimized(fragment) {
@@ -7310,12 +7480,12 @@ function createAsanaRowHTML(asana, index, sectionName, sectionId, displayNumber,
         <td>${createSideDropdown(asana.side)}</td>
         <td>
             <div class="more-options-container">
-                <button class="table-btn more-options-btn" onclick="togglePoseDropdown(${index})" title="More options">⋮</button>
+                <button class="table-btn more-options-btn" data-pose-index="${index}" title="More options">⋮</button>
                 <div class="pose-dropdown" id="pose-dropdown-${index}">
-                    <div class="dropdown-item" onclick="showAddPoseModal(${index}, 'above'); hidePoseDropdown(${index})">Add pose above</div>
-                    <div class="dropdown-item" onclick="showAddPoseModal(${index}, 'below'); hidePoseDropdown(${index})">Add pose below</div>
-                    <div class="dropdown-item" onclick="showSwapPoseModal(${index}); hidePoseDropdown(${index})">Swap pose</div>
-                    <div class="dropdown-item delete-item" onclick="removePoseFromDropdown(${index}); hidePoseDropdown(${index})">Delete pose</div>
+                    <div class="dropdown-item" data-action="add-above" data-pose-index="${index}">Add pose above</div>
+                    <div class="dropdown-item" data-action="add-below" data-pose-index="${index}">Add pose below</div>
+                    <div class="dropdown-item" data-action="swap" data-pose-index="${index}">Swap pose</div>
+                    <div class="dropdown-item delete-item" data-action="delete" data-pose-index="${index}">Delete pose</div>
                 </div>
             </div>
         </td>
@@ -7344,6 +7514,9 @@ function rebuildCardViewOptimized() {
     buildCardElementsOptimized(fragment, sectionData);
     
     cardsContainer.appendChild(fragment);
+    
+    // Set up mobile-friendly event listeners
+    setupMoreOptionsEventListeners();
 }
 
 function buildCardElementsOptimized(fragment, sectionData) {
@@ -8512,6 +8685,9 @@ function initializeApp() {
         
         // Update date
         updateDate();
+        
+        // Set up mobile-friendly event delegation for more options buttons
+        setupMoreOptionsEventListeners();
         
         // Set up event listeners
         const asanaSearch = document.getElementById('asanaSearch');
