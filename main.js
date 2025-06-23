@@ -5248,6 +5248,16 @@ function handleTableDragStart(e) {
     } else {
         row = e.target.closest('tr');
         
+        // Debug logging for troubleshooting
+        if (row) {
+            console.log('🔍 Dragging from row:', {
+                rowIndex: row.rowIndex,
+                classes: row.className,
+                dataIndex: row.getAttribute('data-index'),
+                isHeaderRow: row.querySelector('th') !== null
+            });
+        }
+        
         // Check if this is a section header
         const isSectionHeader = row && row.classList.contains('section-header');
         
@@ -5320,8 +5330,10 @@ function handleTableDragStart(e) {
         }
     }
     
-    if (!row || row.rowIndex === 0) {
-        console.log('⛔ Invalid drag source: Header row or no row');
+    // More robust header detection: check for <th> elements instead of just rowIndex
+    const isActualHeaderRow = row && row.querySelector('th');
+    if (!row || isActualHeaderRow) {
+        console.log('⛔ Invalid drag source: Header row (contains <th>) or no row');
         e.preventDefault();
         return false; // Ignore header row
     }
@@ -5417,7 +5429,8 @@ function handleTableDragEnter(e) {
     if (!dragSource) return;
     
     const row = e.target.closest('tr');
-    if (!row || row.rowIndex === 0) return; // Ignore header row
+    const isActualHeaderRow = row && row.querySelector('th');
+    if (!row || isActualHeaderRow) return; // Ignore header row
     
     // Add visual feedback
     const allRows = Array.from(document.querySelectorAll('#flowTable tr:not(:first-child)'));
@@ -5436,7 +5449,8 @@ function handleTableDragOver(e) {
     
     // Find the closest row
     const row = e.target.closest('tr');
-    if (!row || row.rowIndex === 0) return; // Ignore header row
+    const isActualHeaderRow = row && row.querySelector('th');
+    if (!row || isActualHeaderRow) return; // Ignore header row
     
     // Determine if we're dragging a section header
     const isDraggingSection = dragSource.isSectionHeader;
@@ -5484,7 +5498,8 @@ function handleTableDrop(e) {
     }
     
     let row = e.target.closest('tr');
-    if (!row || row.rowIndex === 0) {
+    const isActualHeaderRow = row && row.querySelector('th');
+    if (!row || isActualHeaderRow) {
         console.log('⛔ Error: Invalid drop target (header or not a row)');
         return; // Ignore header row
     }
@@ -6025,7 +6040,8 @@ function handleTableTouchStart(e) {
         }
     }
     
-    if (!row || row.rowIndex === 0) {
+    const isActualHeaderRow = row && row.querySelector('th');
+    if (!row || isActualHeaderRow) {
         return; // Header row or no row
     }
     
@@ -7523,6 +7539,21 @@ function rebuildTableView() {
         }
     });
     
+    // Debug first few rows if there are issues
+    if (table.rows.length > 1) {
+        const firstDataRow = table.rows[1];
+        if (firstDataRow && (!firstDataRow.getAttribute('draggable') || firstDataRow.classList.contains('section-header'))) {
+            console.warn('⚠️ First data row has issues:', {
+                draggable: firstDataRow.getAttribute('draggable'),
+                classes: firstDataRow.className,
+                dataIndex: firstDataRow.getAttribute('data-index')
+            });
+        }
+    }
+    
+    // Ensure drag and drop events are properly set up after rebuilding table
+    setupTableDragAndDrop();
+    
     // We're removing the "Create New Section" button at the bottom as requested
 }
 
@@ -7571,6 +7602,17 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
     // Make the row element draggable for the drag event system to work
     row.setAttribute('draggable', 'true');
     row.setAttribute('data-index', index);
+    
+    // Debug logging for troubleshooting first pose issues
+    if (index === 0) {
+        console.log('🔍 Creating first pose row:', {
+            rowIndex: row.rowIndex,
+            draggable: row.getAttribute('draggable'),
+            dataIndex: row.getAttribute('data-index'),
+            displayNumber: displayNumber
+        });
+    }
+    
     // Only set section attributes if we have a section
     if (sectionName && sectionId) {
         row.setAttribute('data-section', sectionName);
@@ -7581,6 +7623,9 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
     if (lastMovedPoseIndex !== null && lastMovedPoseIndex === index) {
         row.classList.add('last-moved-pose');
     }
+    
+    // Safety check: ensure pose rows never get section-header class
+    row.classList.remove('section-header');
     
     // Use the provided display number if available, otherwise calculate based on index
     let rowNumber;
@@ -7641,6 +7686,12 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
     // Add specific drag handle tooltip and style
     const numCell = row.cells[0];
     numCell.style.cursor = "grab";
+    
+    // Final safety check: ensure draggable attribute is properly set
+    if (row.getAttribute('draggable') !== 'true') {
+        console.warn('⚠️ Row missing draggable attribute, fixing...', {index, displayNumber});
+        row.setAttribute('draggable', 'true');
+    }
     
     return row;
 }
