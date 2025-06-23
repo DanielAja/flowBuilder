@@ -4381,7 +4381,7 @@ function importFlowFromData(templateData) {
             "" // peakPose
         );
         
-        // Add asanas to the flow
+        // Add asanas to the flow - build array directly to preserve order
         templateData.asanas.forEach(asanaData => {
             const newAsana = new YogaAsana(
                 asanaData.english || asanaData.name, // Use english name for display
@@ -4401,7 +4401,8 @@ function importFlowFromData(templateData) {
             // Store the original name for image reference
             newAsana.imageName = asanaData.name;
             
-            newFlow.addAsana(newAsana);
+            // Add directly to asanas array to preserve import order
+            newFlow.asanas.push(newAsana);
         });
         
         // Calculate total time
