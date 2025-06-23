@@ -840,6 +840,11 @@ function changeScreen(screenId) {
         cleanupFlowControlsAutoHide();
     }
     
+    // Hide recommended poses when leaving build screen
+    if (currentScreenId === 'buildScreen' && screenId !== 'buildScreen') {
+        hideRecommendedPoses();
+    }
+    
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
     const targetScreen = document.getElementById(screenId);
     
