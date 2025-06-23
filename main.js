@@ -3341,7 +3341,8 @@ function exportFlowAsJSONFromModal() {
                     tags: Array.isArray(asana.tags) ? asana.tags : [],
                     chakra: asana.chakra || "Root"
                 };
-            })
+            }),
+            sections: flowToExport.sections || [] // Include sections (groups) in export
         };
         
         // Validate the export data before creating file (ensure it would pass import validation)
@@ -4407,6 +4408,16 @@ function importFlowFromData(templateData) {
         
         // Calculate total time
         newFlow.time = newFlow.asanas.reduce((total, asana) => total + asana.duration, 0);
+        
+        // Import sections (groups) if they exist
+        if (templateData.sections && Array.isArray(templateData.sections)) {
+            newFlow.sections = templateData.sections.map(section => ({
+                id: section.id || generateUniqueID(), // Generate new ID if missing
+                name: section.name || "Unnamed Section",
+                asanaIds: section.asanaIds || [], // Preserve asana IDs in sections
+                collapsed: section.collapsed || false // Preserve collapsed state if available
+            }));
+        }
         
         // Get existing flows
         const flows = getFlows();
@@ -7235,8 +7246,8 @@ function createSectionHeaderRow(sectionInfo) {
                 <div class="section-toggle" onclick="toggleSectionCollapse('${section.id}')" title="Collapse/Expand group">
                     <div class="section-toggle-icon">${section.collapsed ? '▶' : '▼'}</div>
                 </div>
-                <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" style="cursor: pointer;">
-                    <span>${section.name}</span>
+                <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" ondblclick="startRenameSection(event, '${section.id}')" style="cursor: pointer;" title="Click to collapse/expand, double-click to rename">
+                    <span class="section-name-text" data-section-id="${section.id}">${section.name}</span>
                     <span class="section-count-duration">${asanas.length} pose${asanas.length !== 1 ? 's' : ''} - ${sectionDurationDisplay}</span>
                 </div>
                 <div class="section-side-control">
@@ -7431,8 +7442,8 @@ function createSectionCardElement(sectionInfo) {
                    data-section-id="${section.id}" 
                    ${allSelected ? 'checked' : ''}
                    onchange="toggleSectionSelection(this)">
-            <span onclick="toggleSectionCollapse('${section.id}')" style="cursor: pointer;">
-                ${section.collapsed ? '▶' : '▼'} ${section.name}
+            <span onclick="toggleSectionCollapse('${section.id}')" ondblclick="startRenameSection(event, '${section.id}')" style="cursor: pointer;" title="Click to collapse/expand, double-click to rename">
+                ${section.collapsed ? '▶' : '▼'} <span class="section-name-text" data-section-id="${section.id}">${section.name}</span>
             </span>
             <span class="section-info">${asanas.length} poses - ${sectionDurationDisplay}</span>
             <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete section">⛓️‍💥</button>
@@ -7581,8 +7592,8 @@ function rebuildTableView() {
                             <div class="section-toggle" onclick="toggleSectionCollapse('${section.id}')" title="Collapse/Expand group">
                                 <div class="section-toggle-icon">${section.collapsed ? '▶' : '▼'}</div>
                             </div>
-                            <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" style="cursor: pointer;">
-                                <span>${section.name}</span>
+                            <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" ondblclick="startRenameSection(event, '${section.id}')" style="cursor: pointer;" title="Click to collapse/expand, double-click to rename">
+                                <span class="section-name-text" data-section-id="${section.id}">${section.name}</span>
                                 <span class="section-count-duration">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''} - ${sectionDurationDisplay}</span>
                             </div>
                             <div class="section-side-control">
@@ -7681,6 +7692,85 @@ function toggleSectionCollapse(sectionId) {
             autoSaveFlow();
         }
     }
+}
+
+// Function to start renaming a section inline
+function startRenameSection(event, sectionId) {
+    // Prevent the click event from propagating to toggleSectionCollapse
+    event.stopPropagation();
+    
+    // Find the section name text element
+    const sectionNameText = document.querySelector(`.section-name-text[data-section-id="${sectionId}"]`);
+    if (!sectionNameText) return;
+    
+    // Get the current section name
+    const currentName = sectionNameText.textContent;
+    
+    // Create an input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentName;
+    input.className = 'section-name-edit-input';
+    input.style.cssText = 'background: white; border: 1px solid #ccc; padding: 2px 4px; border-radius: 3px; font-size: inherit; width: 200px; max-width: 300px;';
+    
+    // Replace the span with the input
+    sectionNameText.replaceWith(input);
+    
+    // Focus and select the text
+    input.focus();
+    input.select();
+    
+    // Handle save/cancel actions
+    function saveRename() {
+        const newName = input.value.trim();
+        if (newName && newName !== currentName) {
+            // Update the section name in the data model
+            const section = editingFlow.getSectionById(sectionId);
+            if (section) {
+                section.name = newName;
+                
+                // Auto-save if in edit mode
+                if (editMode) {
+                    autoSaveFlow();
+                }
+                
+                // Show success notification
+                showToastNotification(`Renamed group to "${newName}"`);
+            }
+        }
+        
+        // Replace the input with the updated span
+        const newSpan = document.createElement('span');
+        newSpan.className = 'section-name-text';
+        newSpan.setAttribute('data-section-id', sectionId);
+        newSpan.textContent = newName || currentName;
+        input.replaceWith(newSpan);
+    }
+    
+    function cancelRename() {
+        // Replace the input with the original span
+        const newSpan = document.createElement('span');
+        newSpan.className = 'section-name-text';
+        newSpan.setAttribute('data-section-id', sectionId);
+        newSpan.textContent = currentName;
+        input.replaceWith(newSpan);
+    }
+    
+    // Handle Enter key to save
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveRename();
+        } else if (e.key === 'Escape') {
+            e.preventDefault();
+            cancelRename();
+        }
+    });
+    
+    // Handle blur to save
+    input.addEventListener('blur', function() {
+        saveRename();
+    });
 }
 
 // Helper function to add an asana row to the table
