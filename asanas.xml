@@ -3198,4 +3198,400 @@
       <transition>Cosmic Egg</transition>
     </transitions>
   </asana>
+  <asana>
+    <n>Standing Forehead to Knee</n>
+    <sanskrit>Dandayamana Janushirasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/standing-forehead-to-knee.webp</image>
+    <description>A challenging balance pose combining standing leg strength with forward folding flexibility. Strengthens the standing leg while stretching hamstrings and spine.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Balance</tag>
+      <tag>Forward Fold</tag>
+      <tag>Hamstring Stretch</tag>
+      <tag>Core Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Standing Hand to Big Toe Pose</transition>
+      <transition>Tree Pose</transition>
+      <transition>Eagle Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Balancing Toe Stand</n>
+    <sanskrit>Padangusthasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/half-lotus-toe-balance.webp</image>
+    <description>An advanced balancing pose requiring exceptional strength and concentration. Balances on the toes while maintaining perfect alignment and breathing.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Strength</tag>
+      <tag>Concentration</tag>
+      <tag>Ankle Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Tree Pose</transition>
+      <transition>Eagle Pose</transition>
+      <transition>Mountain Pose</transition>
+      <transition>Standing Forward Fold</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Upward Salute</n>
+    <sanskrit>Urdhva Hastasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/upward-salute.webp</image>
+    <description>A gentle backbend with arms reaching skyward, creating length through the spine and opening the chest. Foundation pose for sun salutations.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Backbend</tag>
+      <tag>Chest Opening</tag>
+      <tag>Energizing</tag>
+      <tag>Sun Salutation</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Forward Fold</transition>
+      <transition>Chair Pose</transition>
+      <transition>Standing Backbend</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Balancing Stick</n>
+    <sanskrit>Tuladandasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/balancing-stick.webp</image>
+    <description>A dynamic balance pose resembling a T-shape, strengthening the standing leg while stretching the hip flexors and building core stability.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Hip Flexor Stretch</tag>
+      <tag>Core Strength</tag>
+      <tag>Leg Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior III</transition>
+      <transition>Standing Forward Fold</transition>
+      <transition>Tree Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Standing Separate Leg Head to Knee Pose</n>
+    <sanskrit>Dandayamana Bibhaktapada Janushirasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/standing-separate-leg-head-to-knee.webp</image>
+    <description>A challenging forward fold with legs wide apart, bringing the forehead toward the knee. Stretches hamstrings, calves, and spine while building concentration.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Sacral</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Forward Fold</tag>
+      <tag>Wide Leg</tag>
+      <tag>Hamstring Stretch</tag>
+      <tag>Flexibility</tag>
+    </tags>
+    <transitions>
+      <transition>Wide-Legged Forward Fold</transition>
+      <transition>Triangle Pose</transition>
+      <transition>Extended Side Angle</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Standing Separate Leg Stretching Pose</n>
+    <sanskrit>Dandayamana Bibhaktapada Paschimottanasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/standing-separate-leg-stretching.webp</image>
+    <description>A deep forward fold with legs wide apart, hands reaching toward the floor. Stretches the entire back body and hamstrings while calming the nervous system.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Sacral</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Forward Fold</tag>
+      <tag>Wide Leg</tag>
+      <tag>Hamstring Stretch</tag>
+      <tag>Calming</tag>
+    </tags>
+    <transitions>
+      <transition>Wide-Legged Forward Fold</transition>
+      <transition>Triangle Pose</transition>
+      <transition>Goddess Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Ear Pinning</n>
+    <sanskrit>Karna Pidasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/ear-pinning.webp</image>
+    <description>An advanced inversion where knees press against the ears, creating deep introspection and spinal flexibility. Calms the mind and nervous system.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Crown</chakra>
+    <tags>
+      <tag>Inversion</tag>
+      <tag>Introspection</tag>
+      <tag>Spinal Flexibility</tag>
+      <tag>Calming</tag>
+      <tag>Advanced</tag>
+    </tags>
+    <transitions>
+      <transition>Plow Pose</transition>
+      <transition>Shoulderstand</transition>
+      <transition>Happy Baby</transition>
+      <transition>Knees to Chest</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Wind-Removing Pose</n>
+    <sanskrit>Pavanamuktasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/wind-removing-pose.webp</image>
+    <description>A gentle pose that aids digestion and releases tension in the lower back. Knees drawn to chest while lying supine, promoting relaxation and abdominal massage.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Sacral</chakra>
+    <tags>
+      <tag>Supine</tag>
+      <tag>Digestive</tag>
+      <tag>Lower Back Relief</tag>
+      <tag>Relaxation</tag>
+      <tag>Hip Flexor Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Happy Baby</transition>
+      <transition>Knees to Chest</transition>
+      <transition>Corpse Pose</transition>
+      <transition>Reclined Spinal Twist</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Rabbit Pose</n>
+    <sanskrit>Sasangasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/rabbit-pose.webp</image>
+    <description>A gentle inversion that stretches the spine and neck while promoting introspection. Kneeling with crown of head on the mat and hands holding the heels.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Crown</chakra>
+    <tags>
+      <tag>Inversion</tag>
+      <tag>Kneeling</tag>
+      <tag>Neck Stretch</tag>
+      <tag>Spine Flexibility</tag>
+      <tag>Introspection</tag>
+    </tags>
+    <transitions>
+      <transition>Child's Pose</transition>
+      <transition>Camel Pose</transition>
+      <transition>Hero Pose</transition>
+      <transition>Cat-Cow</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Half Tortoise Pose</n>
+    <sanskrit>Ardha Kurmasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/half-tortoise-pose.webp</image>
+    <description>A restorative forward fold that calms the nervous system and stretches the shoulders and back. Kneeling with arms extended forward and forehead to the mat.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Kneeling</tag>
+      <tag>Forward Fold</tag>
+      <tag>Restorative</tag>
+      <tag>Shoulder Stretch</tag>
+      <tag>Calming</tag>
+    </tags>
+    <transitions>
+      <transition>Child's Pose</transition>
+      <transition>Hero Pose</transition>
+      <transition>Cat-Cow</transition>
+      <transition>Table Top</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Fixed Firm Pose</n>
+    <sanskrit>Supta Vajrasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/fixed-firm-pose.webp</image>
+    <description>A deep backbend from a kneeling position that opens the chest and stretches the quadriceps and hip flexors. Requires significant flexibility and should be approached gradually.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Kneeling</tag>
+      <tag>Chest Opening</tag>
+      <tag>Quadriceps Stretch</tag>
+      <tag>Hip Flexor Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Hero Pose</transition>
+      <transition>Camel Pose</transition>
+      <transition>Child's Pose</transition>
+      <transition>Bridge Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Toppling Tree Pose</n>
+    <sanskrit>Vrikshasana Variation</sanskrit>
+    <side>Center</side>
+    <image>images/webp/toppling-tree.webp</image>
+    <description>A dynamic variation of tree pose that challenges balance and proprioception. The pose involves controlled movement while maintaining the tree pose foundation.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Dynamic</tag>
+      <tag>Proprioception</tag>
+      <tag>Core Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Tree Pose</transition>
+      <transition>Eagle Pose</transition>
+      <transition>Mountain Pose</transition>
+      <transition>Standing Forward Fold</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Standing Savasana</n>
+    <sanskrit>Standing Savasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/standing-savasana.webp</image>
+    <description>A neutral standing pause that allows for integration and mindful breathing between poses. Similar to mountain pose but with emphasis on complete stillness and awareness.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Crown</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Meditation</tag>
+      <tag>Integration</tag>
+      <tag>Mindfulness</tag>
+      <tag>Neutral</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Forward Fold</transition>
+      <transition>Upward Salute</transition>
+      <transition>Chair Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Eagle Armed Airplane</n>
+    <sanskrit>Garudasana Variation</sanskrit>
+    <side>Center</side>
+    <image>images/webp/eagle-armed-airplane.webp</image>
+    <description>A challenging balance pose combining eagle arms with airplane position. Balances on one leg while the other extends back, with arms in eagle wrap creating a complex coordination challenge.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Arm Binding</tag>
+      <tag>Coordination</tag>
+      <tag>Core Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Eagle Pose</transition>
+      <transition>Warrior III</transition>
+      <transition>Tree Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Awkward Pose</n>
+    <sanskrit>Utkatasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/awkward-1.webp</image>
+    <description>A challenging standing pose that builds strength in the legs, core, and arms while improving balance and endurance. Creates heat in the body.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Strength</tag>
+      <tag>Balance</tag>
+      <tag>Heat Building</tag>
+      <tag>Leg Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Awkward Pose - Knees Together</transition>
+      <transition>Chair Pose</transition>
+      <transition>Mountain Pose</transition>
+      <transition>Forward Fold</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Awkward Pose - Knees Together</n>
+    <sanskrit>Utkatasana Variation 2</sanskrit>
+    <side>Center</side>
+    <image>images/webp/awkward-2.webp</image>
+    <description>Second variation of Awkward Pose with knees and feet pressed together. Challenges balance and leg strength while maintaining proper alignment in the squat position.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Strength</tag>
+      <tag>Balance</tag>
+      <tag>Leg Alignment</tag>
+      <tag>Core Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Awkward Pose</transition>
+      <transition>Awkward Pose - Arms Up</transition>
+      <transition>Eagle Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Awkward Pose - On Toes</n>
+    <sanskrit>Utkatasana Variation 3</sanskrit>
+    <side>Center</side>
+    <image>images/webp/awkward-3.webp</image>
+    <description>Third variation of Awkward Pose performed on the balls of the feet with knees and feet together. Most challenging variation requiring exceptional balance, ankle strength, and concentration.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Balance</tag>
+      <tag>Ankle Strength</tag>
+      <tag>Concentration</tag>
+      <tag>Advanced</tag>
+    </tags>
+    <transitions>
+      <transition>Awkward Pose</transition>
+      <transition>Tree Pose</transition>
+      <transition>Eagle Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Baby Cobra</n>
+    <sanskrit>Ardha Bhujangasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/baby-cobra.webp</image>
+    <description>A gentle backbend performed prone with minimal lift, focusing on spinal mobility and chest opening. Perfect for beginners or as a warm-up for deeper backbends.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Prone</tag>
+      <tag>Chest Opening</tag>
+      <tag>Gentle</tag>
+      <tag>Spinal Mobility</tag>
+    </tags>
+    <transitions>
+      <transition>Cobra Pose</transition>
+      <transition>Child's Pose</transition>
+      <transition>Downward Facing Dog</transition>
+      <transition>Sphinx Pose</transition>
+    </transitions>
+  </asana>
 </asanas>
