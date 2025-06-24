@@ -9748,6 +9748,51 @@ function reverseSelectedPoses() {
         }
     });
     
+    // Analyze which sections contain selected poses
+    const sectionsWithSelection = new Map();
+    const selectedPosesInSections = new Set();
+    
+    editingFlow.sections.forEach(section => {
+        const selectedInSection = section.asanaIds.filter(id => selectedIndices.includes(id));
+        if (selectedInSection.length > 0) {
+            sectionsWithSelection.set(section.id, {
+                section: section,
+                selectedIndices: selectedInSection,
+                allIndices: section.asanaIds
+            });
+            selectedInSection.forEach(id => selectedPosesInSections.add(id));
+        }
+    });
+    
+    // Check if we should reverse entire sections or individual poses
+    const shouldReverseSections = sectionsWithSelection.size > 1 || 
+        (sectionsWithSelection.size === 1 && 
+         Array.from(sectionsWithSelection.values())[0].selectedIndices.length === 
+         Array.from(sectionsWithSelection.values())[0].allIndices.length);
+    
+    if (shouldReverseSections && sectionsWithSelection.size > 1) {
+        // Reverse entire sections when multiple sections are involved
+        reverseSectionOrder(sectionsWithSelection);
+    } else {
+        // Original behavior: reverse individual poses
+        reverseIndividualPoses(selectedIndices);
+    }
+    
+    // Rebuild the table to reflect the changes
+    rebuildFlowTable();
+    
+    // Show appropriate notification
+    const notificationText = shouldReverseSections && sectionsWithSelection.size > 1 
+        ? `Reversed ${sectionsWithSelection.size} group${sectionsWithSelection.size !== 1 ? 's' : ''}`
+        : `Reversed ${selectedPoses.length} pose${selectedPoses.length !== 1 ? 's' : ''}`;
+    showToastNotification(notificationText);
+    
+    // Save the changes
+    autoSaveFlow();
+}
+
+// Helper function to reverse individual poses (original behavior)
+function reverseIndividualPoses(selectedIndices) {
     // Create array of selected poses with their original indices
     const selectedWithIndices = selectedIndices.map(index => ({
         asana: editingFlow.asanas[index],
@@ -9762,20 +9807,57 @@ function reverseSelectedPoses() {
         const originalIndex = selectedIndices[reverseIndex];
         editingFlow.asanas[originalIndex] = item.asana;
     });
+}
+
+// Helper function to reverse section order
+function reverseSectionOrder(sectionsWithSelection) {
+    // Get all sections that have selected poses, sorted by their first pose index
+    const sectionsArray = Array.from(sectionsWithSelection.values())
+        .sort((a, b) => Math.min(...a.allIndices) - Math.min(...b.allIndices));
     
-    // Update section references if needed (maintain same indices but with reversed poses)
-    editingFlow.sections.forEach(section => {
-        // Section references remain the same since we're not changing indices, just swapping poses
+    // Find the range of indices that these sections span
+    const allInvolvedIndices = [];
+    sectionsArray.forEach(sectionData => {
+        allInvolvedIndices.push(...sectionData.allIndices);
+    });
+    allInvolvedIndices.sort((a, b) => a - b);
+    
+    // Reverse the order of sections
+    sectionsArray.reverse();
+    
+    // Collect all poses from sections in their new reversed order
+    const newOrderPoses = [];
+    const newSectionMapping = new Map(); // Track new index assignments for each section
+    let currentIndex = 0;
+    
+    sectionsArray.forEach(sectionData => {
+        const sectionPoses = sectionData.allIndices
+            .sort((a, b) => a - b)
+            .map(index => editingFlow.asanas[index]);
+        
+        // Record new indices for this section
+        const newIndicesForSection = [];
+        for (let i = 0; i < sectionPoses.length; i++) {
+            newIndicesForSection.push(allInvolvedIndices[currentIndex + i]);
+        }
+        newSectionMapping.set(sectionData.section.id, newIndicesForSection);
+        
+        newOrderPoses.push(...sectionPoses);
+        currentIndex += sectionPoses.length;
     });
     
-    // Rebuild the table to reflect the changes
-    rebuildFlowTable();
+    // Update the poses in their new positions
+    allInvolvedIndices.forEach((targetIndex, i) => {
+        editingFlow.asanas[targetIndex] = newOrderPoses[i];
+    });
     
-    // Show notification
-    showToastNotification(`Reversed ${selectedPoses.length} pose${selectedPoses.length !== 1 ? 's' : ''}`);
-    
-    // Save the changes
-    autoSaveFlow();
+    // Update section references with new indices
+    newSectionMapping.forEach((newIndices, sectionId) => {
+        const section = editingFlow.sections.find(s => s.id === sectionId);
+        if (section) {
+            section.asanaIds = newIndices;
+        }
+    });
 }
 
 // Function to show the change side modal
