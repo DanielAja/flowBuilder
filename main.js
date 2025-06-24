@@ -1337,10 +1337,24 @@ function updateFlowDuration() {
     });
 
     // Update durations in the flow object
-    const rows = document.querySelectorAll('#flowTable tr:not(:first-child):not(.section-header)');
+    // Use data-index attribute to identify pose rows instead of excluding first-child
+    const rows = document.querySelectorAll('#flowTable tr[data-index]:not(.section-header)');
+    console.log(`🔧 updateFlowDuration: Processing ${rows.length} rows`);
+    
     rows.forEach(row => {
         // Use the data-index attribute to get the correct asana index
         const asanaIndex = parseInt(row.getAttribute('data-index'));
+        
+        // Debug logging for first pose (index 0)
+        if (asanaIndex === 0) {
+            const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
+            console.log(`🔍 First pose (index 0) duration update:`, {
+                asanaIndex,
+                currentDuration: editingFlow.asanas[0]?.duration,
+                inputValue: durationInput?.value,
+                newDuration: parseInt(durationInput?.value) || 7
+            });
+        }
         
         // Make sure the index is valid and the asana exists
         if (!isNaN(asanaIndex) && asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
