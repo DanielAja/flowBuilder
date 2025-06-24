@@ -1654,6 +1654,24 @@
       </div>
     </div>
 
+    <!-- Change Side Modal -->
+    <div id="changeSideModal" class="modal section-modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeChangeSideModal()">&times;</span>
+        <h2>Change Side</h2>
+        <p class="modal-description">Set the side for all selected poses:</p>
+        <div class="section-name-input-container">
+          <select id="sideSelectModal" class="section-name-input">
+            <option value="Front">Front</option>
+            <option value="Back">Back</option>
+            <option value="Right">Right</option>
+            <option value="Left">Left</option>
+          </select>
+          <button class="create-section-btn" onclick="changeSelectedPosesSide()">Apply</button>
+        </div>
+      </div>
+    </div>
+
 
     <script src="main.js"></script>
   </body>

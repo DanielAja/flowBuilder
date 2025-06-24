@@ -113,6 +113,7 @@ class YogaAsana {
         this.transitionsAsana = Array.isArray(transitionsAsana) ? transitionsAsana : [];
         this.duration = 7; // Default duration of 7 seconds
         this.chakra = chakra; // Store which chakra is associated with this pose
+        this.selected = false; // Initialize selection state
     }
 
     setDuration(duration) {
@@ -770,6 +771,9 @@ function clearBuildAFlow() {
     // Hide recommended poses section
     hideRecommendedPoses();
     
+    // Clear all pose selections to ensure clean state
+    clearAllPoseSelections();
+    
     console.log('Flow cleared, new flow object:', editingFlow);
 }
 
@@ -1053,6 +1057,9 @@ function startNewFlow() {
         allPoses.forEach(pose => {
             pose.classList.remove('highlight');
         });
+        
+        // Clear all pose selections to ensure clean state
+        clearAllPoseSelections();
     }, 150); // Slight delay to ensure everything else has run
 }
 
@@ -1081,6 +1088,7 @@ function selectAsana(asana) {
         asana.chakra || ""
     );
     newAsana.setDuration(7); // Default 7 seconds
+    // Note: selected property defaults to false from YogaAsana constructor
     
     // Add pose based on table ordering
     if (tableInDescendingOrder) {
@@ -1102,27 +1110,52 @@ function selectAsana(asana) {
     // Rebuild the table to ensure proper order and numbering
     rebuildFlowTable();
     
-    // Get the row corresponding to the newly added pose
-    let rowIndex = tableInDescendingOrder ? table.rows.length - 1 : 1; // First or last row based on order
-    let row = table.rows[rowIndex];
-    
-    updateFlowDuration();
-    
-    console.log(`Added asana: ${asana.name} to the flow. Current asanas:`, editingFlow.asanas);
+    // Use requestAnimationFrame to ensure table rebuild completes before accessing rows
+    requestAnimationFrame(() => {
+        // Double-check that table rebuilding is complete by verifying row count
+        const expectedRowCount = editingFlow.asanas.length + 1; // +1 for header row
+        
+        if (table.rows.length >= expectedRowCount) {
+            // Get the row corresponding to the newly added pose
+            let rowIndex = tableInDescendingOrder ? table.rows.length - 1 : 1; // First or last row based on order
+            let row = table.rows[rowIndex];
+            
+            updateFlowDuration();
+            updateActionButtons(); // Update button states
+            
+            console.log(`Added asana: ${asana.name} to the flow. Current asanas:`, editingFlow.asanas);
+            
+            // Add visual feedback on the table (only if we found the row)
+            if (row) {
+                row.classList.add('highlight-added');
+                setTimeout(() => {
+                    row.classList.remove('highlight-added');
+                }, 1500);
+            }
+        } else {
+            // Fallback: use setTimeout to wait a bit longer if table isn't ready
+            setTimeout(() => {
+                let rowIndex = tableInDescendingOrder ? table.rows.length - 1 : 1;
+                let row = table.rows[rowIndex];
+                
+                updateFlowDuration();
+                updateActionButtons(); // Update button states
+                
+                if (row) {
+                    row.classList.add('highlight-added');
+                    setTimeout(() => {
+                        row.classList.remove('highlight-added');
+                    }, 1500);
+                }
+            }, 50);
+        }
+    });
     
     // Restore scroll position after refreshing the list
     if (asanaList) {
         setTimeout(() => {
             asanaList.scrollLeft = scrollPosition;
         }, 10);
-    }
-    
-    // Add visual feedback on the table (only if we found the row)
-    if (row) {
-        row.classList.add('highlight-added');
-        setTimeout(() => {
-            row.classList.remove('highlight-added');
-        }, 1500);
     }
     
     // Show recommended poses based on the selected asana
@@ -3342,6 +3375,9 @@ function editFlow(flowID) {
         descriptionInput.addEventListener('input', autoSaveFlow);
     }
 
+    // Clear any existing pose selections when loading a new flow
+    clearAllPoseSelections();
+
     // Defer heavy asana processing to next frame
     requestAnimationFrame(() => {
         processFlowAsanasOptimized(flowToEdit);
@@ -3378,6 +3414,7 @@ function processFlowAsanasOptimized(flowToEdit) {
                     );
                     editingFlow.asanas[i].setDuration(asana.duration || 7);
                     editingFlow.asanas[i].setSide(asana.side || "Center");
+                    editingFlow.asanas[i].selected = asana.selected || false;
                 }
             }
             
@@ -8843,6 +8880,51 @@ function toggleSelectAllPoses() {
     showToastNotification(newState ? 'All poses selected' : 'All poses deselected');
 }
 
+// Function to clear all pose selections when loading a new flow
+function clearAllPoseSelections() {
+    // Clear selection state in the data model
+    if (editingFlow && editingFlow.asanas) {
+        editingFlow.asanas.forEach(asana => {
+            if (asana) {
+                asana.selected = false;
+            }
+        });
+    }
+    
+    // Clear all checkbox states in the UI (if table exists)
+    const table = document.getElementById('flowTable');
+    if (table) {
+        const checkboxes = table.querySelectorAll('.asana-select');
+        checkboxes.forEach(cb => {
+            cb.checked = false;
+        });
+        
+        // Clear section checkboxes
+        const sectionCheckboxes = table.querySelectorAll('.section-select');
+        sectionCheckboxes.forEach(cb => {
+            cb.checked = false;
+        });
+    }
+    
+    // Clear the main select all checkbox
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+    if (selectAllCheckbox) {
+        selectAllCheckbox.checked = false;
+    }
+    
+    // Reset select all button text
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    if (selectAllBtn) {
+        const buttonSpan = selectAllBtn.querySelector('span');
+        if (buttonSpan) {
+            buttonSpan.textContent = 'Select All';
+        }
+    }
+    
+    // Update action buttons state
+    updateActionButtons();
+}
+
 // Function to handle section selection toggling
 function toggleSectionSelection(checkbox) {
     const sectionName = checkbox.getAttribute('data-section');
@@ -10015,15 +10097,14 @@ function changeSelectedPosesSide() {
     });
     
     // Update the individual side dropdowns in the table to reflect the change
-    const tableRows = document.querySelectorAll('#flowTable tr:not(:first-child):not(.section-header)');
-    tableRows.forEach(row => {
-        const asanaIndex = parseInt(row.getAttribute('data-index'));
-        if (!isNaN(asanaIndex) && asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
-            const asana = editingFlow.asanas[asanaIndex];
-            if (asana.selected) {
-                const sideSelect = row.querySelector('select.side-select');
+    editingFlow.asanas.forEach((asana, asanaIndex) => {
+        if (asana.selected) {
+            const tableRow = document.querySelector(`#flowTable tr[data-index="${asanaIndex}"]`);
+            if (tableRow) {
+                const sideSelect = tableRow.querySelector('select.side-select');
                 if (sideSelect) {
                     sideSelect.value = newSide;
+                    console.log(`Updated side select for pose ${asanaIndex} to ${newSide}`);
                 }
             }
         }
