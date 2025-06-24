@@ -3594,4 +3594,424 @@
       <transition>Sphinx Pose</transition>
     </transitions>
   </asana>
+  <asana>
+    <n>Star Pose</n>
+    <sanskrit>Utthita Tadasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/star-pose.webp</image>
+    <description>A standing pose with arms and legs spread wide, creating a five-pointed star shape. Opens the chest and hip flexors while building strength and confidence.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Chest Opening</tag>
+      <tag>Hip Opening</tag>
+      <tag>Energizing</tag>
+      <tag>Confidence Building</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Forward Fold</transition>
+      <transition>Goddess Pose</transition>
+      <transition>Wide-Legged Forward Fold</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Banana Stretch</n>
+    <sanskrit>Bananasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/banana-stretch.webp</image>
+    <description>A side-lying pose that creates a crescent moon shape with the body. Stretches the side body, intercostal muscles, and provides gentle spinal lengthening.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Side Lying</tag>
+      <tag>Side Body Stretch</tag>
+      <tag>Restorative</tag>
+      <tag>Spinal Mobility</tag>
+    </tags>
+    <transitions>
+      <transition>Corpse Pose</transition>
+      <transition>Fetal Pose</transition>
+      <transition>Side Plank</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Bound Side Angle</n>
+    <sanskrit>Baddha Parsvakonasana</sanskrit>
+    <side>Left</side>
+    <image>images/webp/bound-side-angle.webp</image>
+    <description>An advanced variation of Side Angle Pose with a binding element. Combines deep side body stretch with shoulder mobility and balance challenges.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Side Stretch</tag>
+      <tag>Binding</tag>
+      <tag>Hip Opening</tag>
+      <tag>Shoulder Mobility</tag>
+    </tags>
+    <transitions>
+      <transition>Extended Side Angle</transition>
+      <transition>Warrior II</transition>
+      <transition>Triangle Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Broken Bridge</n>
+    <sanskrit>Setu Bandha Variation</sanskrit>
+    <side>Center</side>
+    <image>images/webp/broken-bridge.webp</image>
+    <description>A modified bridge pose with asymmetrical leg positioning. Challenges core stability while providing gentle backbend and hip opening benefits.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Supine</tag>
+      <tag>Core Strength</tag>
+      <tag>Hip Opening</tag>
+      <tag>Asymmetrical</tag>
+    </tags>
+    <transitions>
+      <transition>Bridge Pose</transition>
+      <transition>Happy Baby</transition>
+      <transition>Single Leg Bridge</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Chair Twist</n>
+    <sanskrit>Parivrtta Utkatasana</sanskrit>
+    <side>Left</side>
+    <image>images/webp/chair-twist.webp</image>
+    <description>A twisted variation of Chair Pose that combines the strength-building benefits of the squat with spinal rotation and detoxification.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Twist</tag>
+      <tag>Strength</tag>
+      <tag>Detoxifying</tag>
+      <tag>Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Chair Pose</transition>
+      <transition>Revolved Chair Pose</transition>
+      <transition>Eagle Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Dancing Half Moon</n>
+    <sanskrit>Natarajasana Half Moon</sanskrit>
+    <side>Left</side>
+    <image>images/webp/dancing-half-moon.webp</image>
+    <description>A dynamic balance pose combining elements of Half Moon and Dancer's Pose. Requires exceptional balance, flexibility, and concentration.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Backbend</tag>
+      <tag>Hip Opening</tag>
+      <tag>Advanced</tag>
+    </tags>
+    <transitions>
+      <transition>Half Moon Pose</transition>
+      <transition>Dancer Pose</transition>
+      <transition>Standing Split</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Embryo Pose</n>
+    <sanskrit>Garbhasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/embryo-pose.webp</image>
+    <description>A deeply introspective seated pose with knees drawn to chest and arms wrapped around legs. Promotes feelings of safety and inner reflection.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Seated</tag>
+      <tag>Introspection</tag>
+      <tag>Calming</tag>
+      <tag>Hip Flexor Stretch</tag>
+      <tag>Grounding</tag>
+    </tags>
+    <transitions>
+      <transition>Easy Pose</transition>
+      <transition>Happy Baby</transition>
+      <transition>Lotus</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Half Camel</n>
+    <sanskrit>Ardha Ustrasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/half-amel.webp</image>
+    <description>A gentler variation of Camel Pose with one hand supporting the lower back. Provides chest opening and backbend benefits with added stability.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Kneeling</tag>
+      <tag>Chest Opening</tag>
+      <tag>Heart Opening</tag>
+      <tag>Hip Flexor Stretch</tag>
+    </tags>
+    <transitions>
+      <transition>Camel Pose</transition>
+      <transition>Hero Pose</transition>
+      <transition>Child's Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Half Splits</n>
+    <sanskrit>Ardha Hanumanasana</sanskrit>
+    <side>Left</side>
+    <image>images/webp/half-splits.webp</image>
+    <description>A preparatory pose for full splits that provides deep hamstring and hip flexor stretching. Builds flexibility gradually and safely.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Sacral</chakra>
+    <tags>
+      <tag>Hip Opening</tag>
+      <tag>Hamstring Stretch</tag>
+      <tag>Flexibility</tag>
+      <tag>Preparatory</tag>
+      <tag>Low Lunge Variation</tag>
+    </tags>
+    <transitions>
+      <transition>Low Lunge</transition>
+      <transition>Splits</transition>
+      <transition>Downward Facing Dog</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Hot Tree</n>
+    <sanskrit>Vrikshasana Variation</sanskrit>
+    <side>Center</side>
+    <image>images/webp/hot-tree.webp</image>
+    <description>An energetic variation of Tree Pose with dynamic arm movements. Builds balance while creating heat and energy in the body.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Dynamic</tag>
+      <tag>Heat Building</tag>
+      <tag>Energizing</tag>
+    </tags>
+    <transitions>
+      <transition>Tree Pose</transition>
+      <transition>Eagle Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Hovering Table</n>
+    <sanskrit>Bharmanasana Variation</sanskrit>
+    <side>Center</side>
+    <image>images/webp/hovering-table.webp</image>
+    <description>A core-strengthening variation of Table Top where the knees hover just above the ground. Builds intense abdominal and arm strength.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Core Strength</tag>
+      <tag>Arm Strength</tag>
+      <tag>Hovering</tag>
+      <tag>Table Top Variation</tag>
+      <tag>Strength Building</tag>
+    </tags>
+    <transitions>
+      <transition>Table Top</transition>
+      <transition>Plank</transition>
+      <transition>Cat-Cow</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Knee to Elbow</n>
+    <sanskrit>Janu Kuharprasana</sanskrit>
+    <side>Left</side>
+    <image>images/webp/knee-to-elbow.webp</image>
+    <description>A dynamic core exercise performed in plank position, bringing knee to same-side elbow. Builds core strength and stability.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Core Strength</tag>
+      <tag>Dynamic</tag>
+      <tag>Plank Variation</tag>
+      <tag>Coordination</tag>
+      <tag>Strength Building</tag>
+    </tags>
+    <transitions>
+      <transition>Plank</transition>
+      <transition>Knee to Nose</transition>
+      <transition>Low Plank</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Knee to Nose</n>
+    <sanskrit>Janu Nasikasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/knee-to-nose.webp</image>
+    <description>A core-strengthening movement from plank position, drawing knee toward nose. Engages deep abdominal muscles and builds stability.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Core Strength</tag>
+      <tag>Dynamic</tag>
+      <tag>Plank Variation</tag>
+      <tag>Abdominal Exercise</tag>
+      <tag>Stability</tag>
+    </tags>
+    <transitions>
+      <transition>Plank</transition>
+      <transition>Knee to Elbow</transition>
+      <transition>Downward Facing Dog</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>One Leg Mountain</n>
+    <sanskrit>Eka Pada Tadasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/one-leg-mountain.webp</image>
+    <description>A standing balance pose with one leg lifted, maintaining mountain pose alignment. Builds balance, focus, and leg strength.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Core Strength</tag>
+      <tag>Leg Strength</tag>
+      <tag>Focus</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Tree Pose</transition>
+      <transition>Standing Figure Four</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Opposite Hand to Big Toe</n>
+    <sanskrit>Viparita Hasta Padangusthasana</sanskrit>
+    <side>Left</side>
+    <image>images/webp/opposite-hand-to-big-toe.webp</image>
+    <description>A challenging balance pose holding the opposite foot's big toe. Requires exceptional balance, flexibility, and core strength.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Hamstring Stretch</tag>
+      <tag>Core Strength</tag>
+      <tag>Advanced</tag>
+    </tags>
+    <transitions>
+      <transition>Standing Hand to Big Toe Pose</transition>
+      <transition>Tree Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Reverse Triangle</n>
+    <sanskrit>Viparita Trikonasana</sanskrit>
+    <side>Left</side>
+    <image>images/webp/reverse-triangle.webp</image>
+    <description>A twisted variation of Triangle Pose with the top hand reaching toward the ground. Combines side stretch with spinal rotation.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Twist</tag>
+      <tag>Side Stretch</tag>
+      <tag>Hamstring Stretch</tag>
+      <tag>Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Triangle Pose</transition>
+      <transition>Revolved Triangle Pose</transition>
+      <transition>Extended Side Angle</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Seated Twist</n>
+    <sanskrit>Bharadvajasana</sanskrit>
+    <side>Left</side>
+    <image>images/webp/seated-twist.webp</image>
+    <description>A gentle seated spinal twist that aids digestion and spinal mobility. Promotes detoxification and relaxation while seated.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Seated</tag>
+      <tag>Twist</tag>
+      <tag>Spinal Mobility</tag>
+      <tag>Detoxifying</tag>
+      <tag>Digestive</tag>
+    </tags>
+    <transitions>
+      <transition>Easy Pose</transition>
+      <transition>Half Lord of the Fishes</transition>
+      <transition>Seated Forward Fold</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Sphinx</n>
+    <sanskrit>Salamba Bhujangasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/sphinx.webp</image>
+    <description>A gentle backbend performed prone with forearms on the ground. Strengthens the back muscles while providing accessible chest opening.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Prone</tag>
+      <tag>Chest Opening</tag>
+      <tag>Back Strengthening</tag>
+      <tag>Gentle</tag>
+    </tags>
+    <transitions>
+      <transition>Cobra Pose</transition>
+      <transition>Child's Pose</transition>
+      <transition>Baby Cobra</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Twisted One Leg Mountain</n>
+    <sanskrit>Parivrtta Eka Pada Tadasana</sanskrit>
+    <side>Left</side>
+    <image>images/webp/twisted-one-leg-mountain.webp</image>
+    <description>A balance pose combining one-legged standing with spinal rotation. Challenges balance, core strength, and coordination simultaneously.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Balance</tag>
+      <tag>Standing</tag>
+      <tag>Twist</tag>
+      <tag>Core Strength</tag>
+      <tag>Coordination</tag>
+    </tags>
+    <transitions>
+      <transition>One Leg Mountain</transition>
+      <transition>Tree Pose</transition>
+      <transition>Mountain Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Wide Seated Forward Fold</n>
+    <sanskrit>Upavistha Konasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/wide-seated-forward-fold.webp</image>
+    <description>A seated forward fold with legs spread wide, stretching the inner thighs and spine. Promotes introspection and hip flexibility.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Sacral</chakra>
+    <tags>
+      <tag>Seated</tag>
+      <tag>Forward Fold</tag>
+      <tag>Hip Opening</tag>
+      <tag>Inner Thigh Stretch</tag>
+      <tag>Flexibility</tag>
+    </tags>
+    <transitions>
+      <transition>Seated Forward Fold</transition>
+      <transition>Butterfly Pose</transition>
+      <transition>Easy Pose</transition>
+    </transitions>
+  </asana>
 </asanas>
