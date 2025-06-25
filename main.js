@@ -7690,12 +7690,12 @@ function createAsanaCardElement(asana, index, displayNumber) {
         </div>
         <div class="card-side">${createSideDropdown(asana.side)}</div>
         <div class="card-actions">
-            <button class="table-btn swap-btn" onclick="showSwapPoseModal(${index})" title="Swap pose">⇆</button>
             <div class="more-options-container">
                 <button class="table-btn more-options-btn" data-pose-index="${index}" title="More options">⋮</button>
                 <div class="dropdown-menu" id="pose-dropdown-${index}">
-                    <button class="dropdown-item danger" data-action="remove" data-pose-index="${index}">Remove pose</button>
+                    <button class="dropdown-item" data-action="swap" data-pose-index="${index}">Swap pose</button>
                     <button class="dropdown-item" data-action="duplicate" data-pose-index="${index}">Duplicate pose</button>
+                    <button class="dropdown-item danger" data-action="remove" data-pose-index="${index}">Remove pose</button>
                 </div>
             </div>
         </div>
