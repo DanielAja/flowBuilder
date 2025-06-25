@@ -1008,6 +1008,9 @@ function startNewFlow() {
     console.log('Switching to build screen...');
     changeScreen('buildScreen');
     
+    // Reset to table view when starting a new flow
+    toggleViewMode('table');
+    
     // Additional cleanup after screen change to ensure table is completely empty
     setTimeout(() => {
         console.log('Final cleanup after screen change...');
@@ -3401,6 +3404,9 @@ function editFlow(flowID) {
 
     // Switch to build screen first for immediate visual feedback
     changeScreen('buildScreen');
+    
+    // Reset to table view when loading a flow
+    toggleViewMode('table');
 
     // Show loading state for very large flows (200+ poses)
     const table = document.getElementById('flowTable');
@@ -7678,6 +7684,7 @@ function createAsanaCardElement(asana, index, displayNumber) {
                    ${asana.selected ? 'checked' : ''}
                    onchange="toggleAsanaSelection(this)">
         </div>
+        <button class="card-remove-btn" data-index="${index}" title="Remove pose" onclick="removePoseFromDropdown(${index}); event.stopPropagation();">×</button>
         <div class="card-image">
             <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" style="${imgTransform}"
                  onerror="this.onerror=null; this.src='images/webp/default-pose.webp';">
@@ -7689,16 +7696,6 @@ function createAsanaCardElement(asana, index, displayNumber) {
             <input type="number" value="${asana.duration || 3}" min="1" max="300" onchange="updateFlowDuration()"/>s
         </div>
         <div class="card-side">${createSideDropdown(asana.side)}</div>
-        <div class="card-actions">
-            <div class="more-options-container">
-                <button class="table-btn more-options-btn" data-pose-index="${index}" title="More options">⋮</button>
-                <div class="dropdown-menu" id="pose-dropdown-${index}">
-                    <button class="dropdown-item" data-action="swap" data-pose-index="${index}">Swap pose</button>
-                    <button class="dropdown-item" data-action="duplicate" data-pose-index="${index}">Duplicate pose</button>
-                    <button class="dropdown-item danger" data-action="remove" data-pose-index="${index}">Remove pose</button>
-                </div>
-            </div>
-        </div>
     `;
     
     return card;
