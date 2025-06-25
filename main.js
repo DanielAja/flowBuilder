@@ -1713,7 +1713,7 @@ function hidePoseDropdown(index) {
 }
 
 function hideAllPoseDropdowns() {
-    const dropdowns = document.querySelectorAll('.pose-dropdown');
+    const dropdowns = document.querySelectorAll('.pose-dropdown, .dropdown-menu');
     dropdowns.forEach(dropdown => {
         dropdown.classList.remove('show');
     });
@@ -1804,7 +1804,11 @@ function handleMoreOptionsEvent(event, eventType) {
                     showSwapPoseModal(poseIndex);
                     break;
                 case 'delete':
+                case 'remove':
                     removePoseFromDropdown(poseIndex);
+                    break;
+                case 'duplicate':
+                    duplicatePose(poseIndex);
                     break;
             }
         }
@@ -1837,6 +1841,51 @@ function removePoseFromDropdown(index) {
         
         // Refresh the asana list
         populateAsanaList();
+    }
+}
+
+function duplicatePose(index) {
+    // Validate index
+    if (index >= 0 && index < editingFlow.asanas.length) {
+        const originalAsana = editingFlow.asanas[index];
+        
+        // Create a deep copy of the pose
+        const duplicatedAsana = new YogaAsana(
+            originalAsana.name,
+            originalAsana.side,
+            originalAsana.image,
+            originalAsana.description,
+            originalAsana.difficulty,
+            [...originalAsana.tags],
+            [...originalAsana.transitionsAsana],
+            originalAsana.sanskrit,
+            originalAsana.chakra || ""
+        );
+        duplicatedAsana.setDuration(originalAsana.duration);
+        
+        // Insert the duplicate right after the original pose
+        editingFlow.asanas.splice(index + 1, 0, duplicatedAsana);
+        
+        // Update section references to account for the new pose
+        editingFlow.sections.forEach(section => {
+            // Adjust the indices of poses that come after the insertion point
+            section.asanaIds = section.asanaIds.map(asanaId => {
+                // If this asana index is after the insertion point, increment it
+                return asanaId > index ? asanaId + 1 : asanaId;
+            });
+        });
+        
+        // Rebuild the entire table to ensure proper order and numbering
+        rebuildFlowTable();
+        
+        // Update flow duration
+        updateFlowDuration();
+        
+        // Refresh the asana list
+        populateAsanaList();
+        
+        // Show notification
+        showToastNotification('Pose duplicated successfully');
     }
 }
 
@@ -7642,7 +7691,13 @@ function createAsanaCardElement(asana, index, displayNumber) {
         <div class="card-side">${createSideDropdown(asana.side)}</div>
         <div class="card-actions">
             <button class="table-btn swap-btn" onclick="showSwapPoseModal(${index})" title="Swap pose">⇆</button>
-            <button class="table-btn remove-btn" onclick="removePose(this)">×</button>
+            <div class="more-options-container">
+                <button class="table-btn more-options-btn" data-pose-index="${index}" title="More options">⋮</button>
+                <div class="dropdown-menu" id="pose-dropdown-${index}">
+                    <button class="dropdown-item danger" data-action="remove" data-pose-index="${index}">Remove pose</button>
+                    <button class="dropdown-item" data-action="duplicate" data-pose-index="${index}">Duplicate pose</button>
+                </div>
+            </div>
         </div>
     `;
     
