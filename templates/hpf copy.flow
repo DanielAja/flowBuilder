@@ -1,0 +1,1697 @@
+{
+  "name": "Hot Power Fusion (HPF) - Complete Sequence",
+  "description": "Complete Hot Power Fusion Yoga sequence based on Bikram-style Hot Yoga. A heated power yoga class (100-105°F) with traditional Bikram poses and light vinyasa flow. 90-minute comprehensive sequence with no chaturanga push-ups.",
+  "totalDuration": 5400,
+  "asanas": [
+    {
+      "id": "1",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Begin in stillness and breath awareness"
+    },
+    {
+      "id": "2",
+      "name": "mountain-pose",
+      "english": "Samasthiti",
+      "sanskrit": "Samasthiti",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Equal standing pose"
+    },
+    {
+      "id": "3",
+      "name": "mountain-pose",
+      "english": "Mountain Pose",
+      "sanskrit": "Tadasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Centering and grounding"
+    },
+    {
+      "id": "4",
+      "name": "back-bend",
+      "english": "Standing Back Bend",
+      "sanskrit": "Anuvittasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Gentle backbend to warm spine"
+    },
+    {
+      "id": "5",
+      "name": "forward-fold",
+      "english": "Forward Fold",
+      "sanskrit": "Uttanasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Forward fold with soft knees"
+    },
+    {
+      "id": "6",
+      "name": "half-forward-fold",
+      "english": "Halfway Lift",
+      "sanskrit": "Ardha Uttanasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Half lift with flat back"
+    },
+    {
+      "id": "7",
+      "name": "squat",
+      "english": "Squat and Curl",
+      "sanskrit": "Malasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Squat with spinal curl"
+    },
+    {
+      "id": "8",
+      "name": "mountain-pose",
+      "english": "Mountain Pose",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Return to center"
+    },
+    {
+      "id": "9",
+      "name": "back-bend",
+      "english": "Standing Back Bend",
+      "sanskrit": "Anuvittasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Second back bend"
+    },
+    {
+      "id": "10",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Brief centering"
+    },
+    {
+      "id": "11",
+      "name": "forward-fold",
+      "english": "Fold Forward",
+      "sanskrit": "Uttanasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Second forward fold"
+    },
+    {
+      "id": "12",
+      "name": "half-forward-fold",
+      "english": "Halfway Lift",
+      "sanskrit": "Ardha Uttanasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Second half lift"
+    },
+    {
+      "id": "13",
+      "name": "squat",
+      "english": "Squat and Curl",
+      "sanskrit": "Malasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Second squat and curl"
+    },
+    {
+      "id": "14",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Center again"
+    },
+    {
+      "id": "15",
+      "name": "side-bend",
+      "english": "Easy Side Stretch",
+      "sanskrit": "Parsva Urdhva Hastasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Side bend to the right"
+    },
+    {
+      "id": "16",
+      "name": "side-bend",
+      "english": "Easy Side Stretch",
+      "sanskrit": "Parsva Urdhva Hastasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Side bend to the left"
+    },
+    {
+      "id": "17",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Return to center"
+    },
+    {
+      "id": "18",
+      "name": "back-bend",
+      "english": "Standing Back Bend",
+      "sanskrit": "Anuvittasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Third back bend"
+    },
+    {
+      "id": "19",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Center"
+    },
+    {
+      "id": "20",
+      "name": "forward-fold",
+      "english": "Forward Fold",
+      "sanskrit": "Uttanasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Third forward fold"
+    },
+    {
+      "id": "21",
+      "name": "half-forward-fold",
+      "english": "Halfway Lift",
+      "sanskrit": "Ardha Uttanasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Third half lift"
+    },
+    {
+      "id": "22",
+      "name": "squat",
+      "english": "Squat and Curl",
+      "sanskrit": "Malasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Third squat and curl"
+    },
+    {
+      "id": "23",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Center"
+    },
+    {
+      "id": "24",
+      "name": "half-moon-pose",
+      "english": "Hot Half Moon",
+      "sanskrit": "Ardha Chandrasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Hot half moon to the right"
+    },
+    {
+      "id": "25",
+      "name": "half-moon-pose",
+      "english": "Hot Half Moon",
+      "sanskrit": "Ardha Chandrasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Hot half moon to the left"
+    },
+    {
+      "id": "26",
+      "name": "back-bend",
+      "english": "Hot Back Bend",
+      "sanskrit": "Anuvittasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Deeper hot back bend"
+    },
+    {
+      "id": "27",
+      "name": "forward-fold",
+      "english": "Hot Forward Fold",
+      "sanskrit": "Uttanasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Deeper hot forward fold"
+    },
+    {
+      "id": "28",
+      "name": "forward-fold",
+      "english": "Hot Hands to Feet Pose",
+      "sanskrit": "Padahastasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Hands under feet, deeper fold"
+    },
+    {
+      "id": "29",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Brief standing rest"
+    },
+    {
+      "id": "30",
+      "name": "chair-pose",
+      "english": "Awkward Pose Part One",
+      "sanskrit": "Utkatasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Arms forward, thighs parallel"
+    },
+    {
+      "id": "31",
+      "name": "chair-pose",
+      "english": "Awkward Pose Part Two",
+      "sanskrit": "Utkatasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Rise on toes, squat down"
+    },
+    {
+      "id": "32",
+      "name": "chair-pose",
+      "english": "Awkward Pose Part Three",
+      "sanskrit": "Utkatasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Knees together, arms up"
+    },
+    {
+      "id": "33",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Rest between sets"
+    },
+    {
+      "id": "34",
+      "name": "mountain-pose",
+      "english": "Mountain Pose",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Prepare for balance series"
+    },
+    {
+      "id": "35",
+      "name": "eagle-pose",
+      "english": "Eagle Pose",
+      "sanskrit": "Garudasana",
+      "duration": 30,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Right leg wrapped around left"
+    },
+    {
+      "id": "36",
+      "name": "eagle-pose",
+      "english": "One-Legged Eagle Pose",
+      "sanskrit": "Garudasana",
+      "duration": 15,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Release legs, keep arms wrapped"
+    },
+    {
+      "id": "37",
+      "name": "eagle-armed-airplane",
+      "english": "Eagle Armed Airplane Pose",
+      "sanskrit": "Garudasana Dekasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Hinge forward with eagle arms"
+    },
+    {
+      "id": "38",
+      "name": "balancing-stick",
+      "english": "Balancing Stick",
+      "sanskrit": "Tuladasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "T-shape, arms straight"
+    },
+    {
+      "id": "39",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Brief rest"
+    },
+    {
+      "id": "40",
+      "name": "mountain-pose",
+      "english": "Mountain Pose",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Prepare for left side"
+    },
+    {
+      "id": "41",
+      "name": "eagle-pose",
+      "english": "Eagle Pose",
+      "sanskrit": "Garudasana",
+      "duration": 30,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Left leg wrapped around right"
+    },
+    {
+      "id": "42",
+      "name": "eagle-pose",
+      "english": "One-Legged Eagle Pose",
+      "sanskrit": "Garudasana",
+      "duration": 15,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Release legs, keep arms wrapped"
+    },
+    {
+      "id": "43",
+      "name": "eagle-armed-airplane",
+      "english": "Eagle Armed Airplane Pose",
+      "sanskrit": "Garudasana Dekasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Hinge forward with eagle arms"
+    },
+    {
+      "id": "44",
+      "name": "balancing-stick",
+      "english": "Balancing Stick",
+      "sanskrit": "Tuladasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "T-shape, arms straight"
+    },
+    {
+      "id": "45",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Brief rest"
+    },
+    {
+      "id": "46",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Prepare for standing series"
+    },
+    {
+      "id": "47",
+      "name": "standing-forehead-to-knee",
+      "english": "Standing Forehead to Knee Part One",
+      "sanskrit": "Dandayamana Janu Sirsasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Lift right knee, grab foot"
+    },
+    {
+      "id": "48",
+      "name": "standing-forehead-to-knee",
+      "english": "Standing Forehead to Knee Part Two",
+      "sanskrit": "Dandayamana Janu Sirsasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Kick leg out, round spine"
+    },
+    {
+      "id": "49",
+      "name": "standing-forehead-to-knee",
+      "english": "Standing Forehead to Knee Part Three",
+      "sanskrit": "Dandayamana Janu Sirsasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Forehead to knee, deep compression"
+    },
+    {
+      "id": "50",
+      "name": "mountain-pose",
+      "english": "One-Legged Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Balance on left leg"
+    },
+    {
+      "id": "51",
+      "name": "standing-bow",
+      "english": "Standing Bow Pose",
+      "sanskrit": "Dandayamana Dhanurasana",
+      "duration": 30,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Grab right foot, kick back"
+    },
+    {
+      "id": "52",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Brief rest"
+    },
+    {
+      "id": "53",
+      "name": "standing-forehead-to-knee",
+      "english": "Standing Forehead to Knee Part One",
+      "sanskrit": "Dandayamana Janu Sirsasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Lift left knee, grab foot"
+    },
+    {
+      "id": "54",
+      "name": "standing-forehead-to-knee",
+      "english": "Standing Forehead to Knee Part Two",
+      "sanskrit": "Dandayamana Janu Sirsasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Kick leg out, round spine"
+    },
+    {
+      "id": "55",
+      "name": "standing-forehead-to-knee",
+      "english": "Standing Forehead to Knee Part Three",
+      "sanskrit": "Dandayamana Janu Sirsasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Forehead to knee, deep compression"
+    },
+    {
+      "id": "56",
+      "name": "mountain-pose",
+      "english": "One-Legged Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Balance on right leg"
+    },
+    {
+      "id": "57",
+      "name": "standing-bow",
+      "english": "Standing Bow Pose",
+      "sanskrit": "Dandayamana Dhanurasana",
+      "duration": 30,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Grab left foot, kick back"
+    },
+    {
+      "id": "58",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Brief rest"
+    },
+    {
+      "id": "59",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Prepare for deeper bow"
+    },
+    {
+      "id": "60",
+      "name": "standing-bow",
+      "english": "Standing Bow Pose",
+      "sanskrit": "Dandayamana Dhanurasana",
+      "duration": 45,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Longer hold, deeper backbend"
+    },
+    {
+      "id": "61",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Rest between sides"
+    },
+    {
+      "id": "62",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Prepare for left side"
+    },
+    {
+      "id": "63",
+      "name": "standing-bow",
+      "english": "Standing Bow Pose",
+      "sanskrit": "Dandayamana Dhanurasana",
+      "duration": 45,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Longer hold, deeper backbend"
+    },
+    {
+      "id": "64",
+      "name": "mountain-pose",
+      "english": "Standing Savasana",
+      "sanskrit": "Samasthiti",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Rest after bow sequence"
+    },
+    {
+      "id": "65",
+      "name": "mountain-pose",
+      "english": "Mountain Pose",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Prepare for flow transition"
+    },
+    {
+      "id": "66",
+      "name": "back-bend",
+      "english": "Standing Back Bend",
+      "sanskrit": "Anuvittasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Transition backbend"
+    },
+    {
+      "id": "67",
+      "name": "forward-fold",
+      "english": "Forward Fold",
+      "sanskrit": "Uttanasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Transition forward fold"
+    },
+    {
+      "id": "68",
+      "name": "half-forward-fold",
+      "english": "Halfway Lift",
+      "sanskrit": "Ardha Uttanasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Prepare for flow"
+    },
+    {
+      "id": "69",
+      "name": "plank",
+      "english": "High Plank",
+      "sanskrit": "Phalakasana",
+      "duration": 15,
+      "category": "Core",
+      "side": "Center",
+      "notes": "Strong plank hold"
+    },
+    {
+      "id": "70",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 20,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Pedal feet, lengthen spine"
+    },
+    {
+      "id": "71",
+      "name": "low-lunge",
+      "english": "Low Lunge",
+      "sanskrit": "Anjaneyasana",
+      "duration": 15,
+      "category": "Lunge",
+      "side": "Right",
+      "notes": "Step right foot forward"
+    },
+    {
+      "id": "72",
+      "name": "warrior-2",
+      "english": "Warrior Two",
+      "sanskrit": "Virabhadrasana II",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Open to side, strong foundation"
+    },
+    {
+      "id": "73",
+      "name": "triangle-pose",
+      "english": "Hot Triangle",
+      "sanskrit": "Trikonasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Straighten front leg, triangle"
+    },
+    {
+      "id": "74",
+      "name": "reverse-warrior",
+      "english": "Reverse Warrior",
+      "sanskrit": "Parivrtta Virabhadrasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Reverse warrior flow"
+    },
+    {
+      "id": "75",
+      "name": "warrior-2",
+      "english": "Warrior Two",
+      "sanskrit": "Virabhadrasana II",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Return to warrior 2"
+    },
+    {
+      "id": "76",
+      "name": "star-pose",
+      "english": "Star Pose",
+      "sanskrit": "Utthita Tadasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Wide stance, arms out"
+    },
+    {
+      "id": "77",
+      "name": "horse-pose",
+      "english": "Horse Pose",
+      "sanskrit": "Utktata Konasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Wide squat, first hold"
+    },
+    {
+      "id": "78",
+      "name": "star-pose",
+      "english": "Star",
+      "sanskrit": "Utthita Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Return to star"
+    },
+    {
+      "id": "79",
+      "name": "horse-pose",
+      "english": "Horse",
+      "sanskrit": "Utktata Konasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Second horse hold"
+    },
+    {
+      "id": "80",
+      "name": "star-pose",
+      "english": "Star Pose",
+      "sanskrit": "Utthita Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Return to star"
+    },
+    {
+      "id": "81",
+      "name": "standing-separate-leg-stretching",
+      "english": "Standing Separate Leg Stretching",
+      "sanskrit": "Dandayamana Bibhaktapada Paschimottanasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Wide-legged forward fold"
+    },
+    {
+      "id": "82",
+      "name": "standing-separate-leg-head-to-knee",
+      "english": "Standing Separate Leg Forehead to Knee",
+      "sanskrit": "Dandayamana Bibhaktapada Janu Sirsasana",
+      "duration": 25,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Pivot to right leg"
+    },
+    {
+      "id": "83",
+      "name": "chest-expansion",
+      "english": "Chest Expansion Grip",
+      "sanskrit": "Parsva Bakasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Reverse prayer or grip"
+    },
+    {
+      "id": "84",
+      "name": "toppling-tree",
+      "english": "Toppling Tree",
+      "sanskrit": "Nataraja Variation",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Balance and hinge forward"
+    },
+    {
+      "id": "85",
+      "name": "standing-split",
+      "english": "Standing Splits",
+      "sanskrit": "Urdhva Prasarita Eka Padasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "High leg split"
+    },
+    {
+      "id": "86",
+      "name": "low-lunge",
+      "english": "Low Lunge",
+      "sanskrit": "Anjaneyasana",
+      "duration": 15,
+      "category": "Lunge",
+      "side": "Right",
+      "notes": "Step back to lunge"
+    },
+    {
+      "id": "87",
+      "name": "three-legged-dog",
+      "english": "Three-Legged Dog",
+      "sanskrit": "Eka Pada Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Right",
+      "notes": "Downward dog with right leg up"
+    },
+    {
+      "id": "88",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Both feet down"
+    },
+    {
+      "id": "89",
+      "name": "low-lunge",
+      "english": "Low Lunge",
+      "sanskrit": "Anjaneyasana",
+      "duration": 15,
+      "category": "Lunge",
+      "side": "Left",
+      "notes": "Step left foot forward"
+    },
+    {
+      "id": "90",
+      "name": "warrior-2",
+      "english": "Warrior Two",
+      "sanskrit": "Virabhadrasana II",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Open to side, strong foundation"
+    },
+    {
+      "id": "91",
+      "name": "triangle-pose",
+      "english": "Hot Triangle",
+      "sanskrit": "Trikonasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Straighten front leg, triangle"
+    },
+    {
+      "id": "92",
+      "name": "reverse-warrior",
+      "english": "Reverse Warrior",
+      "sanskrit": "Parivrtta Virabhadrasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Reverse warrior flow"
+    },
+    {
+      "id": "93",
+      "name": "warrior-2",
+      "english": "Warrior Two",
+      "sanskrit": "Virabhadrasana II",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Return to warrior 2"
+    },
+    {
+      "id": "94",
+      "name": "star-pose",
+      "english": "Star Pose",
+      "sanskrit": "Utthita Tadasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Wide stance, arms out"
+    },
+    {
+      "id": "95",
+      "name": "horse-pose",
+      "english": "Horse Pose",
+      "sanskrit": "Utktata Konasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Wide squat"
+    },
+    {
+      "id": "96",
+      "name": "horse-pose",
+      "english": "Horse",
+      "sanskrit": "Utktata Konasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Second horse hold"
+    },
+    {
+      "id": "97",
+      "name": "star-pose",
+      "english": "Star Pose",
+      "sanskrit": "Utthita Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Return to star"
+    },
+    {
+      "id": "98",
+      "name": "standing-separate-leg-stretching",
+      "english": "Separate Leg Stretching",
+      "sanskrit": "Dandayamana Bibhaktapada Paschimottanasana",
+      "duration": 30,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Wide-legged forward fold"
+    },
+    {
+      "id": "99",
+      "name": "standing-separate-leg-head-to-knee",
+      "english": "Standing Separate Leg Forehead to Knee",
+      "sanskrit": "Dandayamana Bibhaktapada Janu Sirsasana",
+      "duration": 25,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Pivot to left leg"
+    },
+    {
+      "id": "100",
+      "name": "chest-expansion",
+      "english": "Chest Expansion Grip",
+      "sanskrit": "Parsva Bakasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Reverse prayer or grip"
+    },
+    {
+      "id": "101",
+      "name": "toppling-tree",
+      "english": "Toppling Tree",
+      "sanskrit": "Nataraja Variation",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Balance and hinge forward"
+    },
+    {
+      "id": "102",
+      "name": "standing-split",
+      "english": "Standing Splits",
+      "sanskrit": "Urdhva Prasarita Eka Padasana",
+      "duration": 20,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "High leg split"
+    },
+    {
+      "id": "103",
+      "name": "low-lunge",
+      "english": "Low Lunge",
+      "sanskrit": "Anjaneyasana",
+      "duration": 15,
+      "category": "Lunge",
+      "side": "Left",
+      "notes": "Step back to lunge"
+    },
+    {
+      "id": "104",
+      "name": "three-legged-dog",
+      "english": "Three-Legged Dog",
+      "sanskrit": "Eka Pada Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Left",
+      "notes": "Downward dog with left leg up"
+    },
+    {
+      "id": "105",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Both feet down"
+    },
+    {
+      "id": "106",
+      "name": "low-lunge",
+      "english": "Low Lunge",
+      "sanskrit": "Anjaneyasana",
+      "duration": 15,
+      "category": "Lunge",
+      "side": "Right",
+      "notes": "Flow repetition right"
+    },
+    {
+      "id": "107",
+      "name": "warrior-2",
+      "english": "Warrior Two",
+      "sanskrit": "Virabhadrasana II",
+      "duration": 25,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Flow repetition"
+    },
+    {
+      "id": "108",
+      "name": "triangle-pose",
+      "english": "Hot Triangle",
+      "sanskrit": "Trikonasana",
+      "duration": 25,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Flow repetition"
+    },
+    {
+      "id": "109",
+      "name": "reverse-warrior",
+      "english": "Reverse Warrior",
+      "sanskrit": "Parivrtta Virabhadrasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Right",
+      "notes": "Flow repetition"
+    },
+    {
+      "id": "110",
+      "name": "low-lunge",
+      "english": "Low Lunge",
+      "sanskrit": "Anjaneyasana",
+      "duration": 15,
+      "category": "Lunge",
+      "side": "Right",
+      "notes": "Return to lunge"
+    },
+    {
+      "id": "111",
+      "name": "three-legged-dog",
+      "english": "Three-Legged Dog",
+      "sanskrit": "Eka Pada Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Right",
+      "notes": "Lift right leg"
+    },
+    {
+      "id": "112",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Both feet down"
+    },
+    {
+      "id": "113",
+      "name": "low-lunge",
+      "english": "Low Lunge",
+      "sanskrit": "Anjaneyasana",
+      "duration": 15,
+      "category": "Lunge",
+      "side": "Left",
+      "notes": "Flow repetition left"
+    },
+    {
+      "id": "114",
+      "name": "warrior-2",
+      "english": "Warrior Two",
+      "sanskrit": "Virabhadrasana II",
+      "duration": 25,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Flow repetition"
+    },
+    {
+      "id": "115",
+      "name": "triangle-pose",
+      "english": "Hot Triangle",
+      "sanskrit": "Trikonasana",
+      "duration": 25,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Flow repetition"
+    },
+    {
+      "id": "116",
+      "name": "reverse-warrior",
+      "english": "Reverse Warrior",
+      "sanskrit": "Parivrtta Virabhadrasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Left",
+      "notes": "Flow repetition"
+    },
+    {
+      "id": "117",
+      "name": "low-lunge",
+      "english": "Low Lunge",
+      "sanskrit": "Anjaneyasana",
+      "duration": 15,
+      "category": "Lunge",
+      "side": "Left",
+      "notes": "Return to lunge"
+    },
+    {
+      "id": "118",
+      "name": "three-legged-dog",
+      "english": "Three-Legged Dog",
+      "sanskrit": "Eka Pada Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Left",
+      "notes": "Lift left leg"
+    },
+    {
+      "id": "119",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Both feet down"
+    },
+    {
+      "id": "120",
+      "name": "forward-fold",
+      "english": "Forward Fold",
+      "sanskrit": "Uttanasana",
+      "duration": 20,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Walk feet to hands"
+    },
+    {
+      "id": "121",
+      "name": "tree-pose",
+      "english": "Hot Tree",
+      "sanskrit": "Vrksasana",
+      "duration": 30,
+      "category": "Balance",
+      "side": "Right",
+      "notes": "Balance on left leg"
+    },
+    {
+      "id": "122",
+      "name": "mountain-pose",
+      "english": "Samasthiti",
+      "sanskrit": "Samasthiti",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Equal standing"
+    },
+    {
+      "id": "123",
+      "name": "tree-pose",
+      "english": "Hot Tree",
+      "sanskrit": "Vrksasana",
+      "duration": 30,
+      "category": "Balance",
+      "side": "Left",
+      "notes": "Balance on right leg"
+    },
+    {
+      "id": "124",
+      "name": "mountain-pose",
+      "english": "Samasthiti",
+      "sanskrit": "Samasthiti",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Equal standing"
+    },
+    {
+      "id": "125",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Mountain pose"
+    },
+    {
+      "id": "126",
+      "name": "back-bend",
+      "english": "Standing Back Bend",
+      "sanskrit": "Anuvittasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Final standing backbend"
+    },
+    {
+      "id": "127",
+      "name": "mountain-pose",
+      "english": "Mountain",
+      "sanskrit": "Tadasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Return to mountain"
+    },
+    {
+      "id": "128",
+      "name": "forward-fold",
+      "english": "Forward Fold",
+      "sanskrit": "Uttanasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Final standing forward fold"
+    },
+    {
+      "id": "129",
+      "name": "half-forward-fold",
+      "english": "Halfway Lift",
+      "sanskrit": "Ardha Uttanasana",
+      "duration": 10,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Final half lift"
+    },
+    {
+      "id": "130",
+      "name": "squat",
+      "english": "Squat and Curl",
+      "sanskrit": "Malasana",
+      "duration": 15,
+      "category": "Standing",
+      "side": "Center",
+      "notes": "Final squat and curl"
+    },
+    {
+      "id": "131",
+      "name": "bound-angle-pose",
+      "english": "Supta Baddha Konasana",
+      "sanskrit": "Supta Baddha Konasana",
+      "duration": 30,
+      "category": "Core",
+      "side": "Center",
+      "notes": "Core work preparation"
+    },
+    {
+      "id": "132",
+      "name": "eagle-crunches",
+      "english": "Eagle Sit-ups",
+      "sanskrit": "Garudasana Uttanasana",
+      "duration": 45,
+      "category": "Core",
+      "side": "Center",
+      "notes": "Eagle arms in crunch position"
+    },
+    {
+      "id": "133",
+      "name": "boat-pose",
+      "english": "Boat Pose",
+      "sanskrit": "Navasana",
+      "duration": 30,
+      "category": "Core",
+      "side": "Center",
+      "notes": "Hold boat pose"
+    },
+    {
+      "id": "134",
+      "name": "cat-cow",
+      "english": "Cats and Cows",
+      "sanskrit": "Marjaryasana Bitilasana",
+      "duration": 30,
+      "category": "Warm-up",
+      "side": "Center",
+      "notes": "Spinal mobility"
+    },
+    {
+      "id": "135",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 20,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "From hands and knees"
+    },
+    {
+      "id": "136",
+      "name": "frog-pose",
+      "english": "Frog Pose",
+      "sanskrit": "Malasana",
+      "duration": 30,
+      "category": "Hip Opener",
+      "side": "Center",
+      "notes": "Deep squat variation"
+    },
+    {
+      "id": "137",
+      "name": "frog-pose",
+      "english": "Malasana, Frog Pose",
+      "sanskrit": "Malasana",
+      "duration": 30,
+      "category": "Hip Opener",
+      "side": "Center",
+      "notes": "Hold frog pose"
+    },
+    {
+      "id": "138",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 20,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Return to down dog"
+    },
+    {
+      "id": "139",
+      "name": "half-pigeon",
+      "english": "Half Pigeon Pose",
+      "sanskrit": "Eka Pada Rajakapotasana",
+      "duration": 60,
+      "category": "Hip Opener",
+      "side": "Right",
+      "notes": "Right knee forward"
+    },
+    {
+      "id": "140",
+      "name": "sleeping-pigeon",
+      "english": "Sleeping Pigeon",
+      "sanskrit": "Eka Pada Rajakapotasana",
+      "duration": 30,
+      "category": "Hip Opener",
+      "side": "Right",
+      "notes": "Fold forward in pigeon"
+    },
+    {
+      "id": "141",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Transition"
+    },
+    {
+      "id": "142",
+      "name": "half-pigeon",
+      "english": "Half Pigeon Pose",
+      "sanskrit": "Eka Pada Rajakapotasana",
+      "duration": 60,
+      "category": "Hip Opener",
+      "side": "Left",
+      "notes": "Left knee forward"
+    },
+    {
+      "id": "143",
+      "name": "sleeping-pigeon",
+      "english": "Sleeping Pigeon",
+      "sanskrit": "Eka Pada Rajakapotasana",
+      "duration": 30,
+      "category": "Hip Opener",
+      "side": "Left",
+      "notes": "Fold forward in pigeon"
+    },
+    {
+      "id": "144",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 15,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Transition"
+    },
+    {
+      "id": "145",
+      "name": "plank",
+      "english": "High Plank",
+      "sanskrit": "Phalakasana",
+      "duration": 20,
+      "category": "Core",
+      "side": "Center",
+      "notes": "Plank hold"
+    },
+    {
+      "id": "146",
+      "name": "cobra-pose",
+      "english": "Cobra Pose",
+      "sanskrit": "Bhujangasana",
+      "duration": 30,
+      "category": "Backbend",
+      "side": "Center",
+      "notes": "First cobra set"
+    },
+    {
+      "id": "147",
+      "name": "locust-pose",
+      "english": "Half Locust Pose",
+      "sanskrit": "Salabhasana",
+      "duration": 20,
+      "category": "Backbend",
+      "side": "Right",
+      "notes": "Right leg up"
+    },
+    {
+      "id": "148",
+      "name": "locust-pose",
+      "english": "Half Locust Pose",
+      "sanskrit": "Salabhasana",
+      "duration": 20,
+      "category": "Backbend",
+      "side": "Left",
+      "notes": "Left leg up"
+    },
+    {
+      "id": "149",
+      "name": "locust-pose",
+      "english": "Half Locust Pose",
+      "sanskrit": "Salabhasana",
+      "duration": 20,
+      "category": "Backbend",
+      "side": "Center",
+      "notes": "Both legs up"
+    },
+    {
+      "id": "150",
+      "name": "locust-pose",
+      "english": "Full Locust Pose",
+      "sanskrit": "Poorna Salabhasana",
+      "duration": 30,
+      "category": "Backbend",
+      "side": "Center",
+      "notes": "Full locust, everything up"
+    },
+    {
+      "id": "151",
+      "name": "bow-pose",
+      "english": "Bow Pose",
+      "sanskrit": "Dhanurasana",
+      "duration": 30,
+      "category": "Backbend",
+      "side": "Center",
+      "notes": "First bow set"
+    },
+    {
+      "id": "152",
+      "name": "fixed-firm-pose",
+      "english": "Fixed Firm",
+      "sanskrit": "Supta Virasana",
+      "duration": 30,
+      "category": "Seated",
+      "side": "Center",
+      "notes": "First set - sit between heels"
+    },
+    {
+      "id": "153",
+      "name": "fixed-firm-pose",
+      "english": "Fixed Firm",
+      "sanskrit": "Supta Virasana",
+      "duration": 30,
+      "category": "Seated",
+      "side": "Center",
+      "notes": "Second set - deeper recline"
+    },
+    {
+      "id": "154",
+      "name": "downward-facing-dog",
+      "english": "Downward Facing Dog",
+      "sanskrit": "Adho Mukha Svanasana",
+      "duration": 20,
+      "category": "Inversion",
+      "side": "Center",
+      "notes": "Transition to seated"
+    },
+    {
+      "id": "155",
+      "name": "half-tortoise-pose",
+      "english": "Half Tortoise",
+      "sanskrit": "Ardha Kurmasana",
+      "duration": 45,
+      "category": "Forward Bend",
+      "side": "Center",
+      "notes": "Knees together, arms forward"
+    },
+    {
+      "id": "156",
+      "name": "camel-pose",
+      "english": "Camel Pose",
+      "sanskrit": "Ustrasana",
+      "duration": 30,
+      "category": "Backbend",
+      "side": "Center",
+      "notes": "Hands to heels or lower back"
+    },
+    {
+      "id": "157",
+      "name": "rabbit-pose",
+      "english": "Rabbit Pose",
+      "sanskrit": "Sasangasana",
+      "duration": 30,
+      "category": "Forward Bend",
+      "side": "Center",
+      "notes": "Crown of head down, grab heels"
+    },
+    {
+      "id": "158",
+      "name": "seated-separate-leg-stretching",
+      "english": "Seated Separate Leg Stretching Forehead to Knee",
+      "sanskrit": "Janu Sirsasana",
+      "duration": 30,
+      "category": "Forward Bend",
+      "side": "Right",
+      "notes": "One leg straight, fold to right"
+    },
+    {
+      "id": "159",
+      "name": "seated-separate-leg-stretching",
+      "english": "Janu Sirsasana",
+      "sanskrit": "Janu Sirsasana",
+      "duration": 30,
+      "category": "Forward Bend",
+      "side": "Left",
+      "notes": "One leg straight, fold to left"
+    },
+    {
+      "id": "160",
+      "name": "seated-forward-fold",
+      "english": "Seated Forward Fold",
+      "sanskrit": "Paschimottanasana",
+      "duration": 30,
+      "category": "Forward Bend",
+      "side": "Center",
+      "notes": "Both legs straight, fold forward"
+    },
+    {
+      "id": "161",
+      "name": "wind-removing-pose",
+      "english": "Half Wind Removing Pose",
+      "sanskrit": "Ardha Pavanamuktasana",
+      "duration": 20,
+      "category": "Supine",
+      "side": "Right",
+      "notes": "Right knee to chest"
+    },
+    {
+      "id": "162",
+      "name": "supine-twist",
+      "english": "Supine Twist",
+      "sanskrit": "Jathara Parivartanasana",
+      "duration": 30,
+      "category": "Twist",
+      "side": "Right",
+      "notes": "Right knee across body"
+    },
+    {
+      "id": "163",
+      "name": "wind-removing-pose",
+      "english": "Half Wind Removing Pose",
+      "sanskrit": "Ardha Pavanamuktasana",
+      "duration": 20,
+      "category": "Supine",
+      "side": "Left",
+      "notes": "Left knee to chest"
+    },
+    {
+      "id": "164",
+      "name": "supine-twist",
+      "english": "Supine Twist",
+      "sanskrit": "Jathara Parivartanasana",
+      "duration": 30,
+      "category": "Twist",
+      "side": "Left",
+      "notes": "Left knee across body"
+    },
+    {
+      "id": "165",
+      "name": "wind-removing-pose",
+      "english": "Full Wind Removing Pose",
+      "sanskrit": "Pavanamuktasana",
+      "duration": 30,
+      "category": "Supine",
+      "side": "Center",
+      "notes": "Both knees to chest"
+    },
+    {
+      "id": "166",
+      "name": "happy-baby",
+      "english": "Happy Baby Pose",
+      "sanskrit": "Ananda Balasana",
+      "duration": 45,
+      "category": "Hip Opener",
+      "side": "Center",
+      "notes": "Grab feet, knees to armpits"
+    },
+    {
+      "id": "167",
+      "name": "corpse-pose",
+      "english": "Savasana",
+      "sanskrit": "Savasana",
+      "duration": 300,
+      "category": "Rest",
+      "side": "Center",
+      "notes": "Final relaxation - 5 minutes"
+    },
+    {
+      "id": "168",
+      "name": "fetal-pose",
+      "english": "Fetal Pose",
+      "sanskrit": "Garbhasana",
+      "duration": 30,
+      "category": "Rest",
+      "side": "Center",
+      "notes": "Transition from savasana"
+    },
+    {
+      "id": "169",
+      "name": "easy-pose",
+      "english": "Easy Seat",
+      "sanskrit": "Sukhasana",
+      "duration": 60,
+      "category": "Seated",
+      "side": "Center",
+      "notes": "Final seated meditation"
+    }
+  ]
+}
