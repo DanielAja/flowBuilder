@@ -17,7 +17,7 @@ Try the live demo: [https://danielaja.github.io/flowBuilder/](https://danielaja.
 *Search and filter through available yoga poses*
 
 ### Flow Practice - Sanskrit Names
-![Flow Practice with Sanskrit Names](flow-screen-screenshot-sandscript.png)
+![Flow Practice with Sanskrit Names](flow-screen-screenshot-sanskrit.png)
 *Practice mode showing Sanskrit pose names*
 
 ### Flow Practice - English Names
