@@ -11034,15 +11034,77 @@ function swapPose(newAsana) {
     newPoseAsana.setDuration(7); // Default duration for new poses
     
     let actionText;
+    let referencePoseSection = null;
+    
+    // For add above/below operations, detect if reference pose belongs to a section
+    if (swapPoseMode === 'addAbove' || swapPoseMode === 'addBelow') {
+        referencePoseSection = editingFlow.sections.find(section => 
+            section.asanaIds.includes(swapPoseIndex)
+        );
+    }
     
     if (swapPoseMode === 'addAbove') {
         // Insert the new pose above (before) the current pose
         editingFlow.asanas.splice(swapPoseIndex, 0, newPoseAsana);
         actionText = `Added ${newAsana.name} above`;
+        
+        // If reference pose was in a section, add new pose to same section
+        if (referencePoseSection) {
+            // Find the position of the reference pose in the section's asanaIds
+            const refPosePositionInSection = referencePoseSection.asanaIds.indexOf(swapPoseIndex);
+            if (refPosePositionInSection !== -1) {
+                // Insert the new pose index at the same position (since we inserted above)
+                referencePoseSection.asanaIds.splice(refPosePositionInSection, 0, swapPoseIndex);
+                
+                // Update all indices after the insertion point
+                for (let i = refPosePositionInSection + 1; i < referencePoseSection.asanaIds.length; i++) {
+                    referencePoseSection.asanaIds[i]++;
+                }
+            }
+            
+            // Update all other sections' asanaIds that have indices >= swapPoseIndex
+            editingFlow.sections.forEach(section => {
+                if (section.id !== referencePoseSection.id) {
+                    section.asanaIds = section.asanaIds.map(id => id >= swapPoseIndex ? id + 1 : id);
+                }
+            });
+        } else {
+            // Update all sections' asanaIds that have indices >= swapPoseIndex
+            editingFlow.sections.forEach(section => {
+                section.asanaIds = section.asanaIds.map(id => id >= swapPoseIndex ? id + 1 : id);
+            });
+        }
     } else if (swapPoseMode === 'addBelow') {
         // Insert the new pose directly below (after) the current pose
         editingFlow.asanas.splice(swapPoseIndex + 1, 0, newPoseAsana);
         actionText = `Added ${newAsana.name} below`;
+        
+        // If reference pose was in a section, add new pose to same section
+        if (referencePoseSection) {
+            // Find the position of the reference pose in the section's asanaIds
+            const refPosePositionInSection = referencePoseSection.asanaIds.indexOf(swapPoseIndex);
+            if (refPosePositionInSection !== -1) {
+                // Insert the new pose index right after the reference pose
+                referencePoseSection.asanaIds.splice(refPosePositionInSection + 1, 0, swapPoseIndex + 1);
+                
+                // Update all indices after the insertion point (except the one we just added)
+                for (let i = refPosePositionInSection + 2; i < referencePoseSection.asanaIds.length; i++) {
+                    referencePoseSection.asanaIds[i]++;
+                }
+            }
+            
+            // Update all other sections' asanaIds that have indices > swapPoseIndex
+            editingFlow.sections.forEach(section => {
+                if (section.id !== referencePoseSection.id) {
+                    section.asanaIds = section.asanaIds.map(id => id > swapPoseIndex ? id + 1 : id);
+                }
+            });
+        } else {
+            // Update all sections' asanaIds that have indices > swapPoseIndex
+            editingFlow.sections.forEach(section => {
+                section.asanaIds = section.asanaIds.map(id => id > swapPoseIndex ? id + 1 : id);
+            });
+        }
     } else {
         // Default swap behavior - preserve duration and side from current pose
         const currentPose = editingFlow.asanas[swapPoseIndex];
