@@ -367,6 +367,7 @@ let isReversed = false;
 let paused = false;
 let pausedBeforeEndFlow = false; // Track pause state before showing End Flow modal
 let lastUpdateTime = 0;
+let chimeAudio = null; // Global audio object for flow completion chime
 let animationFrameId = null;
 let startTimerInterval = null; // Track the starting countdown interval
 let startCountdownValue = 0; // Track current countdown value
@@ -2215,6 +2216,16 @@ function playFlow(flowID) {
     currentAsanaIndex = 0;
     paused = false;
     
+    // Preload completion chime audio (user interaction allows this)
+    try {
+        chimeAudio = new Audio('End Chime.mp3');
+        chimeAudio.preload = 'auto';
+        // Attempt to load the audio to ensure it's ready
+        chimeAudio.load();
+    } catch (error) {
+        console.log('Audio preload failed:', error);
+    }
+    
     // Update lastFlowed timestamp in the original flows array
     flows[flowIndex].lastFlowed = new Date().toISOString();
     saveFlows(flows); // Save the updated timestamp
@@ -2691,6 +2702,16 @@ function startCountdownTimer(duration, isResuming = false) {
                     }, 100);
                 } else {
                     console.log("End of flow reached!");
+
+                    // Play completion chime
+                    if (chimeAudio) {
+                        chimeAudio.currentTime = 0; // Reset to beginning
+                        chimeAudio.play().catch(error => {
+                            console.log('Audio playback failed:', error);
+                        });
+                    } else {
+                        console.log('Audio not preloaded');
+                    }
 
                     // Trigger confetti animation to celebrate completion
                     createConfetti();
