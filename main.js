@@ -380,6 +380,7 @@ let currentViewMode = localStorage.getItem('viewMode') || 'table'; // Default to
 let confettiAnimationId = null; // For tracking confetti animation
 let flowStartTime = null; // Track when flow started
 let wakeLock = null; // Track the wake lock
+let wakeLockFallbackInterval = null; // Track fallback interval for older browsers
 let totalFlowDuration = 0; // Total duration of all poses in flow
 let flowElapsedTime = 0; // Time elapsed since flow started
 
@@ -782,38 +783,129 @@ function clearBuildAFlow() {
 // Wake Lock functions to prevent device sleep during flow
 async function requestWakeLock() {
     try {
-        if ('wakeLock' in navigator) {
+        // Check for Wake Lock API support
+        if ('wakeLock' in navigator && 'request' in navigator.wakeLock) {
             wakeLock = await navigator.wakeLock.request('screen');
             console.log('Wake lock acquired');
             
             wakeLock.addEventListener('release', () => {
                 console.log('Wake lock released');
+                wakeLock = null;
             });
         } else {
-            console.log('Wake Lock API not supported');
+            console.log('Wake Lock API not supported, using fallback methods');
+            // Fallback methods for older browsers
+            useWakeLockFallbacks();
         }
     } catch (error) {
         console.error('Error requesting wake lock:', error);
+        // Try fallback methods if native wake lock fails
+        try {
+            useWakeLockFallbacks();
+        } catch (fallbackError) {
+            console.error('Fallback methods also failed:', fallbackError);
+        }
     }
 }
 
+// Fallback methods for browsers without Wake Lock API support
+function useWakeLockFallbacks() {
+    // Method 1: Keep screen active with a hidden video element
+    if (!document.getElementById('wake-lock-video')) {
+        const video = document.createElement('video');
+        video.id = 'wake-lock-video';
+        video.style.position = 'fixed';
+        video.style.top = '-1px';
+        video.style.left = '-1px';
+        video.style.width = '1px';
+        video.style.height = '1px';
+        video.style.opacity = '0';
+        video.style.pointerEvents = 'none';
+        video.muted = true;
+        video.loop = true;
+        video.playsInline = true;
+        
+        // Create a minimal video data URL (black pixel)
+        video.src = 'data:video/mp4;base64,AAAAHGZ0eXBpc29tAAACAGlzb21pc28ybXA0MQAAAAhmcmVlAAAGF21kYXTeBAAAbGliZmFhYyAxLjI4AABCAJMgBDIARIiIQQQgBDgAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIAItIA';
+        
+        document.body.appendChild(video);
+        
+        // Try to play the video
+        video.play().catch(e => {
+            console.log('Video fallback failed, trying alternative method:', e);
+            // If video fails, try a different approach
+            try {
+                video.remove();
+            } catch (removeError) {
+                console.log('Error removing failed video element:', removeError);
+            }
+        });
+    }
+    
+    // Method 2: Periodic no-op activity to prevent sleep
+    if (typeof wakeLockFallbackInterval === 'undefined' || !wakeLockFallbackInterval) {
+        wakeLockFallbackInterval = setInterval(() => {
+            try {
+                // Trigger a minimal DOM operation to keep the page active
+                document.body.style.transform = document.body.style.transform ? '' : 'translateZ(0)';
+            } catch (error) {
+                console.log('Error in wake lock fallback interval:', error);
+            }
+        }, 30000); // Every 30 seconds
+    }
+    
+    console.log('Wake lock fallback methods activated');
+}
+
+
 async function releaseWakeLock() {
     try {
+        // Release native wake lock
         if (wakeLock) {
             await wakeLock.release();
             wakeLock = null;
             console.log('Wake lock manually released');
         }
+        
+        // Clean up fallback methods
+        cleanupWakeLockFallbacks();
     } catch (error) {
         console.error('Error releasing wake lock:', error);
     }
 }
 
+// Clean up fallback methods when wake lock is no longer needed
+function cleanupWakeLockFallbacks() {
+    // Remove hidden video element
+    const video = document.getElementById('wake-lock-video');
+    if (video) {
+        video.remove();
+    }
+    
+    // Clear the periodic interval
+    if (typeof wakeLockFallbackInterval !== 'undefined' && wakeLockFallbackInterval) {
+        clearInterval(wakeLockFallbackInterval);
+        wakeLockFallbackInterval = null;
+    }
+    
+    // Reset body transform
+    document.body.style.transform = '';
+    
+    
+    console.log('Wake lock fallback methods cleaned up');
+}
+
 // Re-acquire wake lock when page becomes visible (in case it was released when app went to background)
 document.addEventListener('visibilitychange', async () => {
-    if (document.visibilityState === 'visible' && currentScreenId === 'flowScreen' && !wakeLock) {
-        console.log('Page became visible during flow, re-requesting wake lock');
-        await requestWakeLock();
+    if (document.visibilityState === 'visible' && currentScreenId === 'flowScreen') {
+        // Check if we need to re-acquire wake lock (native API might have released it)
+        if (!wakeLock || (!document.getElementById('wake-lock-video') && !wakeLockFallbackInterval)) {
+            console.log('Page became visible during flow, re-requesting wake lock');
+            await requestWakeLock();
+        }
+    } else if (document.visibilityState === 'hidden' && currentScreenId === 'flowScreen') {
+        // Optionally log when page becomes hidden during flow
+        console.log('Page became hidden during flow (wake lock may be released by browser)');
     }
 });
 
@@ -8781,10 +8873,8 @@ function initializeApp() {
         const actionsPinned = localStorage.getItem('actionsPinned') === 'true';
         if (pinToggle) {
             pinToggle.checked = actionsPinned;
-            // Apply the pin state immediately if it was previously pinned
-            if (actionsPinned) {
-                togglePinActions(true);
-            }
+            // Don't automatically show the pinned panel on page load
+            // User needs to manually click the pin toggle to show it
         }
 
         // Initialize view toggle buttons with saved preference
