@@ -119,8 +119,8 @@
       <tag>Hip Opener</tag>
     </tags>
     <transitions>
-      <transition>Warrior 1</transition>
-      <transition>Warrior 2</transition>
+      <transition>Warrior I</transition>
+      <transition>Warrior II</transition>
       <transition>Plank</transition>
       <transition>Low Lunge</transition>
       <transition>Runner's Lunge</transition>
@@ -146,7 +146,7 @@
     </tags>
     <transitions>
       <transition>Crescent Lunge</transition>
-      <transition>Warrior 1</transition>
+      <transition>Warrior I</transition>
       <transition>Revolved Chair Pose</transition>
       <transition>Side Angle Pose</transition>
       <transition>Revolved Triangle Pose</transition>
@@ -167,7 +167,7 @@
       <tag>Hip Opener</tag>
     </tags>
     <transitions>
-      <transition>Warrior 2</transition>
+      <transition>Warrior II</transition>
       <transition>Triangle Pose</transition>
       <transition>Reverse Warrior</transition>
       <transition>Bound Half Moon</transition>
@@ -195,7 +195,7 @@
     </transitions>
   </asana>
   <asana>
-    <n>Hand to Big Toe</n>
+    <n>Extended Hand-to-Big-Toe Pose</n>
     <sanskrit>Utthita Hasta Padangusthasana</sanskrit>
     <side>Right</side>
     <image>images/webp/hand-to-big-toe.webp</image>
@@ -211,8 +211,8 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Tree Pose</transition>
-      <transition>Standing Split</transition>
-      <transition>Warrior 3</transition>
+      <transition>Standing Splits</transition>
+      <transition>Warrior III</transition>
     </transitions>
   </asana>
   <asana>
@@ -231,7 +231,7 @@
       <tag>Surrender</tag>
     </tags>
     <transitions>
-      <transition>Warrior 1</transition>
+      <transition>Warrior I</transition>
       <transition>Wide-Legged Forward Fold</transition>
       <transition>Pyramid Pose</transition>
       <transition>Downward Facing Dog</transition>
@@ -252,10 +252,10 @@
       <tag>Chest Opener</tag>
     </tags>
     <transitions>
-      <transition>Warrior 2</transition>
+      <transition>Warrior II</transition>
       <transition>Extended Side Angle</transition>
       <transition>Triangle Pose</transition>
-      <transition>Half Moon Pose</transition>
+      <transition>Half Moon</transition>
     </transitions>
   </asana>
   <asana>
@@ -273,14 +273,14 @@
       <tag>Chest Opener</tag>
     </tags>
     <transitions>
-      <transition>Warrior 2</transition>
-      <transition>Half Moon Pose</transition>
+      <transition>Warrior II</transition>
+      <transition>Half Moon</transition>
       <transition>Revolved Triangle Pose</transition>
       <transition>Wide-Legged Forward Fold</transition>
     </transitions>
   </asana>
   <asana>
-    <n>Warrior 1</n>
+    <n>Warrior I</n>
     <sanskrit>Virabhadrasana I</sanskrit>
     <side>Right</side>
     <image>images/webp/warrior-1.webp</image>
@@ -294,7 +294,7 @@
       <tag>Chest Opener</tag>
     </tags>
     <transitions>
-      <transition>Warrior 2</transition>
+      <transition>Warrior II</transition>
       <transition>Mountain Pose</transition>
       <transition>Humble Warrior</transition>
       <transition>Pyramid Pose</transition>
@@ -302,7 +302,7 @@
     </transitions>
   </asana>
   <asana>
-    <n>Warrior 2</n>
+    <n>Warrior II</n>
     <sanskrit>Virabhadrasana II</sanskrit>
     <side>Right</side>
     <image>images/webp/warrior-2.webp</image>
@@ -319,8 +319,8 @@
       <transition>Extended Side Angle</transition>
       <transition>Triangle Pose</transition>
       <transition>Reverse Warrior</transition>
-      <transition>Warrior 1</transition>
-      <transition>Half Moon Pose</transition>
+      <transition>Warrior I</transition>
+      <transition>Half Moon</transition>
     </transitions>
   </asana>
   <asana>
@@ -341,7 +341,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Half Forward Fold</transition>
-      <transition>Standing Split</transition>
+      <transition>Standing Splits</transition>
       <transition>Chair Pose</transition>
       <transition>Gorilla Pose</transition>
       <transition>Malasana</transition>
@@ -407,7 +407,7 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Triangle Pose</transition>
-      <transition>Warrior 2</transition>
+      <transition>Warrior II</transition>
       <transition>Skandasana</transition>
       <transition>Headstand</transition>
     </transitions>
@@ -430,7 +430,7 @@
     <transitions>
       <transition>Bound Extended Side Angle</transition>
       <transition>Mountain Pose</transition>
-      <transition>Standing Split</transition>
+      <transition>Standing Splits</transition>
     </transitions>
   </asana>
   <asana>
@@ -449,14 +449,14 @@
       <tag>Chest Opener</tag>
     </tags>
     <transitions>
-      <transition>Half Moon Pose</transition>
+      <transition>Half Moon</transition>
       <transition>Extended Side Angle</transition>
-      <transition>Standing Split</transition>
-      <transition>Warrior 3</transition>
+      <transition>Standing Splits</transition>
+      <transition>Warrior III</transition>
     </transitions>
   </asana>
   <asana>
-    <n>Dancer Pose</n>
+    <n>Dancer's Pose</n>
     <sanskrit>Natarajasana</sanskrit>
     <side>Right</side>
     <image>images/webp/dancer-pose.webp</image>
@@ -473,8 +473,8 @@
     <transitions>
       <transition>Mountain Pose</transition>
       <transition>Tree Pose</transition>
-      <transition>Warrior 3</transition>
-      <transition>Hand to Big Toe</transition>
+      <transition>Warrior III</transition>
+      <transition>Extended Hand-to-Big-Toe Pose</transition>
     </transitions>
   </asana>
   <asana>
@@ -496,11 +496,11 @@
       <transition>Mountain Pose</transition>
       <transition>Tree Pose</transition>
       <transition>Chair Pose</transition>
-      <transition>Warrior 3</transition>
+      <transition>Warrior III</transition>
     </transitions>
   </asana>
   <asana>
-    <n>Half Moon Pose</n>
+    <n>Half Moon</n>
     <sanskrit>Ardha Chandrasana</sanskrit>
     <side>Right</side>
     <image>images/webp/half-moon-pose.webp</image>
@@ -516,14 +516,14 @@
     </tags>
     <transitions>
       <transition>Triangle Pose</transition>
-      <transition>Warrior 2</transition>
-      <transition>Warrior 3</transition>
-      <transition>Standing Split</transition>
+      <transition>Warrior II</transition>
+      <transition>Warrior III</transition>
+      <transition>Standing Splits</transition>
       <transition>Bound Half Moon</transition>
     </transitions>
   </asana>
   <asana>
-    <n>Standing Split</n>
+    <n>Standing Splits</n>
     <sanskrit>Urdhva Prasarita Eka Padasana</sanskrit>
     <side>Right</side>
     <image>images/webp/standing-split.webp</image>
@@ -539,8 +539,8 @@
     </tags>
     <transitions>
       <transition>Forward Fold</transition>
-      <transition>Half Moon Pose</transition>
-      <transition>Warrior 3</transition>
+      <transition>Half Moon</transition>
+      <transition>Warrior III</transition>
       <transition>Handstand Prep</transition>
       <transition>Low Lunge</transition>
     </transitions>
@@ -561,13 +561,13 @@
     </tags>
     <transitions>
       <transition>Mountain Pose</transition>
-      <transition>Warrior 3</transition>
+      <transition>Warrior III</transition>
       <transition>Eagle Pose</transition>
-      <transition>Hand to Big Toe</transition>
+      <transition>Extended Hand-to-Big-Toe Pose</transition>
     </transitions>
   </asana>
   <asana>
-    <n>Warrior 3</n>
+    <n>Warrior III</n>
     <sanskrit>Virabhadrasana III</sanskrit>
     <side>Right</side>
     <image>images/webp/warrior-3.webp</image>
@@ -582,10 +582,10 @@
       <tag>Focus</tag>
     </tags>
     <transitions>
-      <transition>Warrior 1</transition>
+      <transition>Warrior I</transition>
       <transition>Crescent Lunge</transition>
-      <transition>Half Moon Pose</transition>
-      <transition>Standing Split</transition>
+      <transition>Half Moon</transition>
+      <transition>Standing Splits</transition>
       <transition>Mountain Pose</transition>
     </transitions>
   </asana>
@@ -693,7 +693,7 @@
     <transitions>
       <transition>Triangle Pose</transition>
       <transition>Pyramid Pose</transition>
-      <transition>Warrior 1</transition>
+      <transition>Warrior I</transition>
       <transition>Wide-Legged Forward Fold</transition>
     </transitions>
   </asana>
@@ -1502,9 +1502,9 @@
     <transitions>
       <transition>Downward Facing Dog</transition>
       <transition>Low Lunge</transition>
-      <transition>Warrior 1</transition>
+      <transition>Warrior I</transition>
       <transition>Half Pigeon</transition>
-      <transition>Standing Split</transition>
+      <transition>Standing Splits</transition>
       <transition>Wild Thing</transition>
     </transitions>
   </asana>
@@ -1725,7 +1725,7 @@
     </tags>
     <transitions>
       <transition>Table Top</transition>
-      <transition>Dancer Pose</transition>
+      <transition>Dancer's Pose</transition>
       <transition>Three Legged Dog</transition>
     </transitions>
   </asana>
@@ -1885,7 +1885,7 @@
     </tags>
     <transitions>
       <transition>Chair Pose</transition>
-      <transition>Warrior 3</transition>
+      <transition>Warrior III</transition>
       <transition>Mountain Pose</transition>
     </transitions>
   </asana>
@@ -1905,7 +1905,7 @@
     </tags>
     <transitions>
       <transition>Crescent Lunge</transition>
-      <transition>Warrior 1</transition>
+      <transition>Warrior I</transition>
       <transition>Horse Pose</transition>
     </transitions>
   </asana>
@@ -1925,7 +1925,7 @@
     </tags>
     <transitions>
       <transition>Crescent Lunge</transition>
-      <transition>Warrior 1</transition>
+      <transition>Warrior I</transition>
       <transition>Low Lunge</transition>
     </transitions>
   </asana>
@@ -1945,7 +1945,7 @@
     </tags>
     <transitions>
       <transition>Crescent Lunge</transition>
-      <transition>Warrior 3</transition>
+      <transition>Warrior III</transition>
       <transition>Half Moon</transition>
     </transitions>
   </asana>
@@ -1984,9 +1984,9 @@
       <tag>Core</tag>
     </tags>
     <transitions>
-      <transition>Hand to Big Toe</transition>
-      <transition>Warrior 3</transition>
-      <transition>Standing Split</transition>
+      <transition>Extended Hand-to-Big-Toe Pose</transition>
+      <transition>Warrior III</transition>
+      <transition>Standing Splits</transition>
     </transitions>
   </asana>
   <asana>
@@ -2006,7 +2006,7 @@
     <transitions>
       <transition>Garland Pose</transition>
       <transition>Standing L</transition>
-      <transition>Warrior 3</transition>
+      <transition>Warrior III</transition>
     </transitions>
   </asana>
   <asana>
@@ -2026,26 +2026,6 @@
     <transitions>
       <transition>Three Legged Dog</transition>
       <transition>Revolved Low Lunge</transition>
-      <transition>Side Plank</transition>
-    </transitions>
-  </asana>
-  <asana>
-    <n>Wild Thing</n>
-    <sanskrit>Virabhadrasana Variation</sanskrit>
-    <side>Right</side>
-    <image>images/webp/wild-thing.webp</image>
-    <description>A variation of Three-Legged Dog where the lifted leg opens to the side and the hips stack, creating a star-like shape and deep hip opening.</description>
-    <difficulty>Intermediate</difficulty>
-    <chakra>Sacral</chakra>
-    <tags>
-      <tag>Standing (inverted)</tag>
-      <tag>Hip Opener</tag>
-      <tag>Balance</tag>
-      <tag>Side Opener</tag>
-    </tags>
-    <transitions>
-      <transition>Three Legged Dog</transition>
-      <transition>Wild Thing</transition>
       <transition>Side Plank</transition>
     </transitions>
   </asana>
@@ -2110,26 +2090,6 @@
     </transitions>
   </asana>
   <asana>
-    <n>Lizard Pose</n>
-    <sanskrit>Utthan Pristhasana</sanskrit>
-    <side>Right</side>
-    <image>images/webp/lizard-pose.webp</image>
-    <description>A deep hip-opening lunge with the front foot stepped to the outer edge of the mat and forearms or hands on the ground inside the front leg.</description>
-    <difficulty>Intermediate</difficulty>
-    <chakra>Sacral</chakra>
-    <tags>
-      <tag>Lunge</tag>
-      <tag>Hip Opener</tag>
-      <tag>Stretch</tag>
-      <tag>Groin Stretch</tag>
-    </tags>
-    <transitions>
-      <transition>Runner's Lunge</transition>
-      <transition>Low Lunge</transition>
-      <transition>Pigeon Pose</transition>
-    </transitions>
-  </asana>
-  <asana>
     <n>Twisted Dancer</n>
     <sanskrit>Parivrtta Natarajasana</sanskrit>
     <side>Right</side>
@@ -2144,7 +2104,7 @@
       <tag>Twist</tag>
     </tags>
     <transitions>
-      <transition>Dancer Pose</transition>
+      <transition>Dancer's Pose</transition>
       <transition>Half Moon</transition>
       <transition>Revolved Half Moon</transition>
     </transitions>
@@ -2164,8 +2124,8 @@
       <tag>Chest Opener</tag>
     </tags>
     <transitions>
-      <transition>Dancer Pose</transition>
-      <transition>Warrior 3</transition>
+      <transition>Dancer's Pose</transition>
+      <transition>Warrior III</transition>
       <transition>Half Moon</transition>
     </transitions>
   </asana>
@@ -2184,29 +2144,9 @@
       <tag>Strength</tag>
     </tags>
     <transitions>
-      <transition>Warrior 3</transition>
+      <transition>Warrior III</transition>
       <transition>Half Moon</transition>
-      <transition>Standing Split</transition>
-    </transitions>
-  </asana>
-  <asana>
-    <n>Warrior 3</n>
-    <sanskrit>Virabhadrasana III</sanskrit>
-    <side>Right</side>
-    <image>images/webp/warrior-3.webp</image>
-    <description>A powerful balance pose where the torso and one leg extend forward and back in a horizontal line, building strength, focus, and stability.</description>
-    <difficulty>Intermediate</difficulty>
-    <chakra>Solar Plexus</chakra>
-    <tags>
-      <tag>Standing</tag>
-      <tag>Balance</tag>
-      <tag>Strength</tag>
-      <tag>Core</tag>
-    </tags>
-    <transitions>
-      <transition>Warrior 1</transition>
-      <transition>Half Moon</transition>
-      <transition>Airplane Pose</transition>
+      <transition>Standing Splits</transition>
     </transitions>
   </asana>
   <asana>
@@ -2428,26 +2368,6 @@
       <transition>Bridge Pose</transition>
       <transition>Wheel Pose</transition>
       <transition>Supine Figure 4</transition>
-    </transitions>
-  </asana>
-  <asana>
-    <n>Wheel Pose</n>
-    <sanskrit>Urdhva Dhanurasana</sanskrit>
-    <side>Center</side>
-    <image>images/webp/wheel-pose.webp</image>
-    <description>A full backbend from a supine position with hands and feet pressing into the floor, lifting the entire body into an arch shape.</description>
-    <difficulty>Advanced</difficulty>
-    <chakra>Heart</chakra>
-    <tags>
-      <tag>Supine</tag>
-      <tag>Backbend</tag>
-      <tag>Strength</tag>
-      <tag>Chest Opener</tag>
-    </tags>
-    <transitions>
-      <transition>Bridge Pose</transition>
-      <transition>Camel Pose</transition>
-      <transition>Child's Pose</transition>
     </transitions>
   </asana>
   <asana>
@@ -2711,26 +2631,6 @@
     </transitions>
   </asana>
   <asana>
-    <n>Peacock Pose</n>
-    <sanskrit>Mayurasana</sanskrit>
-    <side>Center</side>
-    <image>images/webp/peacock-pose.webp</image>
-    <description>An advanced arm balance where the entire body is parallel to the floor, supported by the hands with elbows pressing into the abdomen.</description>
-    <difficulty>Advanced</difficulty>
-    <chakra>Solar Plexus</chakra>
-    <tags>
-      <tag>Arm Balance</tag>
-      <tag>Core</tag>
-      <tag>Strength</tag>
-      <tag>Digestive</tag>
-    </tags>
-    <transitions>
-      <transition>Plank</transition>
-      <transition>Crow Pose</transition>
-      <transition>Chaturanga</transition>
-    </transitions>
-  </asana>
-  <asana>
     <n>Chin Stand</n>
     <sanskrit>Ganda Bherundasana</sanskrit>
     <side>Center</side>
@@ -2748,26 +2648,6 @@
       <transition>Crane Pose</transition>
       <transition>Forearm Stand</transition>
       <transition>Child's Pose</transition>
-    </transitions>
-  </asana>
-  <asana>
-    <n>Flying Pigeon</n>
-    <sanskrit>Eka Pada Galavasana</sanskrit>
-    <side>Right</side>
-    <image>images/webp/flying-pigeon.webp</image>
-    <description>An advanced arm balance combining hip opening with arm strength as one leg tucks into the opposite arm while the other extends behind.</description>
-    <difficulty>Advanced</difficulty>
-    <chakra>Sacral</chakra>
-    <tags>
-      <tag>Arm Balance</tag>
-      <tag>Hip Opener</tag>
-      <tag>Core</tag>
-      <tag>Balance</tag>
-    </tags>
-    <transitions>
-      <transition>Figure 4</transition>
-      <transition>Crow Pose</transition>
-      <transition>One-Legged Crow</transition>
     </transitions>
   </asana>
   <asana>
@@ -2985,29 +2865,9 @@
       <tag>Hip Opener</tag>
     </tags>
     <transitions>
-      <transition>Dancer Pose</transition>
+      <transition>Dancer's Pose</transition>
       <transition>Half Lotus</transition>
       <transition>King Dancer</transition>
-    </transitions>
-  </asana>
-  <asana>
-    <n>Firefly Pose</n>
-    <sanskrit>Tittibhasana</sanskrit>
-    <side>Center</side>
-    <image>images/webp/firefly-pose.webp</image>
-    <description>An advanced arm balance with legs extended straight out to the sides while balancing on the hands, requiring hamstring flexibility and arm strength.</description>
-    <difficulty>Advanced</difficulty>
-    <chakra>Solar Plexus</chakra>
-    <tags>
-      <tag>Arm Balance</tag>
-      <tag>Hamstring Stretch</tag>
-      <tag>Core</tag>
-      <tag>Strength</tag>
-    </tags>
-    <transitions>
-      <transition>Malasana</transition>
-      <transition>Wide-Legged Forward Fold</transition>
-      <transition>L-Sit</transition>
     </transitions>
   </asana>
   <asana>
@@ -3715,9 +3575,9 @@
       <tag>Advanced</tag>
     </tags>
     <transitions>
-      <transition>Half Moon Pose</transition>
-      <transition>Dancer Pose</transition>
-      <transition>Standing Split</transition>
+      <transition>Half Moon</transition>
+      <transition>Dancer's Pose</transition>
+      <transition>Standing Splits</transition>
     </transitions>
   </asana>
   <asana>
@@ -3802,27 +3662,6 @@
       <transition>Tree Pose</transition>
       <transition>Eagle Pose</transition>
       <transition>Mountain Pose</transition>
-    </transitions>
-  </asana>
-  <asana>
-    <n>Hovering Table</n>
-    <sanskrit>Bharmanasana Variation</sanskrit>
-    <side>Center</side>
-    <image>images/webp/hovering-table.webp</image>
-    <description>A core-strengthening variation of Table Top where the knees hover just above the ground. Builds intense abdominal and arm strength.</description>
-    <difficulty>Advanced</difficulty>
-    <chakra>Solar Plexus</chakra>
-    <tags>
-      <tag>Core Strength</tag>
-      <tag>Arm Strength</tag>
-      <tag>Hovering</tag>
-      <tag>Table Top Variation</tag>
-      <tag>Strength Building</tag>
-    </tags>
-    <transitions>
-      <transition>Table Top</transition>
-      <transition>Plank</transition>
-      <transition>Cat-Cow</transition>
     </transitions>
   </asana>
   <asana>
@@ -4012,6 +3851,248 @@
       <transition>Seated Forward Fold</transition>
       <transition>Butterfly Pose</transition>
       <transition>Easy Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Bound Locust</n>
+    <sanskrit>Baddha Salabhasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/bound-locust.webp</image>
+    <description>A heart-opening backbend with hands clasped behind the back, strengthening the posterior chain while opening the chest and shoulders.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Prone</tag>
+      <tag>Heart Opening</tag>
+      <tag>Shoulder Opening</tag>
+    </tags>
+    <transitions>
+      <transition>Locust Pose</transition>
+      <transition>Cobra Pose</transition>
+      <transition>Child's Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Full Locust</n>
+    <sanskrit>Purna Salabhasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/full-locust.webp</image>
+    <description>An advanced backbend lifting the entire body off the ground, building tremendous back strength and opening the entire front body.</description>
+    <difficulty>Advanced</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Backbend</tag>
+      <tag>Prone</tag>
+      <tag>Strength</tag>
+      <tag>Heart Opening</tag>
+    </tags>
+    <transitions>
+      <transition>Locust Pose</transition>
+      <transition>Bound Locust</transition>
+      <transition>Child's Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Kneeling Knee to Nose</n>
+    <sanskrit>Ardha Uttanasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/kneeling-knee-to-nose.webp</image>
+    <description>A core-strengthening pose bringing knee to nose while in a kneeling position, building abdominal strength and improving balance.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Kneeling</tag>
+      <tag>Core</tag>
+      <tag>Balance</tag>
+      <tag>Strength</tag>
+    </tags>
+    <transitions>
+      <transition>Table Top</transition>
+      <transition>Cat-Cow Pose</transition>
+      <transition>Extended Child's Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Standing Bird Dog</n>
+    <sanskrit>Eka Pada Urdhva Mukha Svanasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/standing-bird-dog.webp</image>
+    <description>A standing balance pose extending opposite arm and leg, improving coordination, balance, and core stability.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Balance</tag>
+      <tag>Core</tag>
+      <tag>Coordination</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Tree Pose</transition>
+      <transition>Warrior III</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>One Leg Up the Wall</n>
+    <sanskrit>Eka Pada Viparita Karani</sanskrit>
+    <side>Center</side>
+    <image>images/webp/one-leg-up-wall.webp</image>
+    <description>A restorative inversion with one leg elevated against a wall, promoting circulation and deep relaxation while gently stretching the hamstrings.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Restorative</tag>
+      <tag>Inversion</tag>
+      <tag>Supine</tag>
+      <tag>Hip Opening</tag>
+    </tags>
+    <transitions>
+      <transition>Legs Up the Wall</transition>
+      <transition>Happy Baby</transition>
+      <transition>Supine Twist</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Hot Triangle</n>
+    <sanskrit>Utthita Trikonasana Variation</sanskrit>
+    <side>Both</side>
+    <image>images/webp/hot-triangle.webp</image>
+    <description>An intense variation of triangle pose with deeper side body stretch and heat-building elements, enhancing flexibility and building internal heat.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Side Bend</tag>
+      <tag>Hip Opening</tag>
+      <tag>Heat Building</tag>
+    </tags>
+    <transitions>
+      <transition>Triangle Pose</transition>
+      <transition>Extended Side Angle</transition>
+      <transition>Wide-Legged Forward Fold</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Exalted Warrior Pose</n>
+    <sanskrit>Utthita Parsvakonasana Variation</sanskrit>
+    <side>Both</side>
+    <image>images/webp/exalted-warrior.webp</image>
+    <description>An elevated variation of warrior pose with arms reaching overhead, building strength and creating length through the entire side body.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Strength</tag>
+      <tag>Side Bend</tag>
+      <tag>Heart Opening</tag>
+    </tags>
+    <transitions>
+      <transition>Warrior II</transition>
+      <transition>Extended Side Angle</transition>
+      <transition>Triangle Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Goddess Pose</n>
+    <sanskrit>Utkata Konasana</sanskrit>
+    <side>Center</side>
+    <image>images/webp/goddess.webp</image>
+    <description>A powerful standing pose with wide legs and arms in various mudras, embodying divine feminine energy and building lower body strength.</description>
+    <difficulty>Beginner</difficulty>
+    <chakra>Sacral</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Hip Opening</tag>
+      <tag>Empowerment</tag>
+      <tag>Grounding</tag>
+    </tags>
+    <transitions>
+      <transition>Goddess Squat</transition>
+      <transition>Star Pose</transition>
+      <transition>Wide-Legged Forward Fold</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>One Leg Mountain - Extended Leg</n>
+    <sanskrit>Eka Pada Tadasana</sanskrit>
+    <side>Both</side>
+    <image>images/webp/one-leg-mountain-extended.webp</image>
+    <description>A standing balance pose with one leg extended, combining the grounding of mountain pose with the challenge of single-leg balance and hip flexibility.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Root</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Balance</tag>
+      <tag>Hip Opening</tag>
+      <tag>Grounding</tag>
+    </tags>
+    <transitions>
+      <transition>Mountain Pose</transition>
+      <transition>Tree Pose</transition>
+      <transition>Extended Hand-to-Big-Toe</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Standing L</n>
+    <sanskrit>Uttanasana Variation</sanskrit>
+    <side>Center</side>
+    <image>images/webp/standing-l.webp</image>
+    <description>A standing forward fold variation creating an L-shape with the body, deeply stretching the hamstrings while strengthening the core and arms.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Solar Plexus</chakra>
+    <tags>
+      <tag>Standing</tag>
+      <tag>Forward Fold</tag>
+      <tag>Hamstring Stretch</tag>
+      <tag>Core</tag>
+    </tags>
+    <transitions>
+      <transition>Forward Fold</transition>
+      <transition>Downward Dog</transition>
+      <transition>Half Lift</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Cow Face Pose Variation</n>
+    <sanskrit>Gomukhasana Variation</sanskrit>
+    <side>Both</side>
+    <image>images/webp/herdelers-pose.webp</image>
+    <description>A specialized seated pose combining hip opening and shoulder stretching, named for its therapeutic benefits in addressing common postural imbalances.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Seated</tag>
+      <tag>Hip Opening</tag>
+      <tag>Shoulder Stretch</tag>
+      <tag>Therapeutic</tag>
+    </tags>
+    <transitions>
+      <transition>Cow Face Pose</transition>
+      <transition>Seated Forward Fold</transition>
+      <transition>Easy Pose</transition>
+    </transitions>
+  </asana>
+  <asana>
+    <n>Kneeling Dancer's Pose</n>
+    <sanskrit>Bharadvajasana Variation</sanskrit>
+    <side>Both</side>
+    <image>images/webp/kneeling-dancers-pose.webp</image>
+    <description>A graceful backbend performed from a kneeling position, grabbing the back foot while arching the spine. Combines hip flexor opening with heart opening in a stable base.</description>
+    <difficulty>Intermediate</difficulty>
+    <chakra>Heart</chakra>
+    <tags>
+      <tag>Kneeling</tag>
+      <tag>Backbend</tag>
+      <tag>Heart Opening</tag>
+      <tag>Hip Opening</tag>
+      <tag>Balance</tag>
+    </tags>
+    <transitions>
+      <transition>Low Lunge</transition>
+      <transition>Camel Pose</transition>
+      <transition>Hero Pose</transition>
+      <transition>Child's Pose</transition>
     </transitions>
   </asana>
 </asanas>
