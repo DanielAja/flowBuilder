@@ -480,8 +480,25 @@ function displayTimerDuration(duration) {
     return sec.toString() + "s";
 }
 
+// Function to find which group/section a pose belongs to
+function findPoseGroupName(poseIndex) {
+    if (!editingFlow || !editingFlow.sections || editingFlow.sections.length === 0) {
+        return null; // No groups defined
+    }
+    
+    // Find the section that contains this pose index
+    for (const section of editingFlow.sections) {
+        if (section.asanaIds && section.asanaIds.includes(poseIndex)) {
+            return section.name;
+        }
+    }
+    
+    return null; // Pose not in any group
+}
+
 function updateAsanaDisplay(asana) {
     const asanaNameElement = document.getElementById("asanaName");
+    const asanaGroupElement = document.getElementById("asanaGroup");
     const asanaSideElement = document.getElementById("asanaSide");
     const asanaImageElement = document.getElementById("asanaImage");
     const nextAsanaNameElement = document.getElementById("nextAsanaName");
@@ -507,6 +524,19 @@ function updateAsanaDisplay(asana) {
             asanaNameElement.textContent = currentUseSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
         }
     }
+    
+    // Update group name display
+    if (asanaGroupElement) {
+        // Find which group/section this pose belongs to
+        const groupName = findPoseGroupName(currentAsanaIndex);
+        if (groupName) {
+            asanaGroupElement.textContent = groupName;
+            asanaGroupElement.style.display = "block";
+        } else {
+            asanaGroupElement.style.display = "none";
+        }
+    }
+    
     if (asanaSideElement) asanaSideElement.textContent = asana.side;
     if (asanaImageElement) {
         asanaImageElement.src = asana.image;
@@ -2426,6 +2456,12 @@ function playFlow(flowID) {
             // Change display to show countdown starting and add animation
             asanaName.textContent = "Get Ready";
             asanaName.style.animation = 'pulse 1.5s infinite';
+            
+            // Hide the group name during countdown
+            const asanaGroup = document.getElementById('asanaGroup');
+            if (asanaGroup) {
+                asanaGroup.style.display = 'none';
+            }
 
             // Add the pulse animation if it doesn't exist
             if (!document.getElementById('countdown-animations')) {
@@ -8796,6 +8832,18 @@ function updateFlowScreenNames() {
         const asanaNameElement = document.getElementById("asanaName");
         if (asanaNameElement && currentAsana) {
             asanaNameElement.textContent = currentAsana.getDisplayName(useSanskritNames);
+        }
+        
+        // Update group name display
+        const asanaGroupElement = document.getElementById("asanaGroup");
+        if (asanaGroupElement) {
+            const groupName = findPoseGroupName(currentAsanaIndex);
+            if (groupName) {
+                asanaGroupElement.textContent = groupName;
+                asanaGroupElement.style.display = "block";
+            } else {
+                asanaGroupElement.style.display = "none";
+            }
         }
         
         // Update next asana if available

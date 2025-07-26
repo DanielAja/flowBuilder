@@ -2524,6 +2524,15 @@ input[type="number"][min="1"][max="300"][onchange="updateFlowDuration()"]:not(:f
   letter-spacing: 0.05em;
 }
 
+.flow-header .asana-group {
+  margin: 8px 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 #asanaImage {
   position: relative;
   padding: 15px;
@@ -3222,6 +3231,11 @@ input:checked + .slider:before {
     font-size: 16px;
   }
 
+  .flow-header .asana-group {
+    font-size: 12px;
+    margin: 6px 0;
+  }
+
   #asanaImage {
     max-width: 90vw;
     max-height: 60vh;
@@ -3421,6 +3435,11 @@ input:checked + .slider:before {
 
   .flow-header p {
     font-size: 14px;
+  }
+
+  .flow-header .asana-group {
+    font-size: 11px;
+    margin: 4px 0;
   }
 
   #asanaImage {
