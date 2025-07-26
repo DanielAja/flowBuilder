@@ -1343,6 +1343,18 @@
             <button id="changeSideBtn" class="action-btn" onclick="showChangeSideModal()" disabled>
               <span>Side</span>
             </button>
+            <button id="setInhaleBtn" class="action-btn" onclick="setSelectedBreath('Inhale')" disabled>
+              <span>Inhale</span>
+            </button>
+            <button id="setExhaleBtn" class="action-btn" onclick="setSelectedBreath('Exhale')" disabled>
+              <span>Exhale</span>
+            </button>
+            <button id="setBreatheHereBtn" class="action-btn" onclick="setSelectedBreath('Breathe Here')" disabled>
+              <span>Breathe Here</span>
+            </button>
+            <button id="setNoBreathBtn" class="action-btn" onclick="setSelectedBreath('-')" disabled>
+              <span>Clear Breath</span>
+            </button>
             <button id="saveSequenceBtn" class="action-btn" onclick="saveSequence()" disabled>
               <span>Save</span>
             </button>
@@ -1377,6 +1389,7 @@
                 <th>Asana</th>
                 <th>Duration</th>
                 <th>Side</th>
+                <th>Breath</th>
                 <th>Add</th>
                 <th>Swap</th>
                 <th>Remove</th>
@@ -1425,11 +1438,19 @@
             <span class="slider round"></span>
           </label>
         </div>
+        <div class="language-toggle-global">
+          <label class="toggle-label">🫁</label>
+          <label class="switch">
+            <input type="checkbox" id="breath-toggle-global">
+            <span class="slider round"></span>
+          </label>
+        </div>
         <button id="end-flow-btn" onclick="endFlow()">
           <span class="end-flow-text">End Flow</span>
         </button>
       </div>
       <div class="flow-header">
+        <p id="asanaBreath" style="display: none;">Breathe Here</p>
         <h1 id="asanaName">Warrior II</h1>
         <p id="asanaGroup" class="asana-group" style="display: none;"></p>
         <p id="asanaSide">left</p>
@@ -1672,6 +1693,7 @@
         </div>
       </div>
     </div>
+
 
 
     <script src="main.js"></script>

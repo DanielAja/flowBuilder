@@ -76,7 +76,8 @@ function getCustomPoses() {
             pose.tags,
             pose.transitionsAsana,
             pose.sanskrit,
-            pose.chakra
+            pose.chakra,
+            pose.breathCue
         ));
     } catch (error) {
         console.error('Error getting custom poses from localStorage:', error);
@@ -101,7 +102,7 @@ function saveCustomPoses(customPoses) {
 
 // YogaAsana class definition
 class YogaAsana {
-    constructor(name, side, image, description, difficulty, tags, transitionsAsana, sanskrit = "", chakra = "") {
+    constructor(name, side, image, description, difficulty, tags, transitionsAsana, sanskrit = "", chakra = "", breathCue = "-") {
         this.name = name;
         this.sanskrit = sanskrit;
         this.side = side;
@@ -113,6 +114,7 @@ class YogaAsana {
         this.transitionsAsana = Array.isArray(transitionsAsana) ? transitionsAsana : [];
         this.duration = 7; // Default duration of 7 seconds
         this.chakra = chakra; // Store which chakra is associated with this pose
+        this.breathCue = breathCue; // Breath guidance for this pose
         this.selected = false; // Initialize selection state
     }
 
@@ -122,6 +124,14 @@ class YogaAsana {
 
     setSide(side) {
         this.side = side;
+    }
+
+    setBreathCue(breathCue) {
+        this.breathCue = breathCue;
+    }
+
+    getBreathCue() {
+        return this.breathCue || "-";
     }
 
     // Get the display name based on language preference
@@ -375,6 +385,7 @@ let isInStartingCountdown = false; // Track if we're in the 3-2-1 countdown
 let speechEnabled = false; // Default to speech disabled
 let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
+let breathCuesEnabled = localStorage.getItem('breathCuesEnabled') !== 'false'; // Default to breath cues enabled
 let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 let currentViewMode = localStorage.getItem('viewMode') || 'table'; // Default to table view
 let confettiAnimationId = null; // For tracking confetti animation
@@ -500,6 +511,7 @@ function updateAsanaDisplay(asana) {
     const asanaNameElement = document.getElementById("asanaName");
     const asanaGroupElement = document.getElementById("asanaGroup");
     const asanaSideElement = document.getElementById("asanaSide");
+    const asanaBreathElement = document.getElementById("asanaBreath");
     const asanaImageElement = document.getElementById("asanaImage");
     const nextAsanaNameElement = document.getElementById("nextAsanaName");
     const nextAsanaImageElement = document.getElementById("nextAsanaImage");
@@ -538,6 +550,17 @@ function updateAsanaDisplay(asana) {
     }
     
     if (asanaSideElement) asanaSideElement.textContent = asana.side;
+    
+    // Update breath cue display
+    if (asanaBreathElement) {
+        const breathCue = asana.getBreathCue ? asana.getBreathCue() : '-';
+        if (breathCuesEnabled && breathCue && breathCue !== '-') {
+            asanaBreathElement.textContent = breathCue.toUpperCase();
+            asanaBreathElement.style.display = 'block';
+        } else {
+            asanaBreathElement.style.display = 'none';
+        }
+    }
     if (asanaImageElement) {
         asanaImageElement.src = asana.image;
         asanaImageElement.alt = `${asana.name} pose`;
@@ -649,7 +672,7 @@ function updateAsanaDisplay(asana) {
     
     // Speak the name of the asana if speech is enabled
     if (speechEnabled && !paused) {
-        speakAsanaName(asana.name, asana.side, asana.sanskrit);
+        speakAsanaName(asana.name, asana.side, asana.sanskrit, asana.getBreathCue ? asana.getBreathCue() : '');
     }
 
     console.log('Current Asana:', asana.name, 'Image:', asana.image, 'Duration:', asana.duration);
@@ -660,7 +683,7 @@ function updateAsanaDisplay(asana) {
 }
 
 // Function to speak the asana name
-function speakAsanaName(name, side, sanskrit = "") {
+function speakAsanaName(name, side, sanskrit = "", breathCue = "") {
     // Don't do anything if speech is disabled
     if (!speechEnabled) return;
     
@@ -675,15 +698,32 @@ function speakAsanaName(name, side, sanskrit = "") {
     if (speechBtn) speechBtn.classList.add('speaking');
     if (speechFlowBtn) speechFlowBtn.classList.add('speaking');
     
-    // Create text to speak - include side only if it's Left or Right
-    let textToSpeak = name;
+    // Create text to speak in order: breath, pose, side (if not front)
+    let textToSpeak = "";
     
-    // Add Sanskrit pronunciation if enabled and available
-    if (useSanskritNames && sanskrit) {
-        textToSpeak = sanskrit;
+    // 1. Add breath cue first if enabled and available
+    if (breathCuesEnabled && breathCue && breathCue !== '-') {
+        if (breathCue === 'Breathe Here') {
+            textToSpeak = "breathe here";
+        } else {
+            textToSpeak = breathCue.toLowerCase();
+        }
     }
     
-    if (side && (side.toLowerCase() === 'left' || side.toLowerCase() === 'right')) {
+    // 2. Add pose name (with Sanskrit if enabled)
+    let poseName = name;
+    if (useSanskritNames && sanskrit) {
+        poseName = sanskrit;
+    }
+    
+    if (textToSpeak) {
+        textToSpeak += `, ${poseName}`;
+    } else {
+        textToSpeak = poseName;
+    }
+    
+    // 3. Add side if not "front" or "center" (include left, right, both)
+    if (side && side.toLowerCase() !== 'front' && side.toLowerCase() !== 'center') {
         textToSpeak += `, ${side} side`;
     }
     
@@ -780,6 +820,7 @@ function clearBuildAFlow() {
             <th>Asana</th>
             <th>Duration</th>
             <th>Side</th>
+            <th>Breath</th>
             <th>Swap</th>
             <th>Remove</th>
         `;
@@ -1164,6 +1205,7 @@ function startNewFlow() {
                     <th>Asana</th>
                     <th>Duration</th>
                     <th>Side</th>
+                    <th>Breath</th>
                     <th>Swap</th>
                     <th>Remove</th>
                 `;
@@ -1211,7 +1253,8 @@ function selectAsana(asana) {
         [...asana.tags || []],
         [...asana.transitionsAsana || []],
         asana.sanskrit,
-        asana.chakra || ""
+        asana.chakra || "",
+        asana.breathCue || "-"
     );
     newAsana.setDuration(7); // Default 7 seconds
     // Note: selected property defaults to false from YogaAsana constructor
@@ -1423,6 +1466,97 @@ function createSideDropdown(side) {
     </select>`;
 }
 
+// Function to create a breath cue dropdown menu
+function createBreathDropdown(breathCue) {
+    return `<select class="breath-select" onchange="updateBreathCue(this)">
+        <option value="-" ${breathCue === "-" ? "selected" : ""}>-</option>
+        <option value="Inhale" ${breathCue === "Inhale" ? "selected" : ""}>Inhale</option>
+        <option value="Exhale" ${breathCue === "Exhale" ? "selected" : ""}>Exhale</option>
+        <option value="Breathe Here" ${breathCue === "Breathe Here" ? "selected" : ""}>Breathe Here</option>
+    </select>`;
+}
+
+// Function to create mobile emoji-based breath display
+function createMobileBreathDisplay(breathCue) {
+    let emoji = "";
+    let title = "";
+    
+    switch(breathCue) {
+        case "Inhale":
+            emoji = "⬆️";
+            title = "Inhale";
+            break;
+        case "Exhale":
+            emoji = "⬇️";
+            title = "Exhale";
+            break;
+        case "Breathe Here":
+            emoji = "🫁";
+            title = "Breathe Here";
+            break;
+        default:
+            emoji = "➖";
+            title = "No breath cue";
+    }
+    
+    return `<span class="mobile-breath-emoji" title="${title}" onclick="cycleMobileBreath(this)" data-breath="${breathCue}">${emoji}</span>`;
+}
+
+// Function to cycle through breath options when emoji is tapped
+function cycleMobileBreath(element) {
+    const currentBreath = element.getAttribute('data-breath');
+    const breathOptions = ["-", "Inhale", "Exhale", "Breathe Here"];
+    const currentIndex = breathOptions.indexOf(currentBreath);
+    const nextIndex = (currentIndex + 1) % breathOptions.length;
+    const nextBreath = breathOptions[nextIndex];
+    
+    // Update the emoji and data
+    let emoji = "";
+    let title = "";
+    
+    switch(nextBreath) {
+        case "Inhale":
+            emoji = "⬆️";
+            title = "Inhale";
+            break;
+        case "Exhale":
+            emoji = "⬇️";
+            title = "Exhale";
+            break;
+        case "Breathe Here":
+            emoji = "🫁";
+            title = "Breathe Here";
+            break;
+        default:
+            emoji = "➖";
+            title = "No breath cue";
+    }
+    
+    element.innerHTML = emoji;
+    element.setAttribute('data-breath', nextBreath);
+    element.setAttribute('title', title);
+    
+    // Update the asana in the flow
+    const row = element.closest('tr');
+    if (row) {
+        const index = parseInt(row.getAttribute('data-index'));
+        if (!isNaN(index) && index >= 0 && index < editingFlow.asanas.length) {
+            const asana = editingFlow.asanas[index];
+            if (asana.setBreathCue) {
+                asana.setBreathCue(nextBreath);
+            } else {
+                asana.breathCue = nextBreath;
+            }
+            
+            // Update the dropdown as well (for consistency)
+            const breathSelect = row.querySelector('select.breath-select');
+            if (breathSelect) {
+                breathSelect.value = nextBreath;
+            }
+        }
+    }
+}
+
 function updateAsanaImageOrientation(selectElement) {
     // Get the row containing this select element
     const row = selectElement.closest('tr');
@@ -1450,6 +1584,26 @@ function updateAsanaImageOrientation(selectElement) {
         if (editMode) {
             autoSaveFlow();
         }
+    }
+}
+
+function updateBreathCue(selectElement) {
+    // Get the row containing this select element
+    const row = selectElement.closest('tr');
+    if (!row) return;
+    
+    // Get the data-index to find the corresponding asana
+    const asanaIndex = parseInt(row.getAttribute('data-index'));
+    if (!isNaN(asanaIndex) && asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
+        // Update the asana's breath cue
+        editingFlow.asanas[asanaIndex].setBreathCue(selectElement.value);
+        
+        // Auto-save if in edit mode
+        if (editMode) {
+            autoSaveFlow();
+        }
+        
+        console.log(`Updated breath cue for pose ${asanaIndex} to ${selectElement.value}`);
     }
 }
 
@@ -1929,6 +2083,18 @@ function handleMoreOptionsEvent(event, eventType) {
                 case 'swap':
                     showSwapPoseModal(poseIndex);
                     break;
+                case 'set-inhale':
+                    setPoseInhale(poseIndex);
+                    break;
+                case 'set-exhale':
+                    setPoseExhale(poseIndex);
+                    break;
+                case 'set-breathe-here':
+                    setPoseBreatheHere(poseIndex);
+                    break;
+                case 'set-no-breath':
+                    setPoseNoBreath(poseIndex);
+                    break;
                 case 'delete':
                 case 'remove':
                     removePoseFromDropdown(poseIndex);
@@ -1985,7 +2151,8 @@ function duplicatePose(index) {
             [...originalAsana.tags],
             [...originalAsana.transitionsAsana],
             originalAsana.sanskrit,
-            originalAsana.chakra || ""
+            originalAsana.chakra || "",
+            originalAsana.breathCue || "-"
         );
         duplicatedAsana.setDuration(originalAsana.duration);
         
@@ -2054,12 +2221,18 @@ function saveFlow() {
         if (!isNaN(asanaIndex) && asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
             const durationInput = row.querySelector('.duration-wrapper input[type="number"]');
             const sideSelect = row.querySelector('select.side-select');
+            const breathSelect = row.querySelector('select.breath-select');
             
             if (durationInput && sideSelect) {
                 editingFlow.asanas[asanaIndex].duration = parseInt(durationInput.value) || 7;
                 // Map Front back to Center for internal storage consistency with XML
                 const mappedSide = sideSelect.value === "Front" ? "Center" : sideSelect.value;
                 editingFlow.asanas[asanaIndex].side = mappedSide;
+                
+                // Save breath cue
+                if (breathSelect) {
+                    editingFlow.asanas[asanaIndex].setBreathCue(breathSelect.value);
+                }
             }
         }
     });
@@ -2327,7 +2500,8 @@ function playFlow(flowID) {
                 asana.tags || [],
                 asana.transitionsAsana || [],
                 asana.sanskrit || "",
-                asana.chakra || ""
+                asana.chakra || "",
+                asana.breathCue || "-"
             );
             newAsana.setDuration(asana.duration || 15);
             newAsana.setSide(asana.side || "Center");
@@ -2461,6 +2635,12 @@ function playFlow(flowID) {
             const asanaGroup = document.getElementById('asanaGroup');
             if (asanaGroup) {
                 asanaGroup.style.display = 'none';
+            }
+            
+            // Hide the breath cue during countdown
+            const asanaBreath = document.getElementById('asanaBreath');
+            if (asanaBreath) {
+                asanaBreath.style.display = 'none';
             }
 
             // Add the pulse animation if it doesn't exist
@@ -3327,7 +3507,8 @@ function exportFlow(flowID) {
                 tags: asana.tags || [],
                 transitionsAsana: asana.transitionsAsana || [],
                 duration: asana.duration || 7,
-                chakra: asana.chakra || ""
+                chakra: asana.chakra || "",
+                breathCue: asana.breathCue || "-"
             })),
             sections: flowToExport.sections || [], // Include sections (groups) in export
             timestamp: new Date().toISOString(),
@@ -3388,7 +3569,8 @@ function importFlow(shareCode) {
                 asana.tags || [],
                 asana.transitionsAsana || [],
                 asana.sanskrit || "",
-                asana.chakra || ""
+                asana.chakra || "",
+                asana.breathCue || "-"
             );
             newAsana.setDuration(asana.duration || 7);
             newFlow.addAsana(newAsana);
@@ -3494,7 +3676,7 @@ function toggleSpeech() {
         // Speak the current pose if not paused
         if (!paused && editingFlow.asanas && editingFlow.asanas[currentAsanaIndex]) {
             const asana = editingFlow.asanas[currentAsanaIndex];
-            speakAsanaName(asana.name, asana.side);
+            speakAsanaName(asana.name, asana.side, asana.sanskrit, asana.getBreathCue ? asana.getBreathCue() : '');
         }
     } else {
         // Update main speech toggle button
@@ -3523,6 +3705,36 @@ function toggleSpeech() {
     }
 }
 
+// Function to toggle breath cues
+function toggleBreathCues() {
+    breathCuesEnabled = !breathCuesEnabled;
+    
+    // Save preference to localStorage
+    localStorage.setItem('breathCuesEnabled', breathCuesEnabled.toString());
+    
+    // Update the breath display immediately if in flow mode
+    if (document.getElementById('flowScreen').classList.contains('active')) {
+        const asanaBreathElement = document.getElementById("asanaBreath");
+        if (asanaBreathElement && editingFlow && editingFlow.asanas && editingFlow.asanas.length > 0) {
+            // Get the current asana from the flow
+            const currentAsana = editingFlow.asanas[currentAsanaIndex];
+            if (currentAsana) {
+                const breathCue = currentAsana.getBreathCue ? currentAsana.getBreathCue() : '-';
+                console.log(`Current asana breath cue: ${breathCue}, breathCuesEnabled: ${breathCuesEnabled}`);
+                
+                if (breathCuesEnabled && breathCue && breathCue !== '-') {
+                    asanaBreathElement.textContent = breathCue.toUpperCase();
+                    asanaBreathElement.style.display = 'block';
+                } else {
+                    asanaBreathElement.style.display = 'none';
+                }
+            }
+        }
+    }
+    
+    console.log(`Breath cues ${breathCuesEnabled ? 'enabled' : 'disabled'}`);
+}
+
 // Add event listener for the global speech toggle
 document.addEventListener('DOMContentLoaded', function() {
     const speechToggleGlobal = document.getElementById('speech-toggle-global');
@@ -3533,7 +3745,165 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Add event listener for the global breath cue toggle
+    const breathToggleGlobal = document.getElementById('breath-toggle-global');
+    if (breathToggleGlobal) {
+        breathToggleGlobal.checked = breathCuesEnabled; // Set initial state
+        breathToggleGlobal.addEventListener('change', function() {
+            toggleBreathCues();
+        });
+    }
 });
+
+function showIndividualBreathModal(poseIndex) {
+    console.log(`showChangeBreathModal called with poseIndex: ${poseIndex}`);
+    console.log(`editingFlow has ${editingFlow.asanas.length} asanas`);
+    
+    if (poseIndex < 0 || poseIndex >= editingFlow.asanas.length) {
+        console.error('Invalid pose index for breath change:', poseIndex);
+        return;
+    }
+    
+    const asana = editingFlow.asanas[poseIndex];
+    const currentBreathCue = asana.getBreathCue ? asana.getBreathCue() : '-';
+    
+    console.log(`Target asana for breath change: ${asana.name} (index ${poseIndex})`);
+    console.log(`Current breath cue: ${currentBreathCue}`);
+    
+    // Create modal HTML
+    const modalHTML = `
+        <div class="modal-overlay" id="individualBreathModal">
+            <div class="modal-content">
+                <h2>Change Breath Cue</h2>
+                <p>Select breath cue for: <strong>${asana.name}</strong></p>
+                <div class="breath-options">
+                    <button class="breath-option-btn ${currentBreathCue === '-' ? 'selected' : ''}" data-breath="-">-</button>
+                    <button class="breath-option-btn ${currentBreathCue === 'Inhale' ? 'selected' : ''}" data-breath="Inhale">Inhale</button>
+                    <button class="breath-option-btn ${currentBreathCue === 'Exhale' ? 'selected' : ''}" data-breath="Exhale">Exhale</button>
+                    <button class="breath-option-btn ${currentBreathCue === 'Breathe Here' ? 'selected' : ''}" data-breath="Breathe Here">Breathe Here</button>
+                </div>
+                <div class="modal-actions">
+                    <button onclick="closeIndividualBreathModal()">Cancel</button>
+                    <button onclick="applyBreathChange(${poseIndex})" data-pose-index="${poseIndex}">Apply</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Add click handlers for breath options
+    const breathButtons = document.querySelectorAll('.breath-option-btn');
+    breathButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Handle double-click to deselect
+            if (this.classList.contains('selected')) {
+                // If already selected, deselect and set to "-"
+                breathButtons.forEach(b => b.classList.remove('selected'));
+                const dashButton = document.querySelector('.breath-option-btn[data-breath="-"]');
+                if (dashButton) dashButton.classList.add('selected');
+            } else {
+                // Select this option
+                breathButtons.forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+            }
+        });
+    });
+}
+
+function closeIndividualBreathModal() {
+    const modal = document.getElementById('individualBreathModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+function applyBreathChange(poseIndex) {
+    const selectedBtn = document.querySelector('.breath-option-btn.selected');
+    
+    console.log(`Applying breath change to pose index: ${poseIndex}`);
+    console.log(`Selected breath cue: ${selectedBtn ? selectedBtn.getAttribute('data-breath') : 'none'}`);
+    console.log(`Flow has ${editingFlow.asanas.length} asanas`);
+    
+    if (selectedBtn && poseIndex >= 0 && poseIndex < editingFlow.asanas.length) {
+        const newBreathCue = selectedBtn.getAttribute('data-breath');
+        const asana = editingFlow.asanas[poseIndex];
+        
+        console.log(`Target asana: ${asana.name}`);
+        console.log(`Old breath cue: ${asana.getBreathCue ? asana.getBreathCue() : asana.breathCue}`);
+        
+        // Update the breath cue using the proper method
+        if (asana.setBreathCue && typeof asana.setBreathCue === 'function') {
+            asana.setBreathCue(newBreathCue);
+        } else {
+            asana.breathCue = newBreathCue;
+        }
+        
+        console.log(`New breath cue: ${asana.getBreathCue ? asana.getBreathCue() : asana.breathCue}`);
+        
+        // Update the table display
+        rebuildFlowTable();
+        
+        // Update flow duration (which saves the changes)
+        updateFlowDuration();
+        
+        console.log(`Successfully changed breath cue for ${asana.name} to: ${newBreathCue}`);
+    } else {
+        console.error(`Failed to apply breath change - invalid index or no selection`);
+        console.error(`poseIndex: ${poseIndex}, selectedBtn: ${selectedBtn}, asanas length: ${editingFlow.asanas.length}`);
+    }
+    
+    closeIndividualBreathModal();
+}
+
+// Functions to set individual breath cues from three-dot dropdown
+function setPoseBreath(poseIndex, breathCue) {
+    console.log(`Setting pose ${poseIndex} to breath cue: ${breathCue}`);
+    
+    if (poseIndex < 0 || poseIndex >= editingFlow.asanas.length) {
+        console.error('Invalid pose index for breath change:', poseIndex);
+        return;
+    }
+    
+    const asana = editingFlow.asanas[poseIndex];
+    
+    // Update the breath cue
+    if (asana.setBreathCue && typeof asana.setBreathCue === 'function') {
+        asana.setBreathCue(breathCue);
+    } else {
+        asana.breathCue = breathCue;
+    }
+    
+    // Update the table display
+    rebuildFlowTable();
+    
+    // Update flow duration (which saves the changes)
+    updateFlowDuration();
+    
+    // Show notification with appropriate message
+    const displayBreath = breathCue === '-' ? 'no breath cue' : breathCue;
+    showToastNotification(`Set ${asana.name} to ${displayBreath}`);
+    
+    console.log(`Successfully set ${asana.name} to breath cue: ${breathCue}`);
+}
+
+function setPoseInhale(poseIndex) {
+    setPoseBreath(poseIndex, 'Inhale');
+}
+
+function setPoseExhale(poseIndex) {
+    setPoseBreath(poseIndex, 'Exhale');
+}
+
+function setPoseBreatheHere(poseIndex) {
+    setPoseBreath(poseIndex, 'Breathe Here');
+}
+
+function setPoseNoBreath(poseIndex) {
+    setPoseBreath(poseIndex, '-');
+}
 
 function editFlow(flowID) {
     const flows = getFlows();
@@ -3614,7 +3984,8 @@ function processFlowAsanasOptimized(flowToEdit) {
                         asana.tags || [],
                         asana.transitionsAsana || [],
                         asana.sanskrit || "",
-                        asana.chakra || ""
+                        asana.chakra || "",
+                        asana.breathCue || "-"
                     );
                     editingFlow.asanas[i].setDuration(asana.duration || 7);
                     editingFlow.asanas[i].setSide(asana.side || "Center");
@@ -3761,7 +4132,8 @@ function exportFlowAsJSONFromModal() {
                     side: asana.side || "both",
                     description: asana.description || "",
                     tags: Array.isArray(asana.tags) ? asana.tags : [],
-                    chakra: asana.chakra || "Root"
+                    chakra: asana.chakra || "Root",
+                    breathCue: asana.breathCue || "-"
                 };
             }),
             sections: flowToExport.sections || [] // Include sections (groups) in export
@@ -4312,6 +4684,7 @@ function generateCSVContent(flow) {
         'Sanskrit Name',
         'Duration',
         'Side',
+        'Breath Cue',
         'Difficulty',
         'Tags',
         'Description'
@@ -4324,6 +4697,7 @@ function generateCSVContent(flow) {
         escapeCSV(asana.sanskrit || ''),
         escapeCSV(formatDuration(asana.duration || 15)),
         escapeCSV(asana.side || 'both'),
+        escapeCSV(asana.breathCue || '-'),
         escapeCSV(asana.difficulty || 'Beginner'),
         escapeCSV(Array.isArray(asana.tags) ? asana.tags.join('; ') : ''),
         escapeCSV(asana.description || '')
@@ -4815,7 +5189,8 @@ function importFlowFromData(templateData) {
                 asanaData.tags || [],
                 asanaData.transitionsAsana || [],
                 asanaData.sanskrit || "",
-                asanaData.chakra || "Root"
+                asanaData.chakra || "Root",
+                asanaData.breathCue || "-"
             );
             
             // Set the duration
@@ -5062,6 +5437,7 @@ async function loadAsanasFromXML() {
             const description = asanaElem.getElementsByTagName('description')[0]?.textContent || '';
             const difficulty = asanaElem.getElementsByTagName('difficulty')[0]?.textContent || 'Beginner';
             const chakra = asanaElem.getElementsByTagName('chakra')[0]?.textContent || '';
+            const breathCue = asanaElem.getElementsByTagName('breath')[0]?.textContent || 'Breathe Here';
             
             // Extract tags
             const tagElements = asanaElem.getElementsByTagName('tag');
@@ -5087,7 +5463,8 @@ async function loadAsanasFromXML() {
                 tags,
                 transitions,
                 sanskrit,
-                chakra
+                chakra,
+                breathCue
             );
             
             // Check for duplicates before adding
@@ -5138,7 +5515,8 @@ async function loadAsanasFromXML() {
                 ["Standing", "Stretch"],
                 ["Plank", "Cobra"],
                 "Adho Mukha Svanasana",
-                "Third Eye"
+                "Third Eye",
+                "Exhale"
             ),
             new YogaAsana(
                 "Tree Pose",
@@ -5149,7 +5527,8 @@ async function loadAsanasFromXML() {
                 ["Standing", "Balance"],
                 ["Mountain Pose", "Warrior 3"],
                 "Vrksasana",
-                "Root"
+                "Root",
+                "Breathe Here"
             ),
             new YogaAsana(
                 "Warrior 2",
@@ -5160,7 +5539,8 @@ async function loadAsanasFromXML() {
                 ["Standing", "Strength"],
                 ["Mountain Pose", "Triangle Pose"],
                 "Virabhadrasana II",
-                "Sacral"
+                "Sacral",
+                "Inhale"
             ),
             new YogaAsana(
                 "Triangle Pose",
@@ -5171,7 +5551,8 @@ async function loadAsanasFromXML() {
                 ["Standing", "Stretch"],
                 ["Warrior 2", "Half Moon Pose"],
                 "Trikonasana",
-                "Sacral"
+                "Sacral",
+                "Exhale"
             )
         ];
         console.log('Loaded fallback asanas');
@@ -7659,7 +8040,7 @@ function createSectionHeaderRow(sectionInfo) {
     const sectionDurationDisplay = displayFlowDuration(sectionDuration);
     
     headerRow.innerHTML = `
-        <td colspan="6" class="section-header-content">
+        <td colspan="7" class="section-header-content">
             <div class="section-header-flex">
                 <div class="section-checkbox">
                     <input type="checkbox" class="section-select" 
@@ -7734,12 +8115,20 @@ function createAsanaRowHTML(asana, index, sectionName, sectionId, displayNumber,
         </td>
         <td>${createSideDropdown(asana.side)}</td>
         <td>
+            ${createBreathDropdown(asana.getBreathCue ? asana.getBreathCue() : '-')}
+            ${createMobileBreathDisplay(asana.getBreathCue ? asana.getBreathCue() : '-')}
+        </td>
+        <td>
             <div class="more-options-container">
                 <button class="table-btn more-options-btn" data-pose-index="${index}" title="More options">⋮</button>
                 <div class="pose-dropdown" id="pose-dropdown-${index}">
                     <div class="dropdown-item" data-action="add-above" data-pose-index="${index}">Add pose above</div>
                     <div class="dropdown-item" data-action="add-below" data-pose-index="${index}">Add pose below</div>
                     <div class="dropdown-item" data-action="swap" data-pose-index="${index}">Swap pose</div>
+                    <div class="dropdown-item" data-action="set-inhale" data-pose-index="${index}">Inhale</div>
+                    <div class="dropdown-item" data-action="set-exhale" data-pose-index="${index}">Exhale</div>
+                    <div class="dropdown-item" data-action="set-breathe-here" data-pose-index="${index}">Breathe Here</div>
+                    <div class="dropdown-item" data-action="set-no-breath" data-pose-index="${index}">Clear Breath</div>
                     <div class="dropdown-item delete-item" data-action="delete" data-pose-index="${index}">Delete pose</div>
                 </div>
             </div>
@@ -7845,6 +8234,7 @@ function createAsanaCardElement(asana, index, displayNumber) {
             <input type="number" value="${asana.duration || 3}" min="1" max="300" onchange="updateFlowDuration()"/>s
         </div>
         <div class="card-side">${createSideDropdown(asana.side)}</div>
+        <div class="card-breath">${createBreathDropdown(asana.getBreathCue ? asana.getBreathCue() : '-')}</div>
     `;
     
     return card;
@@ -8005,7 +8395,7 @@ function rebuildTableView() {
                 
                 // Create section header with checkbox and collapse/expand toggle
                 headerRow.innerHTML = `
-                    <td colspan="8" class="section-header-content">
+                    <td colspan="9" class="section-header-content">
                         <div class="section-header-flex">
                             <div class="section-checkbox">
                                 <input type="checkbox" class="section-select" 
@@ -8865,7 +9255,7 @@ function updateFlowScreenNames() {
             // Cancel current speech
             speechSynthesis.cancel();
             // Speak the current pose name in the new language
-            speakAsanaName(currentAsana.name, currentAsana.side, currentAsana.sanskrit);
+            speakAsanaName(currentAsana.name, currentAsana.side, currentAsana.sanskrit, currentAsana.getBreathCue ? currentAsana.getBreathCue() : '');
         }
     }
 }
@@ -9878,6 +10268,10 @@ function updateActionButtons() {
     const saveSequenceBtn = document.getElementById('saveSequenceBtn');
     const addToSectionBtn = document.getElementById('addToSectionBtn');
     const changeSideBtn = document.getElementById('changeSideBtn');
+    const setInhaleBtn = document.getElementById('setInhaleBtn');
+    const setExhaleBtn = document.getElementById('setExhaleBtn');
+    const setBreatheHereBtn = document.getElementById('setBreatheHereBtn');
+    const setNoBreathBtn = document.getElementById('setNoBreathBtn');
     const reverseBtn = document.getElementById('reverseOrderBtn');
     
     const selectedPoses = getSelectedAsanas();
@@ -9890,6 +10284,10 @@ function updateActionButtons() {
     if (saveSequenceBtn) saveSequenceBtn.disabled = !hasSelectedPoses;
     if (addToSectionBtn) addToSectionBtn.disabled = !hasSelectedPoses;
     if (changeSideBtn) changeSideBtn.disabled = !hasSelectedPoses;
+    if (setInhaleBtn) setInhaleBtn.disabled = !hasSelectedPoses;
+    if (setExhaleBtn) setExhaleBtn.disabled = !hasSelectedPoses;
+    if (setBreatheHereBtn) setBreatheHereBtn.disabled = !hasSelectedPoses;
+    if (setNoBreathBtn) setNoBreathBtn.disabled = !hasSelectedPoses;
     const changeDurationBtn = document.getElementById('changeDurationBtn');
     if (changeDurationBtn) changeDurationBtn.disabled = !hasSelectedPoses;
     if (reverseBtn) reverseBtn.disabled = !hasSelectedPoses;
@@ -9911,7 +10309,8 @@ function copySelectedPoses() {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || ""
+            asana.chakra || "",
+            asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
@@ -9939,7 +10338,8 @@ function pasteSelectedPoses() {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || ""
+            asana.chakra || "",
+            asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
@@ -10181,6 +10581,7 @@ function closeChangeSideModal() {
     modal.style.display = 'none';
 }
 
+
 // Duration change modal functions
 function showChangeDurationModal() {
     const selectedPoses = getSelectedAsanas();
@@ -10338,6 +10739,51 @@ function changeSelectedPosesSide() {
     console.log(`Successfully changed ${changedCount} poses to side: ${newSide}`);
 }
 
+// Function to set breath cue for all selected poses
+function setSelectedBreath(breathCue) {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) {
+        showToastNotification('Please select poses first');
+        return;
+    }
+    
+    console.log(`Setting ${selectedPoses.length} selected poses to breath cue: ${breathCue}`);
+    
+    // Update the breath cue for all selected asanas
+    let changedCount = 0;
+    editingFlow.asanas.forEach((asana, index) => {
+        if (asana.selected) {
+            asana.setBreathCue(breathCue);
+            changedCount++;
+        }
+    });
+    
+    // Update the individual breath dropdowns in the table to reflect the change
+    editingFlow.asanas.forEach((asana, asanaIndex) => {
+        if (asana.selected) {
+            const tableRow = document.querySelector(`#flowTable tr[data-index="${asanaIndex}"]`);
+            if (tableRow) {
+                const breathSelect = tableRow.querySelector('select.breath-select');
+                if (breathSelect) {
+                    breathSelect.value = breathCue;
+                    console.log(`Updated breath select for pose ${asanaIndex} to ${breathCue}`);
+                }
+            }
+        }
+    });
+    
+    // Auto-save if in edit mode
+    if (editMode) {
+        autoSaveFlow();
+    }
+    
+    // Show notification with appropriate message
+    const displayBreath = breathCue === '-' ? 'no breath cue' : breathCue;
+    showToastNotification(`Set ${changedCount} pose${changedCount !== 1 ? 's' : ''} to ${displayBreath}`);
+    
+    console.log(`Successfully set ${changedCount} poses to breath cue: ${breathCue}`);
+}
+
 // Function to save a sequence
 function saveSequence() {
     const selectedPoses = getSelectedAsanas();
@@ -10374,7 +10820,8 @@ function saveSequence() {
                 [...asana.tags],
                 [...asana.transitionsAsana],
                 asana.sanskrit,
-                asana.chakra || ""
+                asana.chakra || "",
+                asana.breathCue || "-"
             );
             newAsana.setDuration(asana.duration);
             return newAsana;
@@ -10648,7 +11095,8 @@ function editSequence(sequenceId) {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || ""
+            asana.chakra || "",
+            asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
         editingFlow.addAsana(newAsana);
@@ -10730,7 +11178,8 @@ function updateEditedSequence(sequenceId, originalName) {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || ""
+            asana.chakra || "",
+            asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
@@ -10768,7 +11217,8 @@ function loadSequence(sequenceId) {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || ""
+            asana.chakra || "",
+            asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
@@ -10919,7 +11369,8 @@ function createCustomPoseFromModal() {
         ['Custom'], // Default tags
         [], // No transitions by default
         '', // No Sanskrit name by default
-        '' // No chakra by default
+        '', // No chakra by default
+        '-' // Default breath cue
     );
     customPose.setDuration(7); // Default duration
 
@@ -11188,7 +11639,8 @@ function swapPose(newAsana) {
         [...(newAsana.tags || [])],
         [...(newAsana.transitionsAsana || [])],
         newAsana.sanskrit,
-        newAsana.chakra || ""
+        newAsana.chakra || "",
+        newAsana.breathCue || "-"
     );
     newPoseAsana.setDuration(7); // Default duration for new poses
     

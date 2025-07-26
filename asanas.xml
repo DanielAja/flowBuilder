@@ -1,13 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <asanas>
   <asana>
     <n>Stand at Attention</n>
     <sanskrit>Samasthiti</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/stand-at-attention.webp</image>
     <description>A fundamental standing pose with feet together, arms at sides, and active engagement of all muscles. Develops concentration, stability, and balanced posture.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Foundation</tag>
@@ -24,11 +25,12 @@
   <asana>
     <n>Mountain Pose</n>
     <sanskrit>Tadasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/mountain-pose.webp</image>
     <description>Establishes proper alignment, grounding, and body awareness. The foundation for all standing poses.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Foundation</tag>
@@ -45,11 +47,12 @@
   <asana>
     <n>Staff Pose</n>
     <sanskrit>Dandasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/staff-pose.webp</image>
     <description>Establishes proper seated alignment, strengthens the core and back muscles, and improves posture. Foundation for seated poses.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Foundation</tag>
@@ -65,11 +68,12 @@
   <asana>
     <n>Table Top</n>
     <sanskrit>Bharmanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/table-top.webp</image>
     <description>A neutral position on hands and knees with a flat back. Foundation for cat-cow, bird dog, and transitions like Downward Dog.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Foundation</tag>
       <tag>Neutral</tag>
@@ -87,11 +91,12 @@
   <asana>
     <n>Chair Pose</n>
     <sanskrit>Utkatasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/chair-pose.webp</image>
     <description>Builds heat and strength in the legs, glutes, and core. Challenges endurance and focus.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -112,6 +117,7 @@
     <description>Strengthens legs and core, stretches hip flexors. Challenges balance with back knee lifted.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -136,6 +142,7 @@
     <description>Deep twisting pose that combines the leg strength of Crescent Lunge with a powerful spinal rotation. Improves balance, digestion, and detoxification while stretching hips and shoulders.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Twist</tag>
@@ -160,6 +167,7 @@
     <description>Deeply stretches the side body, opens hips and chest, and strengthens legs. Builds stamina.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Side Stretch</tag>
@@ -176,11 +184,12 @@
   <asana>
     <n>Gorilla Pose</n>
     <sanskrit>Pada Hastasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/gorilla-pose.webp</image>
     <description>Standing forward fold with hands placed under the feet (palms up). Deeply stretches hamstrings, calves, and wrists.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -202,6 +211,7 @@
     <description>Challenges balance, stretches hamstrings and hips, and strengthens the standing leg and core.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -223,6 +233,7 @@
     <description>Forward fold variation from Warrior 1 with hands interlaced behind back. Deeply opens shoulders and hips, promotes surrender.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -245,6 +256,7 @@
     <description>Creates a side bend and opens the side waist while maintaining Warrior 2 leg stance. Builds strength and grace.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Side Stretch</tag>
@@ -266,6 +278,7 @@
     <description>Stretches hamstrings, groins, and hips while opening the chest and shoulders. Improves stability and alignment.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Stretch</tag>
@@ -287,6 +300,7 @@
     <description>Strengthens legs and core, opens chest and shoulders, stretches hip flexors. Builds stability, focus, and confidence.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -309,6 +323,7 @@
     <description>Strengthens legs and arms, opens hips and chest. Builds stamina, focus, and determination.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -326,11 +341,12 @@
   <asana>
     <n>Forward Fold</n>
     <sanskrit>Uttanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/forward-fold.webp</image>
     <description>Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -350,11 +366,12 @@
   <asana>
     <n>Half Forward Fold</n>
     <sanskrit>Ardha Uttanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/half-forward-fold.webp</image>
     <description>Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -371,11 +388,12 @@
   <asana>
     <n>Seated Forward Fold</n>
     <sanskrit>Paschimottanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/seated-forward-fold.webp</image>
     <description>Deeply stretches the entire back body (spine, hamstrings, calves). Calms the nervous system, promotes introspection.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Forward Fold</tag>
@@ -392,11 +410,12 @@
   <asana>
     <n>Wide-Legged Forward Fold</n>
     <sanskrit>Prasarita Padottanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/wide-legged-forward-fold.webp</image>
     <description>Stretches inner thighs, hamstrings, and spine. Calms the mind, relieves mild back tension. Variations include different hand/arm positions.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -420,6 +439,7 @@
     <description>Advanced standing balance requiring hip flexibility, hamstring length, core strength, and focus. Combines a bind with leg extension.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -441,6 +461,7 @@
     <description>Variation of Half Moon Pose involving a bind between the top arm and lifted leg. Deeply opens the chest and challenges balance.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -463,6 +484,7 @@
     <description>Combines balance, strength, flexibility, and focus. Opens the chest and shoulders, stretches the hip flexors and quads.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -485,6 +507,7 @@
     <description>Improves balance, concentration, and joint stability (ankles, knees, wrists). Stretches shoulders and upper back.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Third Eye</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -507,6 +530,7 @@
     <description>Challenges balance while strengthening legs and core. Opens hips and chest, improves coordination.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -530,6 +554,7 @@
     <description>Challenges balance and hamstring flexibility. Strengthens the standing leg. A forward fold with one leg extended upwards.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -553,6 +578,7 @@
     <description>Improves balance, concentration, and stability. Strengthens ankles and legs, opens hips gently.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -574,6 +600,7 @@
     <description>Balancing pose that strengthens the entire back body, legs, and core. Improves focus, coordination, and posture.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -597,6 +624,7 @@
     <description>Seated spinal twist energizes the spine, stimulates digestion, and improves spinal mobility. Stretches hips, shoulders, and neck.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Twist</tag>
@@ -618,6 +646,7 @@
     <description>Gentle supine twist that releases tension in the spine and back muscles. Promotes relaxation and can aid digestion.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Twist</tag>
@@ -640,6 +669,7 @@
     <description>Performed lying on the back, knees drop to one side while gazing opposite. Gentle spinal rotation, releases lower back.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Twist</tag>
@@ -661,6 +691,7 @@
     <description>Combines the strength of Chair Pose with a deep spinal twist. Detoxifies organs, builds heat, challenges balance.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Twist</tag>
@@ -683,6 +714,7 @@
     <description>Combines a deep twist with a hamstring stretch. Improves balance, aids digestion, strengthens legs and core.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Twist</tag>
@@ -705,6 +737,7 @@
     <description>Gentle twist from Table Top. Releases tension in the upper back, shoulders, and neck.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Twist</tag>
@@ -721,11 +754,12 @@
   <asana>
     <n>Butterfly Pose</n>
     <sanskrit>Baddha Konasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/butterfly-pose.webp</image>
     <description>Seated pose opening the hips and inner thighs. Can be practiced upright or folded forward. Stimulates pelvic region.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hip Opener</tag>
@@ -742,11 +776,12 @@
   <asana>
     <n>Garland Pose</n>
     <sanskrit>Malasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/garland-pose.webp</image>
     <description>Deep squat opening hips, groin, and lower back. Stretches ankles. Grounding and beneficial for digestion and elimination.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Hip Opener</tag>
@@ -769,6 +804,7 @@
     <description>Intense hip opener focusing on the external rotation of the front leg hip and stretching the hip flexor of the back leg. Often practiced folding forward (Sleeping Pigeon).</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Hip Opener</tag>
@@ -786,11 +822,12 @@
   <asana>
     <n>Happy Baby</n>
     <sanskrit>Ananda Balasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/happy-baby.webp</image>
     <description>Supine pose opening hips and inner groin. Gently releases lower back and sacrum. Calming and playful.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Hip Opener</tag>
@@ -813,6 +850,7 @@
     <description>Deep hip and groin opener, stretches hamstrings, hip flexors, and quads. Can be practiced on hands or forearms.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Hip Opener</tag>
@@ -836,6 +874,7 @@
     <description>Stretches hip flexors (psoas) and quadriceps of the back leg. Builds stability. Back knee rests on the ground.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Lunge</tag>
@@ -860,6 +899,7 @@
     <description>A foundational lunge with the back knee on or hovering above the ground. Builds strength in the legs while opening the hip flexors and preparing for deeper poses.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Lunge</tag>
@@ -883,6 +923,7 @@
     <description>Upright variation of the hip opener, often incorporating a backbend (King Pigeon) or quad stretch. Opens hips and chest.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Hip Opener</tag>
@@ -899,11 +940,12 @@
   <asana>
     <n>Reclined Bound Angle</n>
     <sanskrit>Supta Baddha Konasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/reclined-bound-angle.webp</image>
     <description>Restorative supine pose opening hips, inner thighs, and chest gently. Promotes relaxation and stress relief.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Restorative</tag>
@@ -926,6 +968,7 @@
     <description>Strengthens core, back muscles, and glutes while improving balance and stability. Done from Table Top.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Core</tag>
@@ -943,11 +986,12 @@
   <asana>
     <n>Boat Pose</n>
     <sanskrit>Navasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/boat-pose.webp</image>
     <description>Strongly engages core muscles (abdominals, hip flexors) and strengthens the spine. Improves balance and concentration.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Core</tag>
@@ -964,11 +1008,12 @@
   <asana>
     <n>Forearm Plank</n>
     <sanskrit>Makara Adho Mukha Svanasana / Phalakasana II</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/forearm-plank.webp</image>
     <description>Strengthens core, arms, shoulders, and legs. Builds endurance. Body forms a straight line supported on forearms and toes.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Core</tag>
@@ -986,11 +1031,12 @@
   <asana>
     <n>Low Plank</n>
     <sanskrit>Chaturanga Dandasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/low-plank.webp</image>
     <description>Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Core</tag>
@@ -1008,11 +1054,12 @@
   <asana>
     <n>Plank</n>
     <sanskrit>Phalakasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/plank.webp</image>
     <description>Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Core</tag>
@@ -1036,6 +1083,7 @@
     <description>Strengthens wrists, arms, shoulders, core (obliques), and legs. Improves balance and coordination.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Arm Balance</tag>
@@ -1054,11 +1102,12 @@
   <asana>
     <n>Bow Pose</n>
     <sanskrit>Dhanurasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/bow-pose.webp</image>
     <description>Strengthens the entire back body, opens chest, shoulders, and hip flexors. Stimulates abdominal organs and improves posture.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Prone</tag>
       <tag>Backbend</tag>
@@ -1076,11 +1125,12 @@
   <asana>
     <n>Bridge Pose</n>
     <sanskrit>Setu Bandhasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/bridge-pose.webp</image>
     <description>Gentle backbend opening chest and shoulders, strengthening glutes, hamstrings, and back. Calming yet energizing.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Backbend</tag>
@@ -1098,11 +1148,12 @@
   <asana>
     <n>Camel Pose</n>
     <sanskrit>Ustrasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/camel-pose.webp</image>
     <description>Deep backbend opening the entire front body (chest, abdomen, hip flexors, quads). Energizing and emotionally releasing.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Backbend</tag>
@@ -1120,11 +1171,12 @@
   <asana>
     <n>Cobra Pose</n>
     <sanskrit>Bhujangasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/cobra-pose.webp</image>
     <description>Gentle backbend strengthening the spine, arms, and glutes. Opens chest and shoulders. Foundational backbend.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Prone</tag>
       <tag>Backbend</tag>
@@ -1143,11 +1195,12 @@
   <asana>
     <n>Cow Pose</n>
     <sanskrit>Bitilasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/cow-pose.webp</image>
     <description>Performed on hands and knees, dropping the belly, lifting chest and gaze. Gently stretches front torso and neck. Paired with Cat Pose.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Backbend</tag>
@@ -1164,11 +1217,12 @@
   <asana>
     <n>Fish Pose</n>
     <sanskrit>Matsyasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/fish-pose.webp</image>
     <description>Opens chest, throat, and shoulders. Stretches front of neck and hip flexors (psoas). Often used as a counterpose to Shoulder Stand.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Throat</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Backbend</tag>
@@ -1186,11 +1240,12 @@
   <asana>
     <n>Locust Pose</n>
     <sanskrit>Salabhasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/locust-pose.webp</image>
     <description>Strengthens the entire back body (spine, glutes, hamstrings). Improves posture and prepares for deeper backbends.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Prone</tag>
       <tag>Backbend</tag>
@@ -1207,11 +1262,12 @@
   <asana>
     <n>Upward Facing Dog</n>
     <sanskrit>Urdhva Mukha Svanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/upward-facing-dog.webp</image>
     <description>Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Prone</tag>
       <tag>Backbend</tag>
@@ -1230,11 +1286,12 @@
   <asana>
     <n>Wheel Pose</n>
     <sanskrit>Urdhva Dhanurasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/wheel-pose.webp</image>
     <description>Deep backbend opening the entire front body. Strengthens arms, legs, spine, and abdomen. Highly energizing.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Backbend</tag>
@@ -1258,6 +1315,7 @@
     <description>Exuberant backbend and heart opener, entered from Side Plank or Downward Dog. Builds strength, flexibility, and freedom.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Backbend</tag>
@@ -1275,11 +1333,12 @@
   <asana>
     <n>Crow Pose</n>
     <sanskrit>Bakasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/crow-pose.webp</image>
     <description>Fundamental arm balance building strength in arms, wrists, and core. Improves focus, balance, and confidence.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Arm Balance</tag>
@@ -1299,11 +1358,12 @@
   <asana>
     <n>Dolphin Pose</n>
     <sanskrit>Ardha Pincha Mayurasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/dolphin-pose.webp</image>
     <description>Strengthens shoulders, arms, and core while stretching hamstrings and opening shoulders. Preparation for forearm stand and headstand.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Third Eye</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Inversion</tag>
@@ -1323,11 +1383,12 @@
   <asana>
     <n>Downward Facing Dog</n>
     <sanskrit>Adho Mukha Svanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/downward-facing-dog.webp</image>
     <description>Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Third Eye</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Inversion</tag>
       <tag>Inversion</tag>
@@ -1351,11 +1412,12 @@
   <asana>
     <n>Firefly Pose</n>
     <sanskrit>Tittibhasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/firefly-pose.webp</image>
     <description>Advanced arm balance requiring significant core, arm, and wrist strength, plus hamstring and hip flexibility.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Arm Balance</tag>
@@ -1378,6 +1440,7 @@
     <description>Advanced arm balance combining hip opening (like Pigeon Pose) with arm strength and balance.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Arm Balance</tag>
@@ -1395,11 +1458,12 @@
   <asana>
     <n>Headstand</n>
     <sanskrit>Sirsasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/headstand.webp</image>
     <description>Full inversion known as the "king" of poses. Improves circulation, balance, focus, and core strength. Requires proper instruction.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Crown</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Inversion</tag>
@@ -1418,11 +1482,12 @@
   <asana>
     <n>Peacock Pose</n>
     <sanskrit>Mayurasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/peacock-pose.webp</image>
     <description>Advanced arm balance strengthening wrists, forearms, and core. Improves digestion through abdominal pressure.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Arm Balance</tag>
@@ -1441,11 +1506,12 @@
   <asana>
     <n>Plow Pose</n>
     <sanskrit>Halasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/plow-pose.webp</image>
     <description>Inversion stretching the spine, shoulders, and back of legs. Calms the nervous system, stimulates thyroid.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Throat</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Inversion</tag>
@@ -1465,11 +1531,12 @@
   <asana>
     <n>Shoulder Stand</n>
     <sanskrit>Salamba Sarvangasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/shoulder-stand.webp</image>
     <description>Full inversion known as the "queen" of poses. Calms nervous system, stimulates thyroid and parathyroid glands, improves circulation.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Throat</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Inversion</tag>
@@ -1492,6 +1559,7 @@
     <description>Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Inversion</tag>
       <tag>Inversion</tag>
@@ -1511,11 +1579,12 @@
   <asana>
     <n>Cat Pose</n>
     <sanskrit>Marjaryasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/cat-pose.webp</image>
     <description>Performed on hands and knees, rounding the spine upward, tucking chin to chest. Stretches back torso and neck. Paired with Cow Pose.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Forward Fold</tag>
@@ -1538,6 +1607,7 @@
     <description>Variation of Low Lunge with arms extended overhead, often with a gentle backbend. Opens chest and shoulders, deepens hip flexor stretch.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Lunge</tag>
@@ -1556,11 +1626,12 @@
   <asana>
     <n>Easy Pose</n>
     <sanskrit>Sukhasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/easy-pose.webp</image>
     <description>Comfortable cross-legged seated position for meditation, pranayama, or centering. Promotes calm and hip opening over time.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Meditation</tag>
@@ -1584,6 +1655,7 @@
     <description>Kneeling side stretch opening the side body, shoulders, hamstrings, and hips. Improves flexibility along the intercostal muscles.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Side Stretch</tag>
@@ -1600,11 +1672,12 @@
   <asana>
     <n>Hero Pose</n>
     <sanskrit>Virasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/hero-pose.webp</image>
     <description>Kneeling pose stretching thighs, knees, and ankles. Improves posture and digestion. Can be used for meditation.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Kneeling</tag>
@@ -1622,11 +1695,12 @@
   <asana>
     <n>Ragdoll Pose</n>
     <sanskrit>Uttanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/ragdoll-pose.webp</image>
     <description>Relaxed variation of Forward Fold with bent knees, soft spine, and loose arms. Releases tension in spine, shoulders, and hamstrings. Calms the nervous system.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -1646,11 +1720,12 @@
   <asana>
     <n>Child's Pose</n>
     <sanskrit>Balasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/childs-pose.webp</image>
     <description>Resting pose gently stretching hips, thighs, ankles, and back. Calms the mind and nervous system. Promotes release and surrender.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Resting</tag>
@@ -1670,11 +1745,12 @@
   <asana>
     <n>Corpse Pose</n>
     <sanskrit>Savasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/corpse-pose.webp</image>
     <description>Final relaxation pose. Allows the body and mind to integrate the benefits of the practice. Promotes deep rest and rejuvenation.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Crown</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Resting</tag>
@@ -1693,11 +1769,12 @@
   <asana>
     <n>Hovering Table</n>
     <sanskrit>Utthita Chaturanga Dandasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/hovering-table-top.webp</image>
     <description>A challenging variation of Table Top with knees lifted slightly off the ground, engaging the core and building strength in the shoulders and arms.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Core</tag>
       <tag>Strength</tag>
@@ -1717,6 +1794,7 @@
     <description>A dynamic backbending pose performed from Table Top where one leg extends backward and upward while grabbing the foot, creating a bow-like shape.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Backbend</tag>
@@ -1737,6 +1815,7 @@
     <description>A standing twist variation of Mountain Pose where the arms are extended and the torso rotates while maintaining firm grounding through the feet.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Twist</tag>
@@ -1752,11 +1831,12 @@
   <asana>
     <n>Backbend</n>
     <sanskrit>Tadasana Urdhva Hastasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/back-bend.webp</image>
     <description>A variation of Mountain Pose with arms extended overhead and a gentle backbend, opening the front body and stretching the shoulders.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Backbend</tag>
@@ -1777,6 +1857,7 @@
     <description>A side-bending variation of Mountain Pose with arms overhead and upper body extending to one side, stretching the intercostal muscles and lateral spine.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Side Stretch</tag>
@@ -1792,11 +1873,12 @@
   <asana>
     <n>Kneeling Plank</n>
     <sanskrit>Ardha Phalakasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/kneeling-plank.webp</image>
     <description>A modified plank position with knees on the ground, making it accessible while still strengthening the upper body and core.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Core</tag>
@@ -1817,6 +1899,7 @@
     <description>A twisting variation of Downward Facing Dog where one hand reaches under the body to the opposite shin, creating a rotational stretch through the spine and shoulders.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing (inverted)</tag>
       <tag>Twist</tag>
@@ -1837,6 +1920,7 @@
     <description>A twisting variation of Chair Pose with arms extended to either side, creating an open twist that challenges balance and core strength.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Twist</tag>
@@ -1852,11 +1936,12 @@
   <asana>
     <n>Drinking Bird</n>
     <sanskrit>Utthita Utkatasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/drinking-bird.webp</image>
     <description>A variation of Chair Pose with heels lifted off the ground, increasing the challenge to balance and strengthening the calves and ankles.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -1872,11 +1957,12 @@
   <asana>
     <n>Airplane Arms Chair</n>
     <sanskrit>Utkatasana Vimanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/airplane-chair.webp</image>
     <description>A variation of Chair Pose with arms extended to the sides like airplane wings, adding upper body engagement and changing the weight distribution.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -1892,11 +1978,12 @@
   <asana>
     <n>Double Crescent</n>
     <sanskrit>Dvipada Anjaneyasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/double-lundge.webp</image>
     <description>A challenging variation of Crescent Lunge with both knees bent at 90 degrees and torso upright, building strength and balance.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Lunge</tag>
@@ -1917,6 +2004,7 @@
     <description>A powerful variation of Crescent Lunge with arms raised overhead, creating length through the side body and a deeper hip flexor stretch.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Lunge</tag>
@@ -1937,6 +2025,7 @@
     <description>A variation of Crescent Lunge with arms extended to the sides, activating the upper back and helping to stabilize the posture.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Lunge</tag>
@@ -1952,11 +2041,12 @@
   <asana>
     <n>Horse Pose</n>
     <sanskrit>Vatayanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/horse-pose.webp</image>
     <description>A wide-legged squat with feet turned out and torso upright, building strength in the lower body and opening the hips.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -1977,6 +2067,7 @@
     <description>A standing balance pose where one leg extends forward at hip height, creating an L-shape with the body while maintaining alignment.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -1997,6 +2088,7 @@
     <description>A one-legged squat with the other leg extended, combining strength, balance, and flexibility in a challenging pose.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -2017,6 +2109,7 @@
     <description>A twisting core variation where the raised leg bends and knee draws toward the opposite tricep, creating a strong oblique engagement and spinal rotation.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing (inverted)</tag>
       <tag>Twist</tag>
@@ -2037,6 +2130,7 @@
     <description>A hip-opening variation of Three-Legged Dog where the knee bends and the hip opens to the side, creating space in the hip joint and increasing external rotation.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing (inverted)</tag>
       <tag>Hip Opener</tag>
@@ -2057,6 +2151,7 @@
     <description>A variation of Side Plank performed on the forearm instead of the hand, providing more stability while still engaging the core and side body.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance (foundational)</tag>
       <tag>Core</tag>
@@ -2077,6 +2172,7 @@
     <description>A variation of Runner's Lunge where the back foot is grabbed with the same-side hand, creating a deep quadriceps and hip flexor stretch.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Lunge</tag>
       <tag>Quad Stretch</tag>
@@ -2097,6 +2193,7 @@
     <description>A twisting variation of Dancer Pose where the torso rotates while maintaining the backbend and balance, adding complexity and new lines of energy.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -2117,6 +2214,7 @@
     <description>An intense backbending balance pose where the leg is pulled up behind while the torso reaches forward, creating a bow shape while standing.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -2132,11 +2230,12 @@
   <asana>
     <n>Airplane</n>
     <sanskrit>Dekasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/airplane.webp</image>
     <description>A balance pose where the torso is parallel to the floor with arms extended to the sides like airplane wings, strengthening the back body.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -2157,6 +2256,7 @@
     <description>A standing hip opener where one ankle crosses above the opposite thigh in a figure-four shape, creating space in the outer hip and glutes.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Hip Opener</tag>
@@ -2177,6 +2277,7 @@
     <description>A twisting variation of Figure 4 where the torso rotates while maintaining the hip-opening leg position, adding spinal mobility to the pose.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Hip Opener</tag>
@@ -2197,6 +2298,7 @@
     <description>An advanced backbending variation of Pigeon Pose where the back foot is drawn toward the head, creating a deep opening in the quadriceps, hip flexors, and spine.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Backbend</tag>
@@ -2218,6 +2320,7 @@
     <description>A variation of Half Pigeon with both knees bent at 90-degree angles, one in front and one to the side, creating a gentle hip and inner thigh opening.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Hip Opener</tag>
@@ -2238,6 +2341,7 @@
     <description>A wide stance lunge with one leg extended to the side and the other bent, creating a deep inner thigh and hamstring stretch.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Lunge</tag>
@@ -2258,6 +2362,7 @@
     <description>A seated pose where legs stack with knees aligned and arms reach in opposite directions behind the back, opening hips, shoulders, and chest.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hip Opener</tag>
@@ -2278,6 +2383,7 @@
     <description>A seated variation of Figure 4 where one ankle crosses over the opposite thigh, creating a gentle external hip rotation and glute stretch.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hip Opener</tag>
@@ -2293,11 +2399,12 @@
   <asana>
     <n>Fire Log</n>
     <sanskrit>Agnistambhasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/fire-log.webp</image>
     <description>A seated pose where legs stack with shins parallel like stacked logs, creating an intense external hip rotation and opening for the outer hips.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hip Opener</tag>
@@ -2313,11 +2420,12 @@
   <asana>
     <n>Prone Frog Pose</n>
     <sanskrit>Mandukasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/prone-frog.webp</image>
     <description>A deep hip opener performed face down with knees wide and bent at 90 degrees, creating an intense inner thigh and groin stretch.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Prone</tag>
       <tag>Hip Opener</tag>
@@ -2338,6 +2446,7 @@
     <description>A one-sided variation of Frog Pose where one leg extends while the other bends outward, creating an asymmetrical hip and quad stretch.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Prone</tag>
       <tag>Hip Opener</tag>
@@ -2358,6 +2467,7 @@
     <description>A variation of Bridge Pose where one leg extends upward, creating an asymmetrical backbend that challenges balance and core stability.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Backbend</tag>
@@ -2378,6 +2488,7 @@
     <description>A seated pose with one leg extended upward while the upper body reclines, creating a deep hamstring stretch with the gaze toward the ceiling.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Throat</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hamstring Stretch</tag>
@@ -2393,11 +2504,12 @@
   <asana>
     <n>Legs Up The Wall</n>
     <sanskrit>Viparita Karani</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/legs-up-wall.webp</image>
     <description>A restorative inversion where the legs rest vertically against a wall while the back is on the floor, promoting circulation and relaxation.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Restorative</tag>
@@ -2413,11 +2525,12 @@
   <asana>
     <n>Prone Chest Opener</n>
     <sanskrit>Utthita Bhujangasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/prone-chest-opener.webp</image>
     <description>A restorative chest opener performed face down with arms extended to the sides, releasing tension in the chest, shoulders, and neck.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Prone</tag>
       <tag>Chest Opener</tag>
@@ -2438,6 +2551,7 @@
     <description>A twisting arm balance where the knees rest on one arm while the body rotates, challenging oblique strength and wrist stability.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Twist</tag>
@@ -2458,6 +2572,7 @@
     <description>An advanced variation of Side Crow where the body extends parallel to the floor, requiring significant core and arm strength.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Twist</tag>
@@ -2478,6 +2593,7 @@
     <description>A variation of Crow Pose where one leg extends back or to the side, challenging core strength and balance in the arm balance.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Core</tag>
@@ -2493,11 +2609,12 @@
   <asana>
     <n>Tripod Headstand</n>
     <sanskrit>Sirsasana II</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/tripod-headstand.webp</image>
     <description>A variation of headstand with the crown of the head and hands forming a triangular base, with legs extended overhead for a full inversion.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Crown</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Inversion</tag>
       <tag>Balance</tag>
@@ -2513,11 +2630,12 @@
   <asana>
     <n>Forearm Stand</n>
     <sanskrit>Pincha Mayurasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/forearm-stand.webp</image>
     <description>An advanced inversion balancing on the forearms with the body aligned vertically overhead, building shoulder strength and confidence.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Throat</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Inversion</tag>
       <tag>Arm Balance</tag>
@@ -2533,11 +2651,12 @@
   <asana>
     <n>Scorpion Pose</n>
     <sanskrit>Vrschikasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/scorpion-pose.webp</image>
     <description>A challenging backbending variation of Forearm Stand where the legs bend toward the head, creating a deep heart opening and spinal flexibility.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Inversion</tag>
       <tag>Backbend</tag>
@@ -2558,6 +2677,7 @@
     <description>An advanced variation of Wheel Pose where one leg extends upward, creating an asymmetrical backbend requiring strength and balance.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Balance</tag>
@@ -2573,11 +2693,12 @@
   <asana>
     <n>Forearm Wheel</n>
     <sanskrit>Dwi Pada Viparita Dandasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/forearm-wheel.webp</image>
     <description>A deep backbend variation of Wheel Pose performed on the forearms instead of hands, creating an intense heart and shoulder opening.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Chest Opener</tag>
@@ -2593,11 +2714,12 @@
   <asana>
     <n>Tortoise</n>
     <sanskrit>Kurmasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/tortoise.webp</image>
     <description>A deep forward fold where arms slide under the legs and extend outward while the torso folds between the legs, creating a turtle-like shape.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Forward Fold</tag>
       <tag>Hip Opener</tag>
@@ -2613,11 +2735,12 @@
   <asana>
     <n>Pendant</n>
     <sanskrit>Lolasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/pendant.webp</image>
     <description>An arm balance where the knees draw into the chest as the body lifts off the floor, creating a pendant-like shape suspended on straight arms.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Core</tag>
@@ -2633,11 +2756,12 @@
   <asana>
     <n>Chin Stand</n>
     <sanskrit>Ganda Bherundasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/chin-stand.webp</image>
     <description>An advanced arm balance variation where the chin rests on the floor while the legs extend overhead, requiring significant shoulder and core strength.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Throat</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Inversion</tag>
@@ -2658,6 +2782,7 @@
     <description>An advanced arm balance where one leg wraps around the arm while the other extends, creating a twisting side balance requiring flexibility and strength.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Twist</tag>
@@ -2678,6 +2803,7 @@
     <description>A preparatory version of Grasshopper Pose, practicing the leg wrap around the arm with modifications to build toward the full pose.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Hip Opener</tag>
@@ -2698,6 +2824,7 @@
     <description>A deep hamstring and hip flexor stretch with legs extended in opposite directions, creating a straight line from heel to heel.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Floor</tag>
       <tag>Hamstring Stretch</tag>
@@ -2718,6 +2845,7 @@
     <description>A deep squatting balance pose where one foot tucks under while sitting on the heel with the other leg in half lotus, challenging balance and hip flexibility.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -2733,11 +2861,12 @@
   <asana>
     <n>Little Thunderbolt</n>
     <sanskrit>Laghu Vajrasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/little-thunderbolt.webp</image>
     <description>A deep backbend from a kneeling position with the hands reaching back to grasp the feet or ankles, creating an intense front body opening.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Backbend</tag>
@@ -2753,11 +2882,12 @@
   <asana>
     <n>Lotus</n>
     <sanskrit>Padmasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/lotue.webp</image>
     <description>The classic meditation pose where both feet rest on the opposite thighs, creating deep external rotation in the hips and a stable seated foundation.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hip Opener</tag>
@@ -2778,6 +2908,7 @@
     <description>A preparatory version of Lotus with only one foot on the opposite thigh, making the hip-opening seated position more accessible.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hip Opener</tag>
@@ -2793,11 +2924,12 @@
   <asana>
     <n>Bound Lotus</n>
     <sanskrit>Baddha Padmasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/bound-lotus.webp</image>
     <description>A variation of Lotus Pose with the arms bound behind the back, adding a shoulder and chest opening to the hip-opening seated position.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hip Opener</tag>
@@ -2813,11 +2945,12 @@
   <asana>
     <n>Floating Lotus</n>
     <sanskrit>Tolasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/floating-lotus.webp</image>
     <description>An arm balance variation of Lotus where the entire body lifts off the ground, supported by straight arms pressing into the floor.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Arm Balance</tag>
@@ -2833,11 +2966,12 @@
   <asana>
     <n>Rooster</n>
     <sanskrit>Kukkutasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/rooster.webp</image>
     <description>An advanced arm balance from Lotus Pose with the arms threaded through the lotus legs, lifting the entire body off the ground.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Hip Opener</tag>
@@ -2858,6 +2992,7 @@
     <description>A balancing backbend in half lotus where one leg forms a half lotus while the other leg extends behind with the same-side hand grasping the foot.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -2878,6 +3013,7 @@
     <description>A seated pose with one leg extended upward grasped by the hands while the other leg is folded, creating an intense hamstring stretch.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hamstring Stretch</tag>
@@ -2898,6 +3034,7 @@
     <description>A seated twist and hamstring stretch where one leg extends to the side while both hands grasp the foot and the torso rotates toward the extended leg.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Twist</tag>
@@ -2918,6 +3055,7 @@
     <description>An arm balance where one leg extends over the shoulder while seated on one buttock, requiring core strength and shoulder opening.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Seated</tag>
@@ -2938,6 +3076,7 @@
     <description>An advanced arm balance where both legs wrap around one arm and extend to the side, requiring core strength and shoulder mobility.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Arm Balance</tag>
       <tag>Core</tag>
@@ -2953,11 +3092,12 @@
   <asana>
     <n>Squat and Curl</n>
     <sanskrit>Utkatasana Variation</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/squat-and-curl.webp</image>
     <description>A dynamic movement combining a squat with arms curling upward, creating a fluid strength-building motion often practiced with a ball or prop.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Dynamic</tag>
@@ -2978,6 +3118,7 @@
     <description>A standing twisting pose with hands in prayer position. Deepens the twist, improves spinal flexibility, and aids in detoxification. Often performed from Chair or Crescent Lunge.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Twist</tag>
@@ -2996,11 +3137,12 @@
   <asana>
     <n>Belly Down Rest</n>
     <sanskrit>Advasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/bell-down-rest.webp</image>
     <description>A restorative pose lying face down with arms extended and head turned to one side. Promotes deep relaxation, helps release tension in the lower back, and provides a gentle stretch to the front of the body.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Prone</tag>
       <tag>Restorative</tag>
@@ -3017,11 +3159,12 @@
   <asana>
     <n>Cosmic Egg</n>
     <sanskrit>Vishnu Mudrasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/cosmic-egg.webp</image>
     <description>A restorative pose lying on the back with arms and legs spread wide, like a star or cosmic being. Promotes complete surrender, deep relaxation, and a sense of expansion and connection to the universe.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Crown</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Restorative</tag>
@@ -3039,11 +3182,12 @@
   <asana>
     <n>Fetal Pose</n>
     <sanskrit>Garbha Pindasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/fetal-pose.webp</image>
     <description>A calming resting pose lying on your side with knees drawn toward chest and arms wrapped around legs or pillowing the head. Promotes feelings of security, comfort, and relaxation.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Side Lying</tag>
       <tag>Restorative</tag>
@@ -3061,11 +3205,12 @@
   <asana>
     <n>Standing Forehead to Knee</n>
     <sanskrit>Dandayamana Janushirasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/standing-forehead-to-knee.webp</image>
     <description>A challenging balance pose combining standing leg strength with forward folding flexibility. Strengthens the standing leg while stretching hamstrings and spine.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -3083,11 +3228,12 @@
   <asana>
     <n>Balancing Toe Stand</n>
     <sanskrit>Padangusthasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/half-lotus-toe-balance.webp</image>
     <description>An advanced balancing pose requiring exceptional strength and concentration. Balances on the toes while maintaining perfect alignment and breathing.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3105,11 +3251,12 @@
   <asana>
     <n>Upward Salute</n>
     <sanskrit>Urdhva Hastasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/upward-salute.webp</image>
     <description>A gentle backbend with arms reaching skyward, creating length through the spine and opening the chest. Foundation pose for sun salutations.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Backbend</tag>
@@ -3127,11 +3274,12 @@
   <asana>
     <n>Balancing Stick</n>
     <sanskrit>Tuladandasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/balancing-stick.webp</image>
     <description>A dynamic balance pose resembling a T-shape, strengthening the standing leg while stretching the hip flexors and building core stability.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3149,11 +3297,12 @@
   <asana>
     <n>Standing Separate Leg Head to Knee Pose</n>
     <sanskrit>Dandayamana Bibhaktapada Janushirasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/standing-separate-leg-head-to-knee.webp</image>
     <description>A challenging forward fold with legs wide apart, bringing the forehead toward the knee. Stretches hamstrings, calves, and spine while building concentration.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -3171,11 +3320,12 @@
   <asana>
     <n>Standing Separate Leg Stretching Pose</n>
     <sanskrit>Dandayamana Bibhaktapada Paschimottanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/standing-separate-leg-stretching.webp</image>
     <description>A deep forward fold with legs wide apart, hands reaching toward the floor. Stretches the entire back body and hamstrings while calming the nervous system.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -3193,11 +3343,12 @@
   <asana>
     <n>Ear Pinning</n>
     <sanskrit>Karna Pidasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/ear-pinning.webp</image>
     <description>An advanced inversion where knees press against the ears, creating deep introspection and spinal flexibility. Calms the mind and nervous system.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Crown</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Inversion</tag>
       <tag>Introspection</tag>
@@ -3215,11 +3366,12 @@
   <asana>
     <n>Wind-Removing Pose</n>
     <sanskrit>Pavanamuktasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/wind-removing-pose.webp</image>
     <description>A gentle pose that aids digestion and releases tension in the lower back. Knees drawn to chest while lying supine, promoting relaxation and abdominal massage.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Supine</tag>
       <tag>Digestive</tag>
@@ -3237,11 +3389,12 @@
   <asana>
     <n>Rabbit Pose</n>
     <sanskrit>Sasangasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/rabbit-pose.webp</image>
     <description>A gentle inversion that stretches the spine and neck while promoting introspection. Kneeling with crown of head on the mat and hands holding the heels.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Crown</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Inversion</tag>
       <tag>Kneeling</tag>
@@ -3259,11 +3412,12 @@
   <asana>
     <n>Half Tortoise Pose</n>
     <sanskrit>Ardha Kurmasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/half-tortoise-pose.webp</image>
     <description>A restorative forward fold that calms the nervous system and stretches the shoulders and back. Kneeling with arms extended forward and forehead to the mat.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Forward Fold</tag>
@@ -3281,11 +3435,12 @@
   <asana>
     <n>Fixed Firm Pose</n>
     <sanskrit>Supta Vajrasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/fixed-firm-pose.webp</image>
     <description>A deep backbend from a kneeling position that opens the chest and stretches the quadriceps and hip flexors. Requires significant flexibility and should be approached gradually.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Kneeling</tag>
@@ -3303,11 +3458,12 @@
   <asana>
     <n>Toppling Tree Pose</n>
     <sanskrit>Vrikshasana Variation</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/toppling-tree.webp</image>
     <description>A dynamic variation of tree pose that challenges balance and proprioception. The pose involves controlled movement while maintaining the tree pose foundation.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3325,11 +3481,12 @@
   <asana>
     <n>Standing Savasana</n>
     <sanskrit>Standing Savasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/standing-savasana.webp</image>
     <description>A neutral standing pause that allows for integration and mindful breathing between poses. Similar to mountain pose but with emphasis on complete stillness and awareness.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Crown</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Meditation</tag>
@@ -3347,11 +3504,12 @@
   <asana>
     <n>Eagle Armed Airplane</n>
     <sanskrit>Garudasana Variation</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/eagle-armed-airplane.webp</image>
     <description>A challenging balance pose combining eagle arms with airplane position. Balances on one leg while the other extends back, with arms in eagle wrap creating a complex coordination challenge.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3369,11 +3527,12 @@
   <asana>
     <n>Awkward Pose</n>
     <sanskrit>Utkatasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/awkward-1.webp</image>
     <description>A challenging standing pose that builds strength in the legs, core, and arms while improving balance and endurance. Creates heat in the body.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -3391,11 +3550,12 @@
   <asana>
     <n>Awkward Pose - Knees Together</n>
     <sanskrit>Utkatasana Variation 2</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/awkward-2.webp</image>
     <description>Second variation of Awkward Pose with knees and feet pressed together. Challenges balance and leg strength while maintaining proper alignment in the squat position.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -3413,11 +3573,12 @@
   <asana>
     <n>Awkward Pose - On Toes</n>
     <sanskrit>Utkatasana Variation 3</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/awkward-3.webp</image>
     <description>Third variation of Awkward Pose performed on the balls of the feet with knees and feet together. Most challenging variation requiring exceptional balance, ankle strength, and concentration.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -3435,11 +3596,12 @@
   <asana>
     <n>Baby Cobra</n>
     <sanskrit>Ardha Bhujangasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/baby-cobra.webp</image>
     <description>A gentle backbend performed prone with minimal lift, focusing on spinal mobility and chest opening. Perfect for beginners or as a warm-up for deeper backbends.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Prone</tag>
@@ -3457,11 +3619,12 @@
   <asana>
     <n>Star Pose</n>
     <sanskrit>Utthita Tadasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/star-pose.webp</image>
     <description>A standing pose with arms and legs spread wide, creating a five-pointed star shape. Opens the chest and hip flexors while building strength and confidence.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Chest Opening</tag>
@@ -3479,11 +3642,12 @@
   <asana>
     <n>Banana Stretch</n>
     <sanskrit>Bananasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/banana-stretch.webp</image>
     <description>A side-lying pose that creates a crescent moon shape with the body. Stretches the side body, intercostal muscles, and provides gentle spinal lengthening.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Side Lying</tag>
       <tag>Side Body Stretch</tag>
@@ -3504,6 +3668,7 @@
     <description>An advanced variation of Side Angle Pose with a binding element. Combines deep side body stretch with shoulder mobility and balance challenges.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Side Stretch</tag>
@@ -3520,11 +3685,12 @@
   <asana>
     <n>Broken Bridge</n>
     <sanskrit>Setu Bandha Variation</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/broken-bridge.webp</image>
     <description>A modified bridge pose with asymmetrical leg positioning. Challenges core stability while providing gentle backbend and hip opening benefits.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Supine</tag>
@@ -3546,6 +3712,7 @@
     <description>A twisted variation of Chair Pose that combines the strength-building benefits of the squat with spinal rotation and detoxification.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Twist</tag>
@@ -3567,6 +3734,7 @@
     <description>A dynamic balance pose combining elements of Half Moon and Dancer's Pose. Requires exceptional balance, flexibility, and concentration.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3583,11 +3751,12 @@
   <asana>
     <n>Embryo Pose</n>
     <sanskrit>Garbhasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/embryo-pose.webp</image>
     <description>A deeply introspective seated pose with knees drawn to chest and arms wrapped around legs. Promotes feelings of safety and inner reflection.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Introspection</tag>
@@ -3604,11 +3773,12 @@
   <asana>
     <n>Half Camel</n>
     <sanskrit>Ardha Ustrasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/half-amel.webp</image>
     <description>A gentler variation of Camel Pose with one hand supporting the lower back. Provides chest opening and backbend benefits with added stability.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Kneeling</tag>
@@ -3630,6 +3800,7 @@
     <description>A preparatory pose for full splits that provides deep hamstring and hip flexor stretching. Builds flexibility gradually and safely.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Hip Opening</tag>
       <tag>Hamstring Stretch</tag>
@@ -3646,11 +3817,12 @@
   <asana>
     <n>Hot Tree</n>
     <sanskrit>Vrikshasana Variation</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/hot-tree.webp</image>
     <description>An energetic variation of Tree Pose with dynamic arm movements. Builds balance while creating heat and energy in the body.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3672,6 +3844,7 @@
     <description>A dynamic core exercise performed in plank position, bringing knee to same-side elbow. Builds core strength and stability.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Core Strength</tag>
       <tag>Dynamic</tag>
@@ -3688,11 +3861,12 @@
   <asana>
     <n>Knee to Nose</n>
     <sanskrit>Janu Nasikasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/knee-to-nose.webp</image>
     <description>A core-strengthening movement from plank position, drawing knee toward nose. Engages deep abdominal muscles and builds stability.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Core Strength</tag>
       <tag>Dynamic</tag>
@@ -3709,11 +3883,12 @@
   <asana>
     <n>One Leg Mountain</n>
     <sanskrit>Eka Pada Tadasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/one-leg-mountain.webp</image>
     <description>A standing balance pose with one leg lifted, maintaining mountain pose alignment. Builds balance, focus, and leg strength.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3735,6 +3910,7 @@
     <description>A challenging balance pose holding the opposite foot's big toe. Requires exceptional balance, flexibility, and core strength.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3756,6 +3932,7 @@
     <description>A twisted variation of Triangle Pose with the top hand reaching toward the ground. Combines side stretch with spinal rotation.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Twist</tag>
@@ -3777,6 +3954,7 @@
     <description>A gentle seated spinal twist that aids digestion and spinal mobility. Promotes detoxification and relaxation while seated.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Twist</tag>
@@ -3793,11 +3971,12 @@
   <asana>
     <n>Sphinx</n>
     <sanskrit>Salamba Bhujangasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/sphinx.webp</image>
     <description>A gentle backbend performed prone with forearms on the ground. Strengthens the back muscles while providing accessible chest opening.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Prone</tag>
@@ -3819,6 +3998,7 @@
     <description>A balance pose combining one-legged standing with spinal rotation. Challenges balance, core strength, and coordination simultaneously.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Balance</tag>
       <tag>Standing</tag>
@@ -3835,11 +4015,12 @@
   <asana>
     <n>Wide Seated Forward Fold</n>
     <sanskrit>Upavistha Konasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/wide-seated-forward-fold.webp</image>
     <description>A seated forward fold with legs spread wide, stretching the inner thighs and spine. Promotes introspection and hip flexibility.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Exhale</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Forward Fold</tag>
@@ -3856,11 +4037,12 @@
   <asana>
     <n>Bound Locust</n>
     <sanskrit>Baddha Salabhasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/bound-locust.webp</image>
     <description>A heart-opening backbend with hands clasped behind the back, strengthening the posterior chain while opening the chest and shoulders.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Prone</tag>
@@ -3876,11 +4058,12 @@
   <asana>
     <n>Full Locust</n>
     <sanskrit>Purna Salabhasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/full-locust.webp</image>
     <description>An advanced backbend lifting the entire body off the ground, building tremendous back strength and opening the entire front body.</description>
     <difficulty>Advanced</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Backbend</tag>
       <tag>Prone</tag>
@@ -3896,11 +4079,12 @@
   <asana>
     <n>Kneeling Knee to Nose</n>
     <sanskrit>Ardha Uttanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/kneeling-knee-to-nose.webp</image>
     <description>A core-strengthening pose bringing knee to nose while in a kneeling position, building abdominal strength and improving balance.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Core</tag>
@@ -3916,11 +4100,12 @@
   <asana>
     <n>Standing Bird Dog</n>
     <sanskrit>Eka Pada Urdhva Mukha Svanasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/standing-bird-dog.webp</image>
     <description>A standing balance pose extending opposite arm and leg, improving coordination, balance, and core stability.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -3936,11 +4121,12 @@
   <asana>
     <n>One Leg Up the Wall</n>
     <sanskrit>Eka Pada Viparita Karani</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/one-leg-up-wall.webp</image>
     <description>A restorative inversion with one leg elevated against a wall, promoting circulation and deep relaxation while gently stretching the hamstrings.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Restorative</tag>
       <tag>Inversion</tag>
@@ -3961,6 +4147,7 @@
     <description>An intense variation of triangle pose with deeper side body stretch and heat-building elements, enhancing flexibility and building internal heat.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Side Bend</tag>
@@ -3981,6 +4168,7 @@
     <description>An elevated variation of warrior pose with arms reaching overhead, building strength and creating length through the entire side body.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Strength</tag>
@@ -3996,11 +4184,12 @@
   <asana>
     <n>Goddess Pose</n>
     <sanskrit>Utkata Konasana</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/goddess.webp</image>
     <description>A powerful standing pose with wide legs and arms in various mudras, embodying divine feminine energy and building lower body strength.</description>
     <difficulty>Beginner</difficulty>
     <chakra>Sacral</chakra>
+    <breath>Inhale</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Hip Opening</tag>
@@ -4021,6 +4210,7 @@
     <description>A standing balance pose with one leg extended, combining the grounding of mountain pose with the challenge of single-leg balance and hip flexibility.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Root</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Balance</tag>
@@ -4036,11 +4226,12 @@
   <asana>
     <n>Standing L</n>
     <sanskrit>Uttanasana Variation</sanskrit>
-    <side>Center</side>
+    <side>Front</side>
     <image>images/webp/standing-l.webp</image>
     <description>A standing forward fold variation creating an L-shape with the body, deeply stretching the hamstrings while strengthening the core and arms.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Solar Plexus</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Standing</tag>
       <tag>Forward Fold</tag>
@@ -4054,13 +4245,14 @@
     </transitions>
   </asana>
   <asana>
-    <n>Cow Face Pose Variation</n>
+    <n>Herdelers-Pose</n>
     <sanskrit>Gomukhasana Variation</sanskrit>
     <side>Right</side>
     <image>images/webp/herdelers-pose.webp</image>
     <description>A specialized seated pose combining hip opening and shoulder stretching, named for its therapeutic benefits in addressing common postural imbalances.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Seated</tag>
       <tag>Hip Opening</tag>
@@ -4081,6 +4273,7 @@
     <description>A graceful backbend performed from a kneeling position, grabbing the back foot while arching the spine. Combines hip flexor opening with heart opening in a stable base.</description>
     <difficulty>Intermediate</difficulty>
     <chakra>Heart</chakra>
+    <breath>Breathe Here</breath>
     <tags>
       <tag>Kneeling</tag>
       <tag>Backbend</tag>
