@@ -382,7 +382,7 @@ let animationFrameId = null;
 let startTimerInterval = null; // Track the starting countdown interval
 let startCountdownValue = 0; // Track current countdown value
 let isInStartingCountdown = false; // Track if we're in the 3-2-1 countdown
-let speechEnabled = false; // Default to speech disabled
+let speechEnabled = localStorage.getItem('speechEnabled') === 'true'; // Load from localStorage
 let speechSynthesis = window.speechSynthesis;
 let speechUtterance = null;
 let breathCuesEnabled = localStorage.getItem('breathCuesEnabled') !== 'false'; // Default to breath cues enabled
@@ -1172,8 +1172,8 @@ function startNewFlow() {
     console.log('Switching to build screen...');
     changeScreen('buildScreen');
     
-    // Reset to table view when starting a new flow
-    toggleViewMode('table');
+    // Reset to table view when starting a new flow (silently, no popup)
+    toggleViewMode('table', true);
     
     // Additional cleanup after screen change to ensure table is completely empty
     setTimeout(() => {
@@ -3664,6 +3664,9 @@ function togglePause() {
 function toggleSpeech() {
     speechEnabled = !speechEnabled;
     
+    // Save preference to localStorage
+    localStorage.setItem('speechEnabled', speechEnabled.toString());
+    
     // Update global speech toggle
     const speechToggleGlobal = document.getElementById('speech-toggle-global');
     
@@ -3924,8 +3927,8 @@ function editFlow(flowID) {
     // Switch to build screen first for immediate visual feedback
     changeScreen('buildScreen');
     
-    // Reset to table view when loading a flow
-    toggleViewMode('table');
+    // Reset to table view when loading a flow (silently, no popup)
+    toggleViewMode('table', true);
 
     // Show loading state for very large flows (200+ poses)
     const table = document.getElementById('flowTable');
@@ -7719,7 +7722,7 @@ function handleCardDragEnd(e) {
 }
 
 // Function to toggle between table and card view
-function toggleViewMode(mode) {
+function toggleViewMode(mode, silent = false) {
     currentViewMode = mode;
 
     // Save preference to localStorage
@@ -7752,8 +7755,10 @@ function toggleViewMode(mode) {
     // Rebuild the flow display to update both views
     rebuildFlowTable();
 
-    // Show a brief notification about the view change
-    showToastNotification(`Switched to ${mode} view`);
+    // Show a brief notification about the view change only if not silent
+    if (!silent) {
+        showToastNotification(`Switched to ${mode} view`);
+    }
 }
 
 // Function to handle view toggle from the switch
@@ -7762,7 +7767,7 @@ function toggleViewFromSwitch(isChecked) {
 }
 
 
-function togglePinActions(isChecked) {
+function togglePinActions(isChecked, silent = false) {
     const selectedActions = document.querySelector('.selected-actions');
     const recommendedBtn = document.getElementById('recommendedToggleBtn');
     
@@ -7783,8 +7788,10 @@ function togglePinActions(isChecked) {
         // Save pin state to localStorage
         localStorage.setItem('actionsPinned', 'true');
         
-        // Show toast notification
-        showToastNotification('Actions panel pinned to screen');
+        // Show toast notification only if not silent
+        if (!silent) {
+            showToastNotification('Actions panel pinned to screen');
+        }
     } else {
         // Unpin the actions - remove pinned class
         selectedActions.classList.remove('pinned');
@@ -7797,8 +7804,10 @@ function togglePinActions(isChecked) {
         // Save pin state to localStorage
         localStorage.setItem('actionsPinned', 'false');
         
-        // Show toast notification
-        showToastNotification('Actions panel unpinned');
+        // Show toast notification only if not silent
+        if (!silent) {
+            showToastNotification('Actions panel unpinned');
+        }
     }
 }
 
@@ -9311,8 +9320,10 @@ function initializeApp() {
         const actionsPinned = localStorage.getItem('actionsPinned') === 'true';
         if (pinToggle) {
             pinToggle.checked = actionsPinned;
-            // Don't automatically show the pinned panel on page load
-            // User needs to manually click the pin toggle to show it
+            // Restore the pinned visual state if it was saved as pinned (silently, no popup)
+            if (actionsPinned) {
+                togglePinActions(true, true);
+            }
         }
 
         // Initialize view toggle buttons with saved preference
@@ -9385,8 +9396,10 @@ function initializeApp() {
         // Set up speech toggle
         const speechToggle = document.getElementById('speech-toggle-global');
         if (speechToggle) {
+            speechToggle.checked = speechEnabled; // Set initial state
             speechToggle.addEventListener('change', function() {
                 speechEnabled = this.checked;
+                localStorage.setItem('speechEnabled', speechEnabled.toString());
             });
         }
     });
