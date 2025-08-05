@@ -1254,7 +1254,7 @@ function selectAsana(asana) {
         [...asana.transitionsAsana || []],
         asana.sanskrit,
         asana.chakra || "",
-        asana.breathCue || "-"
+        "-"
     );
     newAsana.setDuration(7); // Default 7 seconds
     // Note: selected property defaults to false from YogaAsana constructor
@@ -5440,7 +5440,7 @@ async function loadAsanasFromXML() {
             const description = asanaElem.getElementsByTagName('description')[0]?.textContent || '';
             const difficulty = asanaElem.getElementsByTagName('difficulty')[0]?.textContent || 'Beginner';
             const chakra = asanaElem.getElementsByTagName('chakra')[0]?.textContent || '';
-            const breathCue = asanaElem.getElementsByTagName('breath')[0]?.textContent || 'Breathe Here';
+            const breathCue = asanaElem.getElementsByTagName('breath')[0]?.textContent || '-';
             
             // Extract tags
             const tagElements = asanaElem.getElementsByTagName('tag');
@@ -11653,7 +11653,7 @@ function swapPose(newAsana) {
         [...(newAsana.transitionsAsana || [])],
         newAsana.sanskrit,
         newAsana.chakra || "",
-        newAsana.breathCue || "-"
+        "-"
     );
     newPoseAsana.setDuration(7); // Default duration for new poses
     
