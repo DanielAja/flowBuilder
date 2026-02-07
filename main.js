@@ -4030,81 +4030,12 @@ function showShareFlow(flowID) {
         return;
     }
 
-    // Get the modal and share code output elements
+    // Get the modal element
     const modal = document.getElementById('shareFlowModal');
-    const shareCodeOutput = document.getElementById('shareCodeOutput');
-
-    // Set the share code in the textarea
-    if (shareCodeOutput) {
-        shareCodeOutput.value = shareCode;
-    }
-
-    // Hide any copy confirmation message
-    const copyConfirmation = document.getElementById('copyConfirmation');
-    if (copyConfirmation) {
-        copyConfirmation.style.display = 'none';
-    }
 
     // Show the modal
     if (modal) {
         modal.style.display = 'block';
-    }
-}
-
-// Copy the share code to clipboard
-function copyShareCode() {
-    const shareCodeOutput = document.getElementById('shareCodeOutput');
-    const copyConfirmation = document.getElementById('copyConfirmation');
-
-    if (shareCodeOutput && copyConfirmation) {
-        // Select the text
-        shareCodeOutput.select();
-
-        try {
-            // Execute copy command
-            document.execCommand('copy');
-
-            // Show confirmation
-            copyConfirmation.style.display = 'block';
-
-            // Hide confirmation after 3 seconds
-            setTimeout(() => {
-                copyConfirmation.style.display = 'none';
-            }, 3000);
-        } catch (err) {
-            console.error('Failed to copy text: ', err);
-            alert('Failed to copy to clipboard. Please select and copy the text manually.');
-        }
-    }
-}
-
-// Import a flow from a pasted share code in the import modal
-function importFromShareCode() {
-    const input = document.getElementById('importCodeInput');
-    const successMsg = document.getElementById('importCodeSuccess');
-    const errorMsg = document.getElementById('importCodeError');
-
-    if (!input || !input.value.trim()) return;
-
-    // Hide previous messages
-    if (successMsg) successMsg.style.display = 'none';
-    if (errorMsg) errorMsg.style.display = 'none';
-
-    const result = importFlow(input.value.trim());
-
-    if (result) {
-        if (successMsg) successMsg.style.display = 'block';
-        input.value = '';
-        // Close modal after short delay
-        setTimeout(() => {
-            closeImportModal();
-            if (successMsg) successMsg.style.display = 'none';
-        }, 1500);
-    } else {
-        if (errorMsg) errorMsg.style.display = 'block';
-        setTimeout(() => {
-            if (errorMsg) errorMsg.style.display = 'none';
-        }, 3000);
     }
 }
 
@@ -4758,75 +4689,15 @@ function generateCSVContent(flow) {
 
 // Show the import flow modal
 function showImportFlow() {
-    // Get the modal and import code input elements
     const modal = document.getElementById('importFlowModal');
-    const importCodeInput = document.getElementById('importCodeInput');
-
-    // Clear any previous input and error messages
-    if (importCodeInput) {
-        importCodeInput.value = '';
-    }
 
     const importError = document.getElementById('importError');
     if (importError) {
         importError.style.display = 'none';
     }
 
-    // Show the modal
     if (modal) {
         modal.style.display = 'block';
-    }
-}
-
-// Process the import flow action
-function processImportFlow() {
-    const importCodeInput = document.getElementById('importCodeInput');
-    const importError = document.getElementById('importError');
-
-    if (!importCodeInput || !importError) {
-        console.error('Import elements not found');
-        return;
-    }
-
-    const shareCode = importCodeInput.value.trim();
-
-    if (!shareCode) {
-        importError.style.display = 'block';
-        return;
-    }
-
-    try {
-        // Try to import the flow
-        const newFlow = importFlow(shareCode);
-
-        if (!newFlow) {
-            importError.style.display = 'block';
-            return;
-        }
-
-        // Get existing flows
-        const flows = getFlows();
-
-        // Check if a flow with the same name already exists
-        const existingNameIndex = flows.findIndex(flow => flow.name === newFlow.name);
-        if (existingNameIndex !== -1) {
-            // Append a suffix to make the name unique
-            newFlow.name = `${newFlow.name} (Imported)`;
-        }
-
-        // Add new flow to storage
-        flows.push(newFlow);
-        saveFlows(flows);
-
-        // Close the modal
-        closeImportModal();
-
-        // Refresh the flow list
-        displayFlows();
-
-    } catch (error) {
-        console.error('Error importing flow:', error);
-        importError.style.display = 'block';
     }
 }
 
@@ -4836,7 +4707,7 @@ function closeImportModal() {
     if (modal) {
         modal.style.display = 'none';
     }
-    
+
     // Clear file input and filename display
     const fileInput = document.getElementById('flowFileInput');
     const fileName = document.getElementById('fileName');
@@ -4846,13 +4717,7 @@ function closeImportModal() {
     if (fileName) {
         fileName.textContent = '';
     }
-    
-    // Clear import code input
-    const importCodeInput = document.getElementById('importCodeInput');
-    if (importCodeInput) {
-        importCodeInput.value = '';
-    }
-    
+
     // Hide error message
     const importError = document.getElementById('importError');
     if (importError) {

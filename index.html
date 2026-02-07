@@ -731,30 +731,6 @@
         font-size: 14px;
       }
       
-      .share-separator {
-        text-align: center;
-        margin: 10px 0;
-        position: relative;
-      }
-      
-      .share-separator::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: #ddd;
-      }
-      
-      .share-separator span {
-        background: white;
-        padding: 0 15px;
-        color: #999;
-        font-weight: 500;
-        font-size: 14px;
-      }
-      
       .export-json-btn {
         background: #6d28d9;
         color: white;
@@ -1526,15 +1502,6 @@
             <button class="export-json-btn" onclick="exportFlowAsCSVFromModal()">Download as .csv</button>
           </div>
 
-          <div class="share-separator"><span>or</span></div>
-
-          <div class="share-code-container">
-            <h3 style="margin: 0 0 8px 0; color: #333; font-size: 18px; font-weight: 600; text-align: center;">Share Code</h3>
-            <p style="margin: 0 0 10px 0; color: #666; font-size: 14px; text-align: center;">Copy this code and send it to someone to import your flow</p>
-            <textarea id="shareCodeOutput" readonly></textarea>
-            <button class="copy-btn" onclick="copyShareCode()">Copy to Clipboard</button>
-            <div id="copyConfirmation" class="copy-confirmation">Copied to clipboard!</div>
-          </div>
         </div>
       </div>
     </div>
@@ -1573,22 +1540,6 @@
           </div>
         </div>
 
-        <!-- Separator -->
-        <div class="import-separator">
-          <span>OR</span>
-        </div>
-
-        <!-- Paste Share Code Section -->
-        <div class="import-option">
-          <h3>Paste Share Code</h3>
-          <p>Paste a flow share code to import</p>
-          <div class="import-code-container">
-            <textarea id="importCodeInput" placeholder="Paste share code here..."></textarea>
-            <button class="import-btn" onclick="importFromShareCode()">Import Flow</button>
-            <div id="importCodeSuccess" class="copy-confirmation" style="display: none;">Flow imported successfully!</div>
-            <div id="importCodeError" class="import-error" style="display: none;">Invalid share code. Please check and try again.</div>
-          </div>
-        </div>
 
         <div id="importError" class="import-error">Invalid flow code. Please check and try again.</div>
       </div>
