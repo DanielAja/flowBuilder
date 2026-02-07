@@ -1,6 +1,6 @@
 {
-  "name": "CorePower - C1",
-  "description": "CorePower Yoga C1 class - A one-hour heated vinyasa flow that builds strength, flexibility, and mental focus through dynamic sequences.",
+  "name": "Heated Vinyasa Flow",
+  "description": "A one-hour heated vinyasa flow that builds strength, flexibility, and mental focus through dynamic sequences.",
   "asanas": [
     {
       "name": "childs-pose",

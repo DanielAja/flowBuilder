@@ -73,8 +73,8 @@ def main():
     """Main function to handle command line arguments."""
     if len(sys.argv) < 2:
         print("Usage: python reverse_yoga.py <input_json_file> [output_json_file]")
-        print("Example: python reverse_yoga.py corepower_c1.json")
-        print("Example: python reverse_yoga.py corepower_c1.json corepower_c1_backwards.json")
+        print("Example: python reverse_yoga.py my_flow.json")
+        print("Example: python reverse_yoga.py my_flow.json my_flow_backwards.json")
         sys.exit(1)
     
     input_file = sys.argv[1]
@@ -90,4 +90,4 @@ if __name__ == "__main__":
 
 # Example usage if running as a module:
 # from reverse_yoga import reverse_yoga_sequence
-# reverse_yoga_sequence("corepower_c1.json", "corepower_c1_reversed.json")
+# reverse_yoga_sequence("my_flow.json", "my_flow_reversed.json")

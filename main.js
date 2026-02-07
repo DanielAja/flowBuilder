@@ -2681,17 +2681,17 @@ function playFlow(flowID) {
             circleContainer.style.display = 'flex';
             circleContainer.style.justifyContent = 'center';
             circleContainer.style.alignItems = 'center';
-            circleContainer.style.boxShadow = '0 0 30px rgba(255, 140, 0, 0.3)';
+            circleContainer.style.boxShadow = '0 0 30px rgba(109, 40, 217, 0.3)';
             circleContainer.style.zIndex = '5';
             circleContainer.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
             circleContainer.style.opacity = '0';
             circleContainer.style.transform = 'translate(-50%, -50%) scale(0.5)';
-            circleContainer.style.border = '2px solid rgba(255, 140, 0, 0.3)';
+            circleContainer.style.border = '2px solid rgba(109, 40, 217, 0.3)';
 
             // Apply stylish styling to the countdown
             countdownDisplay.style.fontSize = '150px';
             countdownDisplay.style.fontWeight = 'bold';
-            countdownDisplay.style.color = '#ff8c00';
+            countdownDisplay.style.color = '#6d28d9';
             countdownDisplay.style.textShadow = '0 0 5px rgba(255, 255, 255, 0.7)';
             countdownDisplay.style.position = 'relative';
             countdownDisplay.style.zIndex = '10';
@@ -2720,12 +2720,12 @@ function playFlow(flowID) {
                     <!-- Outer circle for flow progress -->
                     <circle r="55" cx="60" cy="60" fill="transparent" stroke="#eee" stroke-width="6"></circle>
                     <circle id="flow-progress-circle" r="55" cx="60" cy="60" fill="transparent"
-                            stroke="#ffb366" stroke-width="6" stroke-dasharray="345.6"
+                            stroke="#a78bfa" stroke-width="6" stroke-dasharray="345.6"
                             stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
                     <!-- Inner circle for pose timer -->
                     <circle r="45" cx="60" cy="60" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
                     <circle id="countdown-circle" r="45" cx="60" cy="60" fill="transparent"
-                            stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
+                            stroke="#6d28d9" stroke-width="10" stroke-dasharray="282.7"
                             stroke-dashoffset="282.7" transform="rotate(-90 60 60)"></circle>
                 </svg>
                 <div id="countdown">3</div>
@@ -2768,7 +2768,7 @@ function playFlow(flowID) {
 
                         // Border colors for each step
                         const borderColors = {
-                            2: '2px solid rgba(255, 140, 0, 0.6)',
+                            2: '2px solid rgba(109, 40, 217, 0.6)',
                             1: '2px solid rgba(255, 0, 0, 0.6)',
                             0: '2px solid rgba(0, 200, 0, 0.6)'
                         };
@@ -2778,8 +2778,8 @@ function playFlow(flowID) {
                             circleContainer.style.border = borderColors[startCountdownValue];
                         }
 
-                        // Keep text color constant - using the orange theme color
-                        countdownDisplay.style.color = '#ff8c00';
+                        // Keep text color constant - using the purple theme color
+                        countdownDisplay.style.color = '#6d28d9';
 
                         if (colors[startCountdownValue]) {
                             circleContainer.style.background = colors[startCountdownValue];
@@ -2870,12 +2870,12 @@ function playFlow(flowID) {
                                 <!-- Outer circle for flow progress -->
                                 <circle r="55" cx="60" cy="60" fill="transparent" stroke="#eee" stroke-width="6"></circle>
                                 <circle id="flow-progress-circle" r="55" cx="60" cy="60" fill="transparent"
-                                        stroke="#ffb366" stroke-width="6" stroke-dasharray="345.6"
+                                        stroke="#a78bfa" stroke-width="6" stroke-dasharray="345.6"
                                         stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
                                 <!-- Inner circle for pose timer -->
                                 <circle r="45" cx="60" cy="60" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
                                 <circle id="countdown-circle" r="45" cx="60" cy="60" fill="transparent"
-                                        stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
+                                        stroke="#6d28d9" stroke-width="10" stroke-dasharray="282.7"
                                         stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
                             </svg>
                             <div id="countdown">${displayTimerDuration(duration)}</div>
@@ -3103,7 +3103,7 @@ function createConfetti() {
 
     // Confetti configuration
     const confettiCount = 200;
-    const confettiColors = ['#ff8c00', '#ffd700', '#00bfff', '#ff1493', '#32cd32', '#7b68ee'];
+    const confettiColors = ['#6d28d9', '#ffd700', '#00bfff', '#ff1493', '#32cd32', '#7b68ee'];
     const confetti = [];
 
     // Create confetti pieces
@@ -3254,7 +3254,7 @@ function resumeStartingCountdown() {
 
                 // Border colors for each step
                 const borderColors = {
-                    2: '2px solid rgba(255, 140, 0, 0.6)',
+                    2: '2px solid rgba(109, 40, 217, 0.6)',
                     1: '2px solid rgba(255, 0, 0, 0.6)',
                     0: '2px solid rgba(0, 200, 0, 0.6)'
                 };
@@ -3264,8 +3264,8 @@ function resumeStartingCountdown() {
                     circleContainer.style.border = borderColors[startCountdownValue];
                 }
 
-                // Keep text color constant - using the orange theme color
-                countdownDisplay.style.color = '#ff8c00';
+                // Keep text color constant - using the purple theme color
+                countdownDisplay.style.color = '#6d28d9';
             }
 
             // Apply exit animation
@@ -3350,7 +3350,7 @@ function resumeStartingCountdown() {
                     <svg class="countdown-svg" viewBox="0 0 100 100">
                         <circle r="45" cx="50" cy="50" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
                         <circle id="countdown-circle" r="45" cx="50" cy="50" fill="transparent"
-                                stroke="#ff8c00" stroke-width="10" stroke-dasharray="282.7"
+                                stroke="#6d28d9" stroke-width="10" stroke-dasharray="282.7"
                                 stroke-dashoffset="0" transform="rotate(-90 50 50)"></circle>
                     </svg>
                     <div id="countdown">${displayTimerDuration(duration)}</div>
@@ -4078,6 +4078,36 @@ function copyShareCode() {
     }
 }
 
+// Import a flow from a pasted share code in the import modal
+function importFromShareCode() {
+    const input = document.getElementById('importCodeInput');
+    const successMsg = document.getElementById('importCodeSuccess');
+    const errorMsg = document.getElementById('importCodeError');
+
+    if (!input || !input.value.trim()) return;
+
+    // Hide previous messages
+    if (successMsg) successMsg.style.display = 'none';
+    if (errorMsg) errorMsg.style.display = 'none';
+
+    const result = importFlow(input.value.trim());
+
+    if (result) {
+        if (successMsg) successMsg.style.display = 'block';
+        input.value = '';
+        // Close modal after short delay
+        setTimeout(() => {
+            closeImportModal();
+            if (successMsg) successMsg.style.display = 'none';
+        }, 1500);
+    } else {
+        if (errorMsg) errorMsg.style.display = 'block';
+        setTimeout(() => {
+            if (errorMsg) errorMsg.style.display = 'none';
+        }, 3000);
+    }
+}
+
 // Close the share modal
 function closeShareModal() {
     const modal = document.getElementById('shareFlowModal');
@@ -4307,11 +4337,11 @@ function generatePDFContent(flow) {
             .header {
                 text-align: center;
                 margin-bottom: 30px;
-                border-bottom: 3px solid #ff8c00;
+                border-bottom: 3px solid #6d28d9;
                 padding-bottom: 20px;
             }
             .header h1 {
-                color: #ff8c00;
+                color: #6d28d9;
                 font-size: 32px;
                 margin: 0 0 10px 0;
                 font-weight: bold;
@@ -4326,10 +4356,10 @@ function generatePDFContent(flow) {
                 display: flex;
                 justify-content: space-around;
                 margin-bottom: 40px;
-                background: linear-gradient(135deg, #fff5e6, #fff);
+                background: linear-gradient(135deg, #f5f3ff, #fff);
                 padding: 20px;
                 border-radius: 12px;
-                border: 2px solid #ff8c00;
+                border: 2px solid #6d28d9;
             }
             .flow-info div {
                 text-align: center;
@@ -4345,18 +4375,18 @@ function generatePDFContent(flow) {
             .flow-info .value {
                 font-size: 24px;
                 font-weight: bold;
-                color: #ff8c00;
+                color: #6d28d9;
             }
             .poses-container {
                 margin-top: 20px;
             }
             .section-title {
-                color: #ff8c00;
+                color: #6d28d9;
                 font-size: 20px;
                 font-weight: bold;
                 margin-bottom: 15px;
                 text-align: center;
-                border-bottom: 2px solid #ff8c00;
+                border-bottom: 2px solid #6d28d9;
                 padding-bottom: 8px;
             }
             .poses-grid {
@@ -4380,7 +4410,7 @@ function generatePDFContent(flow) {
                 position: absolute;
                 top: 4px;
                 left: 4px;
-                background: #ff8c00;
+                background: #6d28d9;
                 color: white;
                 width: 18px;
                 height: 18px;
@@ -4446,7 +4476,7 @@ function generatePDFContent(flow) {
                 overflow: hidden;
             }
             .pose-sanskrit {
-                color: #ff8c00;
+                color: #6d28d9;
                 font-size: 8px;
                 font-style: italic;
                 margin: 0 0 3px 0;
@@ -4482,7 +4512,7 @@ function generatePDFContent(flow) {
             .info-value {
                 font-size: 8px;
                 font-weight: bold;
-                color: #ff8c00;
+                color: #6d28d9;
                 word-wrap: break-word;
                 white-space: nowrap;
             }
@@ -4507,7 +4537,7 @@ function generatePDFContent(flow) {
                 text-align: center;
                 font-size: 12px;
                 color: #666;
-                border-top: 2px solid #ff8c00;
+                border-top: 2px solid #6d28d9;
                 padding-top: 20px;
                 font-weight: 500;
             }
@@ -5277,7 +5307,7 @@ async function importTemplate(templateFile) {
     }
 }
 
-// Import default C1 flow for new users
+// Import default flow for new users
 async function importDefaultFlowForNewUser() {
     try {
         // Check if user has previously used the app
@@ -5286,28 +5316,28 @@ async function importDefaultFlowForNewUser() {
             console.log('User has used app before - not importing default flow');
             return;
         }
-        
-        console.log('Importing default C1 flow for new user');
-        
-        // Check if C1 flow template exists
-        const response = await fetch('templates/c1.flow');
+
+        console.log('Importing default flow for new user');
+
+        // Check if default flow template exists
+        const response = await fetch('templates/heated-vinyasa.flow');
         if (!response.ok) {
-            console.error('C1 template not found:', response.status);
+            console.error('Default template not found:', response.status);
             return;
         }
-        
+
         const templateData = await response.json();
-        
-        // Import the C1 flow data
+
+        // Import the default flow data
         importFlowFromData(templateData);
-        
+
         // Mark user as having used the app
         localStorage.setItem('hasUsedApp', 'true');
-        
-        console.log('Default C1 flow imported successfully');
-        
+
+        console.log('Default flow imported successfully');
+
     } catch (error) {
-        console.error('Error importing default C1 flow:', error);
+        console.error('Error importing default flow:', error);
         // Silently fail - don't show error to user as this is background functionality
     }
 }
@@ -5875,7 +5905,7 @@ function populateAsanaList() {
             // Create sequence badge
             const sequenceBadge = document.createElement('span');
             sequenceBadge.className = 'difficulty-badge sequence';
-            sequenceBadge.style.backgroundColor = '#ff8c00';
+            sequenceBadge.style.backgroundColor = '#6d28d9';
             sequenceBadge.textContent = 'Sequence';
             
             // Create sequence name label
@@ -6198,7 +6228,7 @@ function handleTableDragStart(e) {
             indicator.className = 'pose-drag-indicator';
             indicator.textContent = displayNumber;
             indicator.style.position = 'fixed';
-            indicator.style.backgroundColor = '#ff8c00';
+            indicator.style.backgroundColor = '#6d28d9';
             indicator.style.color = 'white';
             indicator.style.padding = '8px 12px';
             indicator.style.borderRadius = '50%';
@@ -6314,8 +6344,8 @@ function handleTableDragStart(e) {
     dragImage.style.opacity = '0.7';
     dragImage.style.position = 'absolute';
     dragImage.style.top = '-1000px';
-    dragImage.style.backgroundColor = '#fff8f0';
-    dragImage.style.border = '2px solid #ff8c00';
+    dragImage.style.backgroundColor = '#faf5ff';
+    dragImage.style.border = '2px solid #6d28d9';
     document.body.appendChild(dragImage);
     
     // Use the custom drag image
@@ -7037,7 +7067,7 @@ function createTouchDragIndicator(row, touch) {
     // Style the indicator
     Object.assign(dragIndicator.style, {
         position: 'fixed',
-        backgroundColor: '#ff8c00',
+        backgroundColor: '#6d28d9',
         color: 'white',
         padding: isSectionHeader ? '16px 20px' : '12px',
         borderRadius: isSectionHeader ? '20px' : '50%',
@@ -7238,7 +7268,7 @@ function handleCardDragStart(e) {
     indicator.className = 'pose-drag-indicator';
     indicator.textContent = displayNumber;
     indicator.style.position = 'fixed';
-    indicator.style.backgroundColor = '#ff8c00';
+    indicator.style.backgroundColor = '#6d28d9';
     indicator.style.color = 'white';
     indicator.style.padding = '8px 12px';
     indicator.style.borderRadius = '50%';
@@ -7278,8 +7308,8 @@ function handleCardDragStart(e) {
     dragImage.style.opacity = '0.7';
     dragImage.style.position = 'absolute';
     dragImage.style.top = '-1000px';
-    dragImage.style.backgroundColor = '#fff8f0';
-    dragImage.style.border = '2px solid #ff8c00';
+    dragImage.style.backgroundColor = '#faf5ff';
+    dragImage.style.border = '2px solid #6d28d9';
     document.body.appendChild(dragImage);
 
     // Use the custom drag image
@@ -7642,8 +7672,8 @@ function handleCardDrop(e) {
             const movedCard = newCards.find(card => parseInt(card.getAttribute('data-index')) === targetIndex);
             if (movedCard) {
                 movedCard.style.transition = 'all 0.3s ease';
-                movedCard.style.boxShadow = '0 0 15px rgba(255, 140, 0, 0.8)';
-                movedCard.style.borderColor = '#ff8c00';
+                movedCard.style.boxShadow = '0 0 15px rgba(109, 40, 217, 0.8)';
+                movedCard.style.borderColor = '#6d28d9';
                 movedCard.style.transform = 'scale(1.03)';
 
                 // Reset after highlight animation completes
@@ -10916,7 +10946,7 @@ function saveSequence() {
         // Create sequence badge
         const sequenceBadge = document.createElement('span');
         sequenceBadge.className = 'difficulty-badge sequence';
-        sequenceBadge.style.backgroundColor = '#ff8c00';
+        sequenceBadge.style.backgroundColor = '#6d28d9';
         sequenceBadge.textContent = 'Sequence';
         
         // Create sequence name label

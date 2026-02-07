@@ -89,8 +89,8 @@ HTML_TEMPLATE = """
         }
         
         .drop-zone.processing {
-            border-color: #ffa500;
-            background: #fff5e6;
+            border-color: #7c3aed;
+            background: #f5f3ff;
         }
         
         .drop-text {
