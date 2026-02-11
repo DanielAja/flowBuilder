@@ -1205,6 +1205,14 @@
     </style>
   </head>
   <body>
+    <!-- App Store Banner -->
+    <div id="appStoreBanner" class="app-store-banner">
+      <div class="banner-content">
+        <span class="banner-text">Flow Builder is now available on the <a href="https://apps.apple.com/us/app/flowbuilder-yoga/id6758913355" target="_blank" rel="noopener noreferrer">App Store</a></span>
+        <button class="banner-close" onclick="dismissAppStoreBanner()" aria-label="Dismiss banner">&times;</button>
+      </div>
+    </div>
+
     <div class="accent-bar"></div>
 
     <div id="homeScreen" class="screen active">
@@ -1676,6 +1684,20 @@
     <!-- placeholder -->
     <!--#include virtual=" userAnalytics.html" -->
 
+    <script>
+      // App Store Banner
+      function dismissAppStoreBanner() {
+        var banner = document.getElementById('appStoreBanner');
+        banner.classList.add('hidden');
+        localStorage.setItem('appStoreBannerDismissed', 'true');
+      }
+      (function() {
+        if (localStorage.getItem('appStoreBannerDismissed') === 'true') {
+          var banner = document.getElementById('appStoreBanner');
+          if (banner) banner.classList.add('hidden');
+        }
+      })();
+    </script>
     <script src="main.js"></script>
   </body>
 </html>

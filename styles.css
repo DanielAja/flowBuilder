@@ -4,6 +4,77 @@
   box-sizing: border-box;
 }
 
+/* App Store Banner */
+.app-store-banner {
+  background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  position: relative;
+  z-index: 2000;
+  animation: bannerSlideDown 0.4s ease-out;
+}
+
+.app-store-banner.hidden {
+  display: none;
+}
+
+@keyframes bannerSlideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.banner-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.banner-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.banner-text a {
+  color: white;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.banner-text a:hover {
+  opacity: 0.9;
+}
+
+.banner-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.banner-close:hover {
+  opacity: 1;
+}
+
+@media (max-width: 480px) {
+  .banner-text { font-size: 12px; }
+  .app-store-banner { padding: 8px 12px; }
+}
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
