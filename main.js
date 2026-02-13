@@ -4069,38 +4069,77 @@ function exportFlowAsJSONFromModal() {
             return;
         }
         
-        // Create simplified JSON structure similar to templates
+        // Create JSON structure compatible with both web and iOS apps
+        const mappedAsanas = flowToExport.asanas.map(asana => {
+            // Extract actual image filename to ensure proper image loading on import
+            let asanaName;
+            if (asana.image && asana.image.includes('/')) {
+                // Extract filename from path like "images/webp/mountain-pose.webp" -> "mountain-pose"
+                const filename = asana.image.split('/').pop();
+                asanaName = filename.replace(/\.(webp|png)$/i, '');
+            } else if (asana.imageName) {
+                asanaName = asana.imageName;
+            } else {
+                // Fallback to generated name for custom poses without images
+                asanaName = asana.name.toLowerCase().replace(/\s+/g, '-');
+            }
+
+            const duration = Math.max(1, Math.min(300, asana.duration || 15));
+            const displayName = asana.name || "Unknown Pose";
+            // Map web side values to iOS format for the poses array
+            const sideMap = { 'both': 'Center', 'left': 'Left', 'right': 'Right' };
+            const iosSide = sideMap[asana.side] || asana.side || 'Center';
+
+            return {
+                // Web format fields
+                name: asanaName || "unknown-pose",
+                english: displayName,
+                // Shared fields
+                sanskrit: asana.sanskrit || "",
+                duration: duration,
+                difficulty: asana.difficulty || "Beginner",
+                side: asana.side || "both",
+                description: asana.description || "",
+                tags: Array.isArray(asana.tags) ? asana.tags : [],
+                chakra: asana.chakra || "Root",
+                breathCue: asana.breathCue || "-",
+                // iOS format fields
+                imageName: asana.image || `images/webp/${asanaName}.webp`,
+                iosSide: iosSide
+            };
+        });
+
         const exportData = {
             name: flowToExport.name || "Untitled Flow",
             description: flowToExport.description || "",
-            asanas: flowToExport.asanas.map(asana => {
-                // Extract actual image filename to ensure proper image loading on import
-                let asanaName;
-                if (asana.image && asana.image.includes('/')) {
-                    // Extract filename from path like "images/webp/mountain-pose.webp" -> "mountain-pose"
-                    const filename = asana.image.split('/').pop();
-                    asanaName = filename.replace(/\.(webp|png)$/i, '');
-                } else if (asana.imageName) {
-                    asanaName = asana.imageName;
-                } else {
-                    // Fallback to generated name for custom poses without images
-                    asanaName = asana.name.toLowerCase().replace(/\s+/g, '-');
-                }
-                
-                return {
-                    name: asanaName || "unknown-pose",
-                    english: asana.name || "Unknown Pose",
-                    sanskrit: asana.sanskrit || "",
-                    duration: Math.max(1, Math.min(300, asana.duration || 15)), // Ensure valid duration range
-                    difficulty: asana.difficulty || "Beginner",
-                    side: asana.side || "both",
-                    description: asana.description || "",
-                    tags: Array.isArray(asana.tags) ? asana.tags : [],
-                    chakra: asana.chakra || "Root",
-                    breathCue: asana.breathCue || "-"
-                };
-            }),
-            sections: flowToExport.sections || [] // Include sections (groups) in export
+            // Web format
+            asanas: mappedAsanas.map(a => ({
+                name: a.name,
+                english: a.english,
+                sanskrit: a.sanskrit,
+                duration: a.duration,
+                difficulty: a.difficulty,
+                side: a.side,
+                description: a.description,
+                tags: a.tags,
+                chakra: a.chakra,
+                breathCue: a.breathCue
+            })),
+            // iOS format (so iOS JSONDecoder can read it directly)
+            poses: mappedAsanas.map(a => ({
+                id: generateUniqueID(),
+                name: a.english,
+                sanskrit: a.sanskrit,
+                side: a.iosSide,
+                imageName: a.imageName,
+                description: a.description,
+                difficulty: a.difficulty,
+                tags: a.tags,
+                chakra: a.chakra,
+                breathCue: a.breathCue,
+                duration: a.duration
+            })),
+            sections: flowToExport.sections || []
         };
         
         // Validate the export data before creating file (ensure it would pass import validation)
@@ -4768,11 +4807,12 @@ function validateJSONContent(data) {
         }
         
         // Validate required properties for flow files
-        const requiredProps = ['name', 'asanas'];
-        for (const prop of requiredProps) {
-            if (!data.hasOwnProperty(prop)) {
-                errors.push(`Missing required property: ${prop}`);
-            }
+        if (!data.hasOwnProperty('name')) {
+            errors.push('Missing required property: name');
+        }
+        // Accept either "asanas" (web format) or "poses" (iOS format)
+        if (!data.hasOwnProperty('asanas') && !data.hasOwnProperty('poses')) {
+            errors.push('Missing required property: asanas or poses');
         }
         
         // Validate name format
@@ -4805,14 +4845,15 @@ function validateJSONContent(data) {
             data.description = data.description.replace(/[<>]/g, '').substring(0, 500);
         }
         
-        // Validate asanas array
-        if (data.asanas && !Array.isArray(data.asanas)) {
-            errors.push('Invalid asanas format.');
+        // Validate asanas/poses array
+        const posesArray = data.asanas || data.poses;
+        if (posesArray && !Array.isArray(posesArray)) {
+            errors.push('Invalid asanas/poses format.');
         }
-        
-        // Validate asanas content
-        if (data.asanas && Array.isArray(data.asanas)) {
-            data.asanas.forEach((asana, index) => {
+
+        // Validate asanas/poses content
+        if (posesArray && Array.isArray(posesArray)) {
+            posesArray.forEach((asana, index) => {
                 if (typeof asana !== 'object' || asana === null) {
                     errors.push(`Invalid asana at position ${index + 1}.`);
                     return;
@@ -5068,6 +5109,10 @@ function handleFileDrop(event) {
 // Import flow from template data (shared function for templates and file uploads)
 function importFlowFromData(templateData) {
     try {
+        // Detect format: iOS uses "poses", web uses "asanas"
+        const isIOSFormat = !templateData.asanas && Array.isArray(templateData.poses);
+        const posesArray = templateData.asanas || templateData.poses || [];
+
         // Convert template data to the format expected by the app
         const newFlow = new Flow(
             templateData.name,
@@ -5075,13 +5120,36 @@ function importFlowFromData(templateData) {
             0, // time will be calculated from asanas
             "" // peakPose
         );
-        
+
         // Add asanas to the flow - build array directly to preserve order
-        templateData.asanas.forEach(asanaData => {
+        posesArray.forEach(asanaData => {
+            // Resolve display name and image slug based on format
+            let displayName, imageSlug, side;
+
+            if (isIOSFormat) {
+                // iOS format: "name" is the display name, "imageName" is the image path
+                displayName = asanaData.name || "Unknown Pose";
+                // Extract slug from imageName like "images/webp/mountain-pose.webp"
+                if (asanaData.imageName && asanaData.imageName.includes('/')) {
+                    const filename = asanaData.imageName.split('/').pop();
+                    imageSlug = filename.replace(/\.(webp|png)$/i, '');
+                } else {
+                    imageSlug = displayName.toLowerCase().replace(/['']/g, '').replace(/\s+/g, '-');
+                }
+                // Map iOS side values (Center/Left/Right) to web values (both/left/right)
+                const sideMap = { 'Center': 'both', 'Left': 'left', 'Right': 'right', 'Front': 'both' };
+                side = sideMap[asanaData.side] || asanaData.side || "both";
+            } else {
+                // Web/template format: "english" is display name, "name" is the slug
+                displayName = asanaData.english || asanaData.name || "Unknown Pose";
+                imageSlug = asanaData.name || displayName.toLowerCase().replace(/\s+/g, '-');
+                side = asanaData.side || "both";
+            }
+
             const newAsana = new YogaAsana(
-                asanaData.english || asanaData.name, // Use english name for display
-                asanaData.side || "both",
-                `images/webp/${asanaData.name}.webp`,
+                displayName,
+                side,
+                `images/webp/${imageSlug}.webp`,
                 asanaData.description || "",
                 asanaData.difficulty || "Beginner",
                 asanaData.tags || [],
@@ -5090,13 +5158,13 @@ function importFlowFromData(templateData) {
                 asanaData.chakra || "Root",
                 asanaData.breathCue || "-"
             );
-            
+
             // Set the duration
             newAsana.setDuration(asanaData.duration || 15);
-            
-            // Store the original name for image reference
-            newAsana.imageName = asanaData.name;
-            
+
+            // Store the image slug for reference
+            newAsana.imageName = imageSlug;
+
             // Add directly to asanas array to preserve import order
             newFlow.asanas.push(newAsana);
         });
@@ -5107,10 +5175,11 @@ function importFlowFromData(templateData) {
         // Import sections (groups) if they exist
         if (templateData.sections && Array.isArray(templateData.sections)) {
             newFlow.sections = templateData.sections.map(section => ({
-                id: section.id || generateUniqueID(), // Generate new ID if missing
+                id: section.id || generateUniqueID(),
                 name: section.name || "Unnamed Section",
-                asanaIds: section.asanaIds || [], // Preserve asana IDs in sections
-                collapsed: section.collapsed || false // Preserve collapsed state if available
+                // Handle both iOS (poseIndices) and web (asanaIds) formats
+                asanaIds: section.asanaIds || section.poseIndices || [],
+                collapsed: section.collapsed || section.isCollapsed || false
             }));
         }
         
