@@ -3541,8 +3541,12 @@ function importFlow(shareCode) {
         // Parse the JSON
         const importData = JSON.parse(jsonStr);
 
+        // Detect format: iOS uses "poses", web uses "asanas"
+        const isIOSFormat = !importData.asanas && Array.isArray(importData.poses);
+        const posesArray = importData.asanas || importData.poses || [];
+
         // Validate the imported data has the minimum required fields
-        if (!importData.name || !Array.isArray(importData.asanas)) {
+        if (!importData.name || posesArray.length === 0) {
             throw new Error("Invalid flow data");
         }
 
@@ -3559,34 +3563,56 @@ function importFlow(shareCode) {
         newFlow.lastEdited = new Date().toISOString();
 
         // Add each asana to the flow
-        importData.asanas.forEach(asana => {
+        posesArray.forEach(asanaData => {
+            let displayName, imageSlug, side;
+
+            if (isIOSFormat) {
+                // iOS format: "name" is display name, "imageName" is image path
+                displayName = asanaData.name || "Unknown Pose";
+                if (asanaData.imageName && asanaData.imageName.includes('/')) {
+                    const filename = asanaData.imageName.split('/').pop();
+                    imageSlug = filename.replace(/\.(webp|png)$/i, '');
+                } else {
+                    imageSlug = displayName.toLowerCase().replace(/['']/g, '').replace(/\s+/g, '-');
+                }
+                const sideMap = { 'Center': 'both', 'Left': 'left', 'Right': 'right', 'Front': 'both' };
+                side = sideMap[asanaData.side] || asanaData.side || "both";
+            } else {
+                // Web format: "english" is display name, "name" is slug
+                displayName = asanaData.english || asanaData.name || "Unknown Pose";
+                imageSlug = asanaData.name || displayName.toLowerCase().replace(/\s+/g, '-');
+                side = asanaData.side || "both";
+            }
+
             const newAsana = new YogaAsana(
-                asana.name,
-                asana.side,
-                asana.image,
-                asana.description,
-                asana.difficulty,
-                asana.tags || [],
-                asana.transitionsAsana || [],
-                asana.sanskrit || "",
-                asana.chakra || "",
-                asana.breathCue || "-"
+                displayName,
+                side,
+                asanaData.image || `images/webp/${imageSlug}.webp`,
+                asanaData.description || "",
+                asanaData.difficulty || "Beginner",
+                asanaData.tags || [],
+                asanaData.transitionsAsana || [],
+                asanaData.sanskrit || "",
+                asanaData.chakra || "",
+                asanaData.breathCue || "-"
             );
-            newAsana.setDuration(asana.duration || 7);
-            newFlow.addAsana(newAsana);
+            newAsana.setDuration(asanaData.duration || 7);
+            newAsana.imageName = imageSlug;
+            newFlow.asanas.push(newAsana);
         });
 
         // Import sections (groups) if they exist
         if (importData.sections && Array.isArray(importData.sections)) {
             newFlow.sections = importData.sections.map(section => ({
-                id: section.id || generateUniqueID(), // Generate new ID if missing
+                id: section.id || generateUniqueID(),
                 name: section.name || "Unnamed Section",
-                asanaIds: section.asanaIds || [] // Preserve asana IDs in sections
+                asanaIds: section.asanaIds || section.poseIndices || [],
+                collapsed: section.collapsed || section.isCollapsed || false
             }));
         }
 
         // Calculate total duration
-        newFlow.calculateTotalDuration();
+        newFlow.time = newFlow.asanas.reduce((total, asana) => total + asana.duration, 0);
 
         return newFlow;
     } catch (error) {
@@ -4109,7 +4135,28 @@ function exportFlowAsJSONFromModal() {
             };
         });
 
+        // Generate UUID v4 for iOS Codable compatibility
+        const uuidv4 = () => crypto.randomUUID ? crypto.randomUUID()
+            : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+
+        // Map web section keys to include iOS-compatible keys
+        const exportSections = (flowToExport.sections || []).map(s => ({
+            id: uuidv4(),
+            name: s.name || "Unnamed Section",
+            asanaIds: s.asanaIds || [],
+            collapsed: s.collapsed || false,
+            poseIndices: s.asanaIds || [],
+            isCollapsed: s.collapsed || false
+        }));
+
         const exportData = {
+            // iOS Codable fields (so iOS JSONDecoder can decode Flow.self directly)
+            id: uuidv4(),
+            lastEdited: flowToExport.lastEdited || new Date().toISOString(),
+            lastFlowed: flowToExport.lastFlowed || null,
             name: flowToExport.name || "Untitled Flow",
             description: flowToExport.description || "",
             // Web format
@@ -4127,7 +4174,7 @@ function exportFlowAsJSONFromModal() {
             })),
             // iOS format (so iOS JSONDecoder can read it directly)
             poses: mappedAsanas.map(a => ({
-                id: generateUniqueID(),
+                id: uuidv4(),
                 name: a.english,
                 sanskrit: a.sanskrit,
                 side: a.iosSide,
@@ -4139,7 +4186,7 @@ function exportFlowAsJSONFromModal() {
                 breathCue: a.breathCue,
                 duration: a.duration
             })),
-            sections: flowToExport.sections || []
+            sections: exportSections
         };
         
         // Validate the export data before creating file (ensure it would pass import validation)
