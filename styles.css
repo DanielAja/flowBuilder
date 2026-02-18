@@ -5568,4 +5568,509 @@ tr[data-section-id]:last-of-type {
   top: calc(100% + 2px);
 }
 
+/* ==========================================
+   Settings Gear Button
+   ========================================== */
 
+.settings-gear-btn {
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.settings-gear-btn:hover {
+  background: #f5f5f5;
+  color: #333;
+  border-color: #ccc;
+}
+
+/* ==========================================
+   Settings Modal
+   ========================================== */
+
+.settings-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.settings-modal-overlay.active {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.settings-panel {
+  background: #fff;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 440px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.settings-header .close-modal {
+  font-size: 1.8rem;
+  cursor: pointer;
+  color: #999;
+  line-height: 1;
+  position: static;
+}
+
+.settings-body {
+  padding: 8px 24px 24px;
+}
+
+.settings-section {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.settings-section:last-child {
+  border-bottom: none;
+}
+
+.settings-section h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #999;
+  margin: 0 0 12px;
+}
+
+.settings-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.settings-toggle-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #6366f1;
+  cursor: pointer;
+}
+
+.settings-buttons-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.settings-action-btn {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: #6366f1;
+  color: white;
+}
+
+.settings-action-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.settings-action-btn.secondary {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.settings-action-btn.secondary:hover {
+  background: #e5e5e5;
+}
+
+/* ==========================================
+   Stats Dashboard
+   ========================================== */
+
+#statsScreen {
+  display: none;
+}
+
+#statsScreen.active {
+  display: block;
+}
+
+.stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  gap: 12px;
+}
+
+.stats-header h1 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+}
+
+.stats-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #6366f1;
+  padding: 6px 0;
+  white-space: nowrap;
+}
+
+.stats-export-btn {
+  flex: 0 !important;
+  padding: 8px 12px !important;
+  font-size: 0.8rem !important;
+  white-space: nowrap;
+}
+
+.stats-main {
+  padding: 16px 20px 40px;
+  max-width: 600px;
+  margin: 0 auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 70px);
+}
+
+.stats-period-tabs {
+  display: flex;
+  gap: 4px;
+  background: #f0f0f0;
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+
+.stats-tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.stats-tab.active {
+  background: #fff;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.stats-summary-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.stats-card {
+  background: #f8f8fa;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stats-card .stats-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.2;
+}
+
+.stats-card .stats-label {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stats-section-block {
+  margin-bottom: 24px;
+}
+
+.stats-section-block h3 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #999;
+  margin: 0 0 12px;
+}
+
+/* Trend Chart */
+.stats-trend-chart {
+  margin-bottom: 24px;
+}
+
+.stats-trend-chart h3 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #999;
+  margin: 0 0 12px;
+}
+
+.stats-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 120px;
+  padding: 0 4px;
+}
+
+.stats-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.stats-bar {
+  width: 100%;
+  background: #6366f1;
+  border-radius: 4px 4px 0 0;
+  min-height: 2px;
+  transition: height 0.3s ease;
+  opacity: 0.8;
+}
+
+.stats-bar-label {
+  font-size: 0.7rem;
+  color: #999;
+  margin-top: 6px;
+  text-align: center;
+}
+
+.stats-bar-value {
+  font-size: 0.7rem;
+  color: #666;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+/* Pose List */
+.stats-pose-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.stats-pose-item:last-child {
+  border-bottom: none;
+}
+
+.stats-pose-rank {
+  width: 24px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #999;
+}
+
+.stats-pose-name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.stats-pose-sanskrit {
+  font-size: 0.75rem;
+  color: #999;
+  font-style: italic;
+}
+
+.stats-pose-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6366f1;
+  background: #f0f0ff;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+/* Category/Difficulty bars */
+.stats-breakdown-item {
+  margin-bottom: 10px;
+}
+
+.stats-breakdown-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.stats-breakdown-name {
+  color: #333;
+}
+
+.stats-breakdown-pct {
+  color: #999;
+  font-weight: 500;
+}
+
+.stats-breakdown-bar {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stats-breakdown-fill {
+  height: 100%;
+  background: #6366f1;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Session History */
+.stats-session-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.stats-session-item:last-child {
+  border-bottom: none;
+}
+
+.stats-session-info {
+  flex: 1;
+}
+
+.stats-session-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.stats-session-date {
+  font-size: 0.75rem;
+  color: #999;
+  margin-top: 2px;
+}
+
+.stats-session-meta {
+  text-align: right;
+}
+
+.stats-session-duration {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.stats-session-status {
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+
+.stats-session-status.completed {
+  color: #22c55e;
+}
+
+.stats-session-status.incomplete {
+  color: #f59e0b;
+}
+
+/* Clear Stats */
+.stats-clear-container {
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.stats-clear-btn {
+  background: none;
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.stats-clear-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+/* Empty state */
+.stats-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.stats-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.stats-empty h3 {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 8px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.stats-empty p {
+  font-size: 0.9rem;
+}

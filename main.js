@@ -100,6 +100,499 @@ function saveCustomPoses(customPoses) {
     }
 }
 
+// ==========================================
+// Practice Statistics
+// ==========================================
+
+function getStatsTrackingEnabled() {
+    const val = localStorage.getItem('statsTrackingEnabled');
+    return val === null ? true : val === 'true'; // default on
+}
+
+function setStatsTrackingEnabled(enabled) {
+    localStorage.setItem('statsTrackingEnabled', String(enabled));
+}
+
+function getPracticeStats() {
+    try {
+        const json = localStorage.getItem('practiceStats');
+        if (!json) return [];
+        const sessions = JSON.parse(json);
+        return Array.isArray(sessions) ? sessions : [];
+    } catch (e) {
+        console.error('Error loading practice stats:', e);
+        return [];
+    }
+}
+
+function savePracticeStats(sessions) {
+    try {
+        localStorage.setItem('practiceStats', JSON.stringify(sessions));
+    } catch (e) {
+        console.error('Error saving practice stats:', e);
+    }
+}
+
+function addPracticeSession(session) {
+    const sessions = getPracticeStats();
+    sessions.push(session);
+    savePracticeStats(sessions);
+}
+
+function clearPracticeStats() {
+    savePracticeStats([]);
+}
+
+function recordSession(completedFully) {
+    if (!getStatsTrackingEnabled()) return;
+    if (!window._sessionTracker) return;
+
+    const tracker = window._sessionTracker;
+
+    // Record the last pose
+    if (tracker.poseStartTime !== null && editingFlow && editingFlow.asanas && editingFlow.asanas[currentAsanaIndex]) {
+        const lastPose = editingFlow.asanas[currentAsanaIndex];
+        const elapsed = Math.round((Date.now() - tracker.poseStartTime) / 1000);
+        tracker.poses.push({
+            name: lastPose.name || '',
+            sanskrit: lastPose.sanskrit || '',
+            durationSeconds: elapsed,
+            difficulty: lastPose.difficulty || 'Beginner',
+            tags: lastPose.tags || [],
+            side: lastPose.side || 'Center'
+        });
+    }
+
+    const totalDuration = Math.round((Date.now() - tracker.startTime) / 1000);
+
+    const session = {
+        id: generateUniqueID(),
+        flowID: tracker.flowID,
+        flowName: tracker.flowName,
+        date: new Date().toISOString(),
+        durationSeconds: totalDuration,
+        poseCount: tracker.poses.length,
+        completedFully: completedFully,
+        poses: tracker.poses
+    };
+
+    addPracticeSession(session);
+    window._sessionTracker = null;
+}
+
+// Stats computation helpers
+function computeStatsFromSessions(sessions) {
+    const totalSessions = sessions.length;
+    const totalSeconds = sessions.reduce((sum, s) => sum + s.durationSeconds, 0);
+    const avgDuration = totalSessions > 0 ? Math.round(totalSeconds / totalSessions) : 0;
+    const totalPoses = sessions.reduce((sum, s) => sum + s.poseCount, 0);
+    const avgPoses = totalSessions > 0 ? (totalPoses / totalSessions).toFixed(1) : '0';
+    const completionRate = totalSessions > 0 ? Math.round(sessions.filter(s => s.completedFully).length / totalSessions * 100) : 0;
+
+    // Streaks
+    const uniqueDays = [...new Set(sessions.map(s => new Date(s.date).toDateString()))].sort((a, b) => new Date(b) - new Date(a));
+    let currentStreak = 0;
+    if (uniqueDays.length > 0) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        let checkDate = new Date(today);
+        const todayStr = today.toDateString();
+        if (!uniqueDays.includes(todayStr)) {
+            checkDate.setDate(checkDate.getDate() - 1);
+            if (!uniqueDays.includes(checkDate.toDateString())) {
+                currentStreak = 0;
+            }
+        }
+        if (currentStreak === 0 && uniqueDays.includes(checkDate.toDateString())) {
+            while (uniqueDays.includes(checkDate.toDateString())) {
+                currentStreak++;
+                checkDate.setDate(checkDate.getDate() - 1);
+            }
+        }
+    }
+
+    // Longest streak
+    let longestStreak = 0;
+    if (uniqueDays.length > 0) {
+        const sortedDays = [...new Set(sessions.map(s => {
+            const d = new Date(s.date);
+            d.setHours(0, 0, 0, 0);
+            return d.getTime();
+        }))].sort((a, b) => a - b);
+        let streak = 1;
+        for (let i = 1; i < sortedDays.length; i++) {
+            const diff = (sortedDays[i] - sortedDays[i - 1]) / (1000 * 60 * 60 * 24);
+            if (diff === 1) {
+                streak++;
+                longestStreak = Math.max(longestStreak, streak);
+            } else {
+                streak = 1;
+            }
+        }
+        longestStreak = Math.max(longestStreak, streak);
+    }
+
+    // Pose frequency
+    const poseFreq = {};
+    sessions.forEach(s => {
+        (s.poses || []).forEach(p => {
+            if (!poseFreq[p.name]) poseFreq[p.name] = { sanskrit: p.sanskrit || '', count: 0 };
+            poseFreq[p.name].count++;
+        });
+    });
+    const topPoses = Object.entries(poseFreq)
+        .map(([name, data]) => ({ name, sanskrit: data.sanskrit, count: data.count }))
+        .sort((a, b) => b.count - a.count);
+
+    // Category breakdown
+    const tagCounts = {};
+    let totalTags = 0;
+    sessions.forEach(s => {
+        (s.poses || []).forEach(p => {
+            (p.tags || []).forEach(tag => {
+                tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                totalTags++;
+            });
+        });
+    });
+    const categories = Object.entries(tagCounts)
+        .map(([name, count]) => ({ name, count, pct: totalTags > 0 ? Math.round(count / totalTags * 100) : 0 }))
+        .sort((a, b) => b.count - a.count);
+
+    // Difficulty breakdown
+    const diffCounts = {};
+    let totalDiffs = 0;
+    sessions.forEach(s => {
+        (s.poses || []).forEach(p => {
+            const d = p.difficulty || 'Beginner';
+            diffCounts[d] = (diffCounts[d] || 0) + 1;
+            totalDiffs++;
+        });
+    });
+    const difficulties = Object.entries(diffCounts)
+        .map(([name, count]) => ({ name, count, pct: totalDiffs > 0 ? Math.round(count / totalDiffs * 100) : 0 }))
+        .sort((a, b) => b.count - a.count);
+
+    // Weekly trend (last 7 days)
+    const weeklyTrend = [];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() - i);
+        const dayStr = d.toDateString();
+        const daySessions = sessions.filter(s => new Date(s.date).toDateString() === dayStr);
+        const mins = Math.round(daySessions.reduce((sum, s) => sum + s.durationSeconds, 0) / 60);
+        weeklyTrend.push({ label: dayNames[d.getDay()], minutes: mins, count: daySessions.length });
+    }
+
+    // Monthly trend (last 4 weeks)
+    const monthlyTrend = [];
+    for (let w = 3; w >= 0; w--) {
+        const weekStart = new Date();
+        weekStart.setHours(0, 0, 0, 0);
+        weekStart.setDate(weekStart.getDate() - (w * 7));
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 7);
+        const weekSessions = sessions.filter(s => {
+            const d = new Date(s.date);
+            return d >= weekStart && d < weekEnd;
+        });
+        const mins = Math.round(weekSessions.reduce((sum, s) => sum + s.durationSeconds, 0) / 60);
+        const label = `${weekStart.getMonth() + 1}/${weekStart.getDate()}`;
+        monthlyTrend.push({ label, minutes: mins, count: weekSessions.length });
+    }
+
+    return {
+        totalSessions, totalSeconds, avgDuration, avgPoses, completionRate,
+        currentStreak, longestStreak, topPoses, categories, difficulties,
+        weeklyTrend, monthlyTrend
+    };
+}
+
+function formatDuration(seconds) {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    if (hrs > 0) return `${hrs}h ${mins}m`;
+    return `${mins}m`;
+}
+
+function exportStatsCSV() {
+    const sessions = getPracticeStats();
+    if (sessions.length === 0) {
+        alert('No practice statistics to export.');
+        return;
+    }
+
+    let csv = 'Session Summary\nDate,Flow Name,Duration (min),Poses,Completed\n';
+    const sorted = sessions.sort((a, b) => new Date(b.date) - new Date(a.date));
+    sorted.forEach(s => {
+        const mins = Math.round(s.durationSeconds / 60);
+        const completed = s.completedFully ? 'Yes' : 'No';
+        csv += `${s.date},"${s.flowName}",${mins},${s.poseCount},${completed}\n`;
+    });
+
+    csv += '\nPose Detail\nDate,Flow Name,Pose,Sanskrit,Duration (s),Difficulty,Tags,Side\n';
+    sorted.forEach(s => {
+        (s.poses || []).forEach(p => {
+            const tags = (p.tags || []).join(';');
+            csv += `${s.date},"${s.flowName}","${p.name}","${p.sanskrit}",${p.durationSeconds},${p.difficulty},"${tags}",${p.side}\n`;
+        });
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'flowbuilder-stats.csv';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// ==========================================
+// Settings Modal
+// ==========================================
+
+function openSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (!modal) return;
+
+    // Sync toggle states
+    const sanskritCheck = document.getElementById('settings-sanskrit');
+    const speechCheck = document.getElementById('settings-speech');
+    const breathCheck = document.getElementById('settings-breath');
+    const trackingCheck = document.getElementById('settings-tracking');
+
+    if (sanskritCheck) sanskritCheck.checked = useSanskritNames;
+    if (speechCheck) speechCheck.checked = speechEnabled;
+    if (breathCheck) breathCheck.checked = breathCuesEnabled;
+    if (trackingCheck) trackingCheck.checked = getStatsTrackingEnabled();
+
+    modal.classList.add('active');
+}
+
+function closeSettingsModal() {
+    const modal = document.getElementById('settingsModal');
+    if (modal) modal.classList.remove('active');
+}
+
+function toggleSettingsSanskrit(enabled) {
+    useSanskritNames = enabled;
+    localStorage.setItem('useSanskritNames', enabled);
+    const flowToggle = document.getElementById('sanskrit-toggle-flow');
+    if (flowToggle) flowToggle.checked = enabled;
+}
+
+function toggleSettingsSpeech(enabled) {
+    speechEnabled = enabled;
+    localStorage.setItem('speechEnabled', enabled);
+}
+
+function toggleSettingsBreath(enabled) {
+    breathCuesEnabled = enabled;
+    localStorage.setItem('breathCuesEnabled', enabled);
+}
+
+// ==========================================
+// Stats Dashboard
+// ==========================================
+
+let currentStatsPeriod = 'weekly';
+
+function openStatsDashboard() {
+    changeScreen('statsScreen');
+    renderStatsDashboard();
+}
+
+function closeStatsDashboard() {
+    changeScreen('homeScreen');
+}
+
+function switchStatsPeriod(period, btn) {
+    currentStatsPeriod = period;
+    document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderStatsDashboard();
+}
+
+function confirmClearStats() {
+    if (confirm('Are you sure you want to clear all practice statistics? This cannot be undone.')) {
+        clearPracticeStats();
+        renderStatsDashboard();
+    }
+}
+
+function renderStatsDashboard() {
+    const sessions = getPracticeStats();
+
+    if (sessions.length === 0) {
+        renderEmptyDashboard();
+        return;
+    }
+
+    const stats = computeStatsFromSessions(sessions);
+
+    // Summary cards
+    const cardsEl = document.getElementById('statsSummaryCards');
+    if (cardsEl) {
+        cardsEl.innerHTML = `
+            <div class="stats-card">
+                <div class="stats-value">${stats.totalSessions}</div>
+                <div class="stats-label">Sessions</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-value">${formatDuration(stats.totalSeconds)}</div>
+                <div class="stats-label">Total Time</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-value">${stats.currentStreak}d</div>
+                <div class="stats-label">Current Streak</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-value">${stats.longestStreak}d</div>
+                <div class="stats-label">Longest Streak</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-value">${stats.avgPoses}</div>
+                <div class="stats-label">Avg Poses/Session</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-value">${stats.completionRate}%</div>
+                <div class="stats-label">Completion Rate</div>
+            </div>
+        `;
+    }
+
+    // Trend chart
+    const trendEl = document.getElementById('statsTrendChart');
+    if (trendEl) {
+        const trendData = currentStatsPeriod === 'monthly' ? stats.monthlyTrend : stats.weeklyTrend;
+        const maxMins = Math.max(...trendData.map(d => d.minutes), 1);
+
+        if (currentStatsPeriod === 'all') {
+            trendEl.innerHTML = `<h3>Practice Overview</h3>
+                <div class="stats-card" style="text-align:center">
+                    <div class="stats-value">${formatDuration(stats.avgDuration)}</div>
+                    <div class="stats-label">Avg Session Duration</div>
+                </div>`;
+        } else {
+            const label = currentStatsPeriod === 'weekly' ? 'This Week' : 'Last 4 Weeks';
+            trendEl.innerHTML = `<h3>${label}</h3>
+                <div class="stats-bars">
+                    ${trendData.map(d => `
+                        <div class="stats-bar-col">
+                            <div class="stats-bar-value">${d.minutes > 0 ? d.minutes + 'm' : ''}</div>
+                            <div class="stats-bar" style="height: ${Math.max((d.minutes / maxMins) * 80, 2)}px"></div>
+                            <div class="stats-bar-label">${d.label}</div>
+                        </div>
+                    `).join('')}
+                </div>`;
+        }
+    }
+
+    // Top poses
+    const posesEl = document.getElementById('statsTopPoses');
+    if (posesEl) {
+        const top10 = stats.topPoses.slice(0, 10);
+        posesEl.innerHTML = `<h3>Most Practiced Poses</h3>
+            ${top10.map((p, i) => `
+                <div class="stats-pose-item">
+                    <span class="stats-pose-rank">${i + 1}</span>
+                    <div class="stats-pose-name">
+                        ${p.name}
+                        ${p.sanskrit ? `<div class="stats-pose-sanskrit">${p.sanskrit}</div>` : ''}
+                    </div>
+                    <span class="stats-pose-count">${p.count}</span>
+                </div>
+            `).join('')}`;
+    }
+
+    // Category breakdown
+    const catEl = document.getElementById('statsCategoryBreakdown');
+    if (catEl) {
+        const top8 = stats.categories.slice(0, 8);
+        catEl.innerHTML = `<h3>By Category</h3>
+            ${top8.map(c => `
+                <div class="stats-breakdown-item">
+                    <div class="stats-breakdown-label">
+                        <span class="stats-breakdown-name">${c.name}</span>
+                        <span class="stats-breakdown-pct">${c.pct}%</span>
+                    </div>
+                    <div class="stats-breakdown-bar">
+                        <div class="stats-breakdown-fill" style="width: ${c.pct}%"></div>
+                    </div>
+                </div>
+            `).join('')}`;
+    }
+
+    // Difficulty breakdown
+    const diffEl = document.getElementById('statsDifficultyBreakdown');
+    if (diffEl) {
+        diffEl.innerHTML = `<h3>By Difficulty</h3>
+            ${stats.difficulties.map(d => `
+                <div class="stats-breakdown-item">
+                    <div class="stats-breakdown-label">
+                        <span class="stats-breakdown-name">${d.name}</span>
+                        <span class="stats-breakdown-pct">${d.pct}%</span>
+                    </div>
+                    <div class="stats-breakdown-bar">
+                        <div class="stats-breakdown-fill" style="width: ${d.pct}%"></div>
+                    </div>
+                </div>
+            `).join('')}`;
+    }
+
+    // Session history
+    const histEl = document.getElementById('statsSessionHistory');
+    if (histEl) {
+        const sorted = [...sessions].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 20);
+        histEl.innerHTML = `<h3>Recent Sessions</h3>
+            ${sorted.map(s => {
+                const date = new Date(s.date);
+                const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                const timeStr = date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+                return `
+                    <div class="stats-session-item">
+                        <div class="stats-session-info">
+                            <div class="stats-session-name">${s.flowName}</div>
+                            <div class="stats-session-date">${dateStr} at ${timeStr}</div>
+                        </div>
+                        <div class="stats-session-meta">
+                            <div class="stats-session-duration">${formatDuration(s.durationSeconds)}</div>
+                            <div class="stats-session-status ${s.completedFully ? 'completed' : 'incomplete'}">${s.completedFully ? 'Completed' : 'Ended Early'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('')}`;
+    }
+}
+
+function renderEmptyDashboard() {
+    const cardsEl = document.getElementById('statsSummaryCards');
+    const trendEl = document.getElementById('statsTrendChart');
+    const posesEl = document.getElementById('statsTopPoses');
+    const catEl = document.getElementById('statsCategoryBreakdown');
+    const diffEl = document.getElementById('statsDifficultyBreakdown');
+    const histEl = document.getElementById('statsSessionHistory');
+
+    const emptyHTML = `
+        <div class="stats-empty">
+            <div class="stats-empty-icon">&#x1F9D8;</div>
+            <h3>No Practice Data Yet</h3>
+            <p>Complete a flow to start tracking your practice statistics.</p>
+        </div>
+    `;
+
+    if (cardsEl) cardsEl.innerHTML = emptyHTML;
+    if (trendEl) trendEl.innerHTML = '';
+    if (posesEl) posesEl.innerHTML = '';
+    if (catEl) catEl.innerHTML = '';
+    if (diffEl) diffEl.innerHTML = '';
+    if (histEl) histEl.innerHTML = '';
+}
+
 // YogaAsana class definition
 class YogaAsana {
     constructor(name, side, image, description, difficulty, tags, transitionsAsana, sanskrit = "", chakra = "", breathCue = "-") {
@@ -2584,6 +3077,17 @@ function playFlow(flowID) {
         flowElapsedTime = 0;
         console.log("Total flow duration:", totalFlowDuration, "seconds");
 
+        // Initialize stats session tracker
+        if (getStatsTrackingEnabled()) {
+            window._sessionTracker = {
+                flowID: editingFlow.flowID,
+                flowName: editingFlow.name,
+                startTime: Date.now(),
+                poses: [],
+                poseStartTime: null
+            };
+        }
+
         // Reset any animation classes on the title elements
         const asanaName = document.getElementById('asanaName');
         if (asanaName) {
@@ -2909,6 +3413,25 @@ function startCountdownTimer(duration, isResuming = false) {
         console.warn("Invalid duration, using default of 7 seconds");
     }
     
+    // Record previous pose for stats tracking
+    if (!isResuming && window._sessionTracker) {
+        if (window._sessionTracker.poseStartTime !== null && currentAsanaIndex > 0) {
+            const prevPose = editingFlow.asanas[currentAsanaIndex - 1];
+            if (prevPose) {
+                const elapsed = Math.round((Date.now() - window._sessionTracker.poseStartTime) / 1000);
+                window._sessionTracker.poses.push({
+                    name: prevPose.name || '',
+                    sanskrit: prevPose.sanskrit || '',
+                    durationSeconds: elapsed,
+                    difficulty: prevPose.difficulty || 'Beginner',
+                    tags: prevPose.tags || [],
+                    side: prevPose.side || 'Center'
+                });
+            }
+        }
+        window._sessionTracker.poseStartTime = Date.now();
+    }
+
     // Only reset the pause state when starting a new timer (not when resuming)
     if (!isResuming) {
         paused = false;
@@ -3010,6 +3533,9 @@ function startCountdownTimer(duration, isResuming = false) {
                     }, 100);
                 } else {
                     console.log("End of flow reached!");
+
+                    // Record completed session for stats
+                    recordSession(true);
 
                     // Play completion chime
                     if (chimeAudio) {
@@ -3406,6 +3932,9 @@ function clearFlowTimers() {
 }
 
 function confirmEndFlow() {
+    // Record early-exit session for stats
+    recordSession(false);
+
     // Clear all timers
     clearFlowTimers()
 
