@@ -1205,12 +1205,15 @@
     </style>
   </head>
   <body>
-    <!-- App Store Banner -->
+    <!-- App Store Floating Banner -->
     <div id="appStoreBanner" class="app-store-banner">
-      <div class="banner-content">
-        <span class="banner-text">Flow Builder is now available on the <a href="https://apps.apple.com/us/app/flowbuilder-yoga/id6758913355" target="_blank" rel="noopener noreferrer">App Store</a></span>
-        <button class="banner-close" onclick="dismissAppStoreBanner()" aria-label="Dismiss banner">&times;</button>
+      <button class="banner-close" onclick="dismissAppStoreBanner()" aria-label="Dismiss banner">&times;</button>
+      <img class="banner-app-icon" src="images/favicon_io/apple-touch-icon.png" alt="FlowBuilder" width="48" height="48">
+      <div class="banner-info">
+        <span class="banner-app-name">FlowBuilder - Yoga</span>
+        <span class="banner-app-subtitle">Build and flow through sequences</span>
       </div>
+      <a href="https://apps.apple.com/us/app/flowbuilder-yoga/id6758913355" target="_blank" rel="noopener noreferrer" class="banner-open-btn">OPEN</a>
     </div>
 
     <div class="accent-bar"></div>
@@ -1409,16 +1412,16 @@
     <div id="flowScreen" class="screen">
       <div class="flow-controls-global">
         <div class="language-toggle-global">
-          <label class="toggle-label">🕉️</label>
+          <label class="toggle-label">🗣️</label>
           <label class="switch">
-            <input type="checkbox" id="sanskrit-toggle-global">
+            <input type="checkbox" id="speech-toggle-global">
             <span class="slider round"></span>
           </label>
         </div>
         <div class="language-toggle-global">
-          <label class="toggle-label">🗣️</label>
+          <label class="toggle-label">🕉️</label>
           <label class="switch">
-            <input type="checkbox" id="speech-toggle-global">
+            <input type="checkbox" id="sanskrit-toggle-global">
             <span class="slider round"></span>
           </label>
         </div>
@@ -1507,7 +1510,6 @@
           <div class="share-option">
             <button class="export-json-btn" onclick="exportFlowAsJSONFromModal()">Download as .flow</button>
             <button class="export-json-btn" onclick="exportFlowAsPDFFromModal()">Download as .pdf</button>
-            <button class="export-json-btn" onclick="exportFlowAsCSVFromModal()">Download as .csv</button>
           </div>
 
         </div>
