@@ -5,4 +5,5 @@ CLAUDE.md
 **/.claude/settings.local.json
 landing
 userAnalytics.html
-flowbuilder/
+flowbuilder/flowbuilder-landing/
+flowbuilder-landing/
