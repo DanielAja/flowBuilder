@@ -364,11 +364,14 @@ function openSettingsModal() {
     const speechCheck = document.getElementById('settings-speech');
     const breathCheck = document.getElementById('settings-breath');
     const trackingCheck = document.getElementById('settings-tracking');
+    const addToTopCheck = document.getElementById('settings-addtotop');
 
     if (sanskritCheck) sanskritCheck.checked = useSanskritNames;
     if (speechCheck) speechCheck.checked = speechEnabled;
     if (breathCheck) breathCheck.checked = breathCuesEnabled;
     if (trackingCheck) trackingCheck.checked = getStatsTrackingEnabled();
+    // addToTop: checked = add to top (tableInDescendingOrder false)
+    if (addToTopCheck) addToTopCheck.checked = !tableInDescendingOrder;
 
     modal.classList.add('active');
 }
@@ -393,6 +396,12 @@ function toggleSettingsSpeech(enabled) {
 function toggleSettingsBreath(enabled) {
     breathCuesEnabled = enabled;
     localStorage.setItem('breathCuesEnabled', enabled);
+}
+
+function toggleSettingsAddToTop(addToTop) {
+    // addToTop true = new poses go to top (ascending, tableInDescendingOrder = false)
+    tableInDescendingOrder = !addToTop;
+    localStorage.setItem('addToTop', addToTop);
 }
 
 // ==========================================
@@ -2100,8 +2109,10 @@ function updateBreathCue(selectElement) {
     }
 }
 
-// Track whether table is in descending order (initialized to true so the first click sorts ascending)
-let tableInDescendingOrder = false;
+// Track whether table is in descending order (false = ascending = new poses added to top)
+// When addToTop is true, tableInDescendingOrder is false
+const _addToTopSaved = localStorage.getItem('addToTop');
+let tableInDescendingOrder = _addToTopSaved === null ? false : _addToTopSaved !== 'true';
 
 // UI update functions
 function updateRowNumbers() {

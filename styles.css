@@ -987,13 +987,13 @@ h1 {
 }
 
 .section-card-header.section-color-1 {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(76, 175, 80, 0.08));
-  border-left: 4px solid #4CAF50;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(124, 58, 237, 0.08));
+  border-left: 4px solid #7c3aed;
 }
 
 .section-card-header.section-color-2 {
-  background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(33, 150, 243, 0.08));
-  border-left: 4px solid #2196F3;
+  background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(167, 139, 250, 0.08));
+  border-left: 4px solid #a78bfa;
 }
 
 .section-card .section-select {
@@ -1035,13 +1035,13 @@ h1 {
 }
 
 .section-card .section-color-1 .section-info {
-  color: #4CAF50;
-  background: rgba(76, 175, 80, 0.1);
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.1);
 }
 
 .section-card .section-color-2 .section-info {
-  color: #2196F3;
-  background: rgba(33, 150, 243, 0.1);
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.1);
 }
 
 .section-card .remove-btn {
@@ -4443,12 +4443,12 @@ tr.section-color-0[data-section-id] {
 
 .section-color-1,
 tr.section-color-1[data-section-id] {
-  border-left-color: #4CAF50; /* Green */
+  border-left-color: #7c3aed; /* Medium purple */
 }
 
 .section-color-2,
 tr.section-color-2[data-section-id] {
-  border-left-color: #2196F3; /* Blue */
+  border-left-color: #a78bfa; /* Light purple */
 }
 
 /* Add highlight background to section headers */
@@ -4457,11 +4457,11 @@ tr.section-header.section-color-0 {
 }
 
 tr.section-header.section-color-1 {
-  background-color: rgba(76, 175, 80, 0.15);
+  background-color: rgba(124, 58, 237, 0.15);
 }
 
 tr.section-header.section-color-2 {
-  background-color: rgba(33, 150, 243, 0.15);
+  background-color: rgba(167, 139, 250, 0.15);
 }
 
 /* Section name span styles based on color */
@@ -4470,11 +4470,11 @@ tr.section-header.section-color-0 .section-name span {
 }
 
 tr.section-header.section-color-1 .section-name span {
-  color: #4CAF50;
+  color: #7c3aed;
 }
 
 tr.section-header.section-color-2 .section-name span {
-  color: #2196F3;
+  color: #a78bfa;
 }
 
 /* Add slight background color to rows in the same section */
@@ -4483,11 +4483,11 @@ tr.section-color-0[data-section-id] {
 }
 
 tr.section-color-1[data-section-id] {
-  background-color: rgba(76, 175, 80, 0.05);
+  background-color: rgba(124, 58, 237, 0.05);
 }
 
 tr.section-color-2[data-section-id] {
-  background-color: rgba(33, 150, 243, 0.05);
+  background-color: rgba(167, 139, 250, 0.05);
 }
 
 /* Section header styling */
