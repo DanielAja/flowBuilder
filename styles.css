@@ -6074,3 +6074,224 @@ tr[data-section-id]:last-of-type {
 .stats-empty p {
   font-size: 0.9rem;
 }
+
+/* ─── FLOW ANALYSIS MODAL ───────────────────────────────────────────────────── */
+
+.flow-analysis-content {
+  max-width: 640px;
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 28px 28px 32px;
+  margin: 4vh auto;
+  border-radius: 20px;
+  scrollbar-width: thin;
+}
+
+#analysisFlowTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 18px 0;
+  padding-right: 32px;
+}
+
+/* Summary row */
+.analysis-summary {
+  display: flex;
+  justify-content: space-around;
+  background: #f5f5f7;
+  border-radius: 14px;
+  padding: 16px 8px;
+  margin-bottom: 16px;
+}
+.analysis-stat-cell { text-align: center; flex: 1; }
+.analysis-stat-val  { font-size: 1.5rem; font-weight: 700; color: #111; }
+.analysis-stat-lbl  { font-size: 0.72rem; color: #888; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Section blocks */
+.analysis-block {
+  background: #f5f5f7;
+  border-radius: 16px;
+  padding: 18px 18px 16px;
+  margin-bottom: 14px;
+}
+.analysis-block-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.analysis-block-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  margin-top: 2px;
+  flex-shrink: 0;
+  color: #6d28d9;
+}
+.analysis-block-header h3 { font-size: 0.95rem; margin: 0 0 2px; font-weight: 700; }
+.analysis-block-header p  { font-size: 0.73rem; color: #888; margin: 0; }
+
+/* Peak Pose */
+.analysis-peak-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.analysis-peak-crown {
+  font-size: 1.3rem;
+  background: rgba(214,158,46,0.15);
+  border-radius: 50%;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.analysis-peak-header h3 { margin: 0 0 2px; font-size: 0.95rem; }
+.analysis-peak-header p  { margin: 0; font-size: 0.73rem; color: #888; }
+.analysis-position-badge {
+  margin-left: auto;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #666;
+  background: rgba(0,0,0,0.07);
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.analysis-peak-card    { display: flex; gap: 12px; }
+.analysis-peak-bar     { width: 4px; border-radius: 4px; flex-shrink: 0; min-height: 60px; }
+.analysis-peak-name    { font-size: 1.05rem; font-weight: 700; margin-bottom: 2px; }
+.analysis-peak-sanskrit { font-size: 0.82rem; color: #888; font-style: italic; margin-bottom: 6px; }
+.analysis-peak-meta    { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+.analysis-diff-chip    { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+.analysis-meta-item    { font-size: 0.73rem; color: #888; }
+.analysis-tags         { display: flex; flex-wrap: wrap; gap: 5px; }
+.analysis-tag {
+  font-size: 0.68rem; color: #888;
+  background: rgba(0,0,0,0.07);
+  padding: 2px 7px; border-radius: 10px;
+}
+
+/* Sequence strip — horizontally scrollable */
+.analysis-sequence-strip {
+  display: flex;
+  gap: 2px;
+  height: 28px;
+  border-radius: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 10px;
+  /* hide scrollbar cross-browser */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.analysis-sequence-strip::-webkit-scrollbar { display: none; }
+.analysis-strip-seg { width: 5px; flex-shrink: 0; border-radius: 2px; }
+
+/* Legend inline row */
+.analysis-legend-row-wrap { margin-bottom: 10px; }
+.analysis-legend-dot  {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  margin-right: 4px; vertical-align: middle;
+}
+.analysis-legend-text { font-size: 0.73rem; color: #888; margin-right: 12px; }
+
+/* Bar chart */
+.analysis-chart-bars { margin-top: 4px; }
+.analysis-bar-row    { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.analysis-bar-label  { font-size: 0.78rem; font-weight: 500; width: 110px; flex-shrink: 0; }
+.analysis-bar-track  { flex: 1; background: rgba(0,0,0,0.08); border-radius: 4px; height: 10px; overflow: hidden; }
+.analysis-bar-fill   { height: 100%; border-radius: 4px; }
+.analysis-bar-value  { font-size: 0.7rem; color: #888; width: 90px; text-align: right; flex-shrink: 0; }
+
+/* Side balance */
+.analysis-side-label-row { font-size: 0.73rem; font-weight: 600; color: #888; margin-bottom: 6px; }
+.analysis-side-bar-track {
+  height: 24px; border-radius: 6px; overflow: hidden;
+  background: rgba(0,0,0,0.06); margin-bottom: 6px;
+  display: flex; align-items: stretch;
+}
+.analysis-side-labels {
+  display: flex; justify-content: space-between;
+  font-size: 0.73rem; color: #888; margin-bottom: 12px;
+}
+
+/* Body heat map — graphic-first layout */
+.analysis-body-center    { display: flex; justify-content: center; margin-bottom: 14px; }
+.analysis-body-canvas    { display: block; border-radius: 6px; }
+.analysis-body-legend-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 14px;
+}
+.analysis-legend-entry   { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.analysis-legend-dot-sm  { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.analysis-legend-name    { font-size: 0.73rem; font-weight: 600; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.analysis-legend-pct     { font-size: 0.68rem; color: #888; flex-shrink: 0; }
+.analysis-heat-scale     { margin-top: 4px; }
+.analysis-heat-scale-label { font-size: 0.68rem; color: #888; margin-bottom: 4px; }
+.analysis-heat-scale-bar {
+  height: 8px; border-radius: 4px; margin-bottom: 3px;
+  background: linear-gradient(to right,
+    hsl(59,85%,65%), hsl(30,95%,55%), hsl(0,100%,50%));
+}
+.analysis-heat-scale-ends { display: flex; justify-content: space-between; font-size: 0.68rem; color: #888; }
+
+/* Chakra toggle buttons */
+.analysis-chakra-toggle { margin-left: auto; display: flex; gap: 4px; flex-shrink: 0; }
+.analysis-toggle-btn {
+  background: rgba(0,0,0,0.07);
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  color: #555;
+}
+.analysis-toggle-btn.active { background: #6d28d9; color: #fff; }
+.analysis-toggle-btn.active svg { stroke: #fff; }
+
+#analysisChakraCanvas { display: block; margin: 0 auto; max-width: 100%; }
+.analysis-empty-note  { font-size: 0.78rem; color: #999; margin: 4px 0; }
+
+/* Analyse button in flow list */
+.analyse-btn {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: flex; justify-content: center; align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  color: #333;
+}
+.analyse-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  border-color: #6d28d9;
+  color: #6d28d9;
+}
+.analyse-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 600px) {
+  .flow-analysis-content {
+    margin: 0;
+    border-radius: 20px 20px 0 0;
+    max-height: 92vh;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px 16px 28px;
+  }
+  .analysis-body-legend-grid { grid-template-columns: 1fr; }
+  .analysis-bar-label { width: 80px; }
+  .analysis-bar-value { width: 70px; }
+}

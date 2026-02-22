@@ -1,11 +1,23 @@
 // Utility functions
+
+// Cryptographically secure ID (replaces Math.random()-based approach)
 function generateUniqueID() {
-    try {
-        return Math.random().toString(36).substr(2, 9);
-    } catch (error) {
-        console.error('Error generating unique ID:', error);
-        return Date.now().toString(36); // Fallback
-    }
+    return Array.from(crypto.getRandomValues(new Uint8Array(9)))
+        .map(b => b.toString(36).padStart(2, '0'))
+        .join('')
+        .slice(0, 12);
+}
+
+// HTML-escape user-supplied strings before insertion into innerHTML.
+// Prevents DOM-based XSS from imported flow/pose data.
+function escapeHTML(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 function getFlows() {
@@ -510,8 +522,8 @@ function renderStatsDashboard() {
                 <div class="stats-pose-item">
                     <span class="stats-pose-rank">${i + 1}</span>
                     <div class="stats-pose-name">
-                        ${p.name}
-                        ${p.sanskrit ? `<div class="stats-pose-sanskrit">${p.sanskrit}</div>` : ''}
+                        ${escapeHTML(p.name)}
+                        ${p.sanskrit ? `<div class="stats-pose-sanskrit">${escapeHTML(p.sanskrit)}</div>` : ''}
                     </div>
                     <span class="stats-pose-count">${p.count}</span>
                 </div>
@@ -526,7 +538,7 @@ function renderStatsDashboard() {
             ${top8.map(c => `
                 <div class="stats-breakdown-item">
                     <div class="stats-breakdown-label">
-                        <span class="stats-breakdown-name">${c.name}</span>
+                        <span class="stats-breakdown-name">${escapeHTML(c.name)}</span>
                         <span class="stats-breakdown-pct">${c.pct}%</span>
                     </div>
                     <div class="stats-breakdown-bar">
@@ -543,7 +555,7 @@ function renderStatsDashboard() {
             ${stats.difficulties.map(d => `
                 <div class="stats-breakdown-item">
                     <div class="stats-breakdown-label">
-                        <span class="stats-breakdown-name">${d.name}</span>
+                        <span class="stats-breakdown-name">${escapeHTML(d.name)}</span>
                         <span class="stats-breakdown-pct">${d.pct}%</span>
                     </div>
                     <div class="stats-breakdown-bar">
@@ -565,7 +577,7 @@ function renderStatsDashboard() {
                 return `
                     <div class="stats-session-item">
                         <div class="stats-session-info">
-                            <div class="stats-session-name">${s.flowName}</div>
+                            <div class="stats-session-name">${escapeHTML(s.flowName)}</div>
                             <div class="stats-session-date">${dateStr} at ${timeStr}</div>
                         </div>
                         <div class="stats-session-meta">
@@ -2876,8 +2888,8 @@ async function displayFlows() {
                 
                 flowItem.innerHTML = `
                     <div class="flow-info">
-                        <h4>${flow.name}</h4>
-                        <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description || ''}</p>
+                        <h4>${escapeHTML(flow.name)}</h4>
+                        <p class="flow-description">(${displayFlowDuration(flow.time)}) ${escapeHTML(flow.description)}</p>
                         <div class="flow-timestamps">
                             <span class="timestamp ${flow.lastFlowed ? 'active' : ''}">Last flowed: ${lastFlowedText}</span>
                             <span class="timestamp">Last edited: ${lastEditedText}</span>
@@ -2885,12 +2897,13 @@ async function displayFlows() {
                     </div>
                     <div class="flow-actions">
                         <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
+                        <button class="analyse-btn" onclick="showFlowAnalysis('${flow.flowID}')" title="Analyse this flow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></button>
                         <button class="share-btn" onclick="showShareFlow('${flow.flowID}')" title="Share this flow"></button>
                         <button class="edit-btn" onclick="editFlow('${flow.flowID}')" title="Edit this flow"></button>
                         <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')" title="Delete this flow">🗑️</button>
                     </div>
                 `;
-                
+
                 flowList.appendChild(flowItem);
             });
         }
@@ -2917,8 +2930,8 @@ async function displayFlows() {
             
             flowItem.innerHTML = `
                 <div class="flow-info">
-                    <h4>${flow.name}</h4>
-                    <p class="flow-description">(${displayFlowDuration(flow.time)}) ${flow.description || ''}</p>
+                    <h4>${escapeHTML(flow.name)}</h4>
+                    <p class="flow-description">(${displayFlowDuration(flow.time)}) ${escapeHTML(flow.description)}</p>
                     <div class="flow-timestamps">
                         <span class="timestamp ${flow.lastFlowed ? 'active' : ''}">Last flowed: ${lastFlowedText}</span>
                         <span class="timestamp">Last edited: ${lastEditedText}</span>
@@ -2926,6 +2939,7 @@ async function displayFlows() {
                 </div>
                 <div class="flow-actions">
                     <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
+                    <button class="analyse-btn" onclick="showFlowAnalysis('${flow.flowID}')" title="Analyse this flow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></button>
                     <button class="share-btn" onclick="showShareFlow('${flow.flowID}')" title="Share this flow"></button>
                     <button class="edit-btn" onclick="editFlow('${flow.flowID}')" title="Edit this flow"></button>
                     <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')" title="Delete this flow">🗑️</button>
@@ -4852,14 +4866,14 @@ function generatePDFContent(flow) {
             <div class="pose-number">${index + 1}</div>
             <div class="pose-content">
                 <div class="pose-image-container">
-                    <img src="${imagePath}" alt="${asana.name}" class="pose-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <img src="${imagePath}" alt="${escapeHTML(asana.name)}" class="pose-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <div class="pose-placeholder" style="display: none;">
                         <div class="pose-icon">🧘</div>
                     </div>
                 </div>
                 <div class="pose-details">
-                    <h3 class="pose-name" style="font-size: ${nameSize}px;">${poseName}</h3>
-                    ${sanskritName ? `<p class="pose-sanskrit" style="font-size: ${sanskritSize}px;">${sanskritName}</p>` : ''}
+                    <h3 class="pose-name" style="font-size: ${nameSize}px;">${escapeHTML(poseName)}</h3>
+                    ${sanskritName ? `<p class="pose-sanskrit" style="font-size: ${sanskritSize}px;">${escapeHTML(sanskritName)}</p>` : ''}
                     <div class="pose-info">
                         <div class="info-item">
                             <span class="info-label">Duration:</span>
@@ -4867,10 +4881,10 @@ function generatePDFContent(flow) {
                         </div>
                         <div class="info-item">
                             <span class="info-label">Side:</span>
-                            <span class="info-value">${asana.side || 'both'}</span>
+                            <span class="info-value">${escapeHTML(asana.side || 'both')}</span>
                         </div>
                     </div>
-                    ${description ? `<p class="pose-description" style="font-size: ${descSize}px;">${description}</p>` : ''}
+                    ${description ? `<p class="pose-description" style="font-size: ${descSize}px;">${escapeHTML(description)}</p>` : ''}
                 </div>
             </div>
         </div>
@@ -4881,7 +4895,7 @@ function generatePDFContent(flow) {
     <!DOCTYPE html>
     <html>
     <head>
-        <title>${flow.name || 'Yoga Flow'}</title>
+        <title>${escapeHTML(flow.name || 'Yoga Flow')}</title>
         <style>
             body {
                 font-family: 'Arial', sans-serif;
@@ -5164,8 +5178,8 @@ function generatePDFContent(flow) {
     </head>
     <body>
         <div class="header">
-            <h1>${flow.name || 'Untitled Flow'}</h1>
-            ${flow.description ? `<p>${flow.description}</p>` : ''}
+            <h1>${escapeHTML(flow.name || 'Untitled Flow')}</h1>
+            ${flow.description ? `<p>${escapeHTML(flow.description)}</p>` : ''}
         </div>
         
         <div class="flow-info">
@@ -5452,10 +5466,37 @@ function validateJSONContent(data) {
                 } else if (asana.name) {
                     errors.push(`Invalid asana name at position ${index + 1}.`);
                 }
-                
-                // Validate duration
-                if (asana.duration && (typeof asana.duration !== 'number' || asana.duration < 0 || asana.duration > 300)) {
-                    errors.push(`Invalid duration for asana at position ${index + 1}.`);
+
+                // Sanitize other string fields
+                const strFields = { sanskrit: 100, description: 500, breathCue: 100, chakra: 50, side: 20 };
+                for (const [field, maxLen] of Object.entries(strFields)) {
+                    if (asana[field] != null) {
+                        if (typeof asana[field] === 'string') {
+                            asana[field] = asana[field].replace(/[<>]/g, '').substring(0, maxLen);
+                        } else {
+                            asana[field] = undefined;
+                        }
+                    }
+                }
+
+                // Sanitize tags array
+                if (asana.tags != null) {
+                    if (Array.isArray(asana.tags)) {
+                        asana.tags = asana.tags
+                            .filter(t => typeof t === 'string')
+                            .map(t => t.replace(/[<>]/g, '').substring(0, 50))
+                            .slice(0, 20);
+                    } else {
+                        asana.tags = [];
+                    }
+                }
+
+                // Validate duration (must be a positive number)
+                if (asana.duration != null) {
+                    if (typeof asana.duration !== 'number' || asana.duration <= 0 || asana.duration > 300) {
+                        errors.push(`Invalid duration for asana at position ${index + 1}.`);
+                        asana.duration = 15;
+                    }
                 }
             });
         }
@@ -5930,7 +5971,9 @@ function showToastNotification(message) {
     const toast = document.createElement('div');
     toast.id = 'sort-toast';
     toast.className = 'toast-notification';
-    toast.innerHTML = `<span>${message}</span>`;
+    const toastSpan = document.createElement('span');
+    toastSpan.textContent = message;
+    toast.appendChild(toastSpan);
     
     // Add to the document
     document.body.appendChild(toast);
@@ -8613,7 +8656,7 @@ function createSectionHeaderRow(sectionInfo) {
                     <div class="section-toggle-icon">${section.collapsed ? '▶' : '▼'}</div>
                 </div>
                 <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" ondblclick="startRenameSection(event, '${section.id}')" style="cursor: pointer;" title="Click to collapse/expand, double-click to rename">
-                    <span class="section-name-text" data-section-id="${section.id}">${section.name}</span>
+                    <span class="section-name-text" data-section-id="${section.id}">${escapeHTML(section.name)}</span>
                     <span class="section-count-duration">${asanas.length} pose${asanas.length !== 1 ? 's' : ''} - ${sectionDurationDisplay}</span>
                 </div>
                 <div class="section-side-control">
@@ -8662,9 +8705,9 @@ function createAsanaRowHTML(asana, index, sectionName, sectionId, displayNumber,
                         asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : ''
                     }" title="${asana.chakra} Chakra"></div>` : ''}
                 </div>
-                <span>${typeof asana.getDisplayName === 'function' ?
+                <span>${escapeHTML(typeof asana.getDisplayName === 'function' ?
                         asana.getDisplayName(useSanskritNames) :
-                        (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
+                        (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name))}</span>
             </div>
         </td>
         <td>
@@ -8968,7 +9011,7 @@ function rebuildTableView() {
                                 <div class="section-toggle-icon">${section.collapsed ? '▶' : '▼'}</div>
                             </div>
                             <div class="section-name" onclick="toggleSectionCollapse('${section.id}')" ondblclick="startRenameSection(event, '${section.id}')" style="cursor: pointer;" title="Click to collapse/expand, double-click to rename">
-                                <span class="section-name-text" data-section-id="${section.id}">${section.name}</span>
+                                <span class="section-name-text" data-section-id="${section.id}">${escapeHTML(section.name)}</span>
                                 <span class="section-count-duration">${asanasInSection.length} pose${asanasInSection.length !== 1 ? 's' : ''} - ${sectionDurationDisplay}</span>
                             </div>
                             <div class="section-side-control">
@@ -9219,9 +9262,9 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
                         asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : ''
                     }" title="${asana.chakra} Chakra"></div>` : ''}
                 </div>
-                <span>${typeof asana.getDisplayName === 'function' ?
+                <span>${escapeHTML(typeof asana.getDisplayName === 'function' ?
                         asana.getDisplayName(useSanskritNames) :
-                        (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</span>
+                        (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name))}</span>
             </div>
         </td>
         <td>
@@ -12299,16 +12342,16 @@ function swapPose(newAsana) {
     
     // Close the modal
     closeSwapPoseModal();
-    
+
     // Rebuild both views
     rebuildFlowTable();
-    
+
     // Update flow duration
     updateFlowDuration();
-    
+
     // Show notification
     showToastNotification(actionText);
-    
+
     // Auto-save if in edit mode
     if (editMode) {
         autoSaveFlow();
@@ -12316,5 +12359,522 @@ function swapPose(newAsana) {
 }
 
 
+// ─── FLOW ANALYSIS ────────────────────────────────────────────────────────────
+
+let currentAnalysisFlowID = null;
+let currentChakraView     = 'bars';
+
+// Tag keyword → per-zone activation weights (mirrors iOS BodyZone.tagActivations)
+const BODY_ZONE_ACTIVATIONS = {
+    'Standing':        { leftThigh:0.5,rightThigh:0.5,leftCalf:0.6,rightCalf:0.6,feet:0.9,torsoLower:0.3 },
+    'Forward Fold':    { leftThigh:0.9,rightThigh:0.9,leftCalf:0.6,rightCalf:0.6,torsoLower:0.8 },
+    'Backbend':        { torsoUpper:0.9,torsoLower:0.7,hips:0.6,leftShoulder:0.5,rightShoulder:0.5 },
+    'Hip Opener':      { hips:1.0,leftThigh:0.7,rightThigh:0.7,torsoLower:0.4 },
+    'Hip Flexor':      { hips:0.9,leftThigh:0.8,rightThigh:0.8,torsoLower:0.4 },
+    'Inversion':       { leftShoulder:0.9,rightShoulder:0.9,neck:0.6,leftUpperArm:0.8,rightUpperArm:0.8,torsoLower:0.7 },
+    'Twist':           { torsoLower:0.9,torsoUpper:0.7,leftShoulder:0.4,rightShoulder:0.4 },
+    'Shoulder Opener': { leftShoulder:1.0,rightShoulder:1.0,torsoUpper:0.6,neck:0.4 },
+    'Core':            { torsoLower:1.0,hips:0.4 },
+    'Balance':         { feet:1.0,leftCalf:0.8,rightCalf:0.8,torsoLower:0.6,leftThigh:0.5,rightThigh:0.5 },
+    'Seated':          { hips:0.7,leftThigh:0.6,rightThigh:0.6,torsoLower:0.4 },
+    'Supine':          { torsoLower:0.5,torsoUpper:0.4,hips:0.3 },
+    'Prone':           { torsoUpper:0.6,leftShoulder:0.4,rightShoulder:0.4,torsoLower:0.5 },
+    'Arm Balance':     { leftUpperArm:1.0,rightUpperArm:1.0,leftForearm:0.9,rightForearm:0.9,leftShoulder:0.9,rightShoulder:0.9,torsoLower:0.7 },
+    'Warrior':         { hips:0.8,leftThigh:0.9,rightThigh:0.9,leftCalf:0.5,rightCalf:0.5,torsoLower:0.5,leftShoulder:0.4,rightShoulder:0.4 },
+    'Lunge':           { hips:0.9,leftThigh:0.9,rightThigh:0.8,torsoLower:0.5 },
+    'Hamstring':       { leftThigh:1.0,rightThigh:1.0,leftCalf:0.4,rightCalf:0.4,torsoLower:0.6 },
+    'Quad':            { leftThigh:1.0,rightThigh:1.0,hips:0.5 },
+    'Chest':           { torsoUpper:1.0,leftShoulder:0.5,rightShoulder:0.5 },
+    'Upper Back':      { torsoUpper:0.9,leftShoulder:0.6,rightShoulder:0.6 },
+    'Lower Back':      { torsoLower:1.0,hips:0.3 },
+    'Neck':            { neck:1.0,leftShoulder:0.3,rightShoulder:0.3 },
+    'Wrist':           { leftForearm:0.9,rightForearm:0.9,leftUpperArm:0.3,rightUpperArm:0.3 },
+    'Vinyasa':         { torsoUpper:0.5,leftUpperArm:0.6,rightUpperArm:0.6,torsoLower:0.4 },
+    'Restorative':     { torsoLower:0.2,hips:0.2 },
+    'Sun Salutation':  { leftThigh:0.6,rightThigh:0.6,torsoUpper:0.5,leftUpperArm:0.5,rightUpperArm:0.5,torsoLower:0.6 },
+    'Pigeon':          { hips:1.0,leftThigh:0.7,rightThigh:0.7,torsoLower:0.4 },
+    'Triangle':        { leftThigh:0.8,rightThigh:0.8,torsoLower:0.7,leftShoulder:0.5,rightShoulder:0.5 },
+    'Mountain':        { feet:0.7,leftCalf:0.4,rightCalf:0.4,torsoLower:0.3 },
+    'Dog':             { leftUpperArm:0.7,rightUpperArm:0.7,leftForearm:0.6,rightForearm:0.6,leftThigh:0.7,rightThigh:0.7,torsoUpper:0.5 },
+    'Plank':           { torsoLower:0.9,leftUpperArm:0.8,rightUpperArm:0.8,leftForearm:0.7,rightForearm:0.7,leftThigh:0.4,rightThigh:0.4 },
+    'Cobra':           { torsoUpper:0.8,torsoLower:0.5,leftShoulder:0.5,rightShoulder:0.5 },
+    'Child':           { hips:0.5,torsoLower:0.4,leftThigh:0.4,rightThigh:0.4 },
+    'Bridge':          { hips:0.8,torsoLower:0.7,leftThigh:0.6,rightThigh:0.6,feet:0.5 },
+    'Wheel':           { torsoUpper:1.0,torsoLower:0.8,hips:0.7,leftShoulder:0.8,rightShoulder:0.8,leftUpperArm:0.7,rightUpperArm:0.7 },
+    'Camel':           { torsoUpper:0.9,torsoLower:0.7,hips:0.6,neck:0.4 },
+    'Boat':            { torsoLower:1.0,hips:0.6,leftThigh:0.7,rightThigh:0.7 },
+    'Crow':            { leftUpperArm:0.9,rightUpperArm:0.9,leftForearm:0.8,rightForearm:0.8,torsoLower:0.8 },
+    'Frog':            { hips:1.0,leftThigh:0.9,rightThigh:0.9,leftCalf:0.4,rightCalf:0.4 },
+    'Splits':          { hips:1.0,leftThigh:1.0,rightThigh:1.0,leftCalf:0.5,rightCalf:0.5 },
+    'Headstand':       { head:0.8,neck:0.9,leftShoulder:0.8,rightShoulder:0.8,torsoLower:0.7 },
+    'Handstand':       { leftUpperArm:1.0,rightUpperArm:1.0,leftForearm:1.0,rightForearm:1.0,leftShoulder:0.9,rightShoulder:0.9,torsoLower:0.8 },
+};
+
+const LEFT_ZONES  = new Set(['leftShoulder','leftUpperArm','leftForearm','leftThigh','leftCalf']);
+const RIGHT_ZONES = new Set(['rightShoulder','rightUpperArm','rightForearm','rightThigh','rightCalf']);
+
+const ZONE_DISPLAY_NAME = {
+    head:'Head', neck:'Neck',
+    leftShoulder:'Shoulders', rightShoulder:'Shoulders',
+    leftUpperArm:'Upper Arms', rightUpperArm:'Upper Arms',
+    leftForearm:'Forearms', rightForearm:'Forearms',
+    torsoUpper:'Chest / Upper Back', torsoLower:'Core / Lower Back',
+    hips:'Hips / Glutes',
+    leftThigh:'Thighs / Hamstrings', rightThigh:'Thighs / Hamstrings',
+    leftCalf:'Calves', rightCalf:'Calves',
+    feet:'Feet',
+};
+
+// Zone centres and radii for radial heat blobs — calibrated to heatmap.png (425 × 580 px).
+// cx/cy are fractions of image width/height; r is a fraction of image WIDTH.
+// Duplicate entries (feet) draw both left and right blobs.
+const HEAT_ZONES = [
+    { zone: 'head',          cx: 0.500, cy: 0.094, r: 0.093 },
+    { zone: 'neck',          cx: 0.500, cy: 0.192, r: 0.055 },
+    { zone: 'leftShoulder',  cx: 0.278, cy: 0.263, r: 0.075 },
+    { zone: 'rightShoulder', cx: 0.722, cy: 0.263, r: 0.075 },
+    { zone: 'torsoUpper',    cx: 0.500, cy: 0.330, r: 0.140 },
+    { zone: 'torsoLower',    cx: 0.500, cy: 0.458, r: 0.125 },
+    { zone: 'hips',          cx: 0.500, cy: 0.577, r: 0.128 },
+    { zone: 'leftUpperArm',  cx: 0.240, cy: 0.335, r: 0.090 },
+    { zone: 'rightUpperArm', cx: 0.760, cy: 0.335, r: 0.090 },
+    { zone: 'leftForearm',   cx: 0.218, cy: 0.513, r: 0.078 },
+    { zone: 'rightForearm',  cx: 0.782, cy: 0.513, r: 0.078 },
+    { zone: 'leftThigh',     cx: 0.422, cy: 0.730, r: 0.088 },
+    { zone: 'rightThigh',    cx: 0.578, cy: 0.730, r: 0.088 },
+    { zone: 'leftCalf',      cx: 0.420, cy: 0.878, r: 0.067 },
+    { zone: 'rightCalf',     cx: 0.580, cy: 0.878, r: 0.067 },
+    { zone: 'feet',          cx: 0.412, cy: 0.970, r: 0.050 },
+    { zone: 'feet',          cx: 0.588, cy: 0.970, r: 0.050 },
+];
+
+const CHAKRAS_ORDERED = ['Crown','Third Eye','Throat','Heart','Solar Plexus','Sacral','Root'];
+const CHAKRA_COLORS = {
+    'Crown':'#9f7aea','Third Eye':'#6b46c1','Throat':'#3182ce',
+    'Heart':'#38a169','Solar Plexus':'#d69e2e','Sacral':'#dd6b20','Root':'#e53e3e',
+};
+const DIFFICULTY_COLORS = { 'Beginner':'#38a169','Intermediate':'#d69e2e','Advanced':'#e53e3e' };
+
+function showFlowAnalysis(flowID) {
+    const flows = getFlows();
+    const flow  = flows.find(f => f.flowID === flowID);
+    if (!flow) return;
+    currentAnalysisFlowID = flowID;
+    currentChakraView     = 'bars';
+    document.getElementById('flowAnalysisModal').style.display = 'block';
+    renderFlowAnalysis(flow);
+}
+
+function closeFlowAnalysis() {
+    document.getElementById('flowAnalysisModal').style.display = 'none';
+    currentAnalysisFlowID = null;
+}
+
+function renderFlowAnalysis(flow) {
+    const asanas    = flow.asanas || [];
+    const totalSecs = asanas.reduce((s, a) => s + (a.duration || 0), 0);
+
+    document.getElementById('analysisFlowTitle').textContent = flow.name + ' — Analysis';
+
+    // ── Summary ───────────────────────────────────────────────────────────────
+    const levels = [...new Set(asanas.map(a => a.difficulty || 'Beginner'))];
+    document.getElementById('analysisSummary').innerHTML = `
+        <div class="analysis-stat-cell">
+            <div class="analysis-stat-val">${asanas.length}</div>
+            <div class="analysis-stat-lbl">Poses</div>
+        </div>
+        <div class="analysis-stat-cell">
+            <div class="analysis-stat-val">${displayFlowDuration(totalSecs)}</div>
+            <div class="analysis-stat-lbl">Duration</div>
+        </div>
+        <div class="analysis-stat-cell">
+            <div class="analysis-stat-val">${levels.length}</div>
+            <div class="analysis-stat-lbl">Level${levels.length === 1 ? '' : 's'}</div>
+        </div>
+    `;
+
+    // ── Peak Pose ─────────────────────────────────────────────────────────────
+    const peakPose = computeAnalysisPeakPose(asanas);
+    const peakEl   = document.getElementById('analysisPeakPose');
+    if (peakPose) {
+        const peakIdx  = asanas.findIndex(a => a === peakPose);
+        const dc       = DIFFICULTY_COLORS[peakPose.difficulty] || '#888';
+        const chakraC  = CHAKRA_COLORS[peakPose.chakra] || null;
+        const poseName = peakPose.english || peakPose.name || 'Unknown';
+        peakEl.style.display = 'block';
+        peakEl.innerHTML = `
+            <div class="analysis-peak-header">
+                <div class="analysis-peak-crown">👑</div>
+                <div><h3>Peak Pose</h3><p>The apex of this flow</p></div>
+                <div class="analysis-position-badge">#${peakIdx + 1} of ${asanas.length}</div>
+            </div>
+            <div class="analysis-peak-card">
+                <div class="analysis-peak-bar" style="background:${dc}"></div>
+                <div>
+                    <div class="analysis-peak-name">${escapeHTML(poseName)}</div>
+                    ${peakPose.sanskrit ? `<div class="analysis-peak-sanskrit">${escapeHTML(peakPose.sanskrit)}</div>` : ''}
+                    <div class="analysis-peak-meta">
+                        <span class="analysis-diff-chip" style="color:${dc};background:${dc}20">${escapeHTML(peakPose.difficulty || 'Beginner')}</span>
+                        <span class="analysis-meta-item">⏱ ${peakPose.duration}s</span>
+                        ${peakPose.chakra && peakPose.chakra !== 'None' && chakraC
+                            ? `<span class="analysis-meta-item"><span style="color:${chakraC}">●</span> ${escapeHTML(peakPose.chakra)}</span>`
+                            : ''}
+                    </div>
+                    ${(peakPose.tags||[]).length ? `<div class="analysis-tags">${peakPose.tags.map(t=>`<span class="analysis-tag">${escapeHTML(t)}</span>`).join('')}</div>` : ''}
+                </div>
+            </div>`;
+    } else {
+        peakEl.style.display = 'none';
+    }
+
+    // ── Dynamic Breakdown ─────────────────────────────────────────────────────
+    document.getElementById('analysisSequenceStrip').innerHTML = asanas.map(a => {
+        const c = DIFFICULTY_COLORS[a.difficulty || 'Beginner'] || '#888';
+        return `<div class="analysis-strip-seg" style="background:${c}"></div>`;
+    }).join('');
+
+    const diffGroups = {};
+    asanas.forEach(a => {
+        const d = a.difficulty || 'Beginner';
+        if (!diffGroups[d]) diffGroups[d] = { count:0, secs:0 };
+        diffGroups[d].count++;
+        diffGroups[d].secs += a.duration || 0;
+    });
+    document.getElementById('analysisDifficultyLegend').innerHTML = Object.entries(diffGroups).map(([d,v]) =>
+        `<span class="analysis-legend-dot" style="background:${DIFFICULTY_COLORS[d]||'#888'}"></span><span class="analysis-legend-text">${escapeHTML(d)} · ${v.count}</span>`
+    ).join('');
+    const maxDiffSecs = Math.max(...Object.values(diffGroups).map(v=>v.secs), 1);
+    document.getElementById('analysisDifficultyBars').innerHTML = Object.entries(diffGroups).map(([d,v]) => {
+        const c   = DIFFICULTY_COLORS[d] || '#888';
+        const pct = Math.round(v.secs / maxDiffSecs * 100);
+        return `<div class="analysis-bar-row">
+            <div class="analysis-bar-label">${escapeHTML(d)}</div>
+            <div class="analysis-bar-track"><div class="analysis-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+            <div class="analysis-bar-value">${(v.secs/60).toFixed(1)}m</div>
+        </div>`;
+    }).join('');
+
+    // ── Side Balance ──────────────────────────────────────────────────────────
+    const sideGroups = {};
+    asanas.forEach(a => {
+        const raw = (a.side || 'Front').toLowerCase();
+        const key = raw === 'left' ? 'Left' : raw === 'right' ? 'Right'
+                  : raw === 'back' ? 'Back' : (raw === 'both' || raw === 'center') ? 'Center' : 'Front';
+        if (!sideGroups[key]) sideGroups[key] = { count:0, secs:0 };
+        sideGroups[key].count++;
+        sideGroups[key].secs += a.duration || 0;
+    });
+    const leftSecs  = (sideGroups['Left']  || {}).secs || 0;
+    const rightSecs = (sideGroups['Right'] || {}).secs || 0;
+    const lateral   = leftSecs + rightSecs;
+    const SIDE_COLORS = { Left:'#4299e1', Right:'#ed8936', Front:'#9f7aea', Center:'#319795', Back:'#e53e3e' };
+    let sideHTML = '';
+    if (lateral > 0) {
+        const lp = Math.round(leftSecs / lateral * 100);
+        const rp = 100 - lp;
+        sideHTML += `
+            <div class="analysis-side-label-row">Left vs Right</div>
+            <div class="analysis-side-bar-track">
+                <div style="background:#4299e1;width:${lp}%;height:100%;display:inline-block;border-radius:6px 0 0 6px;"></div>
+                <div style="background:#ed8936;width:${rp}%;height:100%;display:inline-block;border-radius:0 6px 6px 0;"></div>
+            </div>
+            <div class="analysis-side-labels">
+                <span><span style="color:#4299e1">●</span> Left ${lp}%</span>
+                <span><span style="color:#ed8936">●</span> Right ${rp}%</span>
+            </div>`;
+    }
+    const maxSideSecs = Math.max(...Object.values(sideGroups).map(v=>v.secs), 1);
+    sideHTML += Object.entries(sideGroups).map(([s,v]) => {
+        const c   = SIDE_COLORS[s] || '#888';
+        const pct = Math.round(v.secs / maxSideSecs * 100);
+        return `<div class="analysis-bar-row">
+            <div class="analysis-bar-label" style="color:${c}">${s}</div>
+            <div class="analysis-bar-track"><div class="analysis-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+            <div class="analysis-bar-value">${v.count} pose${v.count===1?'':'s'}</div>
+        </div>`;
+    }).join('');
+    document.getElementById('analysisSideBalance').innerHTML = sideHTML;
+
+    // ── Body Heat Map ─────────────────────────────────────────────────────────
+    const activations = computeAnalysisBodyActivations(asanas, totalSecs);
+    const bodyBlock   = document.getElementById('analysisBodyMapBlock');
+    if (Object.keys(activations).length > 0) {
+        bodyBlock.style.display = 'block';
+        // Size canvas to body image aspect ratio (425 × 580)
+        const canvas = document.getElementById('analysisBodyCanvas');
+        const BODY_W = 190;
+        const BODY_H = Math.round(BODY_W * 580 / 425);
+        canvas.width        = BODY_W;
+        canvas.height       = BODY_H;
+        canvas.style.width  = BODY_W + 'px';
+        canvas.style.height = BODY_H + 'px';
+        drawAnalysisBodyHeatMap(canvas, activations);
+
+        // Top-6 activated zone legend (2-column grid)
+        const grouped = {};
+        Object.entries(activations).forEach(([zone, lvl]) => {
+            if (lvl < 0.05) return;
+            const name = ZONE_DISPLAY_NAME[zone] || zone;
+            if (!grouped[name] || grouped[name] < lvl) grouped[name] = lvl;
+        });
+        const top6 = Object.entries(grouped).sort((a,b)=>b[1]-a[1]).slice(0, 6);
+        document.getElementById('analysisBodyLegend').innerHTML = top6.map(([name, lvl]) => {
+            const c = analysisHeatColor(lvl);
+            return `<div class="analysis-legend-entry">
+                <span class="analysis-legend-dot-sm" style="background:${c}"></span>
+                <span class="analysis-legend-name">${name}</span>
+                <span class="analysis-legend-pct">${Math.round(lvl * 100)}%</span>
+            </div>`;
+        }).join('');
+    } else {
+        bodyBlock.style.display = 'none';
+    }
+
+    // ── Chakra Distribution ───────────────────────────────────────────────────
+    const chakraGroups = {};
+    asanas.forEach(a => {
+        const c = a.chakra || 'None';
+        if (!chakraGroups[c]) chakraGroups[c] = { count:0, secs:0 };
+        chakraGroups[c].count++;
+        chakraGroups[c].secs += a.duration || 0;
+    });
+    window._analysisChakraGroups = chakraGroups;
+    window._analysisTotalSecs    = totalSecs;
+    setChakraView('bars');
+}
+
+function computeAnalysisPeakPose(asanas) {
+    const advanced = asanas.filter(a => (a.difficulty || '') === 'Advanced');
+    if (advanced.length) return advanced.reduce((b, a) => (a.duration||0) > (b.duration||0) ? a : b);
+    const inter = asanas.filter(a => (a.difficulty || '') === 'Intermediate');
+    if (!inter.length || inter.length >= asanas.length * 0.40) return null;
+    return inter.reduce((b, a) => (a.duration||0) > (b.duration||0) ? a : b);
+}
+
+function computeAnalysisBodyActivations(asanas, totalSecs) {
+    if (!totalSecs) return {};
+    const raw = {};
+    asanas.forEach(a => {
+        const w    = (a.duration || 0) / totalSecs;
+        const side = (a.side || '').toLowerCase();
+        (a.tags || []).forEach(tag => {
+            const tl = tag.toLowerCase();
+            Object.entries(BODY_ZONE_ACTIVATIONS).forEach(([key, zoneMap]) => {
+                const kl = key.toLowerCase();
+                if (!tl.includes(kl) && !kl.includes(tl)) return;
+                Object.entries(zoneMap).forEach(([zone, weight]) => {
+                    let mult = 1.0;
+                    if (side === 'left'  && RIGHT_ZONES.has(zone)) mult = 0.15;
+                    if (side === 'right' && LEFT_ZONES.has(zone))  mult = 0.15;
+                    raw[zone] = (raw[zone] || 0) + weight * w * mult;
+                });
+            });
+        });
+    });
+    const maxVal = Math.max(...Object.values(raw), 0);
+    if (!maxVal) return {};
+    const out = {};
+    Object.entries(raw).forEach(([k, v]) => out[k] = v / maxVal);
+    return out;
+}
+
+// Pre-load body silhouette — used for multiply composite in drawAnalysisBodyHeatMap
+const _heatmapBodyImg = new Image();
+_heatmapBodyImg.src = 'images/png/heatmap-nobg.png';
+
+// Returns a solid CSS hsl() colour for legend dots / heat scale (yellow → orange → red).
+function analysisHeatColor(level) {
+    if (level <= 0.04) return 'transparent';
+    const t   = Math.min(1, Math.max(0, level));
+    const hue = Math.round(59 * (1 - t));          // 59 = yellow, 0 = red
+    const sat = Math.round(85 + 15 * t);
+    const bri = Math.round(65 - 15 * t);
+    return `hsl(${hue},${sat}%,${bri}%)`;
+}
+
+// Returns an [R, G, B] triple for the given level (used in radial gradients).
+function _heatRgb(level) {
+    const t = Math.min(1, Math.max(0, level));
+    if (t < 0.33) {
+        const s = t / 0.33;
+        return [255, Math.round(220 - 80 * s), 0];
+    } else if (t < 0.67) {
+        const s = (t - 0.33) / 0.34;
+        return [255, Math.round(140 - 60 * s), 0];
+    } else {
+        const s = (t - 0.67) / 0.33;
+        return [255, Math.round(80 - 80 * s), 0];
+    }
+}
+
+function drawAnalysisBodyHeatMap(canvas, activations) {
+    const ctx = canvas.getContext('2d');
+    const W   = canvas.width;
+    const H   = canvas.height;
+
+    // ── 1. White base ────────────────────────────────────────────────────
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── 2. Smooth radial heat blobs — coolest first (painter's algorithm) ─
+    // Gradients fade from solid heat colour at centre → white at the edge,
+    // so any bleed outside the body silhouette is invisible on the white base.
+    const sorted = [...HEAT_ZONES].sort(
+        (a, b) => (activations[a.zone] || 0) - (activations[b.zone] || 0)
+    );
+    for (const def of sorted) {
+        const level = activations[def.zone] || 0;
+        if (level <= 0.04) continue;
+
+        const cx     = def.cx * W;
+        const cy     = def.cy * H;
+        const radius = def.r * W * 1.22;   // 22 % bleed for a soft, natural fade
+        const [r, g, b] = _heatRgb(level);
+
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+        grad.addColorStop(0.00, `rgba(${r},${g},${b},1.00)`);
+        grad.addColorStop(0.40, `rgba(${r},${g},${b},0.82)`);
+        grad.addColorStop(0.78, `rgba(${r},${g},${b},0.18)`);
+        grad.addColorStop(1.00, 'rgba(255,255,255,1)');
+
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+    }
+
+    // ── 3. Composite body silhouette with multiply ────────────────────────
+    // White image pixels → heat colour passes through unchanged.
+    // Black outline pixels → multiplied to black → defines body shape.
+    function composite() {
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.drawImage(_heatmapBodyImg, 0, 0, W, H);
+        ctx.globalCompositeOperation = 'source-over';
+    }
+    if (_heatmapBodyImg.complete && _heatmapBodyImg.naturalWidth > 0) {
+        composite();
+    } else {
+        _heatmapBodyImg.addEventListener('load', composite, { once: true });
+    }
+}
+
+function setChakraView(mode) {
+    currentChakraView = mode;
+    document.getElementById('chakraBarsBtn').classList.toggle('active', mode === 'bars');
+    document.getElementById('chakraHeptBtn').classList.toggle('active', mode === 'heptagon');
+    const barsEl    = document.getElementById('analysisChakraBars');
+    const canvas    = document.getElementById('analysisChakraCanvas');
+    const groups    = window._analysisChakraGroups || {};
+    const totalSecs = window._analysisTotalSecs || 1;
+    const withChakra = Object.entries(groups).filter(([c]) => c !== 'None');
+    const noEntry    = groups['None'];
+
+    if (mode === 'bars') {
+        canvas.style.display = 'none';
+        if (!withChakra.length) {
+            barsEl.innerHTML = '<p class="analysis-empty-note">No chakra data assigned to poses in this flow.</p>';
+            return;
+        }
+        const maxSecs = Math.max(...withChakra.map(([,v]) => v.secs), 1);
+        barsEl.innerHTML = [...withChakra].sort((a,b) => b[1].secs - a[1].secs).map(([chakra, v]) => {
+            const c    = CHAKRA_COLORS[chakra] || '#888';
+            const pct  = Math.round(v.secs / maxSecs * 100);
+            const tPct = Math.round(v.secs / totalSecs * 100);
+            return `<div class="analysis-bar-row">
+                <div class="analysis-bar-label" style="color:${c}">${chakra}</div>
+                <div class="analysis-bar-track"><div class="analysis-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+                <div class="analysis-bar-value">${v.count} pose${v.count===1?'':'s'} · ${tPct}%</div>
+            </div>`;
+        }).join('');
+        if (noEntry) barsEl.innerHTML += `<p class="analysis-empty-note" style="margin-top:8px">⚬ ${noEntry.count} unassigned</p>`;
+    } else {
+        barsEl.innerHTML = '';
+        canvas.style.display = 'block';
+        drawAnalysisChakraHeptagon(canvas, groups, totalSecs);
+    }
+}
+
+function drawAnalysisChakraHeptagon(canvas, groups, totalSecs) {
+    const size = Math.min(canvas.parentElement ? canvas.parentElement.offsetWidth : 320, 340);
+    canvas.width  = size;
+    canvas.height = size;
+    const ctx    = canvas.getContext('2d');
+    const cx     = size / 2;
+    const cy     = size / 2;
+    const radius = size / 2 - 56;
+
+    ctx.clearRect(0, 0, size, size);
+
+    const rawSecs = CHAKRAS_ORDERED.map(c => (groups[c] || {}).secs || 0);
+    const maxSecs = Math.max(...rawSecs, 1);
+    const values  = rawSecs.map(s => s / maxSecs);
+
+    function angleAt(i) { return -Math.PI / 2 + i * 2 * Math.PI / 7; }
+    function pt(i, r)   { return [cx + r * Math.cos(angleAt(i)), cy + r * Math.sin(angleAt(i))]; }
+
+    // Grid rings
+    [0.25, 0.5, 0.75, 1.0].forEach(frac => {
+        ctx.beginPath();
+        for (let i = 0; i < 7; i++) {
+            const [px, py] = pt(i, radius * frac);
+            i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = frac === 1 ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.07)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    });
+
+    // Axis lines
+    for (let i = 0; i < 7; i++) {
+        const [px, py] = pt(i, radius);
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py);
+        ctx.strokeStyle = 'rgba(0,0,0,0.10)'; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    // Data polygon
+    ctx.beginPath();
+    CHAKRAS_ORDERED.forEach((c, i) => {
+        const v = Math.max(values[i], 0.015);
+        const [px, py] = pt(i, radius * v);
+        i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    });
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(109, 40, 217, 0.20)'; ctx.fill();
+    ctx.strokeStyle = 'rgba(109, 40, 217, 0.55)'; ctx.lineWidth = 2; ctx.stroke();
+
+    // Vertex dots
+    CHAKRAS_ORDERED.forEach((c, i) => {
+        const v  = values[i];
+        const [px, py] = pt(i, radius * Math.max(v, 0.015));
+        ctx.beginPath(); ctx.arc(px, py, v > 0 ? 5.5 : 3, 0, Math.PI * 2);
+        ctx.fillStyle   = v > 0 ? (CHAKRA_COLORS[c] || '#888') : '#ccc';
+        ctx.fill();
+        ctx.strokeStyle = '#fff'; ctx.lineWidth = v > 0 ? 1.5 : 0; ctx.stroke();
+    });
+
+    // Labels
+    CHAKRAS_ORDERED.forEach((c, i) => {
+        const [px, py] = pt(i, radius + 38);
+        const v      = values[i];
+        const pct    = Math.round(((groups[c]||{}).secs||0) / totalSecs * 100);
+        const color  = v > 0 ? (CHAKRA_COLORS[c] || '#888') : '#bbb';
+        ctx.fillStyle   = color;
+        ctx.textAlign   = 'center';
+        ctx.textBaseline = 'middle';
+        const label = c === 'Solar Plexus' ? 'Solar\nPlexus' : c;
+        if (label.includes('\n')) {
+            ctx.font = v > 0 ? 'bold 10px system-ui' : '10px system-ui';
+            const parts = label.split('\n');
+            ctx.fillText(parts[0], px, py - 6);
+            ctx.fillText(parts[1], px, py + 6);
+            if (v > 0) { ctx.font = '9px system-ui'; ctx.fillStyle = '#999'; ctx.fillText(`${pct}%`, px, py + 18); }
+        } else {
+            ctx.font = v > 0 ? 'bold 10px system-ui' : '10px system-ui';
+            ctx.fillText(label, px, py - (v > 0 ? 5 : 0));
+            if (v > 0) { ctx.font = '9px system-ui'; ctx.fillStyle = '#999'; ctx.fillText(`${pct}%`, px, py + 7); }
+        }
+    });
+}
 
 

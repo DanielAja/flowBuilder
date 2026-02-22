@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';" />
     <title>Flow Builder</title>
     <link rel="icon" type="image/x-icon" href="images/favicon_io/favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="images/favicon_io/apple-touch-icon.png">
@@ -1776,6 +1777,93 @@
         }
       })();
     </script>
+    <!-- Flow Analysis Modal -->
+    <div id="flowAnalysisModal" class="modal">
+      <div class="modal-content flow-analysis-content">
+        <span class="close-modal" onclick="closeFlowAnalysis()">&times;</span>
+        <h2 id="analysisFlowTitle">Flow Analysis</h2>
+
+        <!-- Summary -->
+        <div id="analysisSummary" class="analysis-summary"></div>
+
+        <!-- Peak Pose -->
+        <div id="analysisPeakPose" class="analysis-block" style="display:none"></div>
+
+        <!-- Dynamic Breakdown -->
+        <div class="analysis-block">
+          <div class="analysis-block-header">
+            <span class="analysis-block-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
+            <div>
+              <h3>Dynamic Breakdown</h3>
+              <p>Difficulty distribution across your flow</p>
+            </div>
+          </div>
+          <div id="analysisSequenceStrip" class="analysis-sequence-strip"></div>
+          <div id="analysisDifficultyLegend" class="analysis-legend-row-wrap"></div>
+          <div id="analysisDifficultyBars" class="analysis-chart-bars"></div>
+        </div>
+
+        <!-- Side Balance -->
+        <div class="analysis-block">
+          <div class="analysis-block-header">
+            <span class="analysis-block-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="20" y1="12" x2="4" y2="12"/></svg>
+            </span>
+            <div>
+              <h3>Side Balance</h3>
+              <p>Left, right, and bilateral distribution</p>
+            </div>
+          </div>
+          <div id="analysisSideBalance"></div>
+        </div>
+
+        <!-- Body Heat Map -->
+        <div id="analysisBodyMapBlock" class="analysis-block" style="display:none">
+          <div class="analysis-block-header">
+            <span class="analysis-block-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </span>
+            <div>
+              <h3>Body Heat Map</h3>
+              <p>Muscle groups worked, weighted by pose duration</p>
+            </div>
+          </div>
+          <div class="analysis-body-center">
+            <canvas id="analysisBodyCanvas" class="analysis-body-canvas"></canvas>
+          </div>
+          <div id="analysisBodyLegend" class="analysis-body-legend-grid"></div>
+          <div class="analysis-heat-scale">
+            <div class="analysis-heat-scale-label">Intensity</div>
+            <div class="analysis-heat-scale-bar"></div>
+            <div class="analysis-heat-scale-ends"><span>Low</span><span>High</span></div>
+          </div>
+        </div>
+
+        <!-- Chakra Distribution -->
+        <div class="analysis-block">
+          <div class="analysis-block-header">
+            <span class="analysis-block-icon">✨</span>
+            <div>
+              <h3>Chakra Distribution</h3>
+              <p>Energy centre balance</p>
+            </div>
+            <div class="analysis-chakra-toggle">
+              <button id="chakraBarsBtn" class="analysis-toggle-btn active" onclick="setChakraView('bars')">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              </button>
+              <button id="chakraHeptBtn" class="analysis-toggle-btn" onclick="setChakraView('heptagon')">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="12"/><line x1="20.2" y1="7.5" x2="12" y2="12"/><line x1="20.2" y1="16.5" x2="12" y2="12"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="3.8" y1="16.5" x2="12" y2="12"/><line x1="3.8" y1="7.5" x2="12" y2="12"/></svg>
+              </button>
+            </div>
+          </div>
+          <div id="analysisChakraBars"></div>
+          <canvas id="analysisChakraCanvas" style="display:none;"></canvas>
+        </div>
+      </div>
+    </div>
+
     <script src="main.js"></script>
   </body>
 </html>
