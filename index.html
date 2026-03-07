@@ -18,66 +18,163 @@
         width: 100%;
       }
 
-      #buildScreen > div.build-content > div.language-toggle-container {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        gap: 10px;
-        z-index: 1000;
-        width: auto;
-        min-width: 280px;
-        max-width: 320px;
-      }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global {
+      /* Build Screen - iPad-style Header */
+      .build-header {
         display: flex;
         align-items: center;
-        gap: 3px;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 4px 6px;
-        border-radius: 15px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        min-width: fit-content;
-        flex: 1;
-        justify-content: center;
+        justify-content: space-between;
+        height: 56px;
+        padding: 0 16px;
+        background: #fff;
+        border-bottom: 1px solid #d2d2d7;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        flex-shrink: 0;
+      }
+      .build-header-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+
+      .build-header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .build-back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #6d28d9;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        transition: background 0.2s;
+      }
+      .build-back-btn:hover {
+        background: rgba(109, 40, 217, 0.1);
+      }
+
+      .build-add-btn {
+        width: 32px;
         height: 32px;
-        box-sizing: border-box;
+        border-radius: 50%;
+        background: #6d28d9;
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+      .build-add-btn:hover {
+        background: #5b21b6;
+        transform: scale(1.05);
+      }
+      .build-add-btn.picker-active {
+        background: #ef4444;
       }
 
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.toggle-label {
-        color: #333;
-        font-size: 12px;
-        font-weight: 500;
+      .build-header-center {
+        text-align: center;
+      }
+      .build-header-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #1d1d1f;
       }
 
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch {
+      .build-header-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .build-view-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #86868b;
+        padding: 6px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        transition: all 0.2s;
+      }
+      .build-view-toggle:hover {
+        background: #f5f5f7;
+        color: #1d1d1f;
+      }
+      .build-view-toggle.active {
+        color: #6d28d9;
+        background: rgba(109, 40, 217, 0.1);
+      }
+
+      .header-add-btn {
+        background: none;
+        color: #86868b;
+        border: none;
+        border-radius: 8px;
+        width: auto;
+        height: auto;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: none;
+        transition: all 0.2s;
+        margin-left: 4px;
+        padding: 6px;
+      }
+      .header-add-btn:hover {
+        background: #f5f5f7;
+        color: #1d1d1f;
+        transform: none;
+      }
+      .header-add-btn.active {
+        color: #6d28d9;
+        background: rgba(109, 40, 217, 0.1);
+      }
+
+      /* Left panel centers when right panel is collapsed */
+      .build-left-panel.expanded {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .build-header-toggle {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .build-header-toggle .toggle-label {
+        font-size: 14px;
+      }
+      .build-header-toggle .switch {
         position: relative;
         display: inline-block;
         width: 36px;
         height: 20px;
       }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input {
+      .build-header-toggle .switch input {
         opacity: 0;
         width: 0;
         height: 0;
       }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider {
+      .build-header-toggle .switch .slider {
         position: absolute;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
+        top: 0; left: 0; right: 0; bottom: 0;
         background-color: #ccc;
         transition: .4s;
       }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider:before {
+      .build-header-toggle .switch .slider:before {
         position: absolute;
         content: "";
         height: 14px;
@@ -87,237 +184,533 @@
         background-color: white;
         transition: .4s;
       }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input:checked + span.slider {
+      .build-header-toggle .switch input:checked + .slider {
         background-color: #6d28d9;
       }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input:focus + span.slider {
-        box-shadow: 0 0 1px #6d28d9;
-      }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > input:checked + span.slider:before {
+      .build-header-toggle .switch input:checked + .slider:before {
         transform: translateX(16px);
       }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider.round {
+      .build-header-toggle .switch .slider.round {
         border-radius: 24px;
       }
-
-      #buildScreen > div.build-content > div.language-toggle-container > div.language-toggle-global > label.switch > span.slider.round:before {
+      .build-header-toggle .switch .slider.round:before {
         border-radius: 50%;
       }
-      
-      #buildScreen > div.build-content > div.language-toggle-container > div.view-toggle-global,
-      #buildScreen > div.build-content > div.language-toggle-container > div.pin-toggle-global {
-        display: flex;
-        align-items: center;
-        gap: 3px;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 4px 6px;
-        border-radius: 15px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        min-width: fit-content;
-        flex: 1;
-        justify-content: center;
-        height: 32px;
-        box-sizing: border-box;
-      }
 
-      #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn,
-      #buildScreen > div.build-content > div.language-toggle-container > button.home-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 4px 8px;
-        border-radius: 15px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      .build-done-btn {
+        background: #6d28d9;
+        color: white;
         border: none;
-        color: #333;
-        font-size: 13px;
-        font-weight: 500;
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
-        min-width: 60px;
-        text-align: center;
-        white-space: nowrap;
-        flex: 1;
-        height: 32px;
-        box-sizing: border-box;
+        transition: all 0.2s;
+      }
+      .build-done-btn:hover {
+        background: #5b21b6;
       }
 
-      #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn:hover,
-      #buildScreen > div.build-content > div.language-toggle-container > button.home-btn:hover {
-        background: rgba(255, 255, 255, 1);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        transform: translateY(-1px);
-      }
-
-      #buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn:active,
-      #buildScreen > div.build-content > div.language-toggle-container > button.home-btn:active {
-        transform: translateY(1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      #buildScreen > div.build-content > div.asana-selection > div.asana-category-buttons {
-        display: flex;
-        overflow-x: auto;
-        gap: 10px;
-        padding: 10px 0;
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none; /* IE and Edge */
-        width: 100%;
-        flex-wrap: nowrap;
-      }
-
-      #buildScreen > div.build-content > div.asana-selection > div.asana-category-buttons::-webkit-scrollbar {
-        display: none; /* Chrome, Safari and Opera */
-      }
-
-      #buildScreen > div.build-content > div.asana-selection > div.asana-category-buttons > button.category-btn {
-        white-space: nowrap;
+      /* Build Analytics Side Panel */
+      .build-analytics-panel {
+        position: relative;
+        width: 340px;
+        min-width: 260px;
+        max-width: 60vw;
         flex-shrink: 0;
-        min-width: fit-content;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 16px 16px 16px 0;
+        background: #f5f5f7;
+        border-left: 1px solid #d2d2d7;
+        z-index: 20;
+        transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    min-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.25s ease,
+                    border-left-color 0.35s ease;
+      }
+      .build-analytics-panel > .panel-toggle-bar {
+        position: sticky;
+        top: -16px;
+        background: #f5f5f7;
+        z-index: 5;
+        padding: 16px 0 12px 10px;
+        margin-top: -16px;
+      }
+      .build-analytics-panel.collapsed {
+        width: 0 !important;
+        min-width: 0;
+        padding: 16px 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        border-left-color: transparent;
+      }
+      .build-analytics-body {
+        padding: 12px 0 0 10px;
+      }
+      .build-analytics-body .analysis-summary {
+        margin-bottom: 16px;
+      }
+      .build-analytics-body .analysis-block {
+        margin-bottom: 14px;
+        padding: 12px;
+      }
+      .build-analytics-body .analysis-block-header h3 {
+        font-size: 0.85rem;
+      }
+      .build-analytics-body .analysis-block-header p {
+        font-size: 0.68rem;
+      }
+      .build-analytics-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+        color: #999;
+        text-align: center;
+        gap: 12px;
+      }
+      .build-analytics-empty p {
+        font-size: 14px;
+        margin: 0;
       }
 
-      #buildScreen > div.build-content > div.asana-selection > div.search-container {
-        width: 100%;
-        padding: 10px 0;
+      @media screen and (max-width: 768px) {
+        .build-analytics-panel {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          width: 100% !important;
+          min-width: 100%;
+          max-width: 100%;
+          max-height: 100%;
+          height: 100%;
+          border-left: none;
+          border-top: none;
+          background: #f5f5f7;
+          z-index: 1000;
+          box-shadow: none;
+          border-radius: 0;
+          padding: 0;
+          transition: transform 0.3s ease, opacity 0.3s ease;
+          transform: translateY(0);
+          display: flex;
+          flex-direction: column;
+        }
+        .build-analytics-panel.collapsed {
+          transform: translateY(100%);
+          opacity: 0;
+          pointer-events: none;
+          width: 100% !important;
+          min-width: 100%;
+          padding: 0;
+        }
+        .build-analytics-panel > .panel-toggle-bar {
+          position: sticky;
+          top: 0;
+          background: #fff;
+          z-index: 5;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 56px;
+          min-height: 56px;
+          border-bottom: 1px solid #e5e5ea;
+          padding: 0 16px;
+        }
+        .build-analytics-panel > .panel-toggle-bar .panel-toggle-title {
+          font-size: 17px;
+          font-weight: 600;
+        }
+        .build-analytics-panel .build-analytics-body {
+          flex: 1;
+          overflow-y: auto;
+          padding: 16px;
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+
+      /* Two-Panel Split Layout */
+      .build-split-layout {
+        display: flex;
+        flex: 1;
+        gap: 0;
+        height: calc(100vh - 56px);
+        overflow: hidden;
         position: relative;
       }
 
-      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-icon {
-        position: absolute;
-        left: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 16px;
-        color: #999;
-        pointer-events: none;
-        transition: all 0.2s ease;
+      .build-left-panel {
+        flex: 1;
+        min-width: 480px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 24px 0 24px 8px;
+        transition: flex 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .mobile-panel-handle {
+        display: none;
+      }
+
+      .build-right-panel {
+        position: relative;
+        width: 380px;
+        min-width: 260px;
+        max-width: 60vw;
+        flex-shrink: 0;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 24px;
-        height: 24px;
-        padding: 4px;
-        background: transparent;
-        z-index: 1;
+        flex-direction: column;
+        overflow: hidden;
+        padding: 16px 16px 0 0;
+        background: #f5f5f7;
+        border-left: 1px solid #d2d2d7;
+        z-index: 21;
+        transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    min-width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    padding 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.25s ease,
+                    border-left-color 0.35s ease;
+      }
+      .build-right-panel.collapsed {
+        width: 0 !important;
+        min-width: 0;
+        padding: 16px 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        border-left-color: transparent;
+      }
+      .build-right-panel.resizing {
+        transition: none;
+        user-select: none;
       }
 
-      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input {
+      /* Flow Info Section */
+      .build-flow-info {
+        margin-bottom: 20px;
+      }
+
+      .build-flow-title-input {
         width: 100%;
-        padding: 12px 20px;
-        padding-left: 50px;
-        border: 2px solid #eee;
-        border-radius: 25px;
-        font-size: 14px;
-        outline: none;
-        transition: all 0.2s ease;
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        margin: 0;
+        border: none !important;
+        border-bottom: 1px solid transparent !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        padding: 4px 0 !important;
+        margin-bottom: 4px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #1d1d1f;
+        transition: border-color 0.2s;
       }
-
-      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input:focus {
-        border-color: #6d28d9;
-        box-shadow: 0 4px 8px rgba(109, 40, 217, 0.1);
-        background: rgba(255, 255, 255, 1);
+      .build-flow-title-input:focus {
+        border-bottom-color: #6d28d9 !important;
+        box-shadow: none !important;
       }
-
-      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input:focus ~ .search-icon {
-        color: #6d28d9;
-      }
-
-      #buildScreen > div.build-content > div.asana-selection > div.search-container > .search-input::placeholder {
-        color: #999;
+      .build-flow-title-input::placeholder {
+        color: #c7c7cc;
         font-weight: 400;
       }
 
-      #buildScreen > div.build-content > div.build-form {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+      .build-flow-desc-input {
         width: 100%;
-        max-width: 600px;
-        margin: 0;
-        padding: 10px;
-        border-radius: 15px;
-        outline: none;
+        border: none !important;
+        border-bottom: 1px solid transparent !important;
+        font-size: 15px !important;
+        padding: 4px 0 !important;
+        margin-bottom: 8px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: #666;
+        resize: none;
+        height: 40px !important;
+        min-height: 30px;
+        transition: border-color 0.2s;
+      }
+      .build-flow-desc-input:focus {
+        border-bottom-color: #6d28d9 !important;
+        box-shadow: none !important;
+      }
+      .build-flow-desc-input::placeholder {
+        color: #c7c7cc;
       }
 
-      #buildScreen > div.build-content > div.build-form > input[type="text"] {
-        width: 100%;
-        padding: 8px 15px;
-        border: 2px solid #eee;
-        border-radius: 15px;
-        font-size: 16px;
-        outline: none;
-        transition: all 0.2s ease;
-        background: rgba(255, 255, 255, 0.9);
-        margin: 0;
-      }
-
-      #buildScreen > div.build-content > div.build-form > textarea {
-        width: 100%;
-        padding: 8px 15px;
-        border: 2px solid #eee;
-        border-radius: 15px;
-        font-size: 16px;
-        outline: none;
-        transition: all 0.2s ease;
-        background: rgba(255, 255, 255, 0.9);
-        min-height: 80px;
-        resize: vertical;
-        font-family: inherit;
-        margin: 0;
-      }
-
-      #buildScreen > div.build-content > div.build-form > input[type="text"]:focus,
-      #buildScreen > div.build-content > div.build-form > textarea:focus {
-        border-color: #6d28d9;
-        box-shadow: 0 4px 8px rgba(109, 40, 217, 0.1);
-        background: rgba(255, 255, 255, 1);
-      }
-
-      #buildScreen > div.build-content > div.build-form > .flow-duration {
+      .build-flow-meta {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 8px 15px;
-        background: rgba(255, 255, 255, 0.9);
-        border-radius: 15px;
-        border: 2px solid #eee;
-        margin: 0;
-        outline: none;
+        gap: 12px;
+        font-size: 13px;
+        color: #86868b;
       }
-
-      #buildScreen > div.build-content > div.build-form > .flow-duration > label {
-        font-size: 16px;
-        color: #333;
-        font-weight: 500;
-        margin: 0;
+      .build-flow-timer {
+        display: flex;
+        align-items: center;
+        gap: 4px;
       }
-
-      #buildScreen > div.build-content > div.build-form > .flow-duration > p {
-        font-size: 16px;
+      .build-flow-timer svg {
+        color: #6d28d9;
+      }
+      .build-flow-timer #flowTime {
+        font-size: 13px;
         color: #6d28d9;
         font-weight: 600;
         margin: 0;
       }
-
-      #buildScreen > div.build-content > div.build-form > input[type="text"]::placeholder,
-      #buildScreen > div.build-content > div.build-form > textarea::placeholder {
-        color: #999;
-        font-weight: 400;
+      .build-flow-count {
+        font-weight: 500;
+        color: #86868b;
+      }
+      .build-flow-language {
+        padding: 2px 10px;
+        border: 1px solid #d2d2d7;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #666;
       }
 
-      #buildScreen > div.build-content > div.asana-selection > div.asana-scroll-container > #asanaList > .asana-item {
-        opacity: 0;
-        transform: translateY(20px);
-        animation: slideIn 0.3s ease forwards;
+      /* Right Panel Search */
+      .build-search-inline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid #d2d2d7;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin: 0 0 12px 10px;
+      }
+      .build-search-inline .search-input {
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        font-size: 14px !important;
+        background: transparent !important;
+        flex: 1;
+      }
+      .build-search-inline .search-input:focus {
+        box-shadow: none !important;
+        outline: none;
+      }
+
+      /* Right Panel - Pose Picker Grid */
+      .build-right-panel .asana-selection {
+        width: 100%;
+        max-width: none;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .build-right-panel #asanaList {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 8px 0 8px 10px;
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        white-space: normal;
+        background: transparent;
+        box-shadow: none;
+        border-radius: 0;
+        min-height: auto;
+        justify-content: flex-start;
+      }
+
+      .build-right-panel .asana-item {
+        min-width: 80px;
+        max-width: 100px;
+        width: 80px;
+        flex: 1 1 80px;
+        margin: 0;
+        padding: 6px;
+        border-radius: 10px;
+        min-height: auto;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+      }
+      .build-right-panel .asana-item:hover {
+        background: #f3f0ff;
+        border: none;
+        box-shadow: none;
+        transform: none;
+      }
+      .build-right-panel .asana-item img {
+        width: 56px;
+        height: 56px;
+        border-radius: 8px;
+        background: #f5f5f7;
+        padding: 0;
+        border: none;
+        box-shadow: none;
+        object-fit: contain;
+      }
+      .build-right-panel .asana-item:hover img {
+        transform: none;
+      }
+      .build-right-panel .asana-item p {
+        font-size: 10px;
+        line-height: 1.2;
+        font-weight: 500;
+        color: #555;
+        text-align: center;
+        word-break: break-word;
+      }
+      .build-right-panel .asana-item:hover p {
+        color: #6d28d9;
+      }
+      .build-right-panel .asana-item .difficulty-badge {
+        display: none;
+      }
+
+      .build-right-panel .asana-category-buttons {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
+        gap: 6px;
+        padding: 0 0 0 10px;
+        margin-bottom: 8px;
+      }
+      .build-right-panel .asana-category-buttons::-webkit-scrollbar { display: none; }
+
+      .build-right-panel .category-btn {
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid #d2d2d7;
+        background: #ffffff;
+        white-space: nowrap;
+        flex-shrink: 0;
+        font-size: 12px;
+        font-weight: 500;
+        color: #666;
+      }
+      .build-right-panel .category-btn.active {
+        background: #6d28d9;
+        color: white;
+        border-color: #6d28d9;
+      }
+      .build-right-panel .category-btn.active:hover {
+        background: #5b21b6;
+      }
+
+      /* Override old search container in right panel */
+      .build-right-panel .search-container {
+        display: none;
+      }
+      .build-right-panel .asana-section-title {
+        display: none;
+      }
+      .build-right-panel .asana-scroll-container {
+        display: contents;
+      }
+      .build-right-panel .scroll-btn {
+        display: none !important;
+      }
+
+      /* Mobile: stack panels vertically */
+      @media screen and (max-width: 768px) {
+        #buildScreen.active {
+          height: 100vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .build-split-layout {
+          flex-direction: column;
+          height: auto;
+          overflow: visible;
+        }
+        .build-left-panel {
+          padding: 16px;
+          padding-bottom: 80px;
+          overflow-y: visible;
+          overflow-x: hidden;
+          min-width: 0 !important;
+        }
+        .build-right-panel {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100% !important;
+          min-width: 100%;
+          height: 40vh;
+          max-height: 80vh;
+          min-height: 60px;
+          border-left: none;
+          border-top: none;
+          background: #fff;
+          z-index: 500;
+          box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+          border-radius: 16px 16px 0 0;
+          transition: transform 0.3s ease, opacity 0.3s ease;
+          transform: translateY(0);
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+        }
+        .build-right-panel.collapsed {
+          transform: translateY(100%);
+          opacity: 0;
+          pointer-events: none;
+        }
+        /* Mobile drag handle for bottom panel */
+        .mobile-panel-handle {
+          display: flex !important;
+          justify-content: center;
+          padding: 8px 0 4px;
+          cursor: grab;
+          flex-shrink: 0;
+          touch-action: none;
+        }
+        .mobile-panel-handle .handle-bar {
+          width: 36px;
+          height: 4px;
+          border-radius: 2px;
+          background: #d2d2d7;
+        }
+        .panel-resize-handle {
+          display: none;
+        }
+        #reopenPanelBtn {
+          padding: 4px;
+        }
+        #tableViewBtn,
+        #cardViewBtn {
+          display: none !important;
+        }
+        .build-header-toggle {
+          display: none;
+        }
+        .build-flow-title-input {
+          font-size: 20px !important;
+        }
+        .flow-cards {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .flow-cards {
+          grid-template-columns: 1fr !important;
+        }
+        .build-header-title {
+          font-size: 15px;
+        }
       }
 
       @keyframes slideIn {
@@ -330,7 +723,7 @@
           transform: translateY(0);
         }
       }
-      
+
       /* Group Naming Modal Styles */
       #groupNamingModal .section-name-input-container {
         display: flex;
@@ -436,11 +829,11 @@
         width: 100%;
         margin: 0 auto;
       }
-      
+
       #deleteFlowModal.section-modal .cancel-btn {
-        background: #ccc;
-        color: #333;
-        border: none;
+        background: #f3f0ff;
+        color: #6d28d9;
+        border: 1.5px solid #6d28d9;
         border-radius: 15px;
         padding: 10px 20px;
         cursor: pointer;
@@ -449,15 +842,15 @@
         transition: all 0.2s ease;
         flex: 1;
       }
-      
+
       #deleteFlowModal.section-modal .cancel-btn:hover {
-        background: #bbb;
+        background: #ede9fe;
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 8px rgba(109, 40, 217, 0.15);
       }
-      
+
       #deleteFlowModal.section-modal .delete-btn {
-        background: #e74c3c;
+        background: #6d28d9;
         color: white;
         border: none;
         border-radius: 15px;
@@ -467,15 +860,14 @@
         font-size: 16px;
         transition: all 0.2s ease;
         flex: 1;
-        content: "🗑️";
       }
-      
+
       #deleteFlowModal.section-modal .delete-btn:hover {
-        background: #c0392b;
+        background: #5b21b6;
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 8px rgba(109, 40, 217, 0.3);
       }
-      
+
       #deleteFlowModal.section-modal .cancel-btn:active,
       #deleteFlowModal.section-modal .delete-btn:active {
         transform: translateY(1px);
@@ -490,11 +882,11 @@
         width: 100%;
         margin: 0 auto;
       }
-      
+
       #endFlowModal.section-modal .cancel-btn {
-        background: #ccc;
-        color: #333;
-        border: none;
+        background: #f3f0ff;
+        color: #6d28d9;
+        border: 1.5px solid #6d28d9;
         border-radius: 15px;
         padding: 10px 20px;
         cursor: pointer;
@@ -503,15 +895,15 @@
         transition: all 0.2s ease;
         flex: 1;
       }
-      
+
       #endFlowModal.section-modal .cancel-btn:hover {
-        background: #bbb;
+        background: #ede9fe;
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 8px rgba(109, 40, 217, 0.15);
       }
-      
+
       #endFlowModal.section-modal .delete-btn {
-        background: #e74c3c;
+        background: #6d28d9;
         color: white;
         border: none;
         border-radius: 15px;
@@ -522,13 +914,13 @@
         transition: all 0.2s ease;
         flex: 1;
       }
-      
+
       #endFlowModal.section-modal .delete-btn:hover {
-        background: #c0392b;
+        background: #5b21b6;
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 8px rgba(109, 40, 217, 0.3);
       }
-      
+
       #endFlowModal.section-modal .cancel-btn:active,
       #endFlowModal.section-modal .delete-btn:active {
         transform: translateY(1px);
@@ -930,6 +1322,247 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
+      /* Danger button (Delete) */
+      .action-btn.action-btn-danger {
+        background: #fee2e2 !important;
+        color: #dc2626 !important;
+        border-color: #fca5a5 !important;
+      }
+      .action-btn.action-btn-danger:hover:not(:disabled) {
+        background: #fecaca !important;
+        border-color: #f87171 !important;
+      }
+      .action-btn.action-btn-danger:disabled {
+        background: #f5f5f5 !important;
+        color: #ccc !important;
+        border-color: #e0e0e0 !important;
+      }
+
+      /* Panel Resize Handle */
+      .panel-resize-handle {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -4px;
+        width: 8px;
+        cursor: col-resize;
+        z-index: 30;
+        background: transparent;
+        transition: background 0.15s;
+      }
+      .panel-resize-handle:hover,
+      .panel-resize-handle.dragging {
+        background: rgba(109, 40, 217, 0.15);
+      }
+      .panel-resize-handle::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 3px;
+        height: 32px;
+        border-radius: 2px;
+        background: #ccc;
+        transition: background 0.15s;
+      }
+      .panel-resize-handle:hover::after,
+      .panel-resize-handle.dragging::after {
+        background: #6d28d9;
+      }
+
+      /* Panel Toggle Bar */
+      .panel-toggle-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 0 12px 10px;
+        border-bottom: 1px solid #e0e0e0;
+        margin-bottom: 12px;
+      }
+      .panel-toggle-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1d1d1f;
+      }
+      .panel-toggle-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
+        color: #666;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+      }
+      .panel-toggle-btn:hover {
+        background: #e0e0e0;
+        color: #333;
+      }
+      .analytics-back-btn {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
+        color: #7c3aed;
+        align-items: center;
+      }
+      @media screen and (max-width: 768px) {
+        .analytics-back-btn {
+          display: flex;
+        }
+        .build-analytics-panel .panel-toggle-btn {
+          display: none;
+        }
+      }
+
+      /* Pose Context Menu (right-click) */
+      .pose-context-menu {
+        position: fixed;
+        z-index: 10000;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15), 0 1px 4px rgba(0, 0, 0, 0.08);
+        padding: 6px 0;
+        min-width: 180px;
+        animation: contextMenuIn 0.15s ease;
+      }
+      @keyframes contextMenuIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      .context-menu-item {
+        padding: 8px 16px;
+        font-size: 13px;
+        color: #333;
+        cursor: pointer;
+        transition: background 0.1s;
+      }
+      .context-menu-item:hover {
+        background: rgba(109, 40, 217, 0.08);
+        color: #6d28d9;
+      }
+      .context-menu-danger {
+        color: #dc2626;
+      }
+      .context-menu-danger:hover {
+        background: rgba(220, 38, 38, 0.08);
+        color: #dc2626;
+      }
+      .context-menu-divider {
+        height: 1px;
+        background: #e5e5ea;
+        margin: 4px 0;
+      }
+
+      /* Breath Picker Modal */
+      .breath-picker-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+      }
+      .breath-picker-content {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        width: 90%;
+        max-width: 340px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        animation: modalAppear 0.2s ease;
+      }
+      .breath-picker-content h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 4px;
+        color: #1d1d1f;
+      }
+      .breath-picker-desc {
+        font-size: 13px;
+        color: #999;
+        margin: 0 0 16px;
+      }
+      .breath-picker-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .breath-option-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        background: #fafafa;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        transition: all 0.15s;
+      }
+      .breath-option-btn:hover {
+        background: #ede9fe;
+        border-color: #6d28d9;
+        color: #6d28d9;
+      }
+      .breath-option-clear {
+        color: #999;
+      }
+      .breath-picker-cancel {
+        margin-top: 12px;
+        background: none;
+        border: none;
+        color: #999;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 8px 16px;
+      }
+      .breath-picker-cancel:hover {
+        color: #666;
+      }
+
+      /* Delete Confirmation Modal */
+      .delete-confirm-content {
+        max-width: 320px; text-align: center;
+      }
+      .delete-confirm-content h3 {
+        font-size: 17px; font-weight: 700; color: #1d1d1f; margin-bottom: 8px;
+      }
+      .delete-confirm-actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .delete-confirm-btn {
+        background: #6d28d9;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 11px 28px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.25,0.46,0.45,0.94);
+      }
+      .delete-confirm-btn:hover {
+        background: #5b21b6; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(109,40,217,0.3);
+      }
+      .delete-confirm-btn:active {
+        transform: scale(0.97);
+      }
+
       /* Recommended Poses Side Panel Styles */
       .recommended-side-panel {
         position: fixed;
@@ -1208,122 +1841,127 @@
   <body>
     <!-- App Store Floating Banner -->
     <div id="appStoreBanner" class="app-store-banner">
-      <button class="banner-close" onclick="dismissAppStoreBanner()" aria-label="Dismiss banner">&times;</button>
-      <img class="banner-app-icon" src="images/favicon_io/apple-touch-icon.png" alt="FlowBuilder" width="48" height="48">
+      <img class="banner-app-icon" src="images/favicon_io/apple-touch-icon.png" alt="FlowBuilder" width="36" height="36">
       <div class="banner-info">
-        <span class="banner-app-name">FlowBuilder - Yoga</span>
-        <span class="banner-app-subtitle">Build and flow through sequences</span>
+        <span class="banner-app-name">FlowBuilder.yoga</span>
+        <span class="banner-app-subtitle">Now available on the App Store</span>
       </div>
       <a href="https://apps.apple.com/us/app/flowbuilder-yoga/id6758913355" target="_blank" rel="noopener noreferrer" class="banner-open-btn">OPEN</a>
+      <button class="banner-close" onclick="dismissAppStoreBanner()" aria-label="Dismiss banner">&times;</button>
     </div>
-
-    <div class="accent-bar"></div>
 
     <div id="homeScreen" class="screen active">
       <header>
-        <h1>flow builder</h1>
-        <div class="header-buttons">
-          <button class="settings-gear-btn" onclick="openSettingsModal()" title="Settings">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-          </button>
-          <button class="import-flow-btn" onclick="showImportFlow()">
-            IMPORT FLOW
-          </button>
-          <button class="build-flow-btn" onclick="startNewFlow()">
-            BUILD A FLOW
-          </button>
-        </div>
+        <button class="settings-gear-btn" onclick="openSettingsModal()" title="Settings">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        </button>
+        <h1>flow builder<span style="font-size: 0.35em; font-weight: 300; vertical-align: super; margin-left: 2px; opacity: 0.6;">.yoga</span></h1>
+        <div class="header-buttons"></div>
       </header>
 
+      <div class="home-action-bar">
+        <button class="home-action-btn" onclick="openBreathwork()">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/></svg>
+          <span>Breathe</span>
+        </button>
+        <button class="home-action-btn" onclick="openMeditation()">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>Meditate</span>
+        </button>
+        <button class="home-action-btn home-action-hero" onclick="startNewFlow()">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <span>Build a Flow</span>
+        </button>
+        <button class="home-action-btn" onclick="showImportFlow()">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Import</span>
+        </button>
+        <button class="home-action-btn" onclick="openTextToFlow()">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>Text to Flow</span>
+        </button>
+      </div>
 
       <main>
-        <h2 class="past-flows">Past Flows</h2>
-        <div class="white-section"></div>
         <div class="flow-list">
           <div class="flow-date">
-            <h3>Today, Thu July 04</h3>
-            <span class="flow-count">3 flows</span>
+            <span class="flow-count">0 flows</span>
+            <span class="flow-date-text"></span>
           </div>
           <div id="savedFlowsList" class="flow-items">
             <!-- Saved flows will be populated here -->
           </div>
         </div>
       </main>
+      <button class="generate-fab" onclick="openFlowGenerator()" title="Generate Flow">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l10-10M13 11l3-3M16 8l2.5-2.5"/><path d="M15 6l3 3"/><circle cx="18" cy="4" r="1" fill="currentColor" stroke="none"/><circle cx="22" cy="7" r="0.75" fill="currentColor" stroke="none"/><circle cx="20" cy="2" r="0.75" fill="currentColor" stroke="none"/></svg>
+        <span class="generate-fab-label">Generate Flow</span>
+      </button>
+      <footer class="home-footer">
+        <span>&copy; AJA Digital 2026</span>
+        <a href="https://h.flowbuilder.yoga/contact" target="_blank" rel="noopener">Contact Us</a>
+      </footer>
     </div>
 
     <div id="buildScreen" class="screen">
-      <div class="accent-bar"></div>
-      
-      <div class="build-content">
-        <h1 class="build-title">build a flow</h1>
-        <div class="build-form">
-          <input type="text" id="title" placeholder="Flow Title" />
-          <textarea id="description" placeholder="Flow Description"></textarea>
-          <div class="flow-duration">
-            <label>Total Duration:</label>
-            <p id="flowTime">0 seconds</p>
-          </div>
+      <!-- iPad-style Header Bar -->
+      <div class="build-header">
+        <div class="build-header-left">
+          <button class="build-back-btn" onclick="changeScreen('homeScreen')" title="Back to Home">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
         </div>
-        
-        <div class="language-toggle-container">
-          <div class="language-toggle-global" title="Toggle Sanskrit Names">
-            <label class="toggle-label">🕉️</label>
-            <label class="switch">
-              <input type="checkbox" id="sanskrit-toggle-build">
-              <span class="slider round"></span>
-            </label>
-          </div>
-          <div class="view-toggle-global" title="Toggle between Table and Card Views">
-            <label class="toggle-label">🃏</label>
-            <label class="switch">
-              <input type="checkbox" id="view-toggle-build" onchange="toggleViewFromSwitch(this.checked)">
-              <span class="slider round"></span>
-            </label>
-            <span class="toggle-hint"></span>
-          </div>
-          <div class="pin-toggle-global" title="Pin selected actions to screen">
-            <label class="toggle-label">📌</label>
-            <label class="switch">
-              <input type="checkbox" id="pin-toggle-build" onchange="togglePinActions(this.checked)">
-              <span class="slider round"></span>
-            </label>
-          </div>
-          <button onclick="saveFlow()" class="save-flow-btn">Done</button>
+        <div class="build-header-center">
+          <span class="build-header-title">Edit Flow</span>
         </div>
-        <div class="asana-selection">
-          <h3 class="asana-section-title">Select poses for your flow</h3>
-          <div class="search-container">
-            <div class="search-icon">🔍</div>
-            <input type="text" id="asanaSearch" placeholder="Search poses..." class="search-input">
-          </div>
-          <div class="asana-category-buttons">
-            <button class="category-btn active" onclick="filterAsanas('all')">All Poses</button>
-            <button class="category-btn" onclick="filterAsanas('Standing')">Standing</button>
-            <button class="category-btn" onclick="filterAsanas('Seated')">Seated</button>
-            <button class="category-btn" onclick="filterAsanas('Backbend')">Backbend</button>
-            <button class="category-btn" onclick="filterAsanas('Balance')">Balance</button>
-            <button class="category-btn" onclick="filterAsanas('Stretch')">Stretch</button>
-            <button class="category-btn" onclick="filterAsanas('Strength')">Strength</button>
-            <button class="category-btn" onclick="filterAsanas('Custom')">Custom</button>
-            <button class="category-btn" onclick="filterAsanas('Sequence')">Sequence</button>
-          </div>
-          <div class="asana-scroll-container">
-            <button class="scroll-btn scroll-left" onclick="scrollAsanaList(-300)">◀</button>
-            <div id="asanaList"></div>
-            <button class="scroll-btn scroll-right" onclick="scrollAsanaList(300)">▶</button>
-          </div>
+        <div class="build-header-right">
+          <button class="build-view-toggle" id="playFlowBtn" onclick="if(editingFlow && editingFlow.flowID) playFlow(editingFlow.flowID)" title="Play Flow" style="color: #6d28d9;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5,3 19,12 5,21"></polygon></svg>
+          </button>
+          <button class="build-view-toggle" id="regenerateFlowBtn" onclick="openRegenerateModal()" title="Regenerate Flow">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l10-10M13 11l3-3M16 8l2.5-2.5"/><path d="M15 6l3 3"/><circle cx="18" cy="4" r="1" fill="currentColor" stroke="none"/><circle cx="22" cy="7" r="0.75" fill="currentColor" stroke="none"/><circle cx="20" cy="2" r="0.75" fill="currentColor" stroke="none"/></svg>
+          </button>
+          <button class="build-view-toggle active" id="tableViewBtn" onclick="toggleViewMode('table')" title="List View">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="18" x2="20" y2="18"></line></svg>
+          </button>
+          <button class="build-view-toggle" id="cardViewBtn" onclick="toggleViewMode('card')" title="Card View">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect></svg>
+          </button>
+          <button class="build-view-toggle" id="analyticsToggleBtn" onclick="toggleBuildAnalytics()" title="Analytics">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </button>
+          <button class="build-view-toggle active" id="reopenPanelBtn" onclick="toggleAsanaPicker()" title="Add poses">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </button>
         </div>
-        
-        <div class="flow-sequence">
+      </div>
+
+      <!-- Two-Panel Split Layout -->
+      <div class="build-split-layout">
+        <!-- Left Panel: Flow Info + Sequence -->
+        <div class="build-left-panel">
+          <div class="build-flow-info">
+            <input type="text" id="title" placeholder="Flow Title" class="build-flow-title-input" />
+            <textarea id="description" placeholder="Flow Description" class="build-flow-desc-input"></textarea>
+            <div class="build-flow-meta">
+              <span class="build-flow-timer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span id="flowTime">0 seconds</span>
+              </span>
+              <span class="build-flow-count" id="flowPoseCount">0 poses</span>
+              <span class="build-flow-language" onclick="toggleBuildSanskrit()" style="cursor:pointer;" id="buildLangToggle">English</span>
+            </div>
+          </div>
+
           <div class="selected-actions">
+            <button id="cutSelectedBtn" class="action-btn" onclick="cutSelectedPoses()" disabled>
+              <span>Cut</span>
+            </button>
             <button id="copySelectedBtn" class="action-btn" onclick="copySelectedPoses()" disabled>
               <span>Copy</span>
             </button>
             <button id="pasteSelectedBtn" class="action-btn" onclick="pasteSelectedPoses()" disabled>
               <span>Paste</span>
-            </button>
-            <button id="deleteSelectedBtn" class="action-btn" onclick="deleteSelectedPoses()" disabled>
-              <span>Delete</span>
             </button>
             <button id="addToSectionBtn" class="action-btn" onclick="addSelectedToSection()" disabled>
               <span>Group</span>
@@ -1334,20 +1972,11 @@
             <button id="changeSideBtn" class="action-btn" onclick="showChangeSideModal()" disabled>
               <span>Side</span>
             </button>
-            <button id="setInhaleBtn" class="action-btn" onclick="setSelectedBreath('Inhale')" disabled>
-              <span>Inhale</span>
-            </button>
-            <button id="setExhaleBtn" class="action-btn" onclick="setSelectedBreath('Exhale')" disabled>
-              <span>Exhale</span>
-            </button>
-            <button id="setBreatheHereBtn" class="action-btn" onclick="setSelectedBreath('Breathe Here')" disabled>
-              <span>Breathe Here</span>
-            </button>
-            <button id="setNoBreathBtn" class="action-btn" onclick="setSelectedBreath('-')" disabled>
-              <span>Clear Breath</span>
+            <button id="setBreathBtn" class="action-btn" onclick="showBreathPicker()" disabled>
+              <span>Breath</span>
             </button>
             <button id="saveSequenceBtn" class="action-btn" onclick="saveSequence()" disabled>
-              <span>Save</span>
+              <span>Save Selected</span>
             </button>
             <button id="reverseOrderBtn" class="action-btn" onclick="reverseSelectedPoses()" disabled>
               <span>Reverse</span>
@@ -1358,106 +1987,227 @@
             <button id="addCustomPoseBtn" class="action-btn" onclick="addCustomPose()">
               <span>+ Custom</span>
             </button>
-          </div>
-
-          <div class="view-toggle-container" style="display: none;">
-            <button class="view-toggle-btn active" id="tableViewBtn" onclick="toggleViewMode('table')">
-              <span>Table View</span>
-            </button>
-            <button class="view-toggle-btn" id="cardViewBtn" onclick="toggleViewMode('card')">
-              <span>Card View</span>
+            <button id="deleteSelectedBtn" class="action-btn action-btn-danger" onclick="confirmDeleteSelectedPoses()" disabled>
+              <span>Delete</span>
             </button>
           </div>
 
-          <div class="flow-table-container">
-            <table id="flowTable">
-              <tr>
-                <th onclick="sortTableByLargestNumber()" style="cursor: pointer;" title="Click to sort by largest number first">#</th>
-                <th>
-                  <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
-                  <label for="selectAllCheckbox" style="display: none;">Select All</label>
-                </th>
-                <th>Asana</th>
-                <th>Duration</th>
-                <th>Side</th>
-                <th>Breath</th>
-                <th>Add</th>
-                <th>Swap</th>
-                <th>Remove</th>
-              </tr>
-            </table>
-          </div>
+          <div class="flow-sequence">
+            <div class="view-toggle-container" style="display: none;">
+              <button class="view-toggle-btn active" onclick="toggleViewMode('table')">
+                <span>Table View</span>
+              </button>
+              <button class="view-toggle-btn" onclick="toggleViewMode('card')">
+                <span>Card View</span>
+              </button>
+            </div>
 
-          <div class="flow-cards"></div>
+            <div class="flow-table-container">
+              <table id="flowTable">
+                <tr>
+                  <th onclick="sortTableByLargestNumber()" style="cursor: pointer;" title="Click to sort by largest number first">#</th>
+                  <th>
+                    <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)">
+                    <label for="selectAllCheckbox" style="display: none;">Select All</label>
+                  </th>
+                  <th>Asana</th>
+                  <th>Duration</th>
+                  <th>Side</th>
+                  <th>Breath</th>
+                </tr>
+              </table>
+            </div>
+
+            <div class="flow-cards"></div>
+          </div>
         </div>
-        
-        <!-- Recommended Poses Toggle Button -->
-        <button id="recommendedToggleBtn" class="recommended-toggle-btn" onclick="toggleRecommendedPanel()" style="display: none;">
-          <span class="toggle-icon">◀</span>
-          <span class="toggle-text">Recommended</span>
-        </button>
-        
-        <!-- Drag and drop hint removed -->
-      </div>
-    </div>
 
-    <!-- Recommended Poses Side Panel -->
-    <div id="recommendedSidePanel" class="recommended-side-panel">
-      <div class="recommended-panel-header">
-        <h3 class="recommended-panel-title">Recommended Next Poses</h3>
-        <button class="recommended-close-btn" onclick="toggleRecommendedPanel()">×</button>
+        <!-- Analytics Side Panel -->
+        <div class="build-analytics-panel collapsed" id="buildAnalyticsPanel">
+          <div class="panel-toggle-bar">
+            <button class="analytics-back-btn" onclick="toggleBuildAnalytics()" title="Back">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <span class="panel-toggle-title">Analytics</span>
+            <button class="panel-toggle-btn" onclick="toggleBuildAnalytics()" title="Close analytics">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="build-analytics-body">
+            <!-- Summary -->
+            <div id="buildAnalysisSummary" class="analysis-summary"></div>
+
+            <!-- Peak Pose -->
+            <div id="buildAnalysisPeakPose" class="analysis-block" style="display:none"></div>
+
+            <!-- Dynamic Breakdown -->
+            <div class="analysis-block">
+              <div class="analysis-block-header">
+                <span class="analysis-block-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                </span>
+                <div>
+                  <h3>Dynamic Breakdown</h3>
+                  <p>Difficulty distribution</p>
+                </div>
+              </div>
+              <div id="buildAnalysisSequenceStrip" class="analysis-sequence-strip"></div>
+              <div id="buildAnalysisDifficultyLegend" class="analysis-legend-row-wrap"></div>
+              <div id="buildAnalysisDifficultyBars" class="analysis-chart-bars"></div>
+            </div>
+
+            <!-- Side Balance -->
+            <div class="analysis-block">
+              <div class="analysis-block-header">
+                <span class="analysis-block-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/><line x1="20" y1="12" x2="4" y2="12"/></svg>
+                </span>
+                <div>
+                  <h3>Side Balance</h3>
+                  <p>Left, right, bilateral</p>
+                </div>
+              </div>
+              <div id="buildAnalysisSideBalance"></div>
+            </div>
+
+            <!-- Body Heat Map -->
+            <div id="buildAnalysisBodyMapBlock" class="analysis-block" style="display:none">
+              <div class="analysis-block-header">
+                <span class="analysis-block-icon">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </span>
+                <div>
+                  <h3>Body Heat Map</h3>
+                  <p>Muscle groups worked</p>
+                </div>
+              </div>
+              <div class="analysis-body-center">
+                <canvas id="buildAnalysisBodyCanvas" class="analysis-body-canvas"></canvas>
+              </div>
+              <div id="buildAnalysisBodyLegend" class="analysis-body-legend-grid"></div>
+            </div>
+
+            <!-- Chakra Distribution -->
+            <div class="analysis-block">
+              <div class="analysis-block-header">
+                <span class="analysis-block-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
+                <div>
+                  <h3>Chakra Distribution</h3>
+                  <p>Energy centre balance</p>
+                </div>
+                <div class="analysis-chakra-toggle">
+                  <button id="buildChakraBarsBtn" class="analysis-toggle-btn active" onclick="setBuildChakraView('bars')">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                  </button>
+                  <button id="buildChakraHeptBtn" class="analysis-toggle-btn" onclick="setBuildChakraView('heptagon')">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="12"/><line x1="20.2" y1="7.5" x2="12" y2="12"/><line x1="20.2" y1="16.5" x2="12" y2="12"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="3.8" y1="16.5" x2="12" y2="12"/><line x1="3.8" y1="7.5" x2="12" y2="12"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div id="buildAnalysisChakraBars"></div>
+              <canvas id="buildAnalysisChakraCanvas" style="display:none;"></canvas>
+            </div>
+
+            <!-- Empty state -->
+            <div id="buildAnalyticsEmpty" class="build-analytics-empty" style="display:none;">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+              <p>Add poses to see analytics</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Pose Picker -->
+        <div class="build-right-panel" id="buildRightPanel">
+          <!-- Mobile drag handle for resizing bottom sheet -->
+          <div class="mobile-panel-handle" id="mobilePanelHandle"><div class="handle-bar"></div></div>
+          <!-- Desktop drag handle for resizing -->
+          <div class="panel-resize-handle" id="panelResizeHandle"></div>
+          <div class="panel-toggle-bar">
+            <span class="panel-toggle-title">Poses</span>
+            <button class="panel-toggle-btn" onclick="toggleAsanaPicker()" title="Close pose picker">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="asana-selection">
+            <div id="recommendedInline" class="recommended-inline" style="display:none;">
+              <h4 class="recommended-inline-title" onclick="toggleRecommendedInline()"><span class="collapse-arrow">▼</span> Recommended Next</h4>
+              <div id="recommendedInlineList" class="recommended-inline-list"></div>
+            </div>
+            <div class="build-search-inline">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="asanaSearch" placeholder="Search poses..." class="search-input">
+            </div>
+            <div class="asana-category-buttons">
+              <button class="category-btn active" onclick="filterAsanas('all')">All Poses</button>
+              <button class="category-btn" onclick="filterAsanas('Standing')">Standing</button>
+              <button class="category-btn" onclick="filterAsanas('Seated')">Seated</button>
+              <button class="category-btn" onclick="filterAsanas('Backbend')">Backbend</button>
+              <button class="category-btn" onclick="filterAsanas('Balance')">Balance</button>
+              <button class="category-btn" onclick="filterAsanas('Stretch')">Stretch</button>
+              <button class="category-btn" onclick="filterAsanas('Strength')">Strength</button>
+              <button class="category-btn" onclick="filterAsanas('Core')">Core</button>
+              <button class="category-btn" onclick="filterAsanas('Hip Opener')">Hip Opener</button>
+              <button class="category-btn" onclick="filterAsanas('Twist')">Twist</button>
+              <button class="category-btn" onclick="filterAsanas('Inversion')">Inversion</button>
+              <button class="category-btn" onclick="filterAsanas('Arm Balance')">Arm Balance</button>
+              <button class="category-btn" onclick="filterAsanas('Restorative')">Restorative</button>
+              <button class="category-btn chakra-filter" onclick="filterAsanas('chakra:Root')"><span class="chakra-dot" style="background:#e53e3e;"></span>Root</button>
+              <button class="category-btn chakra-filter" onclick="filterAsanas('chakra:Sacral')"><span class="chakra-dot" style="background:#ed8936;"></span>Sacral</button>
+              <button class="category-btn chakra-filter" onclick="filterAsanas('chakra:Solar Plexus')"><span class="chakra-dot" style="background:#ecc94b;"></span>Solar Plexus</button>
+              <button class="category-btn chakra-filter" onclick="filterAsanas('chakra:Heart')"><span class="chakra-dot" style="background:#48bb78;"></span>Heart</button>
+              <button class="category-btn chakra-filter" onclick="filterAsanas('chakra:Throat')"><span class="chakra-dot" style="background:#4299e1;"></span>Throat</button>
+              <button class="category-btn chakra-filter" onclick="filterAsanas('chakra:Third Eye')"><span class="chakra-dot" style="background:#667eea;"></span>Third Eye</button>
+              <button class="category-btn chakra-filter" onclick="filterAsanas('chakra:Crown')"><span class="chakra-dot" style="background:#9f7aea;"></span>Crown</button>
+              <button class="category-btn" onclick="filterAsanas('Custom')">Custom</button>
+              <button class="category-btn" onclick="filterAsanas('Sequence')">Sequence</button>
+            </div>
+            <div id="asanaList"></div>
+          </div>
+        </div>
       </div>
-      <p class="recommended-panel-description">Based on your last selected pose</p>
-      <div class="recommended-panel-content">
-        <div id="recommendedPosesList" class="recommended-poses-list"></div>
-      </div>
+
     </div>
 
     <div id="flowScreen" class="screen">
-      <div class="flow-controls-global">
-        <div class="language-toggle-global">
-          <label class="toggle-label">🗣️</label>
-          <label class="switch">
-            <input type="checkbox" id="speech-toggle-global">
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="language-toggle-global">
-          <label class="toggle-label">🕉️</label>
-          <label class="switch">
-            <input type="checkbox" id="sanskrit-toggle-global">
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <div class="language-toggle-global">
-          <label class="toggle-label">🫁</label>
-          <label class="switch">
-            <input type="checkbox" id="breath-toggle-global">
-            <span class="slider round"></span>
-          </label>
-        </div>
-        <button id="end-flow-btn" onclick="endFlow()">
-          <span class="end-flow-text">End Flow</span>
-        </button>
-      </div>
       <div class="flow-header">
         <p id="asanaBreath" style="display: none;">Breathe Here</p>
         <h1 id="asanaName">Warrior II</h1>
         <p id="asanaGroup" class="asana-group" style="display: none;"></p>
         <p id="asanaSide">left</p>
+        <div class="flow-controls-global">
+          <div class="language-toggle-global">
+            <label class="toggle-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></label>
+            <label class="switch">
+              <input type="checkbox" id="speech-toggle-global">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="language-toggle-global">
+            <label class="toggle-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z"/><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></label>
+            <label class="switch">
+              <input type="checkbox" id="sanskrit-toggle-global">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="language-toggle-global">
+            <label class="toggle-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4-4 8-7.5 8-12a8 8 0 10-16 0c0 4.5 4 8 8 12z"/></svg></label>
+            <label class="switch">
+              <input type="checkbox" id="breath-toggle-global">
+              <span class="slider round"></span>
+            </label>
+          </div>
+        </div>
+        <button id="end-flow-btn" onclick="endFlow()">
+          <span class="end-flow-text">End Flow</span>
+        </button>
       </div>
-      <div class="flow-content">
+      <div id="guideCueOverlay" class="guide-cue-overlay" style="display:none;"></div>
+      <div class="flow-content" id="flowContent">
         <div class="asana-image-container">
           <img id="asanaImage" src="images/webp/warrior-2.webp" alt="Asana pose" />
         </div>
-        <div class="flow-controls">
+        <div class="flow-controls" style="display:none;">
           <div class="left-controls">
-            <button class="pause-btn" onclick="togglePause()">
-              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="6" y="4" width="4" height="16"></rect>
-                <rect x="14" y="4" width="4" height="16"></rect>
-              </svg>
-            </button>
           </div>
         </div>
         <div class="countdown-container">
@@ -1485,8 +2235,23 @@
           </svg>
           <div id="countdown">15s</div>
         </div>
+        <!-- Pose navigation: previous / pause / next -->
+        <div class="flow-nav-controls" id="flowNavControls">
+          <button class="flow-nav-btn" id="prevPoseBtn" onclick="goToPreviousPose()" title="Previous pose">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <button class="pause-btn" onclick="togglePause()">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+          <button class="flow-nav-btn" id="nextPoseBtn" onclick="goToNextPose()" title="Next pose">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
         <div class="coming-up">
-          <p>Coming Up:</p>
+          <p>Coming Up: <span id="nextPoseTiming" class="next-pose-timing"></span></p>
           <p id="nextAsanaName">Triangle</p>
           <img
             id="nextAsanaImage"
@@ -1586,7 +2351,7 @@
     </div>
 
     <!-- Settings Modal -->
-    <div id="settingsModal" class="settings-modal-overlay">
+    <div id="settingsModal" class="settings-modal-overlay" onclick="if(event.target===this)closeSettingsModal()">
       <div class="settings-panel">
         <div class="settings-header">
           <h2>Settings</h2>
@@ -1614,6 +2379,75 @@
               <span>Add New Poses to Top</span>
               <input type="checkbox" id="settings-addtotop" onchange="toggleSettingsAddToTop(this.checked)">
             </label>
+            <div class="settings-slider-row">
+              <span>Default Pose Duration</span>
+              <div class="settings-slider-control">
+                <input type="range" id="settings-poseDuration" min="1" max="120" value="7" oninput="updateSettingPoseDuration(this.value)">
+                <input type="number" id="settings-poseDuration-val" class="settings-slider-val-input" value="7" min="1" max="120" oninput="updateSettingPoseDuration(this.value)"><span class="settings-slider-unit">s</span>
+              </div>
+            </div>
+            <div class="settings-slider-row">
+              <span>Countdown Duration</span>
+              <div class="settings-slider-control">
+                <input type="range" id="settings-countdown" min="1" max="10" value="3" oninput="updateSettingCountdown(this.value)">
+                <input type="number" id="settings-countdown-val" class="settings-slider-val-input" value="3" min="1" max="10" oninput="updateSettingCountdown(this.value)"><span class="settings-slider-unit">s</span>
+              </div>
+            </div>
+            <label class="settings-toggle-row">
+              <span>Guide Cues</span>
+              <input type="checkbox" id="settings-guideCues" onchange="updateSettingGuideCues(this.checked)">
+            </label>
+            <div class="settings-slider-row" id="guideCueFreqRow" style="display:none;">
+              <span>Guide Cue Frequency</span>
+              <div class="settings-slider-control">
+                <input type="range" id="settings-guideCueFreq" min="10" max="100" value="50" oninput="updateSettingGuideCueFreq(this.value)">
+                <span id="settings-guideCueFreq-val" class="settings-slider-val">50%</span>
+              </div>
+            </div>
+            <label class="settings-toggle-row">
+              <span>Spoken Breath Cues</span>
+              <input type="checkbox" id="settings-spokenBreath" onchange="updateSettingSpokenBreath(this.checked)">
+            </label>
+            <label class="settings-toggle-row">
+              <span>End Chime</span>
+              <input type="checkbox" id="settings-endChime" onchange="updateSettingEndChime(this.checked)">
+            </label>
+            <label class="settings-toggle-row">
+              <span>Suggested Poses</span>
+              <input type="checkbox" id="settings-suggestedPoses" onchange="updateSettingSuggestedPoses(this.checked)">
+            </label>
+          </div>
+          <div class="settings-section">
+            <h3>Voice</h3>
+            <div class="settings-select-row">
+              <span>TTS Voice</span>
+              <select id="settings-ttsVoice" onchange="updateSettingTTSVoice(this.value)">
+                <option value="">Default</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3>Reminders</h3>
+            <label class="settings-toggle-row">
+              <span>Practice Reminders</span>
+              <input type="checkbox" id="settings-reminder" onchange="updateSettingReminder(this.checked)">
+            </label>
+            <div id="reminderOptions" style="display:none;">
+              <div class="settings-select-row">
+                <span>Time</span>
+                <input type="time" id="settings-reminderTime" value="08:00" onchange="updateSettingReminderTime(this.value)">
+              </div>
+              <div class="settings-day-buttons">
+                <button class="day-btn active" data-day="0" onclick="toggleReminderDay(0)">Su</button>
+                <button class="day-btn active" data-day="1" onclick="toggleReminderDay(1)">Mo</button>
+                <button class="day-btn active" data-day="2" onclick="toggleReminderDay(2)">Tu</button>
+                <button class="day-btn active" data-day="3" onclick="toggleReminderDay(3)">We</button>
+                <button class="day-btn active" data-day="4" onclick="toggleReminderDay(4)">Th</button>
+                <button class="day-btn active" data-day="5" onclick="toggleReminderDay(5)">Fr</button>
+                <button class="day-btn active" data-day="6" onclick="toggleReminderDay(6)">Sa</button>
+              </div>
+              <p class="settings-note">Reminders work while the app tab is open.</p>
+            </div>
           </div>
           <div class="settings-section">
             <h3>Statistics</h3>
@@ -1625,6 +2459,14 @@
               <button class="settings-action-btn" onclick="closeSettingsModal(); openStatsDashboard();">View Dashboard</button>
               <button class="settings-action-btn secondary" onclick="exportStatsCSV()">Export CSV</button>
             </div>
+          </div>
+          <div class="settings-footer">
+            <a href="https://apps.apple.com/us/app/flowbuilder-yoga/id6758913355" target="_blank" rel="noopener noreferrer" class="settings-app-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+              Get FlowBuilder for iPhone
+            </a>
+            <a href="https://flowbuilder.yoga" target="_blank" rel="noopener noreferrer" class="settings-website-link">FlowBuilder.yoga</a>
+            <span class="settings-version">v1.1.0.1</span>
           </div>
         </div>
       </div>
@@ -1641,6 +2483,12 @@
         <button class="settings-action-btn secondary stats-export-btn" onclick="exportStatsCSV()">Export CSV</button>
       </header>
       <main class="stats-main">
+        <div class="stats-type-tabs" id="statsTypeTabs">
+          <button class="stats-type-tab active" onclick="switchStatsType('all', this)">All</button>
+          <button class="stats-type-tab" onclick="switchStatsType('yoga', this)">Yoga</button>
+          <button class="stats-type-tab" onclick="switchStatsType('breathwork', this)">Breathwork</button>
+          <button class="stats-type-tab" onclick="switchStatsType('meditation', this)">Meditation</button>
+        </div>
         <div class="stats-period-tabs">
           <button class="stats-tab active" onclick="switchStatsPeriod('weekly', this)">Weekly</button>
           <button class="stats-tab" onclick="switchStatsPeriod('monthly', this)">Monthly</button>
@@ -1760,6 +2608,372 @@
     </div>
 
 
+    <!-- Breathwork Screen -->
+    <div id="breathworkScreen" class="screen">
+      <header class="feature-header">
+        <button class="feature-back-btn" onclick="changeScreen('homeScreen')">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <h1>Breathwork</h1>
+        <div style="width:60px;"></div>
+      </header>
+      <main class="feature-main breathwork-main">
+        <div class="breath-split-layout">
+          <div class="breath-split-left">
+            <div class="breath-patterns" id="breathPatterns"></div>
+            <div id="breathSavedPresets" class="breath-saved-presets"></div>
+          </div>
+          <div class="breath-split-right">
+            <div class="breath-custom-card">
+              <div class="breath-custom-header">
+                <h3>Times</h3>
+                <button class="breath-save-preset-circle" onclick="saveBreathPreset()" title="Save as Preset">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+              </div>
+              <div class="breath-custom-sliders">
+                <label><span class="breath-phase-info">Inhale <span id="customInhaleVal">4</span>s</span>
+                  <input type="range" min="1" max="15" value="4" oninput="updateCustomBreathPattern('inhale', this.value)">
+                </label>
+                <label><span class="breath-phase-info">Hold In <span id="customHoldInVal">0</span>s</span>
+                  <input type="range" min="0" max="15" value="0" oninput="updateCustomBreathPattern('holdIn', this.value)">
+                </label>
+                <label><span class="breath-phase-info">Exhale <span id="customExhaleVal">4</span>s</span>
+                  <input type="range" min="1" max="15" value="4" oninput="updateCustomBreathPattern('exhale', this.value)">
+                </label>
+                <label><span class="breath-phase-info">Hold Out <span id="customHoldOutVal">0</span>s</span>
+                  <input type="range" min="0" max="15" value="0" oninput="updateCustomBreathPattern('holdOut', this.value)">
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="breath-bottom-section">
+          <div class="breath-duration-selector">
+            <h3>Duration</h3>
+            <div class="duration-pills" id="breathDurationPills">
+              <button class="duration-pill" onclick="selectBreathDuration(60)">1 min</button>
+              <button class="duration-pill" onclick="selectBreathDuration(180)">3 min</button>
+              <button class="duration-pill active" onclick="selectBreathDuration(300)">5 min</button>
+              <button class="duration-pill" onclick="selectBreathDuration(600)">10 min</button>
+              <button class="duration-pill" onclick="selectBreathDuration(0)">Infinite</button>
+            </div>
+          </div>
+          <button class="feature-begin-btn" onclick="startBreathSession()">Begin</button>
+        </div>
+      </main>
+    </div>
+
+    <!-- Breathwork Player Screen -->
+    <div id="breathPlayerScreen" class="screen">
+      <div class="breath-player-container">
+        <div class="breath-session-timer" id="breathSessionTimer">5:00</div>
+        <div class="breath-circle-wrap">
+          <div class="breath-circle" id="breathCircle"></div>
+          <div class="breath-phase-label" id="breathPhaseLabel">Inhale</div>
+        </div>
+        <div class="breath-phase-timer" id="breathPhaseTimer">4</div>
+        <div class="breath-player-controls">
+          <button class="breath-control-btn" onclick="pauseBreathSession()" id="breathPauseBtn">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <button class="breath-control-btn breath-stop-btn" onclick="endBreathSession(false)">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breath Wiki Modal -->
+    <div id="breathWikiModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="document.getElementById('breathWikiModal').style.display='none'">&times;</span>
+        <h2 id="breathWikiTitle"></h2>
+        <div id="breathWikiBody"></div>
+      </div>
+    </div>
+
+    <!-- Meditation Screen -->
+    <div id="meditationScreen" class="screen">
+      <header class="feature-header">
+        <button class="feature-back-btn" onclick="changeScreen('homeScreen')">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <h1>Meditation</h1>
+        <div style="width:60px;"></div>
+      </header>
+      <main class="feature-main">
+        <div class="meditation-durations">
+          <h3>Duration</h3>
+          <div class="duration-pills" id="meditationDurationPills">
+            <button class="duration-pill" onclick="selectMeditationDuration(300)">5 min</button>
+            <button class="duration-pill active" onclick="selectMeditationDuration(600)">10 min</button>
+            <button class="duration-pill" onclick="selectMeditationDuration(900)">15 min</button>
+            <button class="duration-pill" onclick="selectMeditationDuration(1200)">20 min</button>
+            <button class="duration-pill" onclick="selectMeditationDuration(1800)">30 min</button>
+            <button class="duration-pill" onclick="selectMeditationDuration(2700)">45 min</button>
+            <button class="duration-pill" onclick="selectMeditationDuration(3600)">60 min</button>
+          </div>
+        </div>
+        <button class="feature-begin-btn" onclick="startMeditation()">Begin</button>
+      </main>
+    </div>
+
+    <!-- Meditation Player Screen -->
+    <div id="meditationPlayerScreen" class="screen">
+      <div class="meditation-player-container">
+        <div class="meditation-time" id="meditationTimeDisplay">00:00</div>
+        <div class="meditation-progress-bar">
+          <div class="meditation-progress-fill" id="meditationProgressFill"></div>
+        </div>
+        <div class="meditation-player-controls">
+          <button class="breath-control-btn" onclick="pauseMeditation()" id="meditationPauseBtn">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+          <button class="breath-control-btn breath-stop-btn" onclick="endMeditation(false)">
+            <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow Generator Screen -->
+    <div id="flowGeneratorScreen" class="screen">
+      <header class="feature-header">
+        <button class="feature-back-btn" onclick="changeScreen('homeScreen')">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <h1 id="genScreenTitle">Generate Flow <span style="font-size:0.5em;font-weight:500;color:#6d28d9;vertical-align:super;">Beta</span></h1>
+        <div style="width:60px;"></div>
+      </header>
+      <main class="feature-main">
+        <div class="gen-section">
+          <h3>Level</h3>
+          <div class="gen-segmented" id="genLevel">
+            <button class="gen-seg-btn active" onclick="setGenLevel('Beginner')">Beginner</button>
+            <button class="gen-seg-btn" onclick="setGenLevel('Intermediate')">Intermediate</button>
+            <button class="gen-seg-btn" onclick="setGenLevel('Advanced')">Advanced</button>
+          </div>
+        </div>
+        <div class="gen-section">
+          <h3>Focus Areas</h3>
+          <div class="gen-tags" id="genFocusTags">
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Standing">Standing</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Balance">Balance</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Hip Opener">Hip Opener</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Backbend">Backbend</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Forward Fold">Forward Fold</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Core">Core</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Inversion">Inversion</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Twist">Twist</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Arm Balance">Arm Balance</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Seated">Seated</button>
+            <button class="gen-tag" onclick="toggleGenTag(this)" data-tag="Stretch">Stretch</button>
+          </div>
+        </div>
+        <div class="gen-section">
+          <h3>Duration</h3>
+          <div class="duration-pills" id="genDurationPills">
+            <button class="duration-pill active" onclick="setGenDuration(15)">15 min</button>
+            <button class="duration-pill" onclick="setGenDuration(30)">30 min</button>
+            <button class="duration-pill" onclick="setGenDuration(45)">45 min</button>
+            <button class="duration-pill" onclick="setGenDuration(60)">60 min</button>
+            <button class="duration-pill" onclick="setGenDuration(90)">90 min</button>
+          </div>
+        </div>
+        <div class="gen-section">
+          <h3>Hold Length</h3>
+          <div class="gen-segmented" id="genHoldLength">
+            <button class="gen-seg-btn" onclick="setGenHold('short')">Short</button>
+            <button class="gen-seg-btn active" onclick="setGenHold('medium')">Medium</button>
+            <button class="gen-seg-btn" onclick="setGenHold('long')">Long</button>
+          </div>
+        </div>
+        <div class="gen-section">
+          <h3>Options</h3>
+          <label class="settings-toggle-row"><span>Include Warmup</span><input type="checkbox" id="genWarmup" checked></label>
+          <label class="settings-toggle-row"><span>Include Cooldown</span><input type="checkbox" id="genCooldown" checked></label>
+          <label class="settings-toggle-row"><span>Include Savasana</span><input type="checkbox" id="genSavasana" checked></label>
+          <label class="settings-toggle-row"><span>Breath Cues</span><input type="checkbox" id="genBreathCues" checked></label>
+        </div>
+        <button class="feature-begin-btn" id="genScreenBtn" onclick="generateFlow()">Generate</button>
+      </main>
+    </div>
+
+    <!-- Text to Flow Modal -->
+    <div id="textToFlowModal" class="modal">
+      <div class="modal-content text-to-flow-content">
+        <span class="close-modal" onclick="closeTextToFlow()">&times;</span>
+        <h2>Text to Flow</h2>
+        <p class="modal-description">Describe your flow with optional side, duration, and breath cues.</p>
+        <textarea id="textToFlowInput" class="ttf-textarea" rows="8" placeholder="Example:&#10;Mountain Pose 10s&#10;Warrior 1 left 15s inhale&#10;Warrior 2 right 20s exhale&#10;Triangle Pose both 30s&#10;Downward Dog 45s, Cobra 10s&#10;Child's Pose 60s"></textarea>
+        <button class="feature-begin-btn" onclick="parseFlowFromText()" style="margin-top:12px;">Parse Flow</button>
+        <div id="ttfResults" class="ttf-results" style="display:none;">
+          <h3>Matched Poses</h3>
+          <div id="ttfMatchList" class="ttf-match-list"></div>
+          <button class="feature-begin-btn" onclick="createFlowFromMatches()" style="margin-top:12px;">Create Flow</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pose Detail Modal -->
+    <div id="poseDetailModal" class="modal">
+      <div class="modal-content pose-detail-content">
+        <span class="close-modal" onclick="closePoseDetail()">&times;</span>
+        <div class="pose-detail-header">
+          <img id="poseDetailImage" class="pose-detail-img" src="" alt="Pose">
+          <div class="pose-detail-info">
+            <h2 id="poseDetailName"></h2>
+            <p id="poseDetailSanskrit" class="pose-detail-sanskrit"></p>
+            <span id="poseDetailDifficulty" class="pose-detail-badge"></span>
+          </div>
+        </div>
+        <div class="pose-detail-body">
+          <div class="pose-detail-row" id="poseDetailAliases"></div>
+          <div class="pose-detail-row" id="poseDetailChakra"></div>
+          <div class="pose-detail-row" id="poseDetailTags"></div>
+          <div class="pose-detail-row" id="poseDetailBreath"></div>
+          <p id="poseDetailDescription" class="pose-detail-desc"></p>
+          <div id="poseDetailCues" class="pose-detail-cues"></div>
+          <div id="poseDetailTransitions" class="pose-detail-transitions"></div>
+          <div id="poseDetailPoseHistory" class="pose-detail-row"></div>
+          <div id="poseDetailHistory" class="pose-detail-history"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onboarding Overlay -->
+    <div id="onboardingOverlay" class="onboarding-overlay" style="display:none;">
+      <div class="onboarding-carousel">
+        <div class="onboarding-slides" id="onboardingSlides">
+          <div class="onboarding-slide active" data-slide="0">
+            <div class="onboarding-icon-svg onboarding-float">
+              <svg viewBox="0 0 80 80" width="80" height="80"><circle cx="40" cy="40" r="38" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/><path d="M40 20c-6 0-10 4-10 8s4 6 10 6 10 2 10 6-4 8-10 8M40 16v4M40 48v4" fill="none" stroke="#6d28d9" stroke-width="2.5" stroke-linecap="round"/><circle cx="40" cy="28" r="5" fill="#6d28d9" opacity="0.3"/><path d="M32 38c0-4 3.5-7 8-7s8 3 8 7" fill="none" stroke="#6d28d9" stroke-width="2"/><line x1="40" y1="38" x2="40" y2="52" stroke="#6d28d9" stroke-width="2.5"/><line x1="40" y1="44" x2="32" y2="38" stroke="#6d28d9" stroke-width="2"/><line x1="40" y1="44" x2="48" y2="38" stroke="#6d28d9" stroke-width="2"/><line x1="40" y1="52" x2="34" y2="60" stroke="#6d28d9" stroke-width="2"/><line x1="40" y1="52" x2="46" y2="60" stroke="#6d28d9" stroke-width="2"/></svg>
+            </div>
+            <h2>Welcome to Flow Builder</h2>
+            <p>Your personal yoga flow companion</p>
+          </div>
+          <div class="onboarding-slide" data-slide="1">
+            <div class="onboarding-icon-svg onboarding-bounce">
+              <svg viewBox="0 0 80 80" width="80" height="80"><rect x="4" y="4" width="72" height="72" rx="16" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/><rect x="16" y="20" width="22" height="6" rx="3" fill="#6d28d9" opacity="0.5"/><rect x="16" y="32" width="48" height="6" rx="3" fill="#6d28d9" opacity="0.3"/><rect x="16" y="44" width="36" height="6" rx="3" fill="#6d28d9" opacity="0.5"/><rect x="16" y="56" width="48" height="6" rx="3" fill="#6d28d9" opacity="0.3"/><circle cx="58" cy="58" r="12" fill="#6d28d9"/><line x1="58" y1="52" x2="58" y2="64" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="52" y1="58" x2="64" y2="58" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+            </div>
+            <h2>Build Custom Flows</h2>
+            <p>Create custom yoga sequences from 200+ poses with drag-and-drop editing</p>
+          </div>
+          <div class="onboarding-slide" data-slide="2">
+            <div class="onboarding-icon-svg onboarding-pulse">
+              <svg viewBox="0 0 80 80" width="80" height="80"><circle cx="40" cy="40" r="38" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/><polygon points="32,24 58,40 32,56" fill="#6d28d9" rx="4"/></svg>
+            </div>
+            <h2>Guided Playback</h2>
+            <p>Practice with voice cues, breath prompts, and pose timers</p>
+          </div>
+          <div class="onboarding-slide" data-slide="3">
+            <div class="onboarding-icon-svg onboarding-grow">
+              <svg viewBox="0 0 80 80" width="80" height="80"><rect x="4" y="4" width="72" height="72" rx="16" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/><rect x="16" y="48" width="10" height="16" rx="3" fill="#6d28d9" opacity="0.4"/><rect x="30" y="36" width="10" height="28" rx="3" fill="#6d28d9" opacity="0.6"/><rect x="44" y="28" width="10" height="36" rx="3" fill="#6d28d9" opacity="0.8"/><rect x="58" y="18" width="10" height="46" rx="3" fill="#6d28d9"/></svg>
+            </div>
+            <h2>Track Your Progress</h2>
+            <p>Monitor streaks, session history, and pose frequency</p>
+          </div>
+          <div class="onboarding-slide" data-slide="4">
+            <div class="onboarding-icon-svg onboarding-breathe">
+              <svg viewBox="0 0 80 80" width="80" height="80"><circle cx="40" cy="40" r="38" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/><circle cx="40" cy="40" r="20" fill="#6d28d9" opacity="0.2" class="onboarding-breath-circle"/><circle cx="40" cy="40" r="12" fill="#6d28d9" opacity="0.4"/><path d="M40 28v24M28 40h24" stroke="#6d28d9" stroke-width="2" stroke-linecap="round" opacity="0.3"/></svg>
+            </div>
+            <h2>Breathwork &amp; Meditation</h2>
+            <p>Guided breathing patterns and meditation timer to complement your practice</p>
+          </div>
+          <div class="onboarding-slide" data-slide="5">
+            <div class="onboarding-icon-svg onboarding-sparkle">
+              <svg viewBox="0 0 80 80" width="80" height="80"><circle cx="40" cy="40" r="38" fill="#ede9fe" stroke="#6d28d9" stroke-width="2"/><path d="M40 16l3 10h10l-8 6 3 10-8-6-8 6 3-10-8-6h10z" fill="#6d28d9" opacity="0.8"/><path d="M24 50l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z" fill="#6d28d9" opacity="0.4"/><path d="M56 50l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z" fill="#6d28d9" opacity="0.4"/></svg>
+            </div>
+            <h2>Your Mat Awaits</h2>
+            <p>Build your first flow and start your journey</p>
+          </div>
+        </div>
+        <div class="onboarding-dots" id="onboardingDots">
+          <span class="onboarding-dot active"></span>
+          <span class="onboarding-dot"></span>
+          <span class="onboarding-dot"></span>
+          <span class="onboarding-dot"></span>
+          <span class="onboarding-dot"></span>
+          <span class="onboarding-dot"></span>
+        </div>
+        <div class="onboarding-actions">
+          <button class="onboarding-skip" id="onboardingSkip" onclick="dismissOnboarding()">Skip</button>
+          <button class="onboarding-next" id="onboardingNext" onclick="nextOnboardingSlide()">Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breath Picker Modal -->
+    <div id="breathPickerModal" class="breath-picker-overlay" style="display:none;" onclick="if(event.target===this)closeBreathPicker()">
+      <div class="breath-picker-content">
+        <h3>Set Breath Cue</h3>
+        <p class="breath-picker-desc">Apply to all selected poses</p>
+        <div class="breath-picker-options">
+          <button class="breath-option-btn" onclick="applyBreathFromPicker('Inhale')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            <span>Inhale</span>
+          </button>
+          <button class="breath-option-btn" onclick="applyBreathFromPicker('Exhale')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            <span>Exhale</span>
+          </button>
+          <button class="breath-option-btn" onclick="applyBreathFromPicker('Breathe Here')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+            <span>Breathe Here</span>
+          </button>
+          <button class="breath-option-btn breath-option-clear" onclick="applyBreathFromPicker('-')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>Clear Breath</span>
+          </button>
+        </div>
+        <button class="breath-picker-cancel" onclick="closeBreathPicker()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Pose Context Menu (right-click) -->
+    <div id="poseContextMenu" class="pose-context-menu" style="display:none;">
+      <div class="context-menu-item" data-action="add-above">Add pose above</div>
+      <div class="context-menu-item" data-action="add-below">Add pose below</div>
+      <div class="context-menu-divider"></div>
+      <div class="context-menu-item" data-action="swap">Swap pose</div>
+      <div class="context-menu-divider"></div>
+      <div class="context-menu-item" data-action="set-inhale">Inhale</div>
+      <div class="context-menu-item" data-action="set-exhale">Exhale</div>
+      <div class="context-menu-item" data-action="set-breathe-here">Breathe Here</div>
+      <div class="context-menu-item" data-action="set-no-breath">Clear Breath</div>
+      <div class="context-menu-divider"></div>
+      <div class="context-menu-item context-menu-danger" data-action="delete">Delete pose</div>
+    </div>
+
+    <!-- Flow Context Menu (right-click on main screen) -->
+    <div id="flowContextMenu" class="pose-context-menu" style="display:none;">
+      <div class="context-menu-item" data-action="flow">Flow</div>
+      <div class="context-menu-item" data-action="edit">Edit</div>
+      <div class="context-menu-divider"></div>
+      <div class="context-menu-item" data-action="analyse">Analyse</div>
+      <div class="context-menu-item" data-action="share">Share</div>
+      <div class="context-menu-divider"></div>
+      <div class="context-menu-item context-menu-danger" data-action="delete">Delete</div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="breath-picker-overlay" style="display:none;" onclick="if(event.target===this)closeDeleteConfirm()">
+      <div class="breath-picker-content delete-confirm-content">
+        <h3>Delete Poses?</h3>
+        <p class="breath-picker-desc" id="deleteConfirmMsg">Are you sure you want to delete the selected poses?</p>
+        <div class="delete-confirm-actions">
+          <button class="breath-picker-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+          <button class="delete-confirm-btn" onclick="executeDeleteSelectedPoses()">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Type Filter (injected via JS) -->
+
     <!-- placeholder -->
     <!--#include virtual=" userAnalytics.html" -->
 
@@ -1844,7 +3058,7 @@
         <!-- Chakra Distribution -->
         <div class="analysis-block">
           <div class="analysis-block-header">
-            <span class="analysis-block-icon">✨</span>
+            <span class="analysis-block-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
             <div>
               <h3>Chakra Distribution</h3>
               <p>Energy centre balance</p>

@@ -155,24 +155,26 @@ function clearPracticeStats() {
     savePracticeStats([]);
 }
 
-function recordSession(completedFully) {
+function recordSession(completedFully, sessionType) {
     if (!getStatsTrackingEnabled()) return;
     if (!window._sessionTracker) return;
 
     const tracker = window._sessionTracker;
 
-    // Record the last pose
-    if (tracker.poseStartTime !== null && editingFlow && editingFlow.asanas && editingFlow.asanas[currentAsanaIndex]) {
-        const lastPose = editingFlow.asanas[currentAsanaIndex];
-        const elapsed = Math.round((Date.now() - tracker.poseStartTime) / 1000);
-        tracker.poses.push({
-            name: lastPose.name || '',
-            sanskrit: lastPose.sanskrit || '',
-            durationSeconds: elapsed,
-            difficulty: lastPose.difficulty || 'Beginner',
-            tags: lastPose.tags || [],
-            side: lastPose.side || 'Center'
-        });
+    // Record the last pose (yoga flows only)
+    if (!sessionType || sessionType === 'yoga') {
+        if (tracker.poseStartTime !== null && editingFlow && editingFlow.asanas && editingFlow.asanas[currentAsanaIndex]) {
+            const lastPose = editingFlow.asanas[currentAsanaIndex];
+            const elapsed = Math.round((Date.now() - tracker.poseStartTime) / 1000);
+            tracker.poses.push({
+                name: lastPose.name || '',
+                sanskrit: lastPose.sanskrit || '',
+                durationSeconds: elapsed,
+                difficulty: lastPose.difficulty || 'Beginner',
+                tags: lastPose.tags || [],
+                side: lastPose.side || 'Center'
+            });
+        }
     }
 
     const totalDuration = Math.round((Date.now() - tracker.startTime) / 1000);
@@ -183,9 +185,10 @@ function recordSession(completedFully) {
         flowName: tracker.flowName,
         date: new Date().toISOString(),
         durationSeconds: totalDuration,
-        poseCount: tracker.poses.length,
+        poseCount: tracker.poses ? tracker.poses.length : 0,
         completedFully: completedFully,
-        poses: tracker.poses
+        poses: tracker.poses || [],
+        type: sessionType || tracker.type || 'yoga'
     };
 
     addPracticeSession(session);
@@ -336,12 +339,13 @@ function exportStatsCSV() {
         return;
     }
 
-    let csv = 'Session Summary\nDate,Flow Name,Duration (min),Poses,Completed\n';
+    let csv = 'Session Summary\nDate,Type,Flow Name,Duration (min),Poses,Completed\n';
     const sorted = sessions.sort((a, b) => new Date(b.date) - new Date(a.date));
     sorted.forEach(s => {
         const mins = Math.round(s.durationSeconds / 60);
         const completed = s.completedFully ? 'Yes' : 'No';
-        csv += `${s.date},"${s.flowName}",${mins},${s.poseCount},${completed}\n`;
+        const type = s.type || 'yoga';
+        csv += `${s.date},${type},"${s.flowName}",${mins},${s.poseCount},${completed}\n`;
     });
 
     csv += '\nPose Detail\nDate,Flow Name,Pose,Sanskrit,Duration (s),Difficulty,Tags,Side\n';
@@ -382,8 +386,49 @@ function openSettingsModal() {
     if (speechCheck) speechCheck.checked = speechEnabled;
     if (breathCheck) breathCheck.checked = breathCuesEnabled;
     if (trackingCheck) trackingCheck.checked = getStatsTrackingEnabled();
-    // addToTop: checked = add to top (tableInDescendingOrder false)
-    if (addToTopCheck) addToTopCheck.checked = !tableInDescendingOrder;
+    // addToTop: checked = add to top
+    if (addToTopCheck) addToTopCheck.checked = localStorage.getItem('addToTop') === 'true';
+
+    // Sync new settings
+    const poseDurSlider = document.getElementById('settings-poseDuration');
+    const poseDurVal = document.getElementById('settings-poseDuration-val');
+    if (poseDurSlider) { poseDurSlider.value = defaultPoseDuration; }
+    if (poseDurVal) { poseDurVal.value = defaultPoseDuration; }
+
+    const cdSlider = document.getElementById('settings-countdown');
+    const cdVal = document.getElementById('settings-countdown-val');
+    if (cdSlider) { cdSlider.value = countdownDuration; }
+    if (cdVal) { cdVal.value = countdownDuration; }
+
+    const gcCheck = document.getElementById('settings-guideCues');
+    if (gcCheck) gcCheck.checked = guideCuesEnabled;
+    const gcfRow = document.getElementById('guideCueFreqRow');
+    if (gcfRow) gcfRow.style.display = guideCuesEnabled ? 'flex' : 'none';
+    const gcfSlider = document.getElementById('settings-guideCueFreq');
+    const gcfVal = document.getElementById('settings-guideCueFreq-val');
+    if (gcfSlider) gcfSlider.value = guideCueFrequency;
+    if (gcfVal) gcfVal.textContent = guideCueFrequency + '%';
+
+    const sbCheck = document.getElementById('settings-spokenBreath');
+    if (sbCheck) sbCheck.checked = spokenBreathCuesEnabled;
+    const ecCheck = document.getElementById('settings-endChime');
+    if (ecCheck) ecCheck.checked = endChimeEnabled;
+    const spCheck = document.getElementById('settings-suggestedPoses');
+    if (spCheck) spCheck.checked = suggestedPosesEnabled;
+
+    const remCheck = document.getElementById('settings-reminder');
+    if (remCheck) remCheck.checked = reminderEnabled;
+    const remOpts = document.getElementById('reminderOptions');
+    if (remOpts) remOpts.style.display = reminderEnabled ? 'block' : 'none';
+    const remTime = document.getElementById('settings-reminderTime');
+    if (remTime) remTime.value = reminderTime;
+    document.querySelectorAll('.day-btn').forEach(btn => {
+        const day = parseInt(btn.dataset.day);
+        btn.classList.toggle('active', reminderDays.includes(day));
+    });
+
+    // Populate TTS voices
+    populateTTSVoices();
 
     modal.classList.add('active');
 }
@@ -411,8 +456,7 @@ function toggleSettingsBreath(enabled) {
 }
 
 function toggleSettingsAddToTop(addToTop) {
-    // addToTop true = new poses go to top (ascending, tableInDescendingOrder = false)
-    tableInDescendingOrder = !addToTop;
+    // addToTop controls array insertion only; display is always ascending
     localStorage.setItem('addToTop', addToTop);
 }
 
@@ -446,7 +490,12 @@ function confirmClearStats() {
 }
 
 function renderStatsDashboard() {
-    const sessions = getPracticeStats();
+    let sessions = getPracticeStats();
+
+    // Filter by type
+    if (currentStatsType !== 'all') {
+        sessions = sessions.filter(s => (s.type || 'yoga') === currentStatsType);
+    }
 
     if (sessions.length === 0) {
         renderEmptyDashboard();
@@ -574,11 +623,13 @@ function renderStatsDashboard() {
                 const date = new Date(s.date);
                 const dateStr = date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
                 const timeStr = date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+                const sessionType = s.type || 'yoga';
+                const typeLabel = sessionType.charAt(0).toUpperCase() + sessionType.slice(1);
                 return `
                     <div class="stats-session-item">
                         <div class="stats-session-info">
                             <div class="stats-session-name">${escapeHTML(s.flowName)}</div>
-                            <div class="stats-session-date">${dateStr} at ${timeStr}</div>
+                            <div class="stats-session-date">${dateStr} at ${timeStr} &middot; ${typeLabel}</div>
                         </div>
                         <div class="stats-session-meta">
                             <div class="stats-session-duration">${formatDuration(s.durationSeconds)}</div>
@@ -600,7 +651,7 @@ function renderEmptyDashboard() {
 
     const emptyHTML = `
         <div class="stats-empty">
-            <div class="stats-empty-icon">&#x1F9D8;</div>
+            <div class="stats-empty-icon"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg></div>
             <h3>No Practice Data Yet</h3>
             <p>Complete a flow to start tracking your practice statistics.</p>
         </div>
@@ -626,10 +677,21 @@ class YogaAsana {
         this.tags = tags;
         // Ensure transitionsAsana is always an array
         this.transitionsAsana = Array.isArray(transitionsAsana) ? transitionsAsana : [];
-        this.duration = 7; // Default duration of 7 seconds
-        this.chakra = chakra; // Store which chakra is associated with this pose
+        this.duration = defaultPoseDuration || 7; // Default duration from settings
+        // Support both single chakra string and array of chakras
+        if (Array.isArray(chakra)) {
+            this.chakras = chakra;
+            this.chakra = chakra[0] || '';
+        } else {
+            this.chakra = chakra || '';
+            this.chakras = chakra ? [chakra] : [];
+        }
         this.breathCue = breathCue; // Breath guidance for this pose
         this.selected = false; // Initialize selection state
+        this.aliases = [];
+        this.cues = [];
+        this.history = '';
+        this.difficultyRating = 0;
     }
 
     setDuration(duration) {
@@ -657,6 +719,76 @@ class YogaAsana {
     getTransitions() {
         return this.transitionsAsana;
     }
+}
+
+// Helper: find a catalog asana by name, aliases, or imageName slug
+function findCatalogAsana(displayName, imageSlug) {
+    if (!asanas || asanas.length === 0) return null;
+    const nameLower = displayName.toLowerCase().trim();
+    // Try exact name match first
+    let match = asanas.find(a => a.name.toLowerCase() === nameLower);
+    if (match) return match;
+    // Try aliases
+    match = asanas.find(a => a.aliases && a.aliases.some(alias => alias.toLowerCase() === nameLower));
+    if (match) return match;
+    // Try matching by image slug (extract slug from catalog image path)
+    if (imageSlug) {
+        match = asanas.find(a => {
+            if (!a.image) return false;
+            const catalogSlug = a.image.split('/').pop().replace(/\.(webp|png)$/i, '');
+            return catalogSlug === imageSlug;
+        });
+        if (match) return match;
+    }
+    // Try sanskrit name
+    match = asanas.find(a => a.sanskrit && a.sanskrit.toLowerCase() === nameLower);
+    if (match) return match;
+    return null;
+}
+
+// Helper: get chakra color for a chakra name
+function getChakraColor(chakra) {
+    const c = chakra.toLowerCase();
+    if (c.includes('root')) return 'linear-gradient(135deg, #ff0000, #8B0000)';
+    if (c.includes('sacral')) return 'linear-gradient(135deg, #6d28d9, #4c1d95)';
+    if (c.includes('solar')) return 'linear-gradient(135deg, #ffff00, #ffd700)';
+    if (c.includes('heart')) return 'linear-gradient(135deg, #00ff00, #008000)';
+    if (c.includes('throat')) return 'linear-gradient(135deg, #00ffff, #008b8b)';
+    if (c.includes('third')) return 'linear-gradient(135deg, #0000ff, #000080)';
+    if (c.includes('crown')) return 'linear-gradient(135deg, #800080, #4b0082)';
+    return '#999';
+}
+
+// Helper: SVG icon for poses without images
+const POSE_FALLBACK_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="16"/><path d="M8 22l2-8"/><path d="M16 22l-2-8"/><path d="M6 13l6-3 6 3"/></svg>`;
+
+// Helper: check if an asana has a valid image path
+function hasValidImage(asana) {
+    return asana.image && asana.image !== '' && asana.image !== 'images/webp/default-pose.webp' && !asana.image.includes('undefined');
+}
+
+// Helper: create a fallback icon element for poses without images
+function poseFallbackIcon(size = 48) {
+    return `<div class="pose-fallback-icon" style="width:${size}px;height:${size}px;display:flex;align-items:center;justify-content:center;background:#f5f5f7;border-radius:10px;">${POSE_FALLBACK_SVG}</div>`;
+}
+
+// Helper: get image HTML or fallback icon for a pose in table/card views
+function poseImageOrIcon(asana, className, size, imgTransform) {
+    if (hasValidImage(asana)) {
+        const src = asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`;
+        return `<img src="${src}" alt="${escapeHTML(asana.name)}" class="${className}" style="${imgTransform || ''}"
+                 onerror="this.outerHTML=poseFallbackIcon(${size});">`;
+    }
+    return poseFallbackIcon(size);
+}
+
+// Helper: generate chakra circles HTML for a pose (top-right positioned)
+function chakraCirclesHTML(asana) {
+    const chakras = asana.chakras && asana.chakras.length > 0 ? asana.chakras : (asana.chakra ? [asana.chakra] : []);
+    if (chakras.length === 0) return '';
+    return '<div class="chakra-circles">' + chakras.map(c =>
+        `<div class="chakra-dot" style="background:${getChakraColor(c)}" title="${c} Chakra"></div>`
+    ).join('') + '</div>';
 }
 
 // Flow class definition
@@ -731,6 +863,27 @@ class Flow {
                 console.error('Invalid target index');
                 return false;
             }
+
+            // If the target pose belongs to another section, snap to that section's boundary
+            const targetPoseSectionId = targetRow.getAttribute('data-section-id');
+            if (targetPoseSectionId && targetPoseSectionId !== sourceSectionId) {
+                const targetPoseSection = this.sections.find(s => s.id === targetPoseSectionId);
+                if (targetPoseSection && targetPoseSection.asanaIds.length > 0) {
+                    const sortedTargetIds = [...targetPoseSection.asanaIds].sort((a, b) => a - b);
+                    const minIdx = sortedTargetIds[0];
+                    const maxIdx = sortedTargetIds[sortedTargetIds.length - 1];
+
+                    // If dropping on the first half of the target section, place before it
+                    // If dropping on the second half, place after it
+                    const midpoint = Math.floor((minIdx + maxIdx) / 2);
+                    if (targetIndex <= midpoint) {
+                        targetIndex = minIdx; // Place before the target section
+                    } else {
+                        targetIndex = maxIdx + 1; // Place after the target section
+                    }
+                    console.log(`Snapped to section boundary: targetIndex=${targetIndex}`);
+                }
+            }
         }
         
         console.log(`Target index position: ${targetIndex}`);
@@ -793,13 +946,20 @@ class Flow {
         
         console.log('Section reordering completed');
         console.log(`Moved section "${sourceSection.name}" to position ${adjustedTargetIndex}`);
-        
+
+        // Reorder the sections array to match the visual order (by lowest asanaId)
+        this.sections.sort((a, b) => {
+            const aMin = a.asanaIds.length > 0 ? Math.min(...a.asanaIds) : Infinity;
+            const bMin = b.asanaIds.length > 0 ? Math.min(...b.asanaIds) : Infinity;
+            return aMin - bMin;
+        });
+
         // Log the new state
         console.log('Updated sections:');
         this.sections.forEach((section, index) => {
             console.log(`  ${index + 1}. "${section.name}" - ${section.asanaIds.length} poses at indices: ${section.asanaIds.join(', ')}`);
         });
-        
+
         return true;
     }
     
@@ -848,14 +1008,15 @@ class Flow {
     }
 
     addAsana(asana) {
-        // Access the global tableInDescendingOrder variable
-        if (typeof tableInDescendingOrder !== 'undefined' && tableInDescendingOrder) {
-            // In descending mode, add to the end (highest number)
+        // Check addToTop setting to decide insertion point
+        const addToTop = localStorage.getItem('addToTop') === 'true';
+        if (!addToTop) {
+            // Add to the end
             this.asanas.push(asana);
         } else {
-            // In ascending mode (default), add to the beginning (position 1)
+            // Add to the beginning (position 1)
             this.asanas.unshift(asana);
-            
+
             // Update section indices when adding to the beginning
             if (this.sections && Array.isArray(this.sections)) {
                 this.sections.forEach(section => {
@@ -876,6 +1037,20 @@ class Flow {
         return this.asanas;
     }
 }
+
+// Enhanced settings (loaded from localStorage)
+let defaultPoseDuration = parseInt(localStorage.getItem('defaultPoseDuration')) || 7;
+let guideCuesEnabled = localStorage.getItem('guideCuesEnabled') === 'true';
+let guideCueFrequency = parseInt(localStorage.getItem('guideCueFrequency')) || 50;
+let spokenBreathCuesEnabled = localStorage.getItem('spokenBreathCuesEnabled') === 'true';
+let endChimeEnabled = localStorage.getItem('endChimeEnabled') !== 'false';
+let countdownDuration = parseInt(localStorage.getItem('countdownDuration')) || 3;
+let suggestedPosesEnabled = localStorage.getItem('suggestedPosesEnabled') !== 'false';
+let reminderEnabled = localStorage.getItem('reminderEnabled') === 'true';
+let reminderTime = localStorage.getItem('reminderTime') || '08:00';
+let reminderDays = JSON.parse(localStorage.getItem('reminderDays') || '[0,1,2,3,4,5,6]');
+let ttsVoiceURI = localStorage.getItem('ttsVoiceURI') || '';
+let currentStatsType = 'all';
 
 // Global variables
 let editingFlow = new Flow();
@@ -903,6 +1078,7 @@ let breathCuesEnabled = localStorage.getItem('breathCuesEnabled') !== 'false'; /
 let useSanskritNames = localStorage.getItem('useSanskritNames') === 'true';
 let currentViewMode = localStorage.getItem('viewMode') || 'table'; // Default to table view
 let confettiAnimationId = null; // For tracking confetti animation
+let flowCancelled = false; // Flag to prevent confetti/chime on cancelled flows
 let flowStartTime = null; // Track when flow started
 let wakeLock = null; // Track the wake lock
 let wakeLockFallbackInterval = null; // Track fallback interval for older browsers
@@ -918,49 +1094,70 @@ let importedFlow = null;
 // Variable to store the controls show handler
 let showControlsHandler;
 
-// Setup auto-hide for flow controls
+// Setup auto-hide for flow controls (now unified with showFlowNavControls)
 function setupFlowControlsAutoHide() {
+    // Global controls are now managed by showFlowNavControls/hideFlowNavControls
     const flowControls = document.querySelector('.flow-controls-global');
-    if (!flowControls) return;
-    
-    // Add styles to enable transition
-    flowControls.style.transition = 'opacity 0.5s ease';
-    flowControls.style.opacity = '1';
-    
-    // Variable to track the timeout
-    let hideTimeout;
-    
-    // Function to show controls
-    showControlsHandler = () => {
-        // Clear any existing timeout
-        clearTimeout(hideTimeout);
-        
-        // Show controls
-        flowControls.style.opacity = '1';
-        flowControls.style.pointerEvents = 'auto';
-        
-        // Set timeout to hide after 7 seconds
-        hideTimeout = setTimeout(() => {
-            flowControls.style.opacity = '0';
-            flowControls.style.pointerEvents = 'none';
-        }, 7000);
-    };
-    
-    // Initial show and hide
-    showControlsHandler();
-    
-    // Add event listeners for touch and click
-    document.addEventListener('click', showControlsHandler);
-    document.addEventListener('touchstart', showControlsHandler);
+    if (flowControls) {
+        flowControls.classList.remove('hidden');
+        flowControls.style.opacity = '';
+        flowControls.style.pointerEvents = '';
+    }
 }
 
 // Clean up event listeners for flow controls
 function cleanupFlowControlsAutoHide() {
-    if (showControlsHandler) {
-        document.removeEventListener('click', showControlsHandler);
-        document.removeEventListener('touchstart', showControlsHandler);
-        showControlsHandler = null;
+    const flowControls = document.querySelector('.flow-controls-global');
+    if (flowControls) {
+        flowControls.classList.remove('hidden');
+        flowControls.style.opacity = '';
+        flowControls.style.pointerEvents = '';
     }
+    const endBtn = document.getElementById('end-flow-btn');
+    if (endBtn) { endBtn.style.opacity = ''; endBtn.style.pointerEvents = ''; }
+    const countdown = document.querySelector('.countdown-container');
+    if (countdown) countdown.classList.remove('shifted-down');
+}
+
+// ─── BUILD SCREEN BOTTOM BAR AUTO-HIDE ───────────────────────────────────────
+let buildBarIdleTimer = null;
+const BUILD_BAR_IDLE_MS = 7000;
+
+function initBuildBarAutoHide() {
+    const bar = document.querySelector('.selected-actions');
+    if (!bar) return;
+
+    function showBar() {
+        bar.classList.remove('bar-hidden');
+        resetBuildBarTimer();
+    }
+
+    function hideBar() {
+        // Don't hide if user is interacting with the bar itself
+        if (bar.matches(':hover')) { resetBuildBarTimer(); return; }
+        bar.classList.add('bar-hidden');
+    }
+
+    function resetBuildBarTimer() {
+        clearTimeout(buildBarIdleTimer);
+        buildBarIdleTimer = setTimeout(hideBar, BUILD_BAR_IDLE_MS);
+    }
+
+    // Show on any interaction in the build screen
+    const buildScreen = document.getElementById('buildScreen');
+    if (buildScreen) {
+        ['click', 'touchstart', 'pointerdown', 'keydown'].forEach(evt => {
+            buildScreen.addEventListener(evt, showBar, { passive: true });
+        });
+    }
+
+    resetBuildBarTimer();
+}
+
+function cleanupBuildBarAutoHide() {
+    clearTimeout(buildBarIdleTimer);
+    const bar = document.querySelector('.selected-actions');
+    if (bar) bar.classList.remove('bar-hidden');
 }
 
 function displayFlowDuration(duration) {
@@ -1050,7 +1247,10 @@ function updateAsanaDisplay(asana) {
             asanaNameElement.textContent = currentUseSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name;
         }
     }
-    
+
+    // Show guide cue for this pose
+    showGuideCue(asana);
+
     // Update group name display
     if (asanaGroupElement) {
         // Find which group/section this pose belongs to
@@ -1076,21 +1276,33 @@ function updateAsanaDisplay(asana) {
         }
     }
     if (asanaImageElement) {
-        asanaImageElement.src = asana.image;
-        asanaImageElement.alt = `${asana.name} pose`;
-        
-        // Add error handling for missing images
-        asanaImageElement.onerror = function() {
-            this.onerror = null;
-            this.src = '';
-            this.style.display = 'flex';
-            this.style.justifyContent = 'center';
-            this.style.alignItems = 'center';
-            this.style.background = '#f5f5f5';
-            this.style.fontSize = '50px';
-            this.innerText = '🧘‍♀️';
-            console.log(`Missing image for ${asana.name}`);
-        };
+        // Apply pose transition animation
+        asanaImageElement.style.animation = 'none';
+        asanaImageElement.offsetHeight; // Trigger reflow
+        asanaImageElement.style.animation = 'pose-transition 0.4s ease-out';
+
+        if (hasValidImage(asana)) {
+            asanaImageElement.src = asana.image;
+            asanaImageElement.alt = `${asana.name} pose`;
+            asanaImageElement.style.display = '';
+            asanaImageElement.onerror = function() {
+                this.onerror = null;
+                this.style.display = 'none';
+                const fallback = document.createElement('div');
+                fallback.innerHTML = poseFallbackIcon(120);
+                fallback.firstChild.style.margin = 'auto';
+                this.parentNode.insertBefore(fallback.firstChild, this.nextSibling);
+            };
+        } else {
+            asanaImageElement.style.display = 'none';
+            // Remove any previous fallback icon
+            const existing = asanaImageElement.parentNode.querySelector('.pose-fallback-icon');
+            if (existing) existing.remove();
+            const fallback = document.createElement('div');
+            fallback.innerHTML = poseFallbackIcon(120);
+            fallback.firstChild.style.margin = 'auto';
+            asanaImageElement.parentNode.insertBefore(fallback.firstChild, asanaImageElement.nextSibling);
+        }
         
         // Flip the image if the side is left
         if (asana.side.toLowerCase() === 'left') {
@@ -1102,6 +1314,11 @@ function updateAsanaDisplay(asana) {
     
     // Update next asana info
     const nextAsana = editingFlow.asanas[currentAsanaIndex + 1];
+    // Show next pose timing
+    const nextTimingEl = document.getElementById('nextPoseTiming');
+    if (nextTimingEl) {
+        nextTimingEl.textContent = nextAsana ? `(${nextAsana.duration || defaultPoseDuration}s)` : '';
+    }
     if (nextAsana) {
         // Show the upcoming pose
         if (nextAsanaNameElement) {
@@ -1138,7 +1355,7 @@ function updateAsanaDisplay(asana) {
                 this.style.alignItems = 'center';
                 this.style.background = '#f5f5f5';
                 this.style.fontSize = '40px';
-                this.innerText = '🧘‍♀️';
+                this.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#999" stroke-width="1.5"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg>';
                 console.log(`Missing image for next pose: ${nextAsana.name}`);
             };
         }
@@ -1216,7 +1433,7 @@ function speakAsanaName(name, side, sanskrit = "", breathCue = "") {
     let textToSpeak = "";
     
     // 1. Add breath cue first if enabled and available
-    if (breathCuesEnabled && breathCue && breathCue !== '-') {
+    if ((breathCuesEnabled || spokenBreathCuesEnabled) && breathCue && breathCue !== '-') {
         if (breathCue === 'Breathe Here') {
             textToSpeak = "breathe here";
         } else {
@@ -1259,37 +1476,33 @@ function speakAsanaName(name, side, sanskrit = "", breathCue = "") {
         console.error('Speech synthesis error');
     };
     
-    // Find a good voice (prefer female voice if available)
+    // Find voice - use saved preference or fallback
     let voices = speechSynthesis.getVoices();
-    if (voices.length > 0) {
-        // Look for English female voice
-        let preferredVoice = voices.find(v => v.lang.includes('en') && v.name.includes('Female'));
-        // If no female English voice, try any English voice
-        if (!preferredVoice) preferredVoice = voices.find(v => v.lang.includes('en'));
-        // If still no match, use the first available voice
-        if (!preferredVoice) preferredVoice = voices[0];
-        
-        if (preferredVoice) {
-            speechUtterance.voice = preferredVoice;
+    function pickVoice(voiceList) {
+        if (ttsVoiceURI) {
+            const saved = voiceList.find(v => v.voiceURI === ttsVoiceURI);
+            if (saved) return saved;
         }
+        let preferredVoice = voiceList.find(v => v.lang.includes('en') && v.name.includes('Female'));
+        if (!preferredVoice) preferredVoice = voiceList.find(v => v.lang.includes('en'));
+        if (!preferredVoice && voiceList.length > 0) preferredVoice = voiceList[0];
+        return preferredVoice;
     }
-    
-    // Handle the case when voices might not be loaded yet
+    if (voices.length > 0) {
+        const v = pickVoice(voices);
+        if (v) speechUtterance.voice = v;
+    }
+
     if (voices.length === 0) {
         speechSynthesis.onvoiceschanged = function() {
             voices = speechSynthesis.getVoices();
-            let preferredVoice = voices.find(v => v.lang.includes('en') && v.name.includes('Female'));
-            if (!preferredVoice) preferredVoice = voices.find(v => v.lang.includes('en'));
-            if (!preferredVoice && voices.length > 0) preferredVoice = voices[0];
-            
-            if (preferredVoice) {
-                speechUtterance.voice = preferredVoice;
-                // Re-speak after voices are loaded
+            const v = pickVoice(voices);
+            if (v) {
+                speechUtterance.voice = v;
                 speechSynthesis.speak(speechUtterance);
             }
         };
     } else {
-        // Speak the text if voices are already loaded
         speechSynthesis.speak(speechUtterance);
     }
 }
@@ -1335,8 +1548,6 @@ function clearBuildAFlow() {
             <th>Duration</th>
             <th>Side</th>
             <th>Breath</th>
-            <th>Swap</th>
-            <th>Remove</th>
         `;
         
         console.log('Table cleared and header recreated, final rows:', table.rows.length);
@@ -1482,15 +1693,15 @@ function cleanupWakeLockFallbacks() {
 
 // Re-acquire wake lock when page becomes visible (in case it was released when app went to background)
 document.addEventListener('visibilitychange', async () => {
-    if (document.visibilityState === 'visible' && currentScreenId === 'flowScreen') {
+    const wakeLockScreens = ['flowScreen', 'breathPlayerScreen', 'meditationPlayerScreen'];
+    if (document.visibilityState === 'visible' && wakeLockScreens.includes(currentScreenId)) {
         // Check if we need to re-acquire wake lock (native API might have released it)
         if (!wakeLock || (!document.getElementById('wake-lock-video') && !wakeLockFallbackInterval)) {
-            console.log('Page became visible during flow, re-requesting wake lock');
+            console.log('Page became visible during active session, re-requesting wake lock');
             await requestWakeLock();
         }
-    } else if (document.visibilityState === 'hidden' && currentScreenId === 'flowScreen') {
-        // Optionally log when page becomes hidden during flow
-        console.log('Page became hidden during flow (wake lock may be released by browser)');
+    } else if (document.visibilityState === 'hidden' && wakeLockScreens.includes(currentScreenId)) {
+        console.log('Page became hidden during active session (wake lock may be released by browser)');
     }
 });
 
@@ -1500,6 +1711,16 @@ function changeScreen(screenId) {
     document.body.classList.remove('flow-mode');
     
     
+    // Clear breathwork/meditation timers when leaving those screens
+    if (currentScreenId === 'breathPlayerScreen' && screenId !== 'breathPlayerScreen') {
+        clearBreathTimers();
+        releaseWakeLock();
+    }
+    if (currentScreenId === 'meditationPlayerScreen' && screenId !== 'meditationPlayerScreen') {
+        clearMeditationTimers();
+        releaseWakeLock();
+    }
+
     // Clear all timers when leaving flow screen
     if (currentScreenId === 'flowScreen' && screenId !== 'flowScreen') {
         // Release wake lock when leaving flow screen
@@ -1522,9 +1743,10 @@ function changeScreen(screenId) {
         cleanupFlowControlsAutoHide();
     }
     
-    // Hide recommended poses when leaving build screen
+    // Hide recommended poses and cleanup bar auto-hide when leaving build screen
     if (currentScreenId === 'buildScreen' && screenId !== 'buildScreen') {
         hideRecommendedPoses();
+        cleanupBuildBarAutoHide();
     }
     
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
@@ -1538,17 +1760,16 @@ function changeScreen(screenId) {
     targetScreen.classList.add('active');
     currentScreenId = screenId;
 
-    // Clean up any lingering countdown elements when entering flow screen
+    // Push browser history state for back button navigation
+    if (!window._popstateNavigating) {
+        history.pushState({ screen: screenId }, '', '');
+    }
+
     if (screenId === 'flowScreen') {
-        // Remove any existing countdown display elements
-        const existingCountdownDisplay = document.getElementById('countdown-display');
-        if (existingCountdownDisplay) {
-            const circleContainer = existingCountdownDisplay.parentElement;
-            if (circleContainer && circleContainer.style.borderRadius === '50%') {
-                circleContainer.remove();
-            } else {
-                existingCountdownDisplay.remove();
-            }
+        // Ensure countdown-big is removed when entering flow screen
+        const countdownContainer = document.querySelector('.countdown-container');
+        if (countdownContainer) {
+            countdownContainer.classList.remove('countdown-big');
         }
         
         // Remove countdown animations
@@ -1584,7 +1805,7 @@ function changeScreen(screenId) {
         }
 
         // Update the save button text
-        const saveButton = document.querySelector('#buildScreen > div.build-content > div.language-toggle-container > button.save-flow-btn');
+        const saveButton = document.querySelector('.build-done-btn');
         if (saveButton) {
             saveButton.textContent = 'Done';
         }
@@ -1634,6 +1855,9 @@ function changeScreen(screenId) {
             }
         });
         
+        // Initialize bottom bar auto-hide
+        initBuildBarAutoHide();
+
         // Initialize the sort indicator when switching to build screen
         setTimeout(() => {
             const tableHeader = document.querySelector('#flowTable th:first-child');
@@ -1720,8 +1944,6 @@ function startNewFlow() {
                     <th>Duration</th>
                     <th>Side</th>
                     <th>Breath</th>
-                    <th>Swap</th>
-                    <th>Remove</th>
                 `;
                 
                 console.log('Table completely reset. Final rows count:', table.rows.length);
@@ -1767,7 +1989,7 @@ function selectAsana(asana) {
         [...asana.tags || []],
         [...asana.transitionsAsana || []],
         asana.sanskrit,
-        asana.chakra || "",
+        asana.chakras || asana.chakra || "",
         "-"
     );
     newAsana.setDuration(7); // Default 7 seconds
@@ -1792,7 +2014,19 @@ function selectAsana(asana) {
     
     // Rebuild the table to ensure proper order and numbering
     rebuildFlowTable();
-    
+
+    // Auto-scroll to the newly added pose
+    setTimeout(() => {
+        const flowSequence = document.querySelector('.flow-sequence');
+        if (flowSequence) {
+            if (tableInDescendingOrder) {
+                flowSequence.scrollTo({ top: flowSequence.scrollHeight, behavior: 'smooth' });
+            } else {
+                flowSequence.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+    }, 100);
+
     // Use requestAnimationFrame to ensure table rebuild completes before accessing rows
     requestAnimationFrame(() => {
         // Double-check that table rebuilding is complete by verifying row count
@@ -1847,47 +2081,73 @@ function selectAsana(asana) {
 
 // Function to show recommended poses based on the selected asana
 function showRecommendedPoses(selectedAsana) {
-    const recommendedList = document.getElementById('recommendedPosesList');
-    const toggleBtn = document.getElementById('recommendedToggleBtn');
-    
-    if (!recommendedList || !toggleBtn) {
-        console.error('Recommended poses elements not found');
-        return;
-    }
-    
-    // Get transition recommendations from the selected asana
+    // Render inline recommended poses
+    const inlineContainer = document.getElementById('recommendedInline');
+    const inlineList = document.getElementById('recommendedInlineList');
+
+    if (!inlineContainer || !inlineList) return;
+
     const transitions = selectedAsana.transitionsAsana || [];
-    
     if (transitions.length === 0) {
-        // Hide the toggle button if no recommendations
-        hideRecommendedPoses();
+        hideRecommendedInline();
         return;
     }
-    
-    // Clear existing recommendations
-    recommendedList.innerHTML = '';
-    
-    // Update the description to show which pose the recommendations are based on
-    const description = document.querySelector('.recommended-panel-description');
-    if (description) {
-        description.textContent = `Based on "${selectedAsana.name}"`;
-    }
-    
-    // Create recommended pose items
-    transitions.forEach(transitionName => {
-        // Find the transition pose in the asanas array
-        const transitionPose = asanas.find(asana => 
-            asana.name.toLowerCase() === transitionName.toLowerCase()
-        );
-        
+
+    inlineList.innerHTML = '';
+    transitions.forEach((transitionName, i) => {
+        const transitionPose = asanas.find(a => a.name.toLowerCase() === transitionName.toLowerCase());
         if (transitionPose) {
-            const poseItem = createRecommendedPoseItem(transitionPose);
-            recommendedList.appendChild(poseItem);
+            const item = document.createElement('div');
+            item.className = 'recommended-inline-item';
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(8px)';
+            const imgContainer = document.createElement('div');
+            imgContainer.style.position = 'relative';
+            imgContainer.style.display = 'inline-block';
+            const img = document.createElement('img');
+            img.src = transitionPose.image;
+            img.alt = transitionPose.name;
+            img.onerror = function() { this.src = ''; this.style.background = '#f5f5f5'; };
+            imgContainer.appendChild(img);
+            imgContainer.insertAdjacentHTML('beforeend', chakraCirclesHTML(transitionPose));
+            const label = document.createElement('span');
+            label.textContent = transitionPose.getDisplayName(useSanskritNames);
+            item.appendChild(imgContainer);
+            item.appendChild(label);
+            item.addEventListener('click', () => selectAsana(transitionPose));
+            inlineList.appendChild(item);
+
+            // Staggered entrance animation
+            setTimeout(() => {
+                item.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, 50 * i);
         }
     });
-    
-    // Show the toggle button
-    toggleBtn.style.display = 'flex';
+
+    inlineContainer.classList.remove('hiding', 'collapsed');
+    inlineContainer.style.display = 'block';
+}
+
+// Animate hiding the recommended inline section
+function hideRecommendedInline() {
+    const inlineContainer = document.getElementById('recommendedInline');
+    if (!inlineContainer || inlineContainer.style.display === 'none') return;
+
+    inlineContainer.classList.add('hiding');
+    inlineContainer.addEventListener('animationend', function handler() {
+        inlineContainer.style.display = 'none';
+        inlineContainer.classList.remove('hiding');
+        inlineContainer.removeEventListener('animationend', handler);
+    });
+}
+
+// Toggle collapse of the recommended inline section
+function toggleRecommendedInline() {
+    const inlineContainer = document.getElementById('recommendedInline');
+    if (!inlineContainer) return;
+    inlineContainer.classList.toggle('collapsed');
 }
 
 // Function to create a recommended pose item element
@@ -1903,7 +2163,7 @@ function createRecommendedPoseItem(asana) {
     
     // Add error handling for missing images
     img.onerror = function() {
-        this.src = asana.image.replace('webp', 'png').replace('.webp', '.png');
+        this.outerHTML = poseFallbackIcon(48);
     };
     
     // Create the pose name
@@ -1933,15 +2193,18 @@ function createRecommendedPoseItem(asana) {
 function hideRecommendedPoses() {
     const toggleBtn = document.getElementById('recommendedToggleBtn');
     const sidePanel = document.getElementById('recommendedSidePanel');
-    
+
     if (toggleBtn) {
         toggleBtn.style.display = 'none';
         toggleBtn.classList.remove('panel-open');
     }
-    
+
     if (sidePanel) {
         sidePanel.classList.remove('open');
     }
+
+    // Also hide inline recommended with animation
+    hideRecommendedInline();
 }
 
 // Function to toggle the recommended poses side panel
@@ -1971,7 +2234,14 @@ function toggleRecommendedPanel() {
 function createSideDropdown(side) {
     // Convert Center to Front for display, but maintain compatibility
     const displaySide = side === "Center" ? "Front" : side;
-    
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        const letterMap = { Front: 'F', Back: 'B', Right: 'R', Left: 'L' };
+        const letter = letterMap[displaySide] || 'F';
+        return `<span class="mobile-side-cycle" title="${displaySide}" onclick="cycleMobileSide(this)" data-side="${displaySide}">${letter}</span>`;
+    }
+
     return `<select class="side-select" onchange="updateAsanaImageOrientation(this)">
         <option value="Front" ${(side === "Center" || side === "Front") ? "selected" : ""}>Front</option>
         <option value="Back" ${side === "Back" ? "selected" : ""}>Back</option>
@@ -1982,76 +2252,68 @@ function createSideDropdown(side) {
 
 // Function to create a breath cue dropdown menu
 function createBreathDropdown(breathCue) {
-    return `<select class="breath-select" onchange="updateBreathCue(this)">
-        <option value="-" ${breathCue === "-" ? "selected" : ""}>-</option>
-        <option value="Inhale" ${breathCue === "Inhale" ? "selected" : ""}>Inhale</option>
-        <option value="Exhale" ${breathCue === "Exhale" ? "selected" : ""}>Exhale</option>
-        <option value="Breathe Here" ${breathCue === "Breathe Here" ? "selected" : ""}>Breathe Here</option>
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        return createMobileBreathDisplay(breathCue);
+    }
+
+    return `<select class="breath-select" onchange="updateBreathCue(this)" style="${breathCue === '-' ? 'color:#b0b0b0;' : ''}">
+        <option value="-" ${breathCue === "-" ? "selected" : ""} style="color:#b0b0b0;">No Breath</option>
+        <option value="Inhale" ${breathCue === "Inhale" ? "selected" : ""} style="color:#1d1d1f;">Inhale</option>
+        <option value="Exhale" ${breathCue === "Exhale" ? "selected" : ""} style="color:#1d1d1f;">Exhale</option>
+        <option value="Breathe Here" ${breathCue === "Breathe Here" ? "selected" : ""} style="color:#1d1d1f;">Breathe Here</option>
     </select>`;
 }
 
-// Function to create mobile emoji-based breath display
-function createMobileBreathDisplay(breathCue) {
-    let emoji = "";
-    let title = "";
-    
+// Function to get breath icon SVG
+function getBreathIcon(breathCue) {
     switch(breathCue) {
         case "Inhale":
-            emoji = "⬆️";
-            title = "Inhale";
-            break;
+            return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 19V5M5 12l7-7 7 7"/></svg>';
         case "Exhale":
-            emoji = "⬇️";
-            title = "Exhale";
-            break;
+            return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
         case "Breathe Here":
-            emoji = "🫁";
-            title = "Breathe Here";
-            break;
+            return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>';
         default:
-            emoji = "➖";
-            title = "No breath cue";
+            return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>';
     }
-    
-    return `<span class="mobile-breath-emoji" title="${title}" onclick="cycleMobileBreath(this)" data-breath="${breathCue}">${emoji}</span>`;
 }
 
-// Function to cycle through breath options when emoji is tapped
+// Function to create mobile icon-based breath display
+function createMobileBreathDisplay(breathCue) {
+    let title = "";
+    switch(breathCue) {
+        case "Inhale": title = "Inhale"; break;
+        case "Exhale": title = "Exhale"; break;
+        case "Breathe Here": title = "Breathe Here"; break;
+        default: title = "No Breath";
+    }
+    return `<span class="mobile-breath-emoji" title="${title}" onclick="cycleMobileBreath(this)" data-breath="${breathCue}">${getBreathIcon(breathCue)}</span>`;
+}
+
+// Function to cycle through breath options when icon is tapped
 function cycleMobileBreath(element) {
     const currentBreath = element.getAttribute('data-breath');
     const breathOptions = ["-", "Inhale", "Exhale", "Breathe Here"];
     const currentIndex = breathOptions.indexOf(currentBreath);
     const nextIndex = (currentIndex + 1) % breathOptions.length;
     const nextBreath = breathOptions[nextIndex];
-    
-    // Update the emoji and data
-    let emoji = "";
+
     let title = "";
-    
     switch(nextBreath) {
-        case "Inhale":
-            emoji = "⬆️";
-            title = "Inhale";
-            break;
-        case "Exhale":
-            emoji = "⬇️";
-            title = "Exhale";
-            break;
-        case "Breathe Here":
-            emoji = "🫁";
-            title = "Breathe Here";
-            break;
-        default:
-            emoji = "➖";
-            title = "No breath cue";
+        case "Inhale": title = "Inhale"; break;
+        case "Exhale": title = "Exhale"; break;
+        case "Breathe Here": title = "Breathe Here"; break;
+        default: title = "No breath cue";
     }
-    
-    element.innerHTML = emoji;
+
+    element.innerHTML = getBreathIcon(nextBreath);
     element.setAttribute('data-breath', nextBreath);
     element.setAttribute('title', title);
     
     // Update the asana in the flow
-    const row = element.closest('tr');
+    const row = element.closest('tr') || element.closest('.card-item');
     if (row) {
         const index = parseInt(row.getAttribute('data-index'));
         if (!isNaN(index) && index >= 0 && index < editingFlow.asanas.length) {
@@ -2061,11 +2323,39 @@ function cycleMobileBreath(element) {
             } else {
                 asana.breathCue = nextBreath;
             }
-            
-            // Update the dropdown as well (for consistency)
-            const breathSelect = row.querySelector('select.breath-select');
-            if (breathSelect) {
-                breathSelect.value = nextBreath;
+        }
+    }
+}
+
+function cycleMobileSide(element) {
+    const sideOptions = ["Front", "Back", "Right", "Left"];
+    const letterMap = { Front: 'F', Back: 'B', Right: 'R', Left: 'L' };
+    const currentSide = element.getAttribute('data-side');
+    const currentIndex = sideOptions.indexOf(currentSide);
+    const nextIndex = (currentIndex + 1) % sideOptions.length;
+    const nextSide = sideOptions[nextIndex];
+
+    element.textContent = letterMap[nextSide];
+    element.setAttribute('data-side', nextSide);
+    element.setAttribute('title', nextSide);
+
+    // Update the asana
+    const row = element.closest('tr') || element.closest('.card-item');
+    if (row) {
+        const index = parseInt(row.getAttribute('data-index'));
+        if (!isNaN(index) && index >= 0 && index < editingFlow.asanas.length) {
+            editingFlow.asanas[index].side = nextSide;
+            // Update image orientation
+            const img = row.querySelector('.table-asana-img') || row.querySelector('.card-asana-img');
+            if (img) {
+                const asana = editingFlow.asanas[index];
+                const catalogAsana = findCatalogAsana(asana.name, asana.image);
+                if (catalogAsana) {
+                    const orientations = catalogAsana.orientations || {};
+                    const sideKey = nextSide.toLowerCase();
+                    const imgPath = orientations[sideKey] || orientations['front'] || asana.image;
+                    img.src = imgPath;
+                }
             }
         }
     }
@@ -2105,26 +2395,32 @@ function updateBreathCue(selectElement) {
     // Get the row containing this select element
     const row = selectElement.closest('tr');
     if (!row) return;
-    
+
+    // Update select color based on value
+    selectElement.style.color = selectElement.value === '-' ? '#b0b0b0' : '';
+
     // Get the data-index to find the corresponding asana
     const asanaIndex = parseInt(row.getAttribute('data-index'));
     if (!isNaN(asanaIndex) && asanaIndex >= 0 && asanaIndex < editingFlow.asanas.length) {
         // Update the asana's breath cue
         editingFlow.asanas[asanaIndex].setBreathCue(selectElement.value);
-        
+
+        // Update mobile breath emoji if present
+        const mobileEmoji = row.querySelector('.mobile-breath-emoji');
+        if (mobileEmoji) {
+            mobileEmoji.innerHTML = getBreathIcon(selectElement.value);
+            mobileEmoji.setAttribute('data-breath', selectElement.value);
+        }
+
         // Auto-save if in edit mode
         if (editMode) {
             autoSaveFlow();
         }
-        
-        console.log(`Updated breath cue for pose ${asanaIndex} to ${selectElement.value}`);
     }
 }
 
-// Track whether table is in descending order (false = ascending = new poses added to top)
-// When addToTop is true, tableInDescendingOrder is false
-const _addToTopSaved = localStorage.getItem('addToTop');
-let tableInDescendingOrder = _addToTopSaved === null ? false : _addToTopSaved !== 'true';
+// Display is always ascending (1→2→3). "Add to top" only controls array insertion.
+let tableInDescendingOrder = false;
 
 // UI update functions
 function updateRowNumbers() {
@@ -2207,6 +2503,9 @@ function updateFlowDuration() {
     
     // Update group header durations
     updateGroupHeaderDurations();
+
+    // Update pose count display
+    updateFlowPoseCount();
 }
 
 // Function to update all group header durations
@@ -2266,9 +2565,6 @@ function autoSaveFlow() {
     if (flowIndex !== -1) {
         flows[flowIndex] = { ...editingFlow };
         saveFlows(flows);
-        
-        // Show a brief save indicator
-        showSaveIndicator();
     }
 }
 
@@ -2282,7 +2578,7 @@ function showSaveIndicator() {
         indicator = document.createElement('div');
         indicator.id = 'save-indicator';
         indicator.textContent = 'Changes saved';
-        document.querySelector('.build-content')?.appendChild(indicator);
+        (document.querySelector('.build-left-panel') || document.querySelector('.build-content'))?.appendChild(indicator);
     }
     
     // Show the indicator
@@ -2559,11 +2855,15 @@ function handleMoreOptionsClick(event) {
 }
 
 function handleMoreOptionsTouch(event) {
-    // Prevent double firing of events on mobile
-    if (event.type === 'touchend') {
-        event.preventDefault();
+    // Only preventDefault on more-options buttons/dropdowns to prevent double-fire,
+    // not on every touchend (which would block all click events in the table)
+    const target = event.target;
+    if (target.closest('.more-options-btn') || target.closest('.dropdown-item') || target.closest('.pose-dropdown')) {
+        if (event.type === 'touchend') {
+            event.preventDefault();
+        }
+        handleMoreOptionsEvent(event, 'touch');
     }
-    handleMoreOptionsEvent(event, 'touch');
 }
 
 function handleMoreOptionsEvent(event, eventType) {
@@ -2667,7 +2967,7 @@ function duplicatePose(index) {
             [...originalAsana.tags],
             [...originalAsana.transitionsAsana],
             originalAsana.sanskrit,
-            originalAsana.chakra || "",
+            originalAsana.chakras || originalAsana.chakra || "",
             originalAsana.breathCue || "-"
         );
         duplicatedAsana.setDuration(originalAsana.duration);
@@ -2840,18 +3140,15 @@ async function displayFlows() {
         saveFlows(flows);
     }
     
-    // Sort flows by lastFlowed (most recent first)
+    // Sort flows by most recent interaction (lastFlowed or lastEdited, whichever is newer)
     flows.sort((a, b) => {
-        // First priority: lastFlowed (those with null lastFlowed go to the bottom)
-        if (a.lastFlowed && !b.lastFlowed) return -1;
-        if (!a.lastFlowed && b.lastFlowed) return 1;
-        if (a.lastFlowed && b.lastFlowed) {
-            const timeComparison = new Date(b.lastFlowed) - new Date(a.lastFlowed);
-            if (timeComparison !== 0) return timeComparison;
-        }
-        
-        // Second priority: lastEdited
-        return new Date(b.lastEdited) - new Date(a.lastEdited);
+        const aFlowed = a.lastFlowed ? new Date(a.lastFlowed).getTime() : 0;
+        const aEdited = a.lastEdited ? new Date(a.lastEdited).getTime() : 0;
+        const bFlowed = b.lastFlowed ? new Date(b.lastFlowed).getTime() : 0;
+        const bEdited = b.lastEdited ? new Date(b.lastEdited).getTime() : 0;
+        const aLatest = Math.max(aFlowed, aEdited);
+        const bLatest = Math.max(bFlowed, bEdited);
+        return bLatest - aLatest;
     });
     
     console.log('Sorted flows:', flows); // Debug log
@@ -2886,23 +3183,27 @@ async function displayFlows() {
                 const lastFlowedText = lastFlowed ? formatTimeAgo(lastFlowed) : 'Never';
                 const lastEditedText = lastEdited ? formatTimeAgo(lastEdited) : 'Unknown';
                 
+                const poseCount = flow.asanas ? flow.asanas.length : 0;
                 flowItem.innerHTML = `
                     <div class="flow-info">
                         <h4>${escapeHTML(flow.name)}</h4>
                         <p class="flow-description">(${displayFlowDuration(flow.time)}) ${escapeHTML(flow.description)}</p>
                         <div class="flow-timestamps">
-                            <span class="timestamp ${flow.lastFlowed ? 'active' : ''}">Last flowed: ${lastFlowedText}</span>
-                            <span class="timestamp">Last edited: ${lastEditedText}</span>
+                            <span class="timestamp"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg> ${poseCount} poses</span>
+                            <span class="timestamp"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ${lastEditedText}</span>
                         </div>
                     </div>
                     <div class="flow-actions">
                         <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
-                        <button class="analyse-btn" onclick="showFlowAnalysis('${flow.flowID}')" title="Analyse this flow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></button>
-                        <button class="share-btn" onclick="showShareFlow('${flow.flowID}')" title="Share this flow"></button>
-                        <button class="edit-btn" onclick="editFlow('${flow.flowID}')" title="Edit this flow"></button>
-                        <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')" title="Delete this flow">🗑️</button>
+                        <button class="edit-btn" onclick="editFlow('${flow.flowID}')" title="Edit"></button>
+                        <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
                     </div>
+                    <button class="flow-more-btn" onclick="event.stopPropagation(); var r=this.getBoundingClientRect(); showFlowContextMenuAt(this.closest('.flow-item'), r.right - 180, r.bottom + 4);" title="More options"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
                 `;
+                flowItem.addEventListener('click', function(e) {
+                    if (e.target.closest('.flow-actions') || e.target.closest('.flow-more-btn')) return;
+                    editFlow(flow.flowID);
+                });
 
                 flowList.appendChild(flowItem);
             });
@@ -2928,23 +3229,27 @@ async function displayFlows() {
             const lastFlowedText = formatRelativeTime(flow.lastFlowed);
             const lastEditedText = formatRelativeTime(flow.lastEdited);
             
+            const poseCount = flow.asanas ? flow.asanas.length : 0;
             flowItem.innerHTML = `
                 <div class="flow-info">
                     <h4>${escapeHTML(flow.name)}</h4>
                     <p class="flow-description">(${displayFlowDuration(flow.time)}) ${escapeHTML(flow.description)}</p>
                     <div class="flow-timestamps">
-                        <span class="timestamp ${flow.lastFlowed ? 'active' : ''}">Last flowed: ${lastFlowedText}</span>
-                        <span class="timestamp">Last edited: ${lastEditedText}</span>
+                        <span class="timestamp"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg> ${poseCount} poses</span>
+                        <span class="timestamp"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ${lastEditedText}</span>
                     </div>
                 </div>
                 <div class="flow-actions">
                     <button class="flow-btn" onclick="playFlow('${flow.flowID}')">FLOW</button>
-                    <button class="analyse-btn" onclick="showFlowAnalysis('${flow.flowID}')" title="Analyse this flow"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></button>
-                    <button class="share-btn" onclick="showShareFlow('${flow.flowID}')" title="Share this flow"></button>
-                    <button class="edit-btn" onclick="editFlow('${flow.flowID}')" title="Edit this flow"></button>
-                    <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')" title="Delete this flow">🗑️</button>
+                    <button class="edit-btn" onclick="editFlow('${flow.flowID}')" title="Edit"></button>
+                    <button class="delete-btn" onclick="deleteFlow('${flow.flowID}')" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
                 </div>
+                <button class="flow-more-btn" onclick="event.stopPropagation(); var r=this.getBoundingClientRect(); showFlowContextMenuAt(this.closest('.flow-item'), r.right - 180, r.bottom + 4);" title="More options"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
             `;
+            flowItem.addEventListener('click', function(e) {
+                if (e.target.closest('.flow-actions') || e.target.closest('.flow-more-btn')) return;
+                editFlow(flow.flowID);
+            });
             flowList.appendChild(flowItem);
         });
     }
@@ -2953,6 +3258,106 @@ async function displayFlows() {
     const flowCount = document.querySelector('.flow-count');
     if (flowCount) {
         flowCount.textContent = `${flows.length} flow${flows.length !== 1 ? 's' : ''}`;
+    }
+
+    // Update date text
+    const flowDateText = document.querySelector('.flow-date-text');
+    if (flowDateText) {
+        const now = new Date();
+        const options = { weekday: 'short', month: 'short', day: 'numeric' };
+        flowDateText.textContent = `Today, ${now.toLocaleDateString('en-US', options)}`;
+    }
+
+    setupFlowContextMenu();
+}
+
+// ─── FLOW CONTEXT MENU (right-click on main screen) ──────────────────────────
+
+let contextMenuFlowID = null;
+
+function showFlowContextMenuAt(flowItem, x, y) {
+    const flowBtn = flowItem.querySelector('.flow-btn');
+    if (!flowBtn) return;
+    const match = flowBtn.getAttribute('onclick').match(/playFlow\('([^']+)'\)/);
+    if (!match) return;
+    contextMenuFlowID = match[1];
+
+    const menu = document.getElementById('flowContextMenu');
+    menu.style.display = 'block';
+    menu.style.left = Math.min(x, window.innerWidth - menu.offsetWidth) + 'px';
+    menu.style.top = Math.min(y, window.innerHeight - menu.offsetHeight) + 'px';
+}
+
+let flowContextMenuInitialized = false;
+
+function setupFlowContextMenu() {
+    if (flowContextMenuInitialized) return;
+    const flowList = document.getElementById('savedFlowsList');
+    if (!flowList) return;
+    flowContextMenuInitialized = true;
+
+    // Right-click (desktop)
+    flowList.addEventListener('contextmenu', function(e) {
+        const flowItem = e.target.closest('.flow-item');
+        if (!flowItem) return;
+        e.preventDefault();
+        showFlowContextMenuAt(flowItem, e.clientX, e.clientY);
+    });
+
+    // Long-press (mobile)
+    let longPressTimer = null;
+    let longPressTriggered = false;
+
+    flowList.addEventListener('touchstart', function(e) {
+        const flowItem = e.target.closest('.flow-item');
+        if (!flowItem || e.target.closest('.flow-actions')) return;
+        longPressTriggered = false;
+        const touch = e.touches[0];
+        const tx = touch.clientX, ty = touch.clientY;
+        longPressTimer = setTimeout(function() {
+            longPressTriggered = true;
+            showFlowContextMenuAt(flowItem, tx, ty);
+            // Vibrate for haptic feedback if available
+            if (navigator.vibrate) navigator.vibrate(30);
+        }, 500);
+    }, { passive: true });
+
+    flowList.addEventListener('touchmove', function() {
+        clearTimeout(longPressTimer);
+    }, { passive: true });
+
+    flowList.addEventListener('touchend', function(e) {
+        clearTimeout(longPressTimer);
+        if (longPressTriggered) {
+            e.preventDefault();
+            longPressTriggered = false;
+        }
+    });
+
+    document.addEventListener('click', function() {
+        const menu = document.getElementById('flowContextMenu');
+        if (menu) menu.style.display = 'none';
+    });
+
+    const menu = document.getElementById('flowContextMenu');
+    if (menu) {
+        menu.addEventListener('click', function(e) {
+            const item = e.target.closest('.context-menu-item');
+            if (!item || !contextMenuFlowID) return;
+
+            const action = item.getAttribute('data-action');
+            const id = contextMenuFlowID;
+            contextMenuFlowID = null;
+            menu.style.display = 'none';
+
+            switch (action) {
+                case 'flow': playFlow(id); break;
+                case 'edit': editFlow(id); break;
+                case 'analyse': showFlowAnalysis(id); break;
+                case 'share': showShareFlow(id); break;
+                case 'delete': deleteFlow(id); break;
+            }
+        });
     }
 }
 
@@ -3018,7 +3423,7 @@ function playFlow(flowID) {
                 asana.tags || [],
                 asana.transitionsAsana || [],
                 asana.sanskrit || "",
-                asana.chakra || "",
+                asana.chakras || asana.chakra || "",
                 asana.breathCue || "-"
             );
             newAsana.setDuration(asana.duration || 15);
@@ -3026,10 +3431,11 @@ function playFlow(flowID) {
             return newAsana;
         });
     }
-    
+
     currentAsanaIndex = 0;
     paused = false;
-    
+    flowCancelled = false;
+
     // Preload completion chime audio (user interaction allows this)
     try {
         chimeAudio = new Audio('End Chime.mp3');
@@ -3052,7 +3458,21 @@ function playFlow(flowID) {
     
     // Initialize the practice screen
     changeScreen('flowScreen');
-    
+
+    // Set up nav controls auto-hide
+    updateFlowNavButtons();
+    showFlowNavControls();
+    const flowContent = document.getElementById('flowContent');
+    if (flowContent) {
+        flowContent.addEventListener('click', showFlowNavControls);
+        flowContent.addEventListener('touchstart', showFlowNavControls, { passive: true });
+    }
+    const flowScreen = document.getElementById('flowScreen');
+    if (flowScreen) {
+        flowScreen.addEventListener('click', showFlowNavControls);
+        flowScreen.addEventListener('touchstart', showFlowNavControls, { passive: true });
+    }
+
     // Initialize both speech button states
     // 1. Bottom speech toggle button
     const speechToggleBtn = document.getElementById('speech-toggle');
@@ -3095,7 +3515,8 @@ function playFlow(flowID) {
         // Reset current asana index and pause state
         currentAsanaIndex = 0;
         paused = false;
-        
+        flowCancelled = false;
+
         // Initialize flow tracking
         flowStartTime = Date.now();
         totalFlowDuration = editingFlow.asanas.reduce((sum, asana) => sum + (asana.duration || 7), 0);
@@ -3186,63 +3607,21 @@ function playFlow(flowID) {
                 document.head.appendChild(styleEl);
             }
 
-            asanaSide.textContent = "Starting in 3";
+            asanaSide.textContent = "Starting in " + countdownDuration;
 
-            // Replace image with countdown number
-            asanaImage.style.display = 'none';
-
-            // Create and add a countdown number display to the image container
-            const asanaImageContainer = document.querySelector('.asana-image-container');
-            const countdownDisplay = document.createElement('div');
-            countdownDisplay.id = 'countdown-display';
-            countdownDisplay.textContent = '3';
-
-            // Create a circular container with white gradient
-            const circleContainer = document.createElement('div');
-            circleContainer.style.position = 'absolute';
-            circleContainer.style.top = '50%';
-            circleContainer.style.left = '50%';
-            circleContainer.style.transform = 'translate(-50%, -50%)';
-            circleContainer.style.width = '250px';
-            circleContainer.style.height = '250px';
-            circleContainer.style.borderRadius = '50%';
-            circleContainer.style.background = 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0) 100%)';
-            circleContainer.style.display = 'flex';
-            circleContainer.style.justifyContent = 'center';
-            circleContainer.style.alignItems = 'center';
-            circleContainer.style.boxShadow = '0 0 30px rgba(109, 40, 217, 0.3)';
-            circleContainer.style.zIndex = '5';
-            circleContainer.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
-            circleContainer.style.opacity = '0';
-            circleContainer.style.transform = 'translate(-50%, -50%) scale(0.5)';
-            circleContainer.style.border = '2px solid rgba(109, 40, 217, 0.3)';
-
-            // Apply stylish styling to the countdown
-            countdownDisplay.style.fontSize = '150px';
-            countdownDisplay.style.fontWeight = 'bold';
-            countdownDisplay.style.color = '#6d28d9';
-            countdownDisplay.style.textShadow = '0 0 5px rgba(255, 255, 255, 0.7)';
-            countdownDisplay.style.position = 'relative';
-            countdownDisplay.style.zIndex = '10';
-            countdownDisplay.style.transition = 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out';
-
-            // Add countdown to the circle container
-            circleContainer.appendChild(countdownDisplay);
-
-            // Add the circle container to the image container
-            asanaImageContainer.appendChild(circleContainer);
-
-            // Trigger the animation after a slight delay
-            setTimeout(() => {
-                circleContainer.style.opacity = '1';
-                circleContainer.style.transform = 'translate(-50%, -50%) scale(1)';
-            }, 50);
+            // Hide the pose image during countdown
+            if (asanaImage) {
+                asanaImage.style.display = 'none';
+            }
 
             // Hide the "Coming Up" section during countdown
             const comingUpSection = document.querySelector('.coming-up');
             if (comingUpSection) {
                 comingUpSection.style.visibility = 'hidden';
             }
+
+            // Make the timer big during the starting countdown
+            countdownContainer.classList.add('countdown-big');
 
             countdownContainer.innerHTML = `
                 <svg class="countdown-svg" viewBox="0 0 120 120">
@@ -3251,13 +3630,13 @@ function playFlow(flowID) {
                     <circle id="flow-progress-circle" r="55" cx="60" cy="60" fill="transparent"
                             stroke="#a78bfa" stroke-width="6" stroke-dasharray="345.6"
                             stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
-                    <!-- Inner circle for pose timer -->
+                    <!-- Inner circle for pose timer - starts full -->
                     <circle r="45" cx="60" cy="60" fill="transparent" stroke="#ddd" stroke-width="10"></circle>
                     <circle id="countdown-circle" r="45" cx="60" cy="60" fill="transparent"
                             stroke="#6d28d9" stroke-width="10" stroke-dasharray="282.7"
-                            stroke-dashoffset="282.7" transform="rotate(-90 60 60)"></circle>
+                            stroke-dashoffset="0" transform="rotate(-90 60 60)"></circle>
                 </svg>
-                <div id="countdown">3</div>
+                <div id="countdown">${countdownDuration}</div>
             `;
 
             // Clear any existing animation frame/timer
@@ -3266,8 +3645,8 @@ function playFlow(flowID) {
                 animationFrameId = null;
             }
 
-            // Start 3-second countdown
-            startCountdownValue = 3;
+            // Start countdown using setting
+            startCountdownValue = countdownDuration;
             isInStartingCountdown = true;
             startTimerInterval = setInterval(() => {
                 startCountdownValue--;
@@ -3276,66 +3655,13 @@ function playFlow(flowID) {
                     countdownElement.textContent = startCountdownValue;
                 }
 
-                // Update the large countdown display in the image container with animation
-                const countdownDisplay = document.getElementById('countdown-display');
-                if (countdownDisplay) {
-                    // Add pulse animation to the circle container
-                    const circleContainer = countdownDisplay.parentElement;
-                    if (circleContainer) {
-                        // Apply animations to the circle
-                        circleContainer.style.transform = 'translate(-50%, -50%) scale(1.1)';
-                        setTimeout(() => {
-                            circleContainer.style.transform = 'translate(-50%, -50%) scale(1)';
-                        }, 300);
-
-                        // Change the background color based on countdown number - keeping white gradient but with different borders
-                        const colors = {
-                            2: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0) 100%)',
-                            1: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0) 100%)',
-                            0: 'radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0.9) 30%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0) 100%)'
-                        };
-
-                        // Border colors for each step
-                        const borderColors = {
-                            2: '2px solid rgba(109, 40, 217, 0.6)',
-                            1: '2px solid rgba(255, 0, 0, 0.6)',
-                            0: '2px solid rgba(0, 200, 0, 0.6)'
-                        };
-
-                        // Apply border color
-                        if (borderColors[startCountdownValue]) {
-                            circleContainer.style.border = borderColors[startCountdownValue];
-                        }
-
-                        // Keep text color constant - using the purple theme color
-                        countdownDisplay.style.color = '#6d28d9';
-
-                        if (colors[startCountdownValue]) {
-                            circleContainer.style.background = colors[startCountdownValue];
-                        }
-                    }
-
-                    // Apply exit animation
-                    countdownDisplay.style.opacity = '0';
-
-                    // Set new number and apply entrance animation after short delay
-                    setTimeout(() => {
-                        countdownDisplay.textContent = startCountdownValue;
-
-                        // Slight delay before entrance animation
-                        setTimeout(() => {
-                            countdownDisplay.style.opacity = '1';
-                        }, 50);
-                    }, 250);
-                }
-
                 asanaSide.textContent = "Starting in " + startCountdownValue;
 
                 // Update circle animation
                 const countdownCircle = document.getElementById('countdown-circle');
                 if (countdownCircle) {
                     const circumference = 2 * Math.PI * 45;
-                    const progress = startCountdownValue / 3;
+                    const progress = startCountdownValue / countdownDuration;
                     const dashOffset = circumference * (1 - progress);
                     countdownCircle.style.strokeDasharray = circumference;
                     countdownCircle.style.strokeDashoffset = dashOffset;
@@ -3344,40 +3670,6 @@ function playFlow(flowID) {
                 if (startCountdownValue <= 0) {
                     clearInterval(startTimerInterval);
                     isInStartingCountdown = false;
-
-                    // Animate the countdown display and circle container out with a final animation
-                    const countdownDisplay = document.getElementById('countdown-display');
-                    if (countdownDisplay) {
-                        // Get the circle container
-                        const circleContainer = countdownDisplay.parentElement;
-
-                        if (circleContainer) {
-                            // Add a celebratory animation to the circle
-                            circleContainer.style.transform = 'translate(-50%, -50%) scale(1.5)';
-                            circleContainer.style.opacity = '0';
-                            circleContainer.style.transition = 'transform 0.8s ease-out, opacity 0.8s ease-out';
-
-                            // Remove after animation completes
-                            setTimeout(() => {
-                                circleContainer.remove();
-                            }, 800);
-                        } else {
-                            // Fallback in case the circle container isn't found
-                            countdownDisplay.style.opacity = '0';
-                            countdownDisplay.style.transform = 'scale(2)';
-
-                            // Remove after animation completes
-                            setTimeout(() => {
-                                countdownDisplay.remove();
-                            }, 500);
-                        }
-                    }
-
-                    // Show the asana image again
-                    const asanaImage = document.getElementById('asanaImage');
-                    if (asanaImage) {
-                        asanaImage.style.display = '';
-                    }
 
                     // Show the "Coming Up" section again
                     const comingUpSection = document.querySelector('.coming-up');
@@ -3388,9 +3680,25 @@ function playFlow(flowID) {
                     // Reset any animation on the asana name
                     asanaName.style.animation = '';
 
+                    // Show the pose image with fade-in
+                    const asanaImage = document.getElementById('asanaImage');
+                    if (asanaImage) {
+                        asanaImage.style.opacity = '0';
+                        asanaImage.style.display = '';
+                        asanaImage.style.transition = 'opacity 0.5s ease';
+                        requestAnimationFrame(() => {
+                            asanaImage.style.opacity = '1';
+                        });
+                    }
+
                     // Update the display and get the duration for the first asana
                     const duration = updateAsanaDisplay(asana);
                     console.log("Display updated, duration:", duration);
+
+                    // Shrink timer back to regular size (animates via CSS transition)
+                    if (countdownContainer) {
+                        countdownContainer.classList.remove('countdown-big');
+                    }
 
                     // Update countdown display for the actual asana
                     if (countdownContainer) {
@@ -3562,18 +3870,16 @@ function startCountdownTimer(duration, isResuming = false) {
                     // Record completed session for stats
                     recordSession(true);
 
-                    // Play completion chime
-                    if (chimeAudio) {
-                        chimeAudio.currentTime = 0; // Reset to beginning
-                        chimeAudio.play().catch(error => {
-                            console.log('Audio playback failed:', error);
-                        });
-                    } else {
-                        console.log('Audio not preloaded');
+                    // Play completion chime and confetti only if flow wasn't cancelled
+                    if (!flowCancelled) {
+                        if (chimeAudio && endChimeEnabled) {
+                            chimeAudio.currentTime = 0;
+                            chimeAudio.play().catch(error => {
+                                console.log('Audio playback failed:', error);
+                            });
+                        }
+                        createConfetti();
                     }
-
-                    // Trigger confetti animation to celebrate completion
-                    createConfetti();
 
                     // End of flow - transform timer into a home button
                     const countdownContainer = document.querySelector('.countdown-container');
@@ -3791,55 +4097,13 @@ function resumeStartingCountdown() {
             countdownElement.textContent = startCountdownValue;
         }
 
-        // Update the large countdown display in the image container with animation
-        const countdownDisplay = document.getElementById('countdown-display');
-        if (countdownDisplay) {
-            // Add pulse animation to the circle container
-            const circleContainer = countdownDisplay.parentElement;
-            if (circleContainer) {
-                // Apply animations to the circle
-                circleContainer.style.transform = 'translate(-50%, -50%) scale(1.1)';
-                setTimeout(() => {
-                    circleContainer.style.transform = 'translate(-50%, -50%) scale(1)';
-                }, 300);
-
-                // Border colors for each step
-                const borderColors = {
-                    2: '2px solid rgba(109, 40, 217, 0.6)',
-                    1: '2px solid rgba(255, 0, 0, 0.6)',
-                    0: '2px solid rgba(0, 200, 0, 0.6)'
-                };
-
-                // Apply border color
-                if (borderColors[startCountdownValue]) {
-                    circleContainer.style.border = borderColors[startCountdownValue];
-                }
-
-                // Keep text color constant - using the purple theme color
-                countdownDisplay.style.color = '#6d28d9';
-            }
-
-            // Apply exit animation
-            countdownDisplay.style.opacity = '0';
-
-            // Set new number and apply entrance animation after short delay
-            setTimeout(() => {
-                countdownDisplay.textContent = startCountdownValue;
-
-                // Slight delay before entrance animation
-                setTimeout(() => {
-                    countdownDisplay.style.opacity = '1';
-                }, 50);
-            }, 250);
-        }
-
         asanaSide.textContent = "Starting in " + startCountdownValue;
 
         // Update circle animation
         const countdownCircle = document.getElementById('countdown-circle');
         if (countdownCircle) {
             const circumference = 2 * Math.PI * 45;
-            const progress = startCountdownValue / 3;
+            const progress = startCountdownValue / countdownDuration;
             const dashOffset = circumference * (1 - progress);
             countdownCircle.style.strokeDasharray = circumference;
             countdownCircle.style.strokeDashoffset = dashOffset;
@@ -3848,39 +4112,6 @@ function resumeStartingCountdown() {
         if (startCountdownValue <= 0) {
             clearInterval(startTimerInterval);
             isInStartingCountdown = false;
-
-            // Animate the countdown display and circle container out with a final animation
-            const countdownDisplay = document.getElementById('countdown-display');
-            if (countdownDisplay) {
-                // Get the circle container
-                const circleContainer = countdownDisplay.parentElement;
-
-                if (circleContainer) {
-                    // Add a celebratory animation to the circle
-                    circleContainer.style.transform = 'translate(-50%, -50%) scale(1.5)';
-                    circleContainer.style.opacity = '0';
-                    circleContainer.style.transition = 'transform 0.8s ease-out, opacity 0.8s ease-out';
-
-                    // Remove after animation completes
-                    setTimeout(() => {
-                        circleContainer.remove();
-                    }, 800);
-                } else {
-                    // Fallback in case the circle container isn't found
-                    countdownDisplay.style.opacity = '0';
-                    countdownDisplay.style.transform = 'scale(2)';
-
-                    // Remove after animation completes
-                    setTimeout(() => {
-                        countdownDisplay.remove();
-                    }, 500);
-                }
-            }
-
-            // Show the asana image again
-            if (asanaImage) {
-                asanaImage.style.display = '';
-            }
 
             // Show the "Coming Up" section again
             const comingUpSection = document.querySelector('.coming-up');
@@ -3891,9 +4122,24 @@ function resumeStartingCountdown() {
             // Reset any animation on the asana name
             asanaName.style.animation = '';
 
+            // Show the pose image with fade-in
+            if (asanaImage) {
+                asanaImage.style.opacity = '0';
+                asanaImage.style.display = '';
+                asanaImage.style.transition = 'opacity 0.5s ease';
+                requestAnimationFrame(() => {
+                    asanaImage.style.opacity = '1';
+                });
+            }
+
             // Update the display and get the duration for the first asana
             const duration = updateAsanaDisplay(asana);
             console.log("Display updated, duration:", duration);
+
+            // Shrink timer back to regular size for flow playback
+            if (countdownContainer) {
+                countdownContainer.classList.remove('countdown-big');
+            }
 
             // Update countdown display for the actual asana
             if (countdownContainer) {
@@ -3933,18 +4179,6 @@ function clearFlowTimers() {
         startCountdownValue = 0;
     }
     
-    // Clear any countdown display elements
-    const countdownDisplay = document.getElementById('countdown-display');
-    if (countdownDisplay) {
-        // Remove the parent circle container if it exists
-        const circleContainer = countdownDisplay.parentElement;
-        if (circleContainer && circleContainer.style.borderRadius === '50%') {
-            circleContainer.remove();
-        } else {
-            countdownDisplay.remove();
-        }
-    }
-    
     // Also remove any lingering countdown animations
     const countdownAnimations = document.getElementById('countdown-animations');
     if (countdownAnimations) {
@@ -3957,6 +4191,24 @@ function clearFlowTimers() {
 }
 
 function confirmEndFlow() {
+    // Set flag to prevent any pending completion effects
+    flowCancelled = true;
+
+    // Cancel any active confetti
+    if (confettiAnimationId) {
+        cancelAnimationFrame(confettiAnimationId);
+        confettiAnimationId = null;
+    }
+    // Remove confetti canvas
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    if (confettiCanvas) confettiCanvas.remove();
+
+    // Stop chime if playing
+    if (chimeAudio) {
+        chimeAudio.pause();
+        chimeAudio.currentTime = 0;
+    }
+
     // Record early-exit session for stats
     recordSession(false);
 
@@ -3983,6 +4235,20 @@ function confirmEndFlow() {
     // Return to home screen
     changeScreen('homeScreen');
 }
+
+// Escape key handler for flow screen
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        if (currentScreenId === 'flowScreen') {
+            const endFlowModal = document.getElementById('endFlowModal');
+            if (endFlowModal && endFlowModal.style.display !== 'none' && endFlowModal.style.display !== '') {
+                closeEndFlowModal();
+            } else {
+                endFlow();
+            }
+        }
+    }
+});
 
 function closeSaveFlowTitleModal() {
     const modal = document.getElementById('saveFlowTitleModal');
@@ -4044,29 +4310,85 @@ function exportFlow(flowID) {
     }
 
     try {
-        // Create a simplified version of the flow for sharing
-        // We exclude some properties that aren't needed for sharing
+        // Helper to generate UUID v4
+        const uuidv4 = () => crypto.randomUUID ? crypto.randomUUID()
+            : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+
+        // Map web side values to iOS format
+        const iosSideMap = { 'both': 'Front', 'left': 'Left', 'right': 'Right' };
+
+        // Create a dual-format version of the flow for sharing (web + iOS compatible)
         const exportData = {
+            // iOS Codable fields
+            id: uuidv4(),
+            lastEdited: flowToExport.lastEdited || new Date().toISOString(),
             name: flowToExport.name,
             description: flowToExport.description,
             time: flowToExport.time,
             peakPose: flowToExport.peakPose,
-            asanas: flowToExport.asanas.map(asana => ({
-                name: asana.name,
-                sanskrit: asana.sanskrit || "",
-                side: asana.side,
-                image: asana.image,
-                description: asana.description,
-                difficulty: asana.difficulty,
-                tags: asana.tags || [],
-                transitionsAsana: asana.transitionsAsana || [],
-                duration: asana.duration || 7,
-                chakra: asana.chakra || "",
-                breathCue: asana.breathCue || "-"
+            // Web format
+            asanas: flowToExport.asanas.map(asana => {
+                let imageSlug;
+                if (asana.image && asana.image.includes('/')) {
+                    const filename = asana.image.split('/').pop();
+                    imageSlug = filename.replace(/\.(webp|png)$/i, '');
+                } else {
+                    imageSlug = asana.name.toLowerCase().replace(/\s+/g, '-');
+                }
+                return {
+                    name: imageSlug,
+                    english: asana.name,
+                    sanskrit: asana.sanskrit || "",
+                    side: asana.side,
+                    image: asana.image,
+                    description: asana.description || "",
+                    difficulty: asana.difficulty || "Beginner",
+                    tags: asana.tags || [],
+                    transitionsAsana: asana.transitionsAsana || [],
+                    duration: asana.duration || 7,
+                    chakra: asana.chakra || "",
+                    chakras: asana.chakras || (asana.chakra ? [asana.chakra] : []),
+                    breathCue: asana.breathCue || "-"
+                };
+            }),
+            // iOS format (so iOS JSONDecoder can read it directly)
+            poses: flowToExport.asanas.map(asana => {
+                let imageSlug;
+                if (asana.image && asana.image.includes('/')) {
+                    const filename = asana.image.split('/').pop();
+                    imageSlug = filename.replace(/\.(webp|png)$/i, '');
+                } else {
+                    imageSlug = asana.name.toLowerCase().replace(/\s+/g, '-');
+                }
+                return {
+                    id: uuidv4(),
+                    name: asana.name,
+                    sanskrit: asana.sanskrit || "",
+                    side: iosSideMap[asana.side] || asana.side || 'Front',
+                    imageName: asana.image || `images/webp/${imageSlug}.webp`,
+                    description: asana.description || "",
+                    difficulty: asana.difficulty || "Beginner",
+                    tags: asana.tags || [],
+                    chakra: asana.chakra || "",
+                    chakras: asana.chakras || (asana.chakra ? [asana.chakra] : []),
+                    breathCue: asana.breathCue || "-",
+                    duration: asana.duration || 7
+                };
+            }),
+            // Dual-format sections
+            sections: (flowToExport.sections || []).map(s => ({
+                id: s.id || uuidv4(),
+                name: s.name || "Unnamed Section",
+                asanaIds: s.asanaIds || [],
+                poseIndices: s.asanaIds || [],
+                collapsed: s.collapsed || false,
+                isCollapsed: s.collapsed || false
             })),
-            sections: flowToExport.sections || [], // Include sections (groups) in export
             timestamp: new Date().toISOString(),
-            version: "1.0" // For future compatibility
+            version: "1.0"
         };
 
         // Convert to JSON string and encode as base64
@@ -4138,20 +4460,29 @@ function importFlow(shareCode) {
                 side = asanaData.side || "both";
             }
 
+            // Look up the pose in the catalog to get the correct image path
+            const catalogMatch = findCatalogAsana(displayName, imageSlug);
+            const imagePath = catalogMatch ? catalogMatch.image : (asanaData.image || `images/webp/${imageSlug}.webp`);
+
+            // Use catalog chakras if pose exists in database, otherwise use imported data
+            const chakraData = catalogMatch
+                ? (catalogMatch.chakras && catalogMatch.chakras.length > 0 ? catalogMatch.chakras : (catalogMatch.chakra ? [catalogMatch.chakra] : []))
+                : (asanaData.chakras && Array.isArray(asanaData.chakras) ? asanaData.chakras : (asanaData.chakra ? [asanaData.chakra] : []));
+
             const newAsana = new YogaAsana(
                 displayName,
                 side,
-                asanaData.image || `images/webp/${imageSlug}.webp`,
+                imagePath,
                 asanaData.description || "",
                 asanaData.difficulty || "Beginner",
                 asanaData.tags || [],
                 asanaData.transitionsAsana || [],
                 asanaData.sanskrit || "",
-                asanaData.chakra || "",
+                chakraData,
                 asanaData.breathCue || "-"
             );
             newAsana.setDuration(asanaData.duration || 7);
-            newAsana.imageName = imageSlug;
+            newAsana.imageName = catalogMatch ? catalogMatch.image.split('/').pop().replace(/\.(webp|png)$/i, '') : imageSlug;
             newFlow.asanas.push(newAsana);
         });
 
@@ -4175,6 +4506,75 @@ function importFlow(shareCode) {
     }
 }
 
+// Flow nav: go to previous pose
+function goToPreviousPose() {
+    if (!editingFlow || !editingFlow.asanas || currentAsanaIndex <= 0) return;
+    if (animationFrameId) { clearTimeout(animationFrameId); animationFrameId = null; }
+    currentAsanaIndex--;
+    const asana = editingFlow.asanas[currentAsanaIndex];
+    const duration = updateAsanaDisplay(asana);
+    const countdownCircle = document.getElementById('countdown-circle');
+    if (countdownCircle) { countdownCircle.style.strokeDashoffset = "0"; }
+    startCountdownTimer(duration);
+    updateFlowNavButtons();
+    showFlowNavControls();
+}
+
+// Flow nav: go to next pose
+function goToNextPose() {
+    if (!editingFlow || !editingFlow.asanas || currentAsanaIndex >= editingFlow.asanas.length - 1) return;
+    if (animationFrameId) { clearTimeout(animationFrameId); animationFrameId = null; }
+    currentAsanaIndex++;
+    const asana = editingFlow.asanas[currentAsanaIndex];
+    const duration = updateAsanaDisplay(asana);
+    const countdownCircle = document.getElementById('countdown-circle');
+    if (countdownCircle) { countdownCircle.style.strokeDashoffset = "0"; }
+    startCountdownTimer(duration);
+    updateFlowNavButtons();
+    showFlowNavControls();
+}
+
+// Update prev/next button disabled state
+function updateFlowNavButtons() {
+    const prevBtn = document.getElementById('prevPoseBtn');
+    const nextBtn = document.getElementById('nextPoseBtn');
+    if (prevBtn) prevBtn.disabled = currentAsanaIndex <= 0;
+    if (nextBtn) nextBtn.disabled = !editingFlow || currentAsanaIndex >= editingFlow.asanas.length - 1;
+}
+
+// Auto-hide nav controls after inactivity
+let flowNavHideTimer = null;
+function showFlowNavControls() {
+    const nav = document.getElementById('flowNavControls');
+    const countdown = document.querySelector('.countdown-container');
+    const globalControls = document.querySelector('.flow-controls-global');
+    const endBtn = document.getElementById('end-flow-btn');
+    if (nav) nav.classList.remove('hidden');
+    if (countdown) countdown.classList.remove('shifted-down');
+    if (globalControls) globalControls.classList.remove('hidden');
+    if (endBtn) { endBtn.style.opacity = '1'; }
+    clearTimeout(flowNavHideTimer);
+    flowNavHideTimer = setTimeout(() => {
+        if (!paused) {
+            if (nav) nav.classList.add('hidden');
+            if (countdown) countdown.classList.add('shifted-down');
+            if (globalControls) globalControls.classList.add('hidden');
+            if (endBtn) { endBtn.style.opacity = '0'; }
+        }
+    }, 5000);
+}
+
+function hideFlowNavControls() {
+    const nav = document.getElementById('flowNavControls');
+    const countdown = document.querySelector('.countdown-container');
+    const globalControls = document.querySelector('.flow-controls-global');
+    const endBtn = document.getElementById('end-flow-btn');
+    if (nav) nav.classList.add('hidden');
+    if (countdown) countdown.classList.add('shifted-down');
+    if (globalControls) globalControls.classList.add('hidden');
+    if (endBtn) { endBtn.style.opacity = '0'; }
+}
+
 function togglePause() {
     console.log("Toggle pause called. Current state:", paused);
     
@@ -4190,7 +4590,22 @@ function togglePause() {
     // Toggle pause state
     paused = !paused;
     console.log("New pause state:", paused);
-    
+
+    // Keep nav & controls visible when paused, auto-hide when resumed
+    if (paused) {
+        const nav = document.getElementById('flowNavControls');
+        const countdown = document.querySelector('.countdown-container');
+        const globalControls = document.querySelector('.flow-controls-global');
+        const endBtn = document.getElementById('end-flow-btn');
+        if (nav) nav.classList.remove('hidden');
+        if (countdown) countdown.classList.remove('shifted-down');
+        if (globalControls) globalControls.classList.remove('hidden');
+        if (endBtn) { endBtn.style.opacity = '1'; }
+        clearTimeout(flowNavHideTimer);
+    } else {
+        showFlowNavControls();
+    }
+
     // Update pause button appearance
     const pauseBtn = document.querySelector('.pause-btn');
     if (pauseBtn) {
@@ -4319,6 +4734,43 @@ function toggleBreathCues() {
 }
 
 // Add event listener for the global speech toggle
+// Global Escape key handler — close any open modal/popup
+document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    // Try closing modals that use display:block/flex
+    const openModals = document.querySelectorAll('.modal, [id$="Modal"]');
+    for (const modal of openModals) {
+        const style = getComputedStyle(modal);
+        if (style.display !== 'none' && modal.style.display !== 'none' && modal.style.display !== '') {
+            modal.style.display = 'none';
+            e.preventDefault();
+            return;
+        }
+    }
+    // Settings modal uses .active class
+    const settingsModal = document.getElementById('settingsModal');
+    if (settingsModal && settingsModal.classList.contains('active')) {
+        closeSettingsModal();
+        e.preventDefault();
+        return;
+    }
+    // Close analytics panel if open
+    if (buildAnalyticsOpen) {
+        toggleBuildAnalytics();
+        e.preventDefault();
+        return;
+    }
+    // Close pose picker panel if open
+    const rightPanel = document.getElementById('buildRightPanel');
+    if (rightPanel && !rightPanel.classList.contains('collapsed')) {
+        rightPanel.classList.add('collapsed');
+        const reopenBtn = document.getElementById('reopenPanelBtn');
+        if (reopenBtn) reopenBtn.classList.remove('active');
+        e.preventDefault();
+        return;
+    }
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     const speechToggleGlobal = document.getElementById('speech-toggle-global');
     if (speechToggleGlobal) {
@@ -4513,7 +4965,7 @@ function editFlow(flowID) {
     // Show loading state for very large flows (200+ poses)
     const table = document.getElementById('flowTable');
     if (table && flowToEdit.asanas && flowToEdit.asanas.length > 200) {
-        table.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Loading flow...</td></tr>';
+        table.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Loading flow...</td></tr>';
     }
 
     // Update form fields immediately for better UX
@@ -4567,7 +5019,7 @@ function processFlowAsanasOptimized(flowToEdit) {
                         asana.tags || [],
                         asana.transitionsAsana || [],
                         asana.sanskrit || "",
-                        asana.chakra || "",
+                        asana.chakras || asana.chakra || "",
                         asana.breathCue || "-"
                     );
                     editingFlow.asanas[i].setDuration(asana.duration || 7);
@@ -4667,8 +5119,8 @@ function exportFlowAsJSONFromModal() {
             const duration = Math.max(1, Math.min(300, asana.duration || 15));
             const displayName = asana.name || "Unknown Pose";
             // Map web side values to iOS format for the poses array
-            const sideMap = { 'both': 'Center', 'left': 'Left', 'right': 'Right' };
-            const iosSide = sideMap[asana.side] || asana.side || 'Center';
+            const sideMap = { 'both': 'Front', 'left': 'Left', 'right': 'Right' };
+            const iosSide = sideMap[asana.side] || asana.side || 'Front';
 
             return {
                 // Web format fields
@@ -4682,6 +5134,7 @@ function exportFlowAsJSONFromModal() {
                 description: asana.description || "",
                 tags: Array.isArray(asana.tags) ? asana.tags : [],
                 chakra: asana.chakra || "Root",
+                chakras: asana.chakras || (asana.chakra ? [asana.chakra] : ["Root"]),
                 breathCue: asana.breathCue || "-",
                 // iOS format fields
                 imageName: asana.image || `images/webp/${asanaName}.webp`,
@@ -4724,6 +5177,7 @@ function exportFlowAsJSONFromModal() {
                 description: a.description,
                 tags: a.tags,
                 chakra: a.chakra,
+                chakras: a.chakras,
                 breathCue: a.breathCue
             })),
             // iOS format (so iOS JSONDecoder can read it directly)
@@ -4737,6 +5191,7 @@ function exportFlowAsJSONFromModal() {
                 difficulty: a.difficulty,
                 tags: a.tags,
                 chakra: a.chakra,
+                chakras: a.chakras,
                 breathCue: a.breathCue,
                 duration: a.duration
             })),
@@ -4868,7 +5323,7 @@ function generatePDFContent(flow) {
                 <div class="pose-image-container">
                     <img src="${imagePath}" alt="${escapeHTML(asana.name)}" class="pose-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                     <div class="pose-placeholder" style="display: none;">
-                        <div class="pose-icon">🧘</div>
+                        <div class="pose-icon"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#6d28d9" stroke-width="1.5"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg></div>
                     </div>
                 </div>
                 <div class="pose-details">
@@ -5764,7 +6219,7 @@ function importFlowFromData(templateData) {
                 } else {
                     imageSlug = displayName.toLowerCase().replace(/['']/g, '').replace(/\s+/g, '-');
                 }
-                // Map iOS side values (Center/Left/Right) to web values (both/left/right)
+                // Map iOS side values to web format
                 const sideMap = { 'Center': 'both', 'Left': 'left', 'Right': 'right', 'Front': 'both' };
                 side = sideMap[asanaData.side] || asanaData.side || "both";
             } else {
@@ -5774,16 +6229,25 @@ function importFlowFromData(templateData) {
                 side = asanaData.side || "both";
             }
 
+            // Look up the pose in the catalog to get the correct image path and updated chakras
+            const catalogMatch = findCatalogAsana(displayName, imageSlug);
+            const imagePath = catalogMatch ? catalogMatch.image : `images/webp/${imageSlug}.webp`;
+
+            // Use catalog chakras if pose exists in database, otherwise use imported data
+            const chakraData = catalogMatch
+                ? (catalogMatch.chakras && catalogMatch.chakras.length > 0 ? catalogMatch.chakras : (catalogMatch.chakra ? [catalogMatch.chakra] : []))
+                : (asanaData.chakras && Array.isArray(asanaData.chakras) ? asanaData.chakras : (asanaData.chakra ? [asanaData.chakra] : []));
+
             const newAsana = new YogaAsana(
                 displayName,
                 side,
-                `images/webp/${imageSlug}.webp`,
+                imagePath,
                 asanaData.description || "",
                 asanaData.difficulty || "Beginner",
                 asanaData.tags || [],
                 asanaData.transitionsAsana || [],
                 asanaData.sanskrit || "",
-                asanaData.chakra || "Root",
+                chakraData,
                 asanaData.breathCue || "-"
             );
 
@@ -5791,7 +6255,7 @@ function importFlowFromData(templateData) {
             newAsana.setDuration(asanaData.duration || 15);
 
             // Store the image slug for reference
-            newAsana.imageName = imageSlug;
+            newAsana.imageName = catalogMatch ? catalogMatch.image.split('/').pop().replace(/\.(webp|png)$/i, '') : imageSlug;
 
             // Add directly to asanas array to preserve import order
             newFlow.asanas.push(newAsana);
@@ -5908,9 +6372,9 @@ async function importDefaultFlowForNewUser() {
 function sortTableByLargestNumber() {
     const table = document.getElementById('flowTable');
     if (!table) return;
-    
-    // Toggle the sort order
-    tableInDescendingOrder = !tableInDescendingOrder;
+
+    // Display is always ascending; this is kept for compatibility
+    tableInDescendingOrder = false;
     
     // Rebuild the flow table with the new sort order
     // Our rebuildTableView function will handle the ordering
@@ -6033,23 +6497,51 @@ async function loadAsanasFromXML() {
             const image = asanaElem.getElementsByTagName('image')[0]?.textContent || 'images/webp/default-pose.webp';
             const description = asanaElem.getElementsByTagName('description')[0]?.textContent || '';
             const difficulty = asanaElem.getElementsByTagName('difficulty')[0]?.textContent || 'Beginner';
-            const chakra = asanaElem.getElementsByTagName('chakra')[0]?.textContent || '';
             const breathCue = asanaElem.getElementsByTagName('breath')[0]?.textContent || '-';
-            
+            const rating = parseInt(asanaElem.getElementsByTagName('rating')[0]?.textContent || '0');
+            const history = asanaElem.getElementsByTagName('history')[0]?.textContent || '';
+
+            // Extract chakras (support both <chakras><chakra> and single <chakra>)
+            const chakrasWrapper = asanaElem.getElementsByTagName('chakras')[0];
+            const chakras = [];
+            if (chakrasWrapper) {
+                const chakraElems = chakrasWrapper.getElementsByTagName('chakra');
+                for (let j = 0; j < chakraElems.length; j++) {
+                    chakras.push(chakraElems[j].textContent);
+                }
+            } else {
+                const singleChakra = asanaElem.getElementsByTagName('chakra')[0]?.textContent;
+                if (singleChakra) chakras.push(singleChakra);
+            }
+
             // Extract tags
             const tagElements = asanaElem.getElementsByTagName('tag');
             const tags = [];
             for (let j = 0; j < tagElements.length; j++) {
                 tags.push(tagElements[j].textContent);
             }
-            
+
             // Extract transitions
             const transitionElements = asanaElem.getElementsByTagName('transition');
             const transitions = [];
             for (let j = 0; j < transitionElements.length; j++) {
                 transitions.push(transitionElements[j].textContent);
             }
-            
+
+            // Extract aliases
+            const aliasElements = asanaElem.getElementsByTagName('alias');
+            const aliases = [];
+            for (let j = 0; j < aliasElements.length; j++) {
+                aliases.push(aliasElements[j].textContent);
+            }
+
+            // Extract cues
+            const cueElements = asanaElem.getElementsByTagName('cue');
+            const cues = [];
+            for (let j = 0; j < cueElements.length; j++) {
+                cues.push(cueElements[j].textContent);
+            }
+
             // Create asana object
             const asana = new YogaAsana(
                 name,
@@ -6060,9 +6552,13 @@ async function loadAsanasFromXML() {
                 tags,
                 transitions,
                 sanskrit,
-                chakra,
+                chakras,
                 breathCue
             );
+            asana.aliases = aliases;
+            asana.cues = cues;
+            asana.history = history;
+            asana.difficultyRating = rating;
             
             // Check for duplicates before adding
             const isDuplicate = asanas.some(existingAsana => 
@@ -6112,7 +6608,7 @@ async function loadAsanasFromXML() {
                 ["Standing", "Stretch"],
                 ["Plank", "Cobra"],
                 "Adho Mukha Svanasana",
-                "Third Eye",
+                ["Third Eye", "Heart", "Root"],
                 "Exhale"
             ),
             new YogaAsana(
@@ -6124,7 +6620,7 @@ async function loadAsanasFromXML() {
                 ["Standing", "Balance"],
                 ["Mountain Pose", "Warrior 3"],
                 "Vrksasana",
-                "Root",
+                ["Root", "Heart"],
                 "Breathe Here"
             ),
             new YogaAsana(
@@ -6136,7 +6632,7 @@ async function loadAsanasFromXML() {
                 ["Standing", "Strength"],
                 ["Mountain Pose", "Triangle Pose"],
                 "Virabhadrasana II",
-                "Sacral",
+                ["Sacral", "Root"],
                 "Inhale"
             ),
             new YogaAsana(
@@ -6148,7 +6644,7 @@ async function loadAsanasFromXML() {
                 ["Standing", "Stretch"],
                 ["Warrior 2", "Half Moon Pose"],
                 "Trikonasana",
-                "Sacral",
+                ["Sacral", "Heart"],
                 "Exhale"
             )
         ];
@@ -6225,13 +6721,10 @@ function filterAsanas(category) {
     // Update active button class
     const categoryButtons = document.querySelectorAll('.category-btn');
     categoryButtons.forEach(button => {
-        // Remove active class from all buttons
         button.classList.remove('active');
-        
-        // Add active class to the clicked button
-        if (button.textContent.trim() === 'All Poses' && category === 'all') {
-            button.classList.add('active');
-        } else if (button.textContent.trim() === category) {
+        // Match by onclick attribute for chakra filters
+        const onclickStr = button.getAttribute('onclick') || '';
+        if (onclickStr.includes(`'${category}'`)) {
             button.classList.add('active');
         }
     });
@@ -6273,9 +6766,15 @@ function populateAsanaList() {
     if (currentFilter === 'Sequence') {
         // If Sequence is selected, only show sequences
         posesList = [];
+    } else if (currentFilter.startsWith('chakra:')) {
+        const chakraName = currentFilter.slice(7);
+        posesList = posesList.filter(asana => {
+            const chakras = asana.chakras || (asana.chakra ? [asana.chakra] : []);
+            return chakras.some(c => c === chakraName);
+        });
     } else if (currentFilter !== 'all') {
         posesList = posesList.filter(asana => {
-            return asana.tags && asana.tags.some(tag => 
+            return asana.tags && asana.tags.some(tag =>
                 tag.toLowerCase().includes(currentFilter.toLowerCase())
             );
         });
@@ -6293,7 +6792,7 @@ function populateAsanaList() {
     
     // Show no matches message if both poses and sequences are empty
     if (posesList.length === 0 && (!sequences || sequences.length === 0)) {
-        asanaList.innerHTML = `<div class="no-matches">No poses found 🧘‍♂️</div>`;
+        asanaList.innerHTML = `<div class="no-matches-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>No poses found</p></div>`;
         return;
     }
     
@@ -6335,36 +6834,23 @@ function populateAsanaList() {
                 this.style.fontSize = '30px';
                 this.style.width = '120px';
                 this.style.height = '120px';
-                this.innerText = '🧘‍♀️';
+                this.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#999" stroke-width="1.5"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg>';
                 console.log(`Missing image for ${asana.getDisplayName(useSanskritNames)} in asana list`);
             };
 
-            // Add chakra indicator if the pose has chakra information
-            if (asana.chakra) {
-                const chakraIndicator = document.createElement('div');
-                chakraIndicator.className = 'chakra-indicator';
-
-                // Add the specific chakra class based on the chakra name
-                const chakraClass = asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
-                                   asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
-                                   asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
-                                   asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
-                                   asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
-                                   asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
-                                   asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : '';
-
-                if (chakraClass) {
-                    chakraIndicator.classList.add(chakraClass);
-                    chakraIndicator.title = `${asana.chakra} Chakra`;
-                    imgContainer.appendChild(chakraIndicator);
-                }
-            }
-
             imgContainer.appendChild(asanaImage);
+
+            // Add chakra circles (top-right)
+            imgContainer.insertAdjacentHTML('beforeend', chakraCirclesHTML(asana));
             
             // Create name label - use getDisplayName for consistent naming
             const asanaName = document.createElement('p');
             asanaName.textContent = asana.getDisplayName(useSanskritNames);
+            asanaName.style.cursor = 'pointer';
+            asanaName.addEventListener('dblclick', function(e) {
+                e.stopPropagation();
+                openPoseDetail(asana.name);
+            });
             
             // Add delete button for custom poses
             if (isCustomPose) {
@@ -6388,7 +6874,28 @@ function populateAsanaList() {
             asanaElement.addEventListener('click', function() {
                 selectAsana(asana);
             });
-            
+
+            // Drag from pose picker to flow list to replace a pose
+            asanaElement.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('application/x-pose-replace', JSON.stringify({
+                    name: asana.name,
+                    side: asana.side,
+                    image: asana.image,
+                    description: asana.description,
+                    difficulty: asana.difficulty,
+                    tags: asana.tags,
+                    transitionsAsana: asana.transitionsAsana,
+                    sanskrit: asana.sanskrit,
+                    chakras: asana.chakras || (asana.chakra ? [asana.chakra] : []),
+                    chakra: asana.chakra
+                }));
+                e.dataTransfer.effectAllowed = 'copy';
+                asanaElement.style.opacity = '0.5';
+            });
+            asanaElement.addEventListener('dragend', function() {
+                asanaElement.style.opacity = '1';
+            });
+
             // Add to list
             asanaList.appendChild(asanaElement);
         });
@@ -6460,7 +6967,7 @@ function populateAsanaList() {
                     this.style.alignItems = 'center';
                     this.style.background = '#f5f5f5';
                     this.style.fontSize = '20px';
-                    this.innerText = '🧘‍♀️';
+                    this.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#999" stroke-width="1.5"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg>';
                 };
                 
                 imageContainer.appendChild(previewImg);
@@ -6571,8 +7078,9 @@ function populateAsanaList() {
     // Show no matches message if both poses and sequences are empty after filtering
     if (asanaList.children.length === 0) {
         asanaList.innerHTML = `
-            <div class="no-matches">
-                <p>No poses found 🧘‍♂️</p>
+            <div class="no-matches-empty">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <p>No poses found</p>
                 <button class="add-custom-pose-btn" onclick="addCustomPose()">
                     <span>+</span> Add Custom Pose
                 </button>
@@ -6658,9 +7166,13 @@ function setupTableDragAndDrop() {
     flowTable.removeEventListener('dragend', handleTableDragEnd);
 
     // Remove existing touch handlers to prevent duplicates
-    flowTable.removeEventListener('touchstart', handleTableTouchStart);
-    flowTable.removeEventListener('touchmove', handleTableTouchMove);
-    flowTable.removeEventListener('touchend', handleTableTouchEnd);
+    if (flowTable._touchStartHandler) {
+        flowTable.removeEventListener('touchstart', flowTable._touchStartHandler);
+        document.removeEventListener('touchmove', handleTableTouchMove);
+        if (flowTable._touchEndWrapper) {
+            document.removeEventListener('touchend', flowTable._touchEndWrapper);
+        }
+    }
 
     // Now add fresh event listeners
     flowTable.addEventListener('dragstart', handleTableDragStart);
@@ -6670,10 +7182,34 @@ function setupTableDragAndDrop() {
     flowTable.addEventListener('drop', handleTableDrop);
     flowTable.addEventListener('dragend', handleTableDragEnd);
 
-    // Add touch event listeners for mobile support
-    flowTable.addEventListener('touchstart', handleTableTouchStart, { passive: false });
-    flowTable.addEventListener('touchmove', handleTableTouchMove, { passive: false });
-    flowTable.addEventListener('touchend', handleTableTouchEnd, { passive: false });
+    // Touch drag: only intercept touches on drag handles (first cell / section headers).
+    // Move/end listeners are added to document only when a drag actually starts,
+    // so they never block normal touch interactions.
+    flowTable._touchStartHandler = function(e) {
+        const target = e.target;
+        const cell = target.closest('td');
+        const row = target.closest('tr');
+        if (!row) return;
+        const isSectionHeader = row.classList.contains('section-header');
+        if (isSectionHeader) {
+            const isDragArea = target.closest('.section-name, .section-header-content, .section-toggle');
+            const isControl = target.closest('.section-checkbox, .section-side-control, .section-remove');
+            if (!isDragArea || isControl) return;
+        } else {
+            if (!cell || cell.cellIndex !== 0) return;
+        }
+        // Attach move/end listeners only now that a drag may begin
+        document.addEventListener('touchmove', handleTableTouchMove, { passive: false });
+        document.addEventListener('touchend', flowTable._touchEndWrapper, { passive: false });
+        handleTableTouchStart(e);
+    };
+    flowTable._touchEndWrapper = function(e) {
+        handleTableTouchEnd(e);
+        // Clean up move/end listeners after touch ends
+        document.removeEventListener('touchmove', handleTableTouchMove);
+        document.removeEventListener('touchend', flowTable._touchEndWrapper);
+    };
+    flowTable.addEventListener('touchstart', flowTable._touchStartHandler, { passive: true });
 
     // Make sure all rows are properly draggable
     updateRowDragAttributes();
@@ -6704,9 +7240,12 @@ function setupCardDragAndDrop() {
 
 // Ensures all rows have proper drag attributes
 function updateRowDragAttributes() {
+    const isMobile = window.innerWidth <= 768;
     const rows = document.querySelectorAll('#flowTable tr:not(:first-child)');
     rows.forEach((row) => { // Removed 'index' from parameters
-        row.setAttribute('draggable', 'true');
+        // On mobile, don't set draggable=true — it blocks taps on checkboxes/controls.
+        // Mobile uses custom touch handlers instead.
+        row.setAttribute('draggable', isMobile ? 'false' : 'true');
         // row.setAttribute('data-index', index); // BUGFIX: data-index should not be reset here.
                                                 // It's correctly set by rebuildTableView/addAsanaRow based on actual array index.
         
@@ -8322,7 +8861,7 @@ function toggleViewMode(mode, silent = false) {
     // Save preference to localStorage
     localStorage.setItem('viewMode', mode);
 
-    // Update the toggle buttons
+    // Update the toggle buttons (new header buttons)
     const tableBtn = document.getElementById('tableViewBtn');
     const cardBtn = document.getElementById('cardViewBtn');
     const flowSequence = document.querySelector('.flow-sequence');
@@ -8334,14 +8873,12 @@ function toggleViewMode(mode, silent = false) {
             cardBtn.classList.remove('active');
             flowSequence.classList.add('table-view-active');
             flowSequence.classList.remove('card-view-active');
-            // Update the toggle switch to match (unchecked = table)
             if (viewToggleSwitch) viewToggleSwitch.checked = false;
         } else {
             tableBtn.classList.remove('active');
             cardBtn.classList.add('active');
             flowSequence.classList.remove('table-view-active');
             flowSequence.classList.add('card-view-active');
-            // Update the toggle switch to match (checked = card)
             if (viewToggleSwitch) viewToggleSwitch.checked = true;
         }
     }
@@ -8358,6 +8895,47 @@ function toggleViewMode(mode, silent = false) {
 // Function to handle view toggle from the switch
 function toggleViewFromSwitch(isChecked) {
     toggleViewMode(isChecked ? 'card' : 'table');
+}
+
+// Toggle the right panel (pose picker) visibility
+function toggleAsanaPicker() {
+    const rightPanel = document.getElementById('buildRightPanel');
+    const reopenBtn = document.getElementById('reopenPanelBtn');
+    const actionsBar = document.querySelector('.selected-actions');
+    if (!rightPanel) return;
+
+    const isCurrentlyOpen = !rightPanel.classList.contains('collapsed');
+
+    if (isCurrentlyOpen) {
+        // Close pose picker
+        rightPanel.classList.add('collapsed');
+        if (reopenBtn) reopenBtn.classList.remove('active');
+        if (actionsBar) actionsBar.style.display = '';
+    } else {
+        // Open pose picker — clear any inline width from drag resize so CSS default applies
+        rightPanel.style.width = '';
+        rightPanel.style.transition = '';
+        rightPanel.classList.remove('collapsed');
+        if (reopenBtn) reopenBtn.classList.add('active');
+        if (actionsBar) actionsBar.style.display = 'none';
+        // Close analytics panel if open
+        if (buildAnalyticsOpen) {
+            const analyticsPanel = document.getElementById('buildAnalyticsPanel');
+            const analyticsBtn = document.getElementById('analyticsToggleBtn');
+            if (analyticsPanel) analyticsPanel.classList.add('collapsed');
+            if (analyticsBtn) analyticsBtn.classList.remove('active');
+            buildAnalyticsOpen = false;
+        }
+    }
+}
+
+// Update the pose count display in build flow info
+function updateFlowPoseCount() {
+    const countEl = document.getElementById('flowPoseCount');
+    if (countEl && editingFlow && editingFlow.asanas) {
+        const count = editingFlow.asanas.length;
+        countEl.textContent = `${count} pose${count !== 1 ? 's' : ''}`;
+    }
 }
 
 
@@ -8411,6 +8989,10 @@ function rebuildFlowTable() {
         rebuildFlowTableOptimized();
     } else {
         rebuildFlowTableLegacy();
+    }
+    // Update build analytics panel in real-time
+    if (buildAnalyticsOpen) {
+        renderBuildAnalytics();
     }
 }
 
@@ -8619,7 +9201,27 @@ function createAsanaRowElement(asana, index, sectionName, sectionId, displayNumb
     const imgTransform = asana.side === "Left" ? "transform: scaleX(-1);" : "";
     
     row.innerHTML = createAsanaRowHTML(asana, index, sectionName, sectionId, displayNumber, imgTransform);
-    
+
+    // Accept drag-and-drop from pose picker to replace this pose
+    row.addEventListener('dragover', function(e) {
+        if (e.dataTransfer.types.includes('application/x-pose-replace')) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'copy';
+            row.classList.add('drop-target-highlight');
+        }
+    });
+    row.addEventListener('dragleave', function() {
+        row.classList.remove('drop-target-highlight');
+    });
+    row.addEventListener('drop', function(e) {
+        if (!e.dataTransfer.types.includes('application/x-pose-replace')) return;
+        e.preventDefault();
+        row.classList.remove('drop-target-highlight');
+        const poseData = JSON.parse(e.dataTransfer.getData('application/x-pose-replace'));
+        const targetIndex = parseInt(row.getAttribute('data-index'));
+        replacePoseAtIndex(targetIndex, poseData);
+    });
+
     return row;
 }
 
@@ -8643,11 +9245,11 @@ function createSectionHeaderRow(sectionInfo) {
     const sectionDurationDisplay = displayFlowDuration(sectionDuration);
     
     headerRow.innerHTML = `
-        <td colspan="7" class="section-header-content">
+        <td colspan="6" class="section-header-content">
             <div class="section-header-flex">
                 <div class="section-checkbox">
-                    <input type="checkbox" class="section-select" 
-                       data-section="${section.name}" 
+                    <input type="checkbox" class="section-select"
+                       data-section="${section.name}"
                        data-section-id="${section.id}" 
                        ${allSelected ? 'checked' : ''}
                        onchange="toggleSectionSelection(this)">
@@ -8669,7 +9271,7 @@ function createSectionHeaderRow(sectionInfo) {
                     </select>
                 </div>
                 <div class="section-remove">
-                    <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">⛓️‍💥</button>
+                    <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 0 10h-3M9 17H6a5 5 0 0 1 0-10h3"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="18" y1="6" x2="6" y2="18" stroke="#ef4444" stroke-width="2.5"/></svg></button>
                 </div>
             </div>
         </td>
@@ -8691,19 +9293,8 @@ function createAsanaRowHTML(asana, index, sectionName, sectionId, displayNumber,
         <td>
             <div class="table-asana">
                 <div style="position: relative; display: inline-block;">
-                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}"
-                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center';
-                         this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px';
-                         this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
-                    ${asana.chakra ? `<div class="chakra-indicator ${
-                        asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
-                        asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
-                        asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
-                        asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
-                        asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
-                        asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
-                        asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : ''
-                    }" title="${asana.chakra} Chakra"></div>` : ''}
+                    ${poseImageOrIcon(asana, 'table-asana-img', 50, imgTransform)}
+                    ${chakraCirclesHTML(asana)}
                 </div>
                 <span>${escapeHTML(typeof asana.getDisplayName === 'function' ?
                         asana.getDisplayName(useSanskritNames) :
@@ -8719,22 +9310,6 @@ function createAsanaRowHTML(asana, index, sectionName, sectionId, displayNumber,
         <td>${createSideDropdown(asana.side)}</td>
         <td>
             ${createBreathDropdown(asana.getBreathCue ? asana.getBreathCue() : '-')}
-            ${createMobileBreathDisplay(asana.getBreathCue ? asana.getBreathCue() : '-')}
-        </td>
-        <td>
-            <div class="more-options-container">
-                <button class="table-btn more-options-btn" data-pose-index="${index}" title="More options">⋮</button>
-                <div class="pose-dropdown" id="pose-dropdown-${index}">
-                    <div class="dropdown-item" data-action="add-above" data-pose-index="${index}">Add pose above</div>
-                    <div class="dropdown-item" data-action="add-below" data-pose-index="${index}">Add pose below</div>
-                    <div class="dropdown-item" data-action="swap" data-pose-index="${index}">Swap pose</div>
-                    <div class="dropdown-item" data-action="set-inhale" data-pose-index="${index}">Inhale</div>
-                    <div class="dropdown-item" data-action="set-exhale" data-pose-index="${index}">Exhale</div>
-                    <div class="dropdown-item" data-action="set-breathe-here" data-pose-index="${index}">Breathe Here</div>
-                    <div class="dropdown-item" data-action="set-no-breath" data-pose-index="${index}">Clear Breath</div>
-                    <div class="dropdown-item delete-item" data-action="delete" data-pose-index="${index}">Delete pose</div>
-                </div>
-            </div>
         </td>
     `;
 }
@@ -8829,6 +9404,7 @@ function createAsanaCardElement(asana, index, displayNumber) {
         <div class="card-image">
             <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" style="${imgTransform}"
                  onerror="this.onerror=null; this.src='images/webp/default-pose.webp';">
+            ${chakraCirclesHTML(asana)}
         </div>
         <div class="card-name">${typeof asana.getDisplayName === 'function' ?
                 asana.getDisplayName(useSanskritNames) :
@@ -8864,7 +9440,7 @@ function createSectionCardElement(sectionInfo) {
                 ${section.collapsed ? '▶' : '▼'} <span class="section-name-text" data-section-id="${section.id}">${section.name}</span>
             </span>
             <span class="section-info">${asanas.length} poses - ${sectionDurationDisplay}</span>
-            <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete section">⛓️‍💥</button>
+            <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete section"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 0 10h-3M9 17H6a5 5 0 0 1 0-10h3"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="18" y1="6" x2="6" y2="18" stroke="#ef4444" stroke-width="2.5"/></svg></button>
         </div>
     `;
     
@@ -8998,7 +9574,7 @@ function rebuildTableView() {
                 
                 // Create section header with checkbox and collapse/expand toggle
                 headerRow.innerHTML = `
-                    <td colspan="9" class="section-header-content">
+                    <td colspan="6" class="section-header-content">
                         <div class="section-header-flex">
                             <div class="section-checkbox">
                                 <input type="checkbox" class="section-select" 
@@ -9024,7 +9600,7 @@ function rebuildTableView() {
                                 </select>
                             </div>
                             <div class="section-remove">
-                                <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group">⛓️‍💥</button>
+                                <button class="table-btn remove-btn" onclick="deleteSection('${section.id}')" title="Delete group"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7h3a5 5 0 0 1 0 10h-3M9 17H6a5 5 0 0 1 0-10h3"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="18" y1="6" x2="6" y2="18" stroke="#ef4444" stroke-width="2.5"/></svg></button>
                             </div>
                         </div>
                     </td>
@@ -9248,19 +9824,8 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
         <td>
             <div class="table-asana">
                 <div style="position: relative; display: inline-block;">
-                    <img src="${asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`}" alt="${asana.name}" class="table-asana-img" style="${imgTransform}"
-                         onerror="this.onerror=null; this.src='images/webp/default-pose.webp'; this.style.display='flex'; this.style.justifyContent='center';
-                         this.style.alignItems='center'; this.style.background='#f5f5f5'; this.style.fontSize='24px';
-                         this.style.width='50px'; this.style.height='50px'; this.innerText='🧘‍♀️';">
-                    ${asana.chakra ? `<div class="chakra-indicator ${
-                        asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
-                        asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
-                        asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
-                        asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
-                        asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
-                        asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
-                        asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : ''
-                    }" title="${asana.chakra} Chakra"></div>` : ''}
+                    ${poseImageOrIcon(asana, 'table-asana-img', 50, imgTransform)}
+                    ${chakraCirclesHTML(asana)}
                 </div>
                 <span>${escapeHTML(typeof asana.getDisplayName === 'function' ?
                         asana.getDisplayName(useSanskritNames) :
@@ -9275,16 +9840,7 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
         </td>
         <td>${createSideDropdown(asana.side)}</td>
         <td>
-            <div class="add-pose-buttons">
-                <button class="table-btn add-above-btn" onclick="showAddPoseModal(${index}, 'above')" title="Add pose above">⬆️</button>
-                <button class="table-btn add-below-btn" onclick="showAddPoseModal(${index}, 'below')" title="Add pose below">⬇️</button>
-            </div>
-        </td>
-        <td>
-            <button class="table-btn swap-btn" onclick="showSwapPoseModal(${index})" title="Swap for another pose">⇆</button>
-        </td>
-        <td>
-            <button class="table-btn remove-btn" onclick="removePose(this)">×</button>
+            ${createBreathDropdown(asana.getBreathCue ? asana.getBreathCue() : '-')}
         </td>
     `;
     
@@ -9393,6 +9949,26 @@ function rebuildCardView() {
         card.setAttribute('draggable', 'false'); // Disable dragging
         card.setAttribute('data-index', index);
 
+        // Accept drag-and-drop from pose picker to replace this pose
+        card.addEventListener('dragover', function(e) {
+            if (e.dataTransfer.types.includes('application/x-pose-replace')) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+                card.classList.add('drop-target-highlight');
+            }
+        });
+        card.addEventListener('dragleave', function() {
+            card.classList.remove('drop-target-highlight');
+        });
+        card.addEventListener('drop', function(e) {
+            if (!e.dataTransfer.types.includes('application/x-pose-replace')) return;
+            e.preventDefault();
+            card.classList.remove('drop-target-highlight');
+            const poseData = JSON.parse(e.dataTransfer.getData('application/x-pose-replace'));
+            const targetIndex = parseInt(card.getAttribute('data-index'));
+            replacePoseAtIndex(targetIndex, poseData);
+        });
+
         // Add chakra data to the card for debugging
         if (asana.chakra) {
             card.setAttribute('data-chakra', asana.chakra);
@@ -9466,58 +10042,29 @@ function rebuildCardView() {
         imgContainer.style.position = 'relative';
         imgContainer.style.display = 'inline-block';
 
-        // Create image
-        const img = document.createElement('img');
-        img.className = 'flow-card-image';
-        img.src = asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`;
-        img.alt = asana.name;
-
-        // Allow click events to bubble up to the card
-        if (asana.side === "Left") {
-            img.style.transform = 'scaleX(-1)';
-        }
-
-        // Add error handling for the image
-        img.onerror = function() {
-            this.onerror = null;
-            this.src = 'images/webp/default-pose.webp';
-            this.style.display = 'flex';
-            this.style.justifyContent = 'center';
-            this.style.alignItems = 'center';
-            this.style.background = '#f5f5f5';
-            this.style.fontSize = '24px';
-            this.innerText = '🧘‍♀️';
-        };
-
-        // Add chakra indicator if the pose has chakra information
-        if (asana.chakra) {
-            const chakraIndicator = document.createElement('div');
-            chakraIndicator.className = 'chakra-indicator';
-
-            // Add the specific chakra class based on the chakra name
-            const chakraClass = asana.chakra.toLowerCase().includes('root') ? 'chakra-root' :
-                               asana.chakra.toLowerCase().includes('sacral') ? 'chakra-sacral' :
-                               asana.chakra.toLowerCase().includes('solar') ? 'chakra-solar' :
-                               asana.chakra.toLowerCase().includes('heart') ? 'chakra-heart' :
-                               asana.chakra.toLowerCase().includes('throat') ? 'chakra-throat' :
-                               asana.chakra.toLowerCase().includes('third') ? 'chakra-third-eye' :
-                               asana.chakra.toLowerCase().includes('crown') ? 'chakra-crown' : '';
-
-            if (chakraClass) {
-                chakraIndicator.classList.add(chakraClass);
-                chakraIndicator.title = `${asana.chakra} Chakra`;
-                imgContainer.appendChild(chakraIndicator);
+        // Create image or fallback icon
+        let img;
+        if (hasValidImage(asana)) {
+            img = document.createElement('img');
+            img.className = 'flow-card-image';
+            img.src = asana.image.startsWith('images/') ? asana.image : `images/webp/${asana.image}`;
+            img.alt = asana.name;
+            if (asana.side === "Left") {
+                img.style.transform = 'scaleX(-1)';
             }
+            img.onerror = function() {
+                this.outerHTML = poseFallbackIcon(80);
+            };
+        } else {
+            img = document.createElement('div');
+            img.innerHTML = poseFallbackIcon(80);
+            img = img.firstChild;
         }
 
         imgContainer.appendChild(img);
 
-        // Verify that the chakra indicator is added correctly
-        if (imgContainer.querySelector('.chakra-indicator')) {
-            console.log(`Added chakra indicator for ${asana.name}`);
-        } else if (asana.chakra) {
-            console.log(`Failed to add chakra indicator for ${asana.name} with chakra ${asana.chakra}`);
-        }
+        // Add chakra circles (top-right)
+        imgContainer.insertAdjacentHTML('beforeend', chakraCirclesHTML(asana));
 
         // Create info container
         const infoDiv = document.createElement('div');
@@ -9644,14 +10191,26 @@ function rebuildCardView() {
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'flow-card-actions';
 
+        // Create side badge (iPad-style colored circle)
+        const sideBadge = document.createElement('div');
+        sideBadge.className = 'flow-card-side-badge';
+        const sideInitial = (asana.side === "Center" || asana.side === "Front") ? "F" :
+                           asana.side === "Back" ? "B" :
+                           asana.side === "Right" ? "R" :
+                           asana.side === "Left" ? "L" : "F";
+        sideBadge.textContent = sideInitial;
+        const sideColors = { F: '#007aff', B: '#ff9500', R: '#34c759', L: '#af52de' };
+        sideBadge.style.backgroundColor = sideColors[sideInitial] || '#007aff';
+
         // Add all elements to the card
         card.appendChild(numberDiv);
         card.appendChild(checkbox);
+        card.appendChild(sideBadge);
         card.appendChild(imgContainer);
         card.appendChild(infoDiv);
         card.appendChild(actionsDiv);
-        card.appendChild(swapBtn); // Add the swap button directly to the card
-        card.appendChild(removeBtn); // Add the remove button directly to the card
+        card.appendChild(swapBtn);
+        card.appendChild(removeBtn);
 
         // Add the card to the container
         cardsContainer.appendChild(card);
@@ -9939,6 +10498,13 @@ function initializeApp() {
 
         // Set up drag and drop
         setupDragAndDrop();
+
+        // Initialize panel resize drag handles
+        initPanelResize();
+        initMobilePanelResize();
+
+        // Initialize right-click context menu for poses
+        setupPoseContextMenu();
         
         // Update date
         updateDate();
@@ -10003,6 +10569,21 @@ function initializeApp() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM Loaded - Initializing app with Sanskrit names:", useSanskritNames);
     initializeApp();
+});
+
+// Browser back button navigation
+history.replaceState({ screen: 'homeScreen' }, '', '');
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.screen) {
+        window._popstateNavigating = true;
+        changeScreen(event.state.screen);
+        window._popstateNavigating = false;
+    } else {
+        // Default to home screen
+        window._popstateNavigating = true;
+        changeScreen('homeScreen');
+        window._popstateNavigating = false;
+    }
 });
 
 // Function to toggle select all checkboxes
@@ -10869,32 +11450,28 @@ function addMultiplePosesToSection() {
 }
 
 function updateActionButtons() {
+    const cutBtn = document.getElementById('cutSelectedBtn');
     const copyBtn = document.getElementById('copySelectedBtn');
     const pasteBtn = document.getElementById('pasteSelectedBtn');
     const deleteBtn = document.getElementById('deleteSelectedBtn');
     const saveSequenceBtn = document.getElementById('saveSequenceBtn');
     const addToSectionBtn = document.getElementById('addToSectionBtn');
     const changeSideBtn = document.getElementById('changeSideBtn');
-    const setInhaleBtn = document.getElementById('setInhaleBtn');
-    const setExhaleBtn = document.getElementById('setExhaleBtn');
-    const setBreatheHereBtn = document.getElementById('setBreatheHereBtn');
-    const setNoBreathBtn = document.getElementById('setNoBreathBtn');
+    const setBreathBtn = document.getElementById('setBreathBtn');
     const reverseBtn = document.getElementById('reverseOrderBtn');
-    
+
     const selectedPoses = getSelectedAsanas();
     const hasSelectedPoses = selectedPoses.length > 0;
     const hasCopiedPoses = copiedPoses.length > 0;
-    
+
+    if (cutBtn) cutBtn.disabled = !hasSelectedPoses;
     if (copyBtn) copyBtn.disabled = !hasSelectedPoses;
     if (pasteBtn) pasteBtn.disabled = !hasCopiedPoses;
     if (deleteBtn) deleteBtn.disabled = !hasSelectedPoses;
     if (saveSequenceBtn) saveSequenceBtn.disabled = !hasSelectedPoses;
     if (addToSectionBtn) addToSectionBtn.disabled = !hasSelectedPoses;
     if (changeSideBtn) changeSideBtn.disabled = !hasSelectedPoses;
-    if (setInhaleBtn) setInhaleBtn.disabled = !hasSelectedPoses;
-    if (setExhaleBtn) setExhaleBtn.disabled = !hasSelectedPoses;
-    if (setBreatheHereBtn) setBreatheHereBtn.disabled = !hasSelectedPoses;
-    if (setNoBreathBtn) setNoBreathBtn.disabled = !hasSelectedPoses;
+    if (setBreathBtn) setBreathBtn.disabled = !hasSelectedPoses;
     const changeDurationBtn = document.getElementById('changeDurationBtn');
     if (changeDurationBtn) changeDurationBtn.disabled = !hasSelectedPoses;
     if (reverseBtn) reverseBtn.disabled = !hasSelectedPoses;
@@ -10916,13 +11493,13 @@ function copySelectedPoses() {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || "",
+            asana.chakras || asana.chakra || "",
             asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
     });
-    
+
     // Update button states
     updateActionButtons();
     
@@ -10945,13 +11522,13 @@ function pasteSelectedPoses() {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || "",
+            asana.chakras || asana.chakra || "",
             asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
     });
-    
+
     // Add poses based on table ordering
     if (tableInDescendingOrder) {
         // When table is in descending order (largest to smallest),
@@ -11035,7 +11612,256 @@ function deleteSelectedPoses() {
     autoSaveFlow();
 }
 
-// Function to reverse the order of selected poses
+// Cut selected poses (copy + delete)
+function cutSelectedPoses() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+    copySelectedPoses();
+    deleteSelectedPoses();
+    showToastNotification(`Cut ${selectedPoses.length} pose${selectedPoses.length !== 1 ? 's' : ''}`);
+}
+
+// Show breath picker modal
+function showBreathPicker() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) {
+        showToastNotification('Please select poses first');
+        return;
+    }
+    document.getElementById('breathPickerModal').style.display = 'flex';
+}
+
+function closeBreathPicker() {
+    document.getElementById('breathPickerModal').style.display = 'none';
+}
+
+function applyBreathFromPicker(breathCue) {
+    closeBreathPicker();
+    setSelectedBreath(breathCue);
+}
+
+// Delete confirmation
+function confirmDeleteSelectedPoses() {
+    const selectedPoses = getSelectedAsanas();
+    if (selectedPoses.length === 0) return;
+    const msg = document.getElementById('deleteConfirmMsg');
+    if (msg) msg.textContent = `Are you sure you want to delete ${selectedPoses.length} selected pose${selectedPoses.length !== 1 ? 's' : ''}?`;
+    document.getElementById('deleteConfirmModal').style.display = 'flex';
+}
+
+function closeDeleteConfirm() {
+    document.getElementById('deleteConfirmModal').style.display = 'none';
+}
+
+function executeDeleteSelectedPoses() {
+    closeDeleteConfirm();
+    deleteSelectedPoses();
+}
+
+// Panel resize drag handle
+function initPanelResize() {
+    const handle = document.getElementById('panelResizeHandle');
+    const rightPanel = document.getElementById('buildRightPanel');
+    if (!handle || !rightPanel) return;
+
+    let isResizing = false;
+    let startX, startWidth;
+
+    handle.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = rightPanel.offsetWidth;
+        rightPanel.classList.add('resizing');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isResizing) return;
+        const diff = startX - e.clientX;
+        const parentWidth = rightPanel.parentElement?.offsetWidth || window.innerWidth;
+        const maxWidth = Math.min(800, parentWidth - 480);
+        const newWidth = Math.max(250, Math.min(maxWidth, startWidth + diff));
+        rightPanel.style.width = newWidth + 'px';
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing) {
+            isResizing = false;
+            rightPanel.classList.remove('resizing');
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    });
+
+    // Touch support
+    handle.addEventListener('touchstart', (e) => {
+        isResizing = true;
+        startX = e.touches[0].clientX;
+        startWidth = rightPanel.offsetWidth;
+        rightPanel.classList.add('resizing');
+        e.preventDefault();
+    });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!isResizing) return;
+        const diff = startX - e.touches[0].clientX;
+        const parentWidth = rightPanel.parentElement?.offsetWidth || window.innerWidth;
+        const maxWidth = Math.min(800, parentWidth - 480);
+        const newWidth = Math.max(250, Math.min(maxWidth, startWidth + diff));
+        rightPanel.style.width = newWidth + 'px';
+    });
+
+    document.addEventListener('touchend', () => {
+        if (isResizing) {
+            isResizing = false;
+            rightPanel.classList.remove('resizing');
+        }
+    });
+}
+
+// Mobile bottom-sheet resize handle
+function initMobilePanelResize() {
+    const handle = document.getElementById('mobilePanelHandle');
+    const panel = document.getElementById('buildRightPanel');
+    if (!handle || !panel) return;
+
+    let isDragging = false;
+    let startY, startHeight;
+
+    function onStart(clientY) {
+        isDragging = true;
+        startY = clientY;
+        startHeight = panel.offsetHeight;
+        panel.style.transition = 'none';
+        handle.style.cursor = 'grabbing';
+    }
+
+    function onMove(clientY) {
+        if (!isDragging) return;
+        const diff = startY - clientY;
+        const maxH = window.innerHeight * 0.8;
+        const newH = Math.max(60, Math.min(maxH, startHeight + diff));
+        panel.style.height = newH + 'px';
+    }
+
+    function onEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        panel.style.transition = '';
+        handle.style.cursor = 'grab';
+
+        // If dragged below 100px, animate closed
+        if (panel.offsetHeight < 100) {
+            panel.style.transition = 'transform 0.3s ease, opacity 0.3s ease, height 0.3s ease';
+            panel.style.height = '';
+            toggleAsanaPicker();
+        }
+    }
+
+    handle.addEventListener('touchstart', (e) => {
+        onStart(e.touches[0].clientY);
+        e.preventDefault();
+    }, { passive: false });
+    document.addEventListener('touchmove', (e) => {
+        if (isDragging) {
+            onMove(e.touches[0].clientY);
+            e.preventDefault();
+        }
+    }, { passive: false });
+    document.addEventListener('touchend', onEnd);
+
+    handle.addEventListener('mousedown', (e) => {
+        onStart(e.clientY);
+        e.preventDefault();
+    });
+    document.addEventListener('mousemove', (e) => { if (isDragging) onMove(e.clientY); });
+    document.addEventListener('mouseup', onEnd);
+}
+
+// Right-click context menu for pose rows
+let contextMenuPoseIndex = null;
+
+function setupPoseContextMenu() {
+    const table = document.getElementById('flowTable');
+    if (!table) return;
+
+    table.addEventListener('contextmenu', function(e) {
+        const row = e.target.closest('tr[data-index]');
+        if (!row) return;
+        e.preventDefault();
+
+        contextMenuPoseIndex = parseInt(row.getAttribute('data-index'));
+        const menu = document.getElementById('poseContextMenu');
+        if (!menu) return;
+
+        menu.style.display = 'block';
+        // Position at cursor, keep within viewport
+        let x = e.clientX;
+        let y = e.clientY;
+        const menuRect = menu.getBoundingClientRect();
+        if (x + menuRect.width > window.innerWidth) x = window.innerWidth - menuRect.width - 8;
+        if (y + menuRect.height > window.innerHeight) y = window.innerHeight - menuRect.height - 8;
+        menu.style.left = x + 'px';
+        menu.style.top = y + 'px';
+    });
+
+    // Close on click anywhere
+    document.addEventListener('click', function() {
+        const menu = document.getElementById('poseContextMenu');
+        if (menu) menu.style.display = 'none';
+    });
+
+    // Handle context menu item clicks
+    const menu = document.getElementById('poseContextMenu');
+    if (menu) {
+        menu.addEventListener('click', function(e) {
+            const item = e.target.closest('.context-menu-item');
+            if (!item || contextMenuPoseIndex === null) return;
+            const action = item.getAttribute('data-action');
+            const idx = contextMenuPoseIndex;
+            menu.style.display = 'none';
+
+            switch(action) {
+                case 'add-above': showAddPoseModal(idx, 'above'); break;
+                case 'add-below': showAddPoseModal(idx, 'below'); break;
+                case 'swap': showSwapPoseModal(idx); break;
+                case 'set-inhale': setSinglePoseBreath(idx, 'Inhale'); break;
+                case 'set-exhale': setSinglePoseBreath(idx, 'Exhale'); break;
+                case 'set-breathe-here': setSinglePoseBreath(idx, 'Breathe Here'); break;
+                case 'set-no-breath': setSinglePoseBreath(idx, '-'); break;
+                case 'delete': removePoseByIndex(idx); break;
+            }
+            contextMenuPoseIndex = null;
+        });
+    }
+}
+
+function setSinglePoseBreath(index, breathCue) {
+    if (editingFlow && editingFlow.asanas[index]) {
+        editingFlow.asanas[index].setBreathCue(breathCue);
+        rebuildFlowTable();
+        autoSaveFlow();
+        showToastNotification(`Set breath to ${breathCue === '-' ? 'none' : breathCue}`);
+    }
+}
+
+function removePoseByIndex(index) {
+    if (!editingFlow || !editingFlow.asanas[index]) return;
+    editingFlow.asanas.splice(index, 1);
+    // Update section references
+    editingFlow.sections.forEach(section => {
+        section.asanaIds = section.asanaIds
+            .filter(id => id !== index)
+            .map(id => id > index ? id - 1 : id);
+    });
+    rebuildFlowTable();
+    updateFlowDuration();
+    autoSaveFlow();
+    showToastNotification('Pose removed');
+}
+
 function reverseSelectedPoses() {
     const selectedPoses = getSelectedAsanas();
     if (selectedPoses.length === 0) return;
@@ -11427,7 +12253,7 @@ function saveSequence() {
                 [...asana.tags],
                 [...asana.transitionsAsana],
                 asana.sanskrit,
-                asana.chakra || "",
+                asana.chakras || asana.chakra || "",
                 asana.breathCue || "-"
             );
             newAsana.setDuration(asana.duration);
@@ -11501,7 +12327,7 @@ function saveSequence() {
                 this.style.alignItems = 'center';
                 this.style.background = '#f5f5f5';
                 this.style.fontSize = '20px';
-                this.innerText = '🧘‍♀️';
+                this.innerHTML = '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#999" stroke-width="1.5"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg>';
             };
             
             imageContainer.appendChild(previewImg);
@@ -11702,7 +12528,7 @@ function editSequence(sequenceId) {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || "",
+            asana.chakras || asana.chakra || "",
             asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
@@ -11734,7 +12560,7 @@ function editSequence(sequenceId) {
     rebuildFlowTable();
     
     // Add a save button event listener to save the edited sequence
-    const saveBtn = document.querySelector('.save-flow-btn');
+    const saveBtn = document.querySelector('.build-done-btn') || document.querySelector('.save-flow-btn');
     if (saveBtn) {
         // Store original onclick
         const originalOnClick = saveBtn.onclick;
@@ -11785,13 +12611,13 @@ function updateEditedSequence(sequenceId, originalName) {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || "",
+            asana.chakras || asana.chakra || "",
             asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
         return newAsana;
     });
-    
+
     // Save back to localStorage
     localStorage.setItem('sequences', JSON.stringify(sequences));
     
@@ -11824,7 +12650,7 @@ function loadSequence(sequenceId) {
             [...asana.tags],
             [...asana.transitionsAsana],
             asana.sanskrit,
-            asana.chakra || "",
+            asana.chakras || asana.chakra || "",
             asana.breathCue || "-"
         );
         newAsana.setDuration(asana.duration);
@@ -12183,14 +13009,7 @@ function populateSwapPoseList(searchTerm = '') {
         img.alt = asana.name;
         img.className = 'swap-pose-img';
         img.onerror = function() {
-            this.onerror = null;
-            this.src = 'images/webp/default-pose.webp';
-            this.style.display = 'flex';
-            this.style.justifyContent = 'center';
-            this.style.alignItems = 'center';
-            this.style.background = '#f5f5f5';
-            this.style.fontSize = '20px';
-            this.innerText = '🧘‍♀️';
+            this.outerHTML = poseFallbackIcon(40);
         };
         
         // Create name
@@ -12213,11 +13032,35 @@ function populateSwapPoseList(searchTerm = '') {
     
     // Show message if no poses found
     if (filteredAsanas.length === 0) {
-        poseList.innerHTML = '<div class="no-matches">No poses found</div>';
+        poseList.innerHTML = '<div class="no-matches-empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>No poses found</p></div>';
     }
 }
 
 // Function to swap the pose
+// Replace a pose at a specific index via drag-and-drop from pose picker
+function replacePoseAtIndex(targetIndex, poseData) {
+    if (targetIndex < 0 || targetIndex >= editingFlow.asanas.length) return;
+    const oldAsana = editingFlow.asanas[targetIndex];
+    const newAsana = new YogaAsana(
+        poseData.name,
+        oldAsana.side, // preserve side
+        poseData.image,
+        poseData.description,
+        poseData.difficulty,
+        poseData.tags || [],
+        poseData.transitionsAsana || [],
+        poseData.sanskrit || '',
+        poseData.chakras || poseData.chakra || '',
+        oldAsana.breathCue || '-'
+    );
+    newAsana.setDuration(oldAsana.duration || 7);
+    editingFlow.asanas[targetIndex] = newAsana;
+    rebuildFlowTable();
+    rebuildCardViewOptimized();
+    updateFlowDuration();
+    showToastNotification(`Replaced with ${poseData.name}`);
+}
+
 function swapPose(newAsana) {
     if (swapPoseIndex === null || swapPoseIndex < 0) {
         console.error('Invalid swap pose index');
@@ -12246,7 +13089,7 @@ function swapPose(newAsana) {
         [...(newAsana.tags || [])],
         [...(newAsana.transitionsAsana || [])],
         newAsana.sanskrit,
-        newAsana.chakra || "",
+        newAsana.chakras && newAsana.chakras.length > 0 ? [...newAsana.chakras] : (newAsana.chakra || ""),
         "-"
     );
     newPoseAsana.setDuration(7); // Default duration for new poses
@@ -12358,6 +13201,287 @@ function swapPose(newAsana) {
     }
 }
 
+
+// ─── BUILD SCREEN ANALYTICS PANEL ────────────────────────────────────────────
+
+let buildAnalyticsOpen = false;
+let buildChakraView = 'bars';
+
+function toggleBuildAnalytics() {
+    const panel = document.getElementById('buildAnalyticsPanel');
+    const btn = document.getElementById('analyticsToggleBtn');
+    const actionsBar = document.querySelector('.selected-actions');
+    if (!panel) return;
+
+    buildAnalyticsOpen = !buildAnalyticsOpen;
+    panel.classList.toggle('collapsed', !buildAnalyticsOpen);
+    if (btn) btn.classList.toggle('active', buildAnalyticsOpen);
+
+    if (buildAnalyticsOpen) {
+        // Hide actions bar while analytics is open
+        if (actionsBar) actionsBar.style.display = 'none';
+        // Close pose picker panel if open
+        const rightPanel = document.getElementById('buildRightPanel');
+        const reopenBtn = document.getElementById('reopenPanelBtn');
+        if (rightPanel && !rightPanel.classList.contains('collapsed')) {
+            rightPanel.classList.add('collapsed');
+            if (reopenBtn) reopenBtn.classList.remove('active');
+        }
+        renderBuildAnalytics();
+    } else {
+        // Show actions bar again
+        if (actionsBar) actionsBar.style.display = '';
+    }
+}
+
+function renderBuildAnalytics() {
+    if (!buildAnalyticsOpen || !editingFlow) return;
+
+    const asanas = editingFlow.asanas || [];
+    const emptyEl = document.getElementById('buildAnalyticsEmpty');
+
+    if (asanas.length === 0) {
+        if (emptyEl) emptyEl.style.display = 'flex';
+        // Clear all sections
+        const ids = ['buildAnalysisSummary','buildAnalysisSequenceStrip','buildAnalysisDifficultyLegend',
+                     'buildAnalysisDifficultyBars','buildAnalysisSideBalance','buildAnalysisChakraBars'];
+        ids.forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
+        const peakEl = document.getElementById('buildAnalysisPeakPose');
+        if (peakEl) peakEl.style.display = 'none';
+        const bodyBlock = document.getElementById('buildAnalysisBodyMapBlock');
+        if (bodyBlock) bodyBlock.style.display = 'none';
+        return;
+    }
+
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    const totalSecs = asanas.reduce((s, a) => s + (a.duration || 0), 0);
+
+    // ── Summary
+    const levels = [...new Set(asanas.map(a => a.difficulty || 'Beginner'))];
+    const summaryEl = document.getElementById('buildAnalysisSummary');
+    if (summaryEl) {
+        summaryEl.innerHTML = `
+            <div class="analysis-stat-cell">
+                <div class="analysis-stat-val">${asanas.length}</div>
+                <div class="analysis-stat-lbl">Poses</div>
+            </div>
+            <div class="analysis-stat-cell">
+                <div class="analysis-stat-val">${displayFlowDuration(totalSecs)}</div>
+                <div class="analysis-stat-lbl">Duration</div>
+            </div>
+            <div class="analysis-stat-cell">
+                <div class="analysis-stat-val">${levels.length}</div>
+                <div class="analysis-stat-lbl">Level${levels.length === 1 ? '' : 's'}</div>
+            </div>
+        `;
+    }
+
+    // ── Peak Pose
+    const peakPose = computeAnalysisPeakPose(asanas);
+    const peakEl = document.getElementById('buildAnalysisPeakPose');
+    if (peakEl) {
+        if (peakPose) {
+            const peakIdx = asanas.findIndex(a => a === peakPose);
+            const dc = DIFFICULTY_COLORS[peakPose.difficulty] || '#888';
+            const chakraC = CHAKRA_COLORS[peakPose.chakra] || null;
+            const poseName = peakPose.english || peakPose.name || 'Unknown';
+            peakEl.style.display = 'block';
+            peakEl.innerHTML = `
+                <div class="analysis-peak-header">
+                    <div class="analysis-peak-crown">👑</div>
+                    <div><h3>Peak Pose</h3><p>The apex of this flow</p></div>
+                    <div class="analysis-position-badge">#${peakIdx + 1} of ${asanas.length}</div>
+                </div>
+                <div class="analysis-peak-card">
+                    <div class="analysis-peak-bar" style="background:${dc}"></div>
+                    <div>
+                        <div class="analysis-peak-name">${escapeHTML(poseName)}</div>
+                        ${peakPose.sanskrit ? `<div class="analysis-peak-sanskrit">${escapeHTML(peakPose.sanskrit)}</div>` : ''}
+                        <div class="analysis-peak-meta">
+                            <span class="analysis-diff-chip" style="color:${dc};background:${dc}20">${escapeHTML(peakPose.difficulty || 'Beginner')}</span>
+                            <span class="analysis-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${peakPose.duration}s</span>
+                            ${peakPose.chakra && peakPose.chakra !== 'None' && chakraC
+                                ? `<span class="analysis-meta-item"><span style="color:${chakraC}">●</span> ${escapeHTML(peakPose.chakra)}</span>`
+                                : ''}
+                        </div>
+                        ${(peakPose.tags||[]).length ? `<div class="analysis-tags">${peakPose.tags.map(t=>`<span class="analysis-tag">${escapeHTML(t)}</span>`).join('')}</div>` : ''}
+                    </div>
+                </div>`;
+        } else {
+            peakEl.style.display = 'none';
+        }
+    }
+
+    // ── Dynamic Breakdown
+    const stripEl = document.getElementById('buildAnalysisSequenceStrip');
+    if (stripEl) {
+        stripEl.innerHTML = asanas.map(a => {
+            const c = DIFFICULTY_COLORS[a.difficulty || 'Beginner'] || '#888';
+            return `<div class="analysis-strip-seg" style="background:${c}"></div>`;
+        }).join('');
+    }
+
+    const diffGroups = {};
+    asanas.forEach(a => {
+        const d = a.difficulty || 'Beginner';
+        if (!diffGroups[d]) diffGroups[d] = { count:0, secs:0 };
+        diffGroups[d].count++;
+        diffGroups[d].secs += a.duration || 0;
+    });
+    const legendEl = document.getElementById('buildAnalysisDifficultyLegend');
+    if (legendEl) {
+        legendEl.innerHTML = Object.entries(diffGroups).map(([d,v]) =>
+            `<span class="analysis-legend-dot" style="background:${DIFFICULTY_COLORS[d]||'#888'}"></span><span class="analysis-legend-text">${escapeHTML(d)} · ${v.count}</span>`
+        ).join('');
+    }
+    const maxDiffSecs = Math.max(...Object.values(diffGroups).map(v=>v.secs), 1);
+    const diffBarsEl = document.getElementById('buildAnalysisDifficultyBars');
+    if (diffBarsEl) {
+        diffBarsEl.innerHTML = Object.entries(diffGroups).map(([d,v]) => {
+            const c = DIFFICULTY_COLORS[d] || '#888';
+            const pct = Math.round(v.secs / maxDiffSecs * 100);
+            return `<div class="analysis-bar-row">
+                <div class="analysis-bar-label">${escapeHTML(d)}</div>
+                <div class="analysis-bar-track"><div class="analysis-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+                <div class="analysis-bar-value">${(v.secs/60).toFixed(1)}m</div>
+            </div>`;
+        }).join('');
+    }
+
+    // ── Side Balance
+    const sideGroups = {};
+    asanas.forEach(a => {
+        const raw = (a.side || 'Front').toLowerCase();
+        const key = raw === 'left' ? 'Left' : raw === 'right' ? 'Right'
+                  : raw === 'back' ? 'Back' : (raw === 'both' || raw === 'center') ? 'Center' : 'Front';
+        if (!sideGroups[key]) sideGroups[key] = { count:0, secs:0 };
+        sideGroups[key].count++;
+        sideGroups[key].secs += a.duration || 0;
+    });
+    const leftSecs  = (sideGroups['Left']  || {}).secs || 0;
+    const rightSecs = (sideGroups['Right'] || {}).secs || 0;
+    const lateral   = leftSecs + rightSecs;
+    const SIDE_COLORS_BUILD = { Left:'#4299e1', Right:'#ed8936', Front:'#9f7aea', Center:'#319795', Back:'#e53e3e' };
+    let sideHTML = '';
+    if (lateral > 0) {
+        const lp = Math.round(leftSecs / lateral * 100);
+        const rp = 100 - lp;
+        sideHTML += `
+            <div class="analysis-side-label-row">Left vs Right</div>
+            <div class="analysis-side-bar-track">
+                <div style="background:#4299e1;width:${lp}%;height:100%;display:inline-block;border-radius:6px 0 0 6px;"></div>
+                <div style="background:#ed8936;width:${rp}%;height:100%;display:inline-block;border-radius:0 6px 6px 0;"></div>
+            </div>
+            <div class="analysis-side-labels">
+                <span><span style="color:#4299e1">●</span> Left ${lp}%</span>
+                <span><span style="color:#ed8936">●</span> Right ${rp}%</span>
+            </div>`;
+    }
+    const maxSideSecs = Math.max(...Object.values(sideGroups).map(v=>v.secs), 1);
+    sideHTML += Object.entries(sideGroups).map(([s,v]) => {
+        const c = SIDE_COLORS_BUILD[s] || '#888';
+        const pct = Math.round(v.secs / maxSideSecs * 100);
+        return `<div class="analysis-bar-row">
+            <div class="analysis-bar-label" style="color:${c}">${s}</div>
+            <div class="analysis-bar-track"><div class="analysis-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+            <div class="analysis-bar-value">${v.count} pose${v.count===1?'':'s'}</div>
+        </div>`;
+    }).join('');
+    const sideEl = document.getElementById('buildAnalysisSideBalance');
+    if (sideEl) sideEl.innerHTML = sideHTML;
+
+    // ── Body Heat Map
+    const activations = computeAnalysisBodyActivations(asanas, totalSecs);
+    const bodyBlock = document.getElementById('buildAnalysisBodyMapBlock');
+    if (bodyBlock) {
+        if (Object.keys(activations).length > 0) {
+            bodyBlock.style.display = 'block';
+            const canvas = document.getElementById('buildAnalysisBodyCanvas');
+            const BODY_W = 160;
+            const BODY_H = Math.round(BODY_W * 580 / 425);
+            canvas.width = BODY_W;
+            canvas.height = BODY_H;
+            canvas.style.width = BODY_W + 'px';
+            canvas.style.height = BODY_H + 'px';
+            drawAnalysisBodyHeatMap(canvas, activations);
+
+            const grouped = {};
+            Object.entries(activations).forEach(([zone, lvl]) => {
+                if (lvl < 0.05) return;
+                const name = ZONE_DISPLAY_NAME[zone] || zone;
+                if (!grouped[name] || grouped[name] < lvl) grouped[name] = lvl;
+            });
+            const top6 = Object.entries(grouped).sort((a,b)=>b[1]-a[1]).slice(0, 6);
+            const bodyLegend = document.getElementById('buildAnalysisBodyLegend');
+            if (bodyLegend) {
+                bodyLegend.innerHTML = top6.map(([name, lvl]) => {
+                    const c = analysisHeatColor(lvl);
+                    return `<div class="analysis-legend-entry">
+                        <span class="analysis-legend-dot-sm" style="background:${c}"></span>
+                        <span class="analysis-legend-name">${name}</span>
+                        <span class="analysis-legend-pct">${Math.round(lvl * 100)}%</span>
+                    </div>`;
+                }).join('');
+            }
+        } else {
+            bodyBlock.style.display = 'none';
+        }
+    }
+
+    // ── Chakra Distribution
+    const chakraGroups = {};
+    asanas.forEach(a => {
+        const c = a.chakra || 'None';
+        if (!chakraGroups[c]) chakraGroups[c] = { count:0, secs:0 };
+        chakraGroups[c].count++;
+        chakraGroups[c].secs += a.duration || 0;
+    });
+    window._buildChakraGroups = chakraGroups;
+    window._buildChakraTotalSecs = totalSecs;
+    setBuildChakraView(buildChakraView);
+}
+
+function setBuildChakraView(mode) {
+    buildChakraView = mode;
+    const barsBtn = document.getElementById('buildChakraBarsBtn');
+    const heptBtn = document.getElementById('buildChakraHeptBtn');
+    if (barsBtn) barsBtn.classList.toggle('active', mode === 'bars');
+    if (heptBtn) heptBtn.classList.toggle('active', mode === 'heptagon');
+
+    const barsEl   = document.getElementById('buildAnalysisChakraBars');
+    const canvas   = document.getElementById('buildAnalysisChakraCanvas');
+    const groups   = window._buildChakraGroups || {};
+    const totalSecs = window._buildChakraTotalSecs || 1;
+    const withChakra = Object.entries(groups).filter(([c]) => c !== 'None');
+    const noEntry = groups['None'];
+
+    if (mode === 'bars') {
+        if (canvas) canvas.style.display = 'none';
+        if (!barsEl) return;
+        if (!withChakra.length) {
+            barsEl.innerHTML = '<p class="analysis-empty-note">No chakra data assigned to poses in this flow.</p>';
+            return;
+        }
+        const maxSecs = Math.max(...withChakra.map(([,v]) => v.secs), 1);
+        barsEl.innerHTML = [...withChakra].sort((a,b) => b[1].secs - a[1].secs).map(([chakra, v]) => {
+            const c    = CHAKRA_COLORS[chakra] || '#888';
+            const pct  = Math.round(v.secs / maxSecs * 100);
+            const tPct = Math.round(v.secs / totalSecs * 100);
+            return `<div class="analysis-bar-row">
+                <div class="analysis-bar-label" style="color:${c}">${chakra}</div>
+                <div class="analysis-bar-track"><div class="analysis-bar-fill" style="width:${pct}%;background:${c}"></div></div>
+                <div class="analysis-bar-value">${v.count} pose${v.count===1?'':'s'} · ${tPct}%</div>
+            </div>`;
+        }).join('');
+        if (noEntry) barsEl.innerHTML += `<p class="analysis-empty-note" style="margin-top:8px">⚬ ${noEntry.count} unassigned</p>`;
+    } else {
+        if (barsEl) barsEl.innerHTML = '';
+        if (!canvas) return;
+        canvas.style.display = 'block';
+        drawAnalysisChakraHeptagon(canvas, groups, totalSecs);
+    }
+}
 
 // ─── FLOW ANALYSIS ────────────────────────────────────────────────────────────
 
@@ -12515,7 +13639,7 @@ function renderFlowAnalysis(flow) {
                     ${peakPose.sanskrit ? `<div class="analysis-peak-sanskrit">${escapeHTML(peakPose.sanskrit)}</div>` : ''}
                     <div class="analysis-peak-meta">
                         <span class="analysis-diff-chip" style="color:${dc};background:${dc}20">${escapeHTML(peakPose.difficulty || 'Beginner')}</span>
-                        <span class="analysis-meta-item">⏱ ${peakPose.duration}s</span>
+                        <span class="analysis-meta-item"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> ${peakPose.duration}s</span>
                         ${peakPose.chakra && peakPose.chakra !== 'None' && chakraC
                             ? `<span class="analysis-meta-item"><span style="color:${chakraC}">●</span> ${escapeHTML(peakPose.chakra)}</span>`
                             : ''}
@@ -12712,9 +13836,8 @@ function drawAnalysisBodyHeatMap(canvas, activations) {
     const W   = canvas.width;
     const H   = canvas.height;
 
-    // ── 1. White base ────────────────────────────────────────────────────
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, W, H);
+    // ── 1. Transparent base ────────────────────────────────────────────────────
+    ctx.clearRect(0, 0, W, H);
 
     // ── 2. Smooth radial heat blobs — coolest first (painter's algorithm) ─
     // Gradients fade from solid heat colour at centre → white at the edge,
@@ -12735,7 +13858,7 @@ function drawAnalysisBodyHeatMap(canvas, activations) {
         grad.addColorStop(0.00, `rgba(${r},${g},${b},1.00)`);
         grad.addColorStop(0.40, `rgba(${r},${g},${b},0.82)`);
         grad.addColorStop(0.78, `rgba(${r},${g},${b},0.18)`);
-        grad.addColorStop(1.00, 'rgba(255,255,255,1)');
+        grad.addColorStop(1.00, 'rgba(255,255,255,0)');
 
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, Math.PI * 2);
@@ -12876,5 +13999,1617 @@ function drawAnalysisChakraHeptagon(canvas, groups, totalSecs) {
         }
     });
 }
+
+// ==========================================
+// Phase 1: Enhanced Settings Functions
+// ==========================================
+
+function updateSettingPoseDuration(val) {
+    defaultPoseDuration = parseInt(val) || 7;
+    localStorage.setItem('defaultPoseDuration', defaultPoseDuration);
+    const slider = document.getElementById('settings-poseDuration');
+    const input = document.getElementById('settings-poseDuration-val');
+    if (slider && slider.value != defaultPoseDuration) slider.value = defaultPoseDuration;
+    if (input && input.value != defaultPoseDuration) input.value = defaultPoseDuration;
+}
+
+function updateSettingCountdown(val) {
+    countdownDuration = parseInt(val) || 3;
+    localStorage.setItem('countdownDuration', countdownDuration);
+    const slider = document.getElementById('settings-countdown');
+    const input = document.getElementById('settings-countdown-val');
+    if (slider && slider.value != countdownDuration) slider.value = countdownDuration;
+    if (input && input.value != countdownDuration) input.value = countdownDuration;
+}
+
+function updateSettingGuideCues(checked) {
+    guideCuesEnabled = checked;
+    localStorage.setItem('guideCuesEnabled', checked);
+    const row = document.getElementById('guideCueFreqRow');
+    if (row) row.style.display = checked ? 'flex' : 'none';
+}
+
+function updateSettingGuideCueFreq(val) {
+    guideCueFrequency = parseInt(val);
+    localStorage.setItem('guideCueFrequency', guideCueFrequency);
+    const el = document.getElementById('settings-guideCueFreq-val');
+    if (el) el.textContent = guideCueFrequency + '%';
+}
+
+function updateSettingSpokenBreath(checked) {
+    spokenBreathCuesEnabled = checked;
+    localStorage.setItem('spokenBreathCuesEnabled', checked);
+    // Sync breathwork screen toggle
+    const breathToggle = document.getElementById('breathVoiceCueToggle');
+    if (breathToggle) breathToggle.checked = checked;
+}
+
+function toggleBreathVoiceCues(checked) {
+    spokenBreathCuesEnabled = checked;
+    speechEnabled = checked; // Also enable speech so the cues work
+    localStorage.setItem('spokenBreathCuesEnabled', checked);
+    if (checked) localStorage.setItem('speechEnabled', 'true');
+    // Sync settings toggle
+    const settingsToggle = document.getElementById('settings-spokenBreath');
+    if (settingsToggle) settingsToggle.checked = checked;
+}
+
+function updateSettingEndChime(checked) {
+    endChimeEnabled = checked;
+    localStorage.setItem('endChimeEnabled', checked);
+}
+
+function updateSettingSuggestedPoses(checked) {
+    suggestedPosesEnabled = checked;
+    localStorage.setItem('suggestedPosesEnabled', checked);
+}
+
+function updateSettingReminder(checked) {
+    reminderEnabled = checked;
+    localStorage.setItem('reminderEnabled', checked);
+    const opts = document.getElementById('reminderOptions');
+    if (opts) opts.style.display = checked ? 'block' : 'none';
+    if (checked) {
+        scheduleReminder();
+    } else {
+        clearReminderTimers();
+    }
+}
+
+function updateSettingReminderTime(val) {
+    reminderTime = val;
+    localStorage.setItem('reminderTime', val);
+    if (reminderEnabled) scheduleReminder();
+}
+
+function toggleReminderDay(day) {
+    const idx = reminderDays.indexOf(day);
+    if (idx >= 0) reminderDays.splice(idx, 1);
+    else reminderDays.push(day);
+    localStorage.setItem('reminderDays', JSON.stringify(reminderDays));
+    document.querySelectorAll('.day-btn').forEach(btn => {
+        const d = parseInt(btn.dataset.day);
+        btn.classList.toggle('active', reminderDays.includes(d));
+    });
+    if (reminderEnabled) scheduleReminder();
+}
+
+function updateSettingTTSVoice(uri) {
+    ttsVoiceURI = uri;
+    localStorage.setItem('ttsVoiceURI', uri);
+}
+
+function populateTTSVoices() {
+    const select = document.getElementById('settings-ttsVoice');
+    if (!select) return;
+    const voices = speechSynthesis.getVoices();
+    select.innerHTML = '<option value="">Default</option>';
+    voices.filter(v => v.lang.startsWith('en')).forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.voiceURI;
+        opt.textContent = v.name;
+        if (v.voiceURI === ttsVoiceURI) opt.selected = true;
+        select.appendChild(opt);
+    });
+}
+
+// Build screen Sanskrit toggle via language label
+function toggleBuildSanskrit() {
+    useSanskritNames = !useSanskritNames;
+    localStorage.setItem('useSanskritNames', useSanskritNames);
+    const label = document.getElementById('buildLangToggle');
+    if (label) label.textContent = useSanskritNames ? 'Sanskrit' : 'English';
+    populateAsanaList();
+    rebuildFlowTable();
+}
+
+// Stats type filter
+function switchStatsType(type, btn) {
+    currentStatsType = type;
+    document.querySelectorAll('.stats-type-tab').forEach(t => t.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderStatsDashboard();
+}
+
+// ==========================================
+// Phase 2: Guide Cues
+// ==========================================
+
+let guideCueTimeout = null;
+
+function showGuideCue(asana) {
+    if (!guideCuesEnabled || !asana) return;
+    if (Math.random() * 100 > guideCueFrequency) return;
+
+    // Prefer alignment cues from iOS data, fall back to description sentences
+    let tips = asana.cues && asana.cues.length > 0 ? asana.cues : [];
+    if (tips.length === 0) {
+        const desc = asana.description || '';
+        tips = desc.split(/[.!?]+/).map(s => s.trim()).filter(s => s.length > 10);
+    }
+    if (tips.length === 0) return;
+
+    const tip = tips[Math.floor(Math.random() * tips.length)];
+    const overlay = document.getElementById('guideCueOverlay');
+    if (!overlay) return;
+
+    overlay.textContent = tip;
+    overlay.style.display = 'block';
+
+    if (guideCueTimeout) clearTimeout(guideCueTimeout);
+    guideCueTimeout = setTimeout(() => {
+        overlay.style.display = 'none';
+        guideCueTimeout = null;
+    }, 4000);
+}
+
+// ==========================================
+// Phase 3: Breathwork System
+// ==========================================
+
+const BREATH_PATTERNS = {
+    equal: {
+        name: 'Equal Breathing', inhale: 4, holdIn: 0, exhale: 4, holdOut: 0,
+        description: 'Balance the nervous system with equal inhale and exhale.',
+        benefits: ['Calms the mind', 'Balances the nervous system', 'Good for beginners'],
+        whenToUse: 'Use anytime you need to center yourself. Great before meditation or sleep.'
+    },
+    box: {
+        name: 'Box Breathing', inhale: 4, holdIn: 4, exhale: 4, holdOut: 4,
+        description: 'Used by Navy SEALs for focus and calm under pressure.',
+        benefits: ['Reduces stress', 'Improves concentration', 'Regulates autonomic nervous system'],
+        whenToUse: 'Ideal before high-pressure situations, presentations, or when feeling anxious.'
+    },
+    wimhof: {
+        name: 'Wim Hof', inhale: 2, holdIn: 0, exhale: 1.5, holdOut: 0,
+        description: 'Rapid, energizing breathwork for increased energy and cold resilience.',
+        benefits: ['Boosts energy', 'Strengthens immune system', 'Increases cold tolerance'],
+        whenToUse: 'Use in the morning for energy. Not recommended before sleep.'
+    },
+    relaxing478: {
+        name: '4-7-8 Relaxing', inhale: 4, holdIn: 7, exhale: 8, holdOut: 0,
+        description: 'Dr. Weil\'s natural tranquilizer for the nervous system.',
+        benefits: ['Promotes sleep', 'Reduces anxiety', 'Acts as natural sedative'],
+        whenToUse: 'Best used before bed or during moments of high anxiety.'
+    },
+    deepcalm: {
+        name: 'Deep Calm', inhale: 4, holdIn: 0, exhale: 6, holdOut: 0,
+        description: 'Extended exhale activates the parasympathetic nervous system.',
+        benefits: ['Activates rest-and-digest', 'Lowers heart rate', 'Deep relaxation'],
+        whenToUse: 'Use during yoga cooldown, before meditation, or anytime you need to deeply relax.'
+    }
+};
+
+let selectedBreathPattern = 'equal';
+let breathSessionDuration = 300; // 5 min default
+let customBreathPattern = { inhale: 4, holdIn: 0, exhale: 4, holdOut: 0 };
+let breathIntervalId = null;
+let breathTimeoutId = null;
+let breathSessionStartTime = null;
+let breathPaused = false;
+let breathRemainingTime = 0;
+let breathPhaseTimeoutId = null;
+
+function openBreathwork() {
+    changeScreen('breathworkScreen');
+    renderBreathPatterns();
+    renderSavedBreathPresets();
+    // Sync voice cue toggle
+    const breathToggle = document.getElementById('breathVoiceCueToggle');
+    if (breathToggle) breathToggle.checked = spokenBreathCuesEnabled;
+}
+
+function getBreathPatternIcon(key) {
+    const icons = {
+        equal: '<svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M4 16h6l3-8 3 16 3-16 3 8h6"/></svg>',
+        box: '<svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#6d28d9" stroke-width="2"><rect x="6" y="6" width="20" height="20" rx="3"/><circle cx="16" cy="16" r="3" fill="#6d28d9" opacity="0.3"/></svg>',
+        wimhof: '<svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M4 24l4-6 4 6 4-12 4 12 4-6 4 6"/><circle cx="16" cy="8" r="4" fill="#6d28d9" opacity="0.2"/></svg>',
+        relaxing478: '<svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M16 4a12 12 0 110 24 12 12 0 010-24z"/><path d="M16 4c0 6-4 12 0 12s0-6 0-12" fill="#6d28d9" opacity="0.15"/><path d="M12 20c2-1 6-1 8 0"/></svg>',
+        deepcalm: '<svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M16 28c-6 0-10-4-10-10C6 12 16 4 16 4s10 8 10 14c0 6-4 10-10 10z" fill="#6d28d9" opacity="0.1"/><path d="M16 28c-6 0-10-4-10-10C6 12 16 4 16 4s10 8 10 14c0 6-4 10-10 10z"/></svg>'
+    };
+    return icons[key] || icons.equal;
+}
+
+function renderBreathPatterns() {
+    const container = document.getElementById('breathPatterns');
+    if (!container) return;
+    container.innerHTML = Object.entries(BREATH_PATTERNS).map(([key, p]) => {
+        const timing = `${p.inhale}s in` +
+            (p.holdIn ? ` - ${p.holdIn}s hold` : '') +
+            ` - ${p.exhale}s out` +
+            (p.holdOut ? ` - ${p.holdOut}s hold` : '');
+        return `<div class="breath-pattern-card ${selectedBreathPattern === key ? 'selected' : ''}" onclick="selectBreathPattern('${key}')">
+            <button class="breath-info-btn" onclick="event.stopPropagation(); showBreathWiki('${key}')" title="Learn more">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </button>
+            <div class="breath-card-icon">${getBreathPatternIcon(key)}</div>
+            <h4>${escapeHTML(p.name)}</h4>
+            <div class="breath-timing">${timing}</div>
+        </div>`;
+    }).join('');
+}
+
+function selectBreathPattern(key) {
+    selectedBreathPattern = key;
+    renderBreathPatterns();
+
+    // Animate custom sliders to match the selected pattern
+    const pattern = BREATH_PATTERNS[key];
+    if (!pattern) return;
+    animateBreathSlider('inhale', 'customInhaleVal', pattern.inhale);
+    animateBreathSlider('holdIn', 'customHoldInVal', pattern.holdIn);
+    animateBreathSlider('exhale', 'customExhaleVal', pattern.exhale);
+    animateBreathSlider('holdOut', 'customHoldOutVal', pattern.holdOut);
+}
+
+function animateBreathSlider(field, valId, targetValue) {
+    const sliders = document.querySelectorAll('.breath-custom-sliders input[type="range"]');
+    const fieldMap = { inhale: 0, holdIn: 1, exhale: 2, holdOut: 3 };
+    const slider = sliders[fieldMap[field]];
+    const valEl = document.getElementById(valId);
+    if (!slider || !valEl) return;
+
+    const startValue = parseFloat(slider.value);
+    const endValue = targetValue;
+    if (startValue === endValue) return;
+
+    const duration = 400;
+    const startTime = performance.now();
+
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+    function tick(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = easeOutCubic(progress);
+        const current = startValue + (endValue - startValue) * eased;
+        const rounded = Math.round(current * 10) / 10;
+
+        slider.value = rounded;
+        valEl.textContent = Math.round(rounded);
+        customBreathPattern[field] = rounded;
+
+        if (progress < 1) {
+            requestAnimationFrame(tick);
+        } else {
+            slider.value = endValue;
+            valEl.textContent = endValue;
+            customBreathPattern[field] = endValue;
+        }
+    }
+    requestAnimationFrame(tick);
+}
+
+function selectBreathDuration(seconds) {
+    breathSessionDuration = seconds;
+    document.querySelectorAll('#breathDurationPills .duration-pill').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.onclick.toString().match(/\d+/)[0]) === seconds);
+    });
+}
+
+function updateCustomBreathPattern(field, value) {
+    customBreathPattern[field] = parseFloat(value);
+    const valEl = document.getElementById('custom' + field.charAt(0).toUpperCase() + field.slice(1) + 'Val');
+    if (valEl) valEl.textContent = value;
+    selectedBreathPattern = 'custom';
+    document.querySelectorAll('.breath-pattern-card').forEach(c => c.classList.remove('selected'));
+    renderSavedBreathPresets();
+}
+
+// ─── SAVED BREATH PRESETS ────────────────────────────────────────────────────
+
+function getSavedBreathPresets() {
+    try { return JSON.parse(localStorage.getItem('breathPresets') || '[]'); }
+    catch { return []; }
+}
+
+function saveBreathPreset() {
+    const name = prompt('Preset name:');
+    if (!name || !name.trim()) return;
+    const presets = getSavedBreathPresets();
+    presets.push({
+        id: Date.now().toString(),
+        name: name.trim(),
+        inhale: customBreathPattern.inhale,
+        holdIn: customBreathPattern.holdIn,
+        exhale: customBreathPattern.exhale,
+        holdOut: customBreathPattern.holdOut
+    });
+    localStorage.setItem('breathPresets', JSON.stringify(presets));
+    renderSavedBreathPresets();
+}
+
+function deleteBreathPreset(id) {
+    const presets = getSavedBreathPresets().filter(p => p.id !== id);
+    localStorage.setItem('breathPresets', JSON.stringify(presets));
+    if (selectedBreathPattern === 'saved-' + id) selectedBreathPattern = 'custom';
+    renderSavedBreathPresets();
+}
+
+function selectSavedBreathPreset(id) {
+    const preset = getSavedBreathPresets().find(p => p.id === id);
+    if (!preset) return;
+    customBreathPattern = { inhale: preset.inhale, holdIn: preset.holdIn, exhale: preset.exhale, holdOut: preset.holdOut };
+    selectedBreathPattern = 'saved-' + id;
+
+    // Sync sliders
+    const fields = ['inhale', 'holdIn', 'exhale', 'holdOut'];
+    fields.forEach(f => {
+        const valEl = document.getElementById('custom' + f.charAt(0).toUpperCase() + f.slice(1) + 'Val');
+        if (valEl) valEl.textContent = customBreathPattern[f];
+        const slider = valEl && valEl.closest('label') && valEl.closest('label').querySelector('input[type="range"]');
+        if (slider) slider.value = customBreathPattern[f];
+    });
+
+    document.querySelectorAll('.breath-pattern-card').forEach(c => c.classList.remove('selected'));
+    renderSavedBreathPresets();
+}
+
+function renderSavedBreathPresets() {
+    const container = document.getElementById('breathSavedPresets');
+    if (!container) return;
+    const presets = getSavedBreathPresets();
+    if (presets.length === 0) { container.innerHTML = ''; return; }
+
+    container.innerHTML = presets.map(p => {
+        const timing = `${p.inhale}s in` + (p.holdIn ? ` - ${p.holdIn}s hold` : '') +
+            ` - ${p.exhale}s out` + (p.holdOut ? ` - ${p.holdOut}s hold` : '');
+        const active = selectedBreathPattern === 'saved-' + p.id ? ' active' : '';
+        return `<div class="breath-preset-row${active}" onclick="selectSavedBreathPreset('${p.id}')">
+            <div><span class="breath-preset-name">${escapeHTML(p.name)}</span> <span class="breath-preset-timing">${timing}</span></div>
+            <button class="breath-preset-delete" onclick="event.stopPropagation(); deleteBreathPreset('${p.id}')" title="Delete preset">&times;</button>
+        </div>`;
+    }).join('');
+}
+
+function showBreathWiki(key) {
+    const p = BREATH_PATTERNS[key];
+    if (!p) return;
+    const modal = document.getElementById('breathWikiModal');
+    document.getElementById('breathWikiTitle').textContent = p.name;
+    document.getElementById('breathWikiBody').innerHTML = `
+        <p>${escapeHTML(p.description)}</p>
+        <h3 style="margin-top:16px;">Benefits</h3>
+        <ul>${p.benefits.map(b => `<li>${escapeHTML(b)}</li>`).join('')}</ul>
+        <h3 style="margin-top:16px;">When to Use</h3>
+        <p>${escapeHTML(p.whenToUse)}</p>
+    `;
+    modal.style.display = 'block';
+}
+
+function getActiveBreathPattern() {
+    if (selectedBreathPattern === 'custom') return customBreathPattern;
+    if (selectedBreathPattern.startsWith('saved-')) return customBreathPattern;
+    return BREATH_PATTERNS[selectedBreathPattern] || BREATH_PATTERNS.equal;
+}
+
+function startBreathSession() {
+    const pattern = getActiveBreathPattern();
+    breathPaused = false;
+    breathSessionStartTime = Date.now();
+    breathRemainingTime = breathSessionDuration;
+
+    // Init session tracker
+    if (getStatsTrackingEnabled()) {
+        window._sessionTracker = {
+            flowID: 'breathwork-' + selectedBreathPattern,
+            flowName: pattern.name || 'Custom Breathwork',
+            startTime: Date.now(),
+            poses: [],
+            type: 'breathwork'
+        };
+    }
+
+    changeScreen('breathPlayerScreen');
+    requestWakeLock();
+    // Start ball small if first phase is inhale
+    const circle = document.getElementById('breathCircle');
+    if (circle) {
+        circle.style.transitionDuration = '0s';
+        circle.style.transform = 'scale(1)';
+        // Force reflow so the instant reset applies before the animated phase
+        circle.offsetHeight;
+    }
+    runBreathCycle(pattern);
+    if (breathSessionDuration > 0) {
+        updateBreathSessionTimer();
+    } else {
+        document.getElementById('breathSessionTimer').textContent = 'Infinite';
+    }
+}
+
+function updateBreathSessionTimer() {
+    if (breathPaused) return;
+    if (breathSessionDuration === 0) return; // infinite
+
+    const elapsed = Math.round((Date.now() - breathSessionStartTime) / 1000);
+    const remaining = breathSessionDuration - elapsed;
+
+    if (remaining <= 0) {
+        endBreathSession(true);
+        return;
+    }
+
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    const timerEl = document.getElementById('breathSessionTimer');
+    if (timerEl) timerEl.textContent = `${mins}:${String(secs).padStart(2, '0')}`;
+
+    breathTimeoutId = setTimeout(updateBreathSessionTimer, 1000);
+}
+
+async function runBreathCycle(pattern) {
+    if (breathPaused || currentScreenId !== 'breathPlayerScreen') return;
+
+    const phases = [];
+    if (pattern.inhale > 0) phases.push({ label: 'Inhale', duration: pattern.inhale, scale: 1.8 });
+    if (pattern.holdIn > 0) phases.push({ label: 'Hold', duration: pattern.holdIn, scale: 1.8 });
+    if (pattern.exhale > 0) phases.push({ label: 'Exhale', duration: pattern.exhale, scale: 1 });
+    if (pattern.holdOut > 0) phases.push({ label: 'Hold', duration: pattern.holdOut, scale: 1 });
+
+    for (const phase of phases) {
+        if (breathPaused || currentScreenId !== 'breathPlayerScreen') return;
+
+        const circle = document.getElementById('breathCircle');
+        const label = document.getElementById('breathPhaseLabel');
+        const timer = document.getElementById('breathPhaseTimer');
+
+        if (label) label.textContent = phase.label;
+        if (circle) {
+            circle.style.transitionDuration = phase.duration + 's';
+            circle.style.transform = `scale(${phase.scale})`;
+            // Color shift: inhale=teal, hold=purple, exhale=indigo
+            const phaseColors = {
+                'Inhale': 'radial-gradient(circle, rgba(45,212,191,0.7) 0%, rgba(45,212,191,0.2) 100%)',
+                'Hold': 'radial-gradient(circle, rgba(139,92,246,0.7) 0%, rgba(139,92,246,0.2) 100%)',
+                'Exhale': 'radial-gradient(circle, rgba(99,102,241,0.7) 0%, rgba(99,102,241,0.2) 100%)'
+            };
+            circle.style.background = phaseColors[phase.label] || phaseColors['Inhale'];
+        }
+        // Update phase label color
+        if (label) {
+            const labelColors = { 'Inhale': '#2dd4bf', 'Hold': '#a78bfa', 'Exhale': '#818cf8' };
+            label.style.color = labelColors[phase.label] || '#fff';
+        }
+
+        // Speak phase if TTS enabled
+        if (speechEnabled) {
+            const utterance = new SpeechSynthesisUtterance(phase.label);
+            utterance.rate = 0.9;
+            speechSynthesis.speak(utterance);
+        }
+
+        // Count down the phase
+        let remaining = Math.ceil(phase.duration);
+        if (timer) timer.textContent = remaining;
+
+        await new Promise(resolve => {
+            const tick = () => {
+                if (breathPaused || currentScreenId !== 'breathPlayerScreen') { resolve(); return; }
+                remaining--;
+                if (timer) timer.textContent = Math.max(remaining, 0);
+                if (remaining <= 0) { resolve(); return; }
+                breathPhaseTimeoutId = setTimeout(tick, 1000);
+            };
+            breathPhaseTimeoutId = setTimeout(tick, 1000);
+        });
+    }
+
+    // Loop
+    if (!breathPaused && currentScreenId === 'breathPlayerScreen') {
+        requestAnimationFrame(() => runBreathCycle(pattern));
+    }
+}
+
+function pauseBreathSession() {
+    breathPaused = !breathPaused;
+    const btn = document.getElementById('breathPauseBtn');
+    if (breathPaused) {
+        if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+        if (breathTimeoutId) clearTimeout(breathTimeoutId);
+        if (breathPhaseTimeoutId) clearTimeout(breathPhaseTimeoutId);
+    } else {
+        if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+        // Adjust start time for pause duration
+        const pattern = getActiveBreathPattern();
+        runBreathCycle(pattern);
+        if (breathSessionDuration > 0) updateBreathSessionTimer();
+    }
+}
+
+function endBreathSession(completedFully) {
+    clearBreathTimers();
+    if (completedFully && endChimeEnabled) {
+        try {
+            const chime = new Audio('End Chime.mp3');
+            chime.play().catch(() => {});
+        } catch (e) {}
+    }
+    recordSession(completedFully, 'breathwork');
+    changeScreen('homeScreen');
+}
+
+function clearBreathTimers() {
+    breathPaused = true;
+    if (breathTimeoutId) { clearTimeout(breathTimeoutId); breathTimeoutId = null; }
+    if (breathPhaseTimeoutId) { clearTimeout(breathPhaseTimeoutId); breathPhaseTimeoutId = null; }
+    if (breathIntervalId) { clearInterval(breathIntervalId); breathIntervalId = null; }
+}
+
+// ==========================================
+// Phase 4: Meditation Timer
+// ==========================================
+
+let meditationDuration = 600; // 10 min default
+let meditationStartTime = null;
+let meditationPaused = false;
+let meditationIntervalId = null;
+
+function openMeditation() {
+    changeScreen('meditationScreen');
+}
+
+function selectMeditationDuration(seconds) {
+    meditationDuration = seconds;
+    document.querySelectorAll('#meditationDurationPills .duration-pill').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.onclick.toString().match(/\d+/)[0]) === seconds);
+    });
+}
+
+function startMeditation() {
+    meditationPaused = false;
+    meditationStartTime = Date.now();
+    meditationPauseStart = null;
+
+    if (getStatsTrackingEnabled()) {
+        window._sessionTracker = {
+            flowID: 'meditation',
+            flowName: 'Meditation (' + Math.round(meditationDuration / 60) + ' min)',
+            startTime: Date.now(),
+            poses: [],
+            type: 'meditation'
+        };
+    }
+
+    changeScreen('meditationPlayerScreen');
+    requestWakeLock();
+    const initMins = Math.floor(meditationDuration / 60);
+    const initSecs = meditationDuration % 60;
+    const display = document.getElementById('meditationTimeDisplay');
+    if (display) display.textContent = String(initMins).padStart(2, '0') + ':' + String(initSecs).padStart(2, '0');
+    const fill = document.getElementById('meditationProgressFill');
+    if (fill) fill.style.width = '0%';
+    updateMeditationDisplay();
+    meditationIntervalId = setInterval(updateMeditationDisplay, 1000);
+}
+
+function updateMeditationDisplay() {
+    if (meditationPaused) return;
+
+    const elapsed = Math.round((Date.now() - meditationStartTime) / 1000);
+    const remaining = meditationDuration - elapsed;
+
+    if (remaining <= 0) {
+        endMeditation(true);
+        return;
+    }
+
+    const mins = Math.floor(remaining / 60);
+    const secs = remaining % 60;
+    const display = document.getElementById('meditationTimeDisplay');
+    if (display) display.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+
+    const fill = document.getElementById('meditationProgressFill');
+    if (fill) {
+        const progress = (elapsed / meditationDuration) * 100;
+        fill.style.width = progress + '%';
+    }
+}
+
+let meditationPauseStart = null;
+
+function pauseMeditation() {
+    meditationPaused = !meditationPaused;
+    const btn = document.getElementById('meditationPauseBtn');
+    if (meditationPaused) {
+        if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+        meditationPauseStart = Date.now();
+    } else {
+        if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+        if (meditationPauseStart) {
+            // Shift start time forward by pause duration
+            meditationStartTime += (Date.now() - meditationPauseStart);
+            meditationPauseStart = null;
+        }
+    }
+}
+
+function endMeditation(completedFully) {
+    clearMeditationTimers();
+    if (completedFully && endChimeEnabled) {
+        try {
+            const chime = new Audio('End Chime.mp3');
+            chime.play().catch(() => {});
+        } catch (e) {}
+    }
+    recordSession(completedFully, 'meditation');
+    changeScreen('homeScreen');
+}
+
+function clearMeditationTimers() {
+    meditationPaused = true;
+    if (meditationIntervalId) { clearInterval(meditationIntervalId); meditationIntervalId = null; }
+}
+
+// ==========================================
+// Phase 5: Flow Generator
+// ==========================================
+
+let genLevel = 'Beginner';
+let genFocusTags = [];
+let genDuration = 15; // minutes
+let genHold = 'medium';
+
+function openFlowGenerator() {
+    regenerateTargetFlowID = null;
+    const title = document.getElementById('genScreenTitle');
+    const btn = document.getElementById('genScreenBtn');
+    if (title) title.innerHTML = 'Generate Flow <span style="font-size:0.5em;font-weight:500;color:#6d28d9;vertical-align:super;">Beta</span>';
+    if (btn) btn.textContent = 'Generate';
+    changeScreen('flowGeneratorScreen');
+}
+
+function setGenLevel(level) {
+    genLevel = level;
+    document.querySelectorAll('#genLevel .gen-seg-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === level);
+    });
+}
+
+function toggleGenTag(btn) {
+    const tag = btn.dataset.tag;
+    btn.classList.toggle('active');
+    if (genFocusTags.includes(tag)) {
+        genFocusTags = genFocusTags.filter(t => t !== tag);
+    } else {
+        genFocusTags.push(tag);
+    }
+}
+
+function setGenDuration(mins) {
+    genDuration = mins;
+    document.querySelectorAll('#genDurationPills .duration-pill').forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.onclick.toString().match(/\d+/)[0]) === mins);
+    });
+}
+
+function setGenHold(length) {
+    genHold = length;
+    const labels = { short: 'Short', medium: 'Medium', long: 'Long' };
+    document.querySelectorAll('#genHoldLength .gen-seg-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent === labels[length]);
+    });
+}
+
+function generateFlow() {
+    const holdRanges = { short: [5, 10], medium: [10, 20], long: [20, 40] };
+    const holdRange = holdRanges[genHold] || holdRanges.medium;
+    const includeWarmup = document.getElementById('genWarmup')?.checked ?? true;
+    const includeCooldown = document.getElementById('genCooldown')?.checked ?? true;
+    const includeSavasana = document.getElementById('genSavasana')?.checked ?? true;
+    const includeBreathCues = document.getElementById('genBreathCues')?.checked ?? true;
+
+    const totalSeconds = genDuration * 60;
+    const avgHold = (holdRange[0] + holdRange[1]) / 2;
+
+    // Filter poses by difficulty
+    const difficultyLevels = {
+        'Beginner': ['Beginner'],
+        'Intermediate': ['Beginner', 'Intermediate'],
+        'Advanced': ['Beginner', 'Intermediate', 'Advanced']
+    };
+    const allowedDiffs = difficultyLevels[genLevel] || ['Beginner'];
+
+    let candidates = asanas.filter(a => allowedDiffs.includes(a.difficulty));
+
+    // Filter by focus tags if selected
+    if (genFocusTags.length > 0) {
+        const focused = candidates.filter(a =>
+            a.tags && a.tags.some(t => genFocusTags.some(ft =>
+                t.toLowerCase().includes(ft.toLowerCase()) || ft.toLowerCase().includes(t.toLowerCase())
+            ))
+        );
+        if (focused.length >= 5) candidates = focused;
+    }
+
+    if (candidates.length === 0) {
+        alert('No poses match your criteria. Try broadening your filters.');
+        return;
+    }
+
+    // Calculate time budget
+    let warmupTime = includeWarmup ? Math.round(totalSeconds * 0.15) : 0;
+    let cooldownTime = includeCooldown ? Math.round(totalSeconds * 0.12) : 0;
+    let savasanaTime = includeSavasana ? 120 : 0; // 2 min
+    let mainTime = totalSeconds - warmupTime - cooldownTime - savasanaTime;
+    if (mainTime < 60) mainTime = totalSeconds;
+
+    // Build flow
+    const flow = new Flow();
+    flow.name = `Generated ${genLevel} Flow`;
+    flow.description = `${genDuration} min ${genLevel.toLowerCase()} flow` +
+        (genFocusTags.length > 0 ? ` focusing on ${genFocusTags.join(', ')}` : '');
+
+    const usedPoses = [];
+
+    function pickPoses(pool, timeTarget) {
+        const poses = [];
+        let timeUsed = 0;
+        const shuffled = [...pool].sort(() => Math.random() - 0.5);
+        let idx = 0;
+        while (timeUsed < timeTarget && idx < shuffled.length * 3) {
+            const pose = shuffled[idx % shuffled.length];
+            idx++;
+            // Avoid immediate repeats
+            if (poses.length > 0 && poses[poses.length - 1].name === pose.name) continue;
+
+            const dur = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+            const newPose = new YogaAsana(
+                pose.name, pose.side, pose.image, pose.description,
+                pose.difficulty, pose.tags, pose.transitionsAsana,
+                pose.sanskrit, pose.chakra, pose.breathCue
+            );
+            newPose.setDuration(dur);
+            if (includeBreathCues && pose.breathCue && pose.breathCue !== '-') {
+                newPose.setBreathCue(pose.breathCue);
+            }
+            poses.push(newPose);
+            timeUsed += dur;
+            if (timeUsed >= timeTarget) break;
+        }
+        return poses;
+    }
+
+    // Warmup: prefer Standing, Stretch, beginner
+    if (includeWarmup && warmupTime > 0) {
+        const warmupPool = candidates.filter(a =>
+            a.tags && (a.tags.includes('Standing') || a.tags.includes('Stretch'))
+        );
+        const warmupPoses = pickPoses(warmupPool.length >= 3 ? warmupPool : candidates, warmupTime);
+        if (warmupPoses.length > 0) {
+            const secId = flow.addSection('Warmup');
+            warmupPoses.forEach(p => {
+                flow.asanas.push(p);
+                flow.addAsanaToSection(flow.asanas.length - 1, secId);
+            });
+        }
+    }
+
+    // Main sequence
+    const mainPoses = pickPoses(candidates, mainTime);
+    if (mainPoses.length > 0) {
+        const secId = flow.addSection('Main Sequence');
+        mainPoses.forEach(p => {
+            flow.asanas.push(p);
+            flow.addAsanaToSection(flow.asanas.length - 1, secId);
+        });
+    }
+
+    // Cooldown: prefer Seated, Stretch
+    if (includeCooldown && cooldownTime > 0) {
+        const cooldownPool = candidates.filter(a =>
+            a.tags && (a.tags.includes('Seated') || a.tags.includes('Stretch'))
+        );
+        const cooldownPoses = pickPoses(cooldownPool.length >= 3 ? cooldownPool : candidates, cooldownTime);
+        if (cooldownPoses.length > 0) {
+            const secId = flow.addSection('Cooldown');
+            cooldownPoses.forEach(p => {
+                flow.asanas.push(p);
+                flow.addAsanaToSection(flow.asanas.length - 1, secId);
+            });
+        }
+    }
+
+    // Savasana
+    if (includeSavasana) {
+        const savasanaAsana = asanas.find(a => a.name.toLowerCase().includes('savasana') || a.name.toLowerCase().includes('corpse'));
+        if (savasanaAsana) {
+            const sav = new YogaAsana(
+                savasanaAsana.name, 'Center', savasanaAsana.image, savasanaAsana.description,
+                savasanaAsana.difficulty, savasanaAsana.tags, savasanaAsana.transitionsAsana,
+                savasanaAsana.sanskrit, savasanaAsana.chakra, savasanaAsana.breathCue
+            );
+            sav.setDuration(savasanaTime);
+            flow.asanas.push(sav);
+            const secId = flow.addSection('Savasana');
+            flow.addAsanaToSection(flow.asanas.length - 1, secId);
+        }
+    }
+
+    // Calculate total time
+    flow.time = flow.asanas.reduce((sum, a) => sum + (a.duration || defaultPoseDuration), 0);
+    flow.lastEdited = new Date().toISOString();
+
+    // Check if regenerating into an existing flow
+    if (regenerateTargetFlowID) {
+        const flows = getFlows();
+        const idx = flows.findIndex(f => f.flowID === regenerateTargetFlowID);
+        if (idx !== -1) {
+            // Replace poses and sections but keep the flow's name/description/ID
+            flows[idx].asanas = flow.asanas;
+            flows[idx].sections = flow.sections;
+            flows[idx].time = flow.time;
+            flows[idx].lastEdited = flow.lastEdited;
+            saveFlows(flows);
+            editingFlow = new Flow();
+            Object.assign(editingFlow, flows[idx]);
+        }
+        regenerateTargetFlowID = null;
+    } else {
+        // Save new flow to localStorage
+        const flows = getFlows();
+        flows.push(flow);
+        saveFlows(flows);
+        editingFlow = flow;
+    }
+
+    // Navigate to build screen in edit mode
+    editMode = true;
+    changeScreen('buildScreen');
+    toggleViewMode('table', true);
+
+    // Populate the build screen
+    setTimeout(() => {
+        const titleInput = document.getElementById('title');
+        if (titleInput) {
+            titleInput.value = editingFlow.name;
+            titleInput.removeEventListener('input', autoSaveFlow);
+            titleInput.addEventListener('input', autoSaveFlow);
+        }
+        const descInput = document.getElementById('description');
+        if (descInput) {
+            descInput.value = editingFlow.description;
+            descInput.removeEventListener('input', autoSaveFlow);
+            descInput.addEventListener('input', autoSaveFlow);
+        }
+        rebuildFlowTable();
+        updateFlowDuration();
+        updateFlowPoseCount();
+    }, 100);
+}
+
+// Regenerate: open generator screen, replace current flow on generate
+let regenerateTargetFlowID = null;
+
+function openRegenerateModal() {
+    if (!editingFlow || !editingFlow.flowID) return;
+    regenerateTargetFlowID = editingFlow.flowID;
+    const title = document.getElementById('genScreenTitle');
+    const btn = document.getElementById('genScreenBtn');
+    if (title) title.innerHTML = 'Regenerate Flow <span style="font-size:0.5em;font-weight:500;color:#6d28d9;vertical-align:super;">Beta</span>';
+    if (btn) btn.textContent = 'Regenerate';
+    const screen = document.getElementById('flowGeneratorScreen');
+    if (screen) screen.classList.add('slide-up-enter');
+    changeScreen('flowGeneratorScreen');
+    if (screen) {
+        screen.addEventListener('animationend', () => {
+            screen.classList.remove('slide-up-enter');
+        }, { once: true });
+    }
+}
+
+// Wrap generateFlow to support regeneration into existing flow
+const _originalGenerateFlow = generateFlow;
+
+// ==========================================
+// Phase 6: Text to Flow
+// ==========================================
+
+function openTextToFlow() {
+    const modal = document.getElementById('textToFlowModal');
+    if (modal) {
+        modal.style.display = 'block';
+        const input = document.getElementById('textToFlowInput');
+        if (input) input.value = '';
+        const results = document.getElementById('ttfResults');
+        if (results) results.style.display = 'none';
+    }
+}
+
+function closeTextToFlow() {
+    const modal = document.getElementById('textToFlowModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function levenshteinDistance(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+    for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+            dp[i][j] = a[i-1] === b[j-1]
+                ? dp[i-1][j-1]
+                : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+        }
+    }
+    return dp[m][n];
+}
+
+function fuzzyMatchPose(input, catalog) {
+    const normalized = input.toLowerCase().trim()
+        .replace(/\bpose\b/gi, '').replace(/\s+/g, ' ').trim();
+    if (!normalized) return null;
+
+    let bestMatch = null;
+    let bestScore = 0;
+
+    for (const pose of catalog) {
+        const poseName = pose.name.toLowerCase();
+        const poseSanskrit = (pose.sanskrit || '').toLowerCase();
+
+        // Exact match
+        if (poseName === normalized || poseSanskrit === normalized) {
+            return { pose, confidence: 1.0 };
+        }
+
+        // Contains match
+        if (poseName.includes(normalized) || normalized.includes(poseName)) {
+            const score = 0.85;
+            if (score > bestScore) { bestScore = score; bestMatch = pose; }
+            continue;
+        }
+
+        if (poseSanskrit && (poseSanskrit.includes(normalized) || normalized.includes(poseSanskrit))) {
+            const score = 0.8;
+            if (score > bestScore) { bestScore = score; bestMatch = pose; }
+            continue;
+        }
+
+        // Levenshtein distance
+        if (normalized.length >= 3) {
+            const dist = levenshteinDistance(normalized, poseName);
+            const maxLen = Math.max(normalized.length, poseName.length);
+            const similarity = 1 - dist / maxLen;
+            if (similarity > bestScore && similarity > 0.6) {
+                bestScore = similarity;
+                bestMatch = pose;
+            }
+        }
+    }
+
+    return bestMatch ? { pose: bestMatch, confidence: bestScore } : null;
+}
+
+let ttfMatches = [];
+
+function buildPoseIndex(catalog) {
+    // Build a set of all words that appear in pose names/sanskrit for quick lookup
+    const poseWords = new Set();
+    const poseNameMap = []; // { lower, words, pose, isSanskrit }
+    for (const pose of catalog) {
+        const lower = pose.name.toLowerCase();
+        const words = lower.split(/\s+/);
+        words.forEach(w => poseWords.add(w));
+        poseNameMap.push({ lower, words, pose, isSanskrit: false });
+        if (pose.sanskrit) {
+            const sLower = pose.sanskrit.toLowerCase();
+            const sWords = sLower.split(/\s+/);
+            sWords.forEach(w => poseWords.add(w));
+            poseNameMap.push({ lower: sLower, words: sWords, pose, isSanskrit: true });
+        }
+    }
+    return { poseWords, poseNameMap };
+}
+
+function matchPoseFromWords(wordSeq, poseNameMap) {
+    // Try to match the longest sequence of words to a pose name
+    // Returns { pose, confidence, wordsConsumed } or null
+    const input = wordSeq.join(' ');
+    let best = null;
+
+    for (const entry of poseNameMap) {
+        // Exact full match
+        if (entry.lower === input) {
+            return { pose: entry.pose, confidence: 1.0, wordsConsumed: wordSeq.length };
+        }
+
+        // Check if input starts with this pose name
+        if (input.startsWith(entry.lower + ' ') || input === entry.lower) {
+            const score = entry.words.length / wordSeq.length * 0.95;
+            if (!best || entry.words.length > best.wordsConsumed || (entry.words.length === best.wordsConsumed && score > best.confidence)) {
+                best = { pose: entry.pose, confidence: 0.95, wordsConsumed: entry.words.length };
+            }
+        }
+
+        // Check if pose name starts with input (partial, still typing)
+        if (entry.lower.startsWith(input) && wordSeq.length < entry.words.length) {
+            // Partial match - don't consume yet
+            continue;
+        }
+
+        // Contains match - pose name is within the word sequence
+        if (wordSeq.length >= entry.words.length) {
+            for (let start = 0; start <= wordSeq.length - entry.words.length; start++) {
+                const sub = wordSeq.slice(start, start + entry.words.length).join(' ');
+                if (sub === entry.lower) {
+                    const score = 0.9;
+                    if (!best || entry.words.length > best.wordsConsumed) {
+                        best = { pose: entry.pose, confidence: score, wordsConsumed: entry.words.length };
+                    }
+                }
+            }
+        }
+    }
+
+    // Fuzzy match on the full sequence
+    if (!best && wordSeq.length >= 1) {
+        const fuzzy = fuzzyMatchPose(input, asanas);
+        if (fuzzy && fuzzy.confidence >= 0.65) {
+            best = { pose: fuzzy.pose, confidence: fuzzy.confidence, wordsConsumed: wordSeq.length };
+        }
+    }
+
+    return best;
+}
+
+function parseFlowFromText() {
+    const input = document.getElementById('textToFlowInput')?.value || '';
+    if (!input.trim()) return;
+
+    const { poseWords, poseNameMap } = buildPoseIndex(asanas);
+
+    // Tokenize: split into words, preserving punctuation as separators
+    const tokens = input
+        .replace(/[-–—]/g, ' ')
+        .replace(/[,;\n]/g, ' , ')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .split(' ')
+        .filter(t => t.length > 0);
+
+    // Metadata patterns
+    const isDuration = (t) => /^\d+\s*(?:s(?:ec(?:onds?)?)?|m(?:in(?:utes?)?)?)$/i.test(t);
+    const parseDuration = (t) => {
+        const m = t.match(/^(\d+)\s*(?:(s)(?:ec(?:onds?)?)?|(m)(?:in(?:utes?)?)?)$/i);
+        if (!m) return null;
+        return m[3] ? parseInt(m[1]) * 60 : parseInt(m[1]);
+    };
+    const isDurationPair = (t1, t2) => /^\d+$/.test(t1) && /^(?:s(?:ec(?:onds?)?)?|m(?:in(?:utes?)?)?)$/i.test(t2);
+    const parseDurationPair = (t1, t2) => {
+        const val = parseInt(t1);
+        return /^m/i.test(t2) ? val * 60 : val;
+    };
+    const isSide = (t) => /^(left|right|both|front|back)$/i.test(t);
+    const parseSide = (t) => {
+        const s = t.toLowerCase();
+        if (s === 'both') return 'Both';
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    };
+    const isBreathCue = (t) => /^(inhale|exhale)$/i.test(t);
+    const parseBreathCue = (t) => t.charAt(0).toUpperCase() + t.slice(1).toLowerCase();
+    const isNoise = (t) => /^(,|the|a|an|in|on|for|with|and|then|next|to|pose|side|hold|each|per|seconds?|sec)$/i.test(t);
+    const isSideFollower = (t) => /^side$/i.test(t);
+
+    // Word-by-word scanning
+    const results = [];
+    let current = { duration: null, side: null, breathCue: null, poseWords: [], raw: [] };
+    let i = 0;
+
+    function finalizeCurrent() {
+        if (current.poseWords.length === 0 && current.duration === null && current.side === null) return;
+
+        let matched = null;
+        let confidence = 0;
+
+        if (current.poseWords.length > 0) {
+            // Try to match the accumulated pose words
+            const m = matchPoseFromWords(current.poseWords, poseNameMap);
+            if (m) {
+                matched = m.pose;
+                confidence = m.confidence;
+            } else {
+                // Try fuzzy on joined words
+                const fuzzy = fuzzyMatchPose(current.poseWords.join(' '), asanas);
+                if (fuzzy) {
+                    matched = fuzzy.pose;
+                    confidence = fuzzy.confidence;
+                }
+            }
+        }
+
+        results.push({
+            raw: current.raw.join(' '),
+            matched,
+            confidence,
+            duration: current.duration,
+            side: current.side,
+            breathCue: current.breathCue
+        });
+
+        current = { duration: null, side: null, breathCue: null, poseWords: [], raw: [] };
+    }
+
+    function wouldStartNewPose(word) {
+        // Check if this word could start a new pose name from the catalog
+        const lower = word.toLowerCase();
+        for (const entry of poseNameMap) {
+            if (entry.words[0] === lower) return true;
+        }
+        return false;
+    }
+
+    while (i < tokens.length) {
+        const t = tokens[i];
+        const tLower = t.toLowerCase();
+
+        // Skip pure noise/separators, but commas/newlines finalize
+        if (t === ',') {
+            finalizeCurrent();
+            i++;
+            continue;
+        }
+
+        // Duration: "30s" or "30 seconds"
+        if (isDuration(t)) {
+            // If we already have a pose identified, this belongs to current
+            // If we also already have a duration, this might signal a new pose
+            if (current.duration !== null && current.poseWords.length > 0) {
+                finalizeCurrent();
+            }
+            current.duration = parseDuration(t);
+            current.raw.push(t);
+            i++;
+            continue;
+        }
+
+        // Duration as two tokens: "30 seconds"
+        if (i + 1 < tokens.length && isDurationPair(t, tokens[i + 1])) {
+            if (current.duration !== null && current.poseWords.length > 0) {
+                finalizeCurrent();
+            }
+            current.duration = parseDurationPair(t, tokens[i + 1]);
+            current.raw.push(t, tokens[i + 1]);
+            i += 2;
+            continue;
+        }
+
+        // Side
+        if (isSide(t)) {
+            current.side = parseSide(t);
+            current.raw.push(t);
+            i++;
+            // Skip "side" if it follows
+            if (i < tokens.length && isSideFollower(tokens[i])) {
+                current.raw.push(tokens[i]);
+                i++;
+            }
+            continue;
+        }
+
+        // Breath cue
+        if (isBreathCue(t)) {
+            current.breathCue = parseBreathCue(t);
+            current.raw.push(t);
+            i++;
+            continue;
+        }
+
+        // Skip noise words
+        if (isNoise(t)) {
+            current.raw.push(t);
+            i++;
+            continue;
+        }
+
+        // This looks like a pose word. Try to greedily match the longest pose name.
+        if (current.poseWords.length > 0) {
+            const curMatch = matchPoseFromWords(current.poseWords, poseNameMap);
+            const extended = [...current.poseWords, tLower];
+            const extMatch = matchPoseFromWords(extended, poseNameMap);
+
+            // Only consider the extension useful if it consumes MORE words than current
+            const extBetter = extMatch && extMatch.wordsConsumed > (curMatch ? curMatch.wordsConsumed : 0);
+
+            if (extBetter) {
+                // Adding this word extends the pose match
+                current.poseWords.push(tLower);
+                current.raw.push(t);
+                i++;
+                continue;
+            } else if (curMatch && curMatch.confidence >= 0.5) {
+                // Current words are a valid pose, finalize and start new
+                finalizeCurrent();
+                current.poseWords.push(tLower);
+                current.raw.push(t);
+                i++;
+                continue;
+            } else {
+                // No good match yet, keep accumulating
+                current.poseWords.push(tLower);
+                current.raw.push(t);
+                i++;
+                continue;
+            }
+        } else {
+            // Start accumulating pose words
+            current.poseWords.push(tLower);
+            current.raw.push(t);
+            i++;
+            continue;
+        }
+    }
+
+    // Finalize last entry
+    finalizeCurrent();
+
+    ttfMatches = results.filter(r => r.matched || r.raw.trim().length > 0);
+
+    // Display results
+    const resultsEl = document.getElementById('ttfResults');
+    const listEl = document.getElementById('ttfMatchList');
+    if (!resultsEl || !listEl) return;
+
+    listEl.innerHTML = ttfMatches.map(m => {
+        const level = m.confidence >= 0.8 ? 'high' : m.confidence >= 0.6 ? 'medium' : 'low';
+        const name = m.matched ? escapeHTML(m.matched.name) : 'No match';
+        const extras = [];
+        if (m.duration) extras.push(m.duration + 's');
+        if (m.side) extras.push(m.side);
+        if (m.breathCue) extras.push(m.breathCue);
+        const extrasStr = extras.length ? ` <span class="ttf-match-extras">${extras.join(' / ')}</span>` : '';
+        return `<div class="ttf-match-item">
+            <span class="ttf-match-indicator ${level}"></span>
+            <span class="ttf-match-name">${name}${extrasStr}</span>
+            <span class="ttf-match-raw">${escapeHTML(m.raw)}</span>
+        </div>`;
+    }).join('');
+
+    resultsEl.style.display = 'block';
+}
+
+function createFlowFromMatches() {
+    const validMatches = ttfMatches.filter(m => m.matched && m.confidence >= 0.5);
+    if (validMatches.length === 0) {
+        alert('No poses could be matched. Try different pose names.');
+        return;
+    }
+
+    const flow = new Flow();
+    flow.name = 'Text to Flow';
+    flow.description = 'Created from text input';
+
+    validMatches.forEach(m => {
+        const pose = m.matched;
+        const newPose = new YogaAsana(
+            pose.name, m.side || pose.side, pose.image, pose.description,
+            pose.difficulty, pose.tags, pose.transitionsAsana,
+            pose.sanskrit, pose.chakra, m.breathCue || pose.breathCue
+        );
+        newPose.setDuration(m.duration || defaultPoseDuration);
+        flow.asanas.push(newPose);
+    });
+
+    flow.time = flow.asanas.reduce((sum, a) => sum + a.duration, 0);
+    flow.lastEdited = new Date().toISOString();
+
+    // Save the flow to localStorage immediately
+    const flows = getFlows();
+    flows.push(flow);
+    saveFlows(flows);
+
+    // Now open it in edit mode so it persists
+    editingFlow = flow;
+    editMode = true;
+    closeTextToFlow();
+    changeScreen('buildScreen');
+    toggleViewMode('table', true);
+
+    setTimeout(() => {
+        const titleInput = document.getElementById('title');
+        const descInput = document.getElementById('description');
+        if (titleInput) {
+            titleInput.value = flow.name;
+            titleInput.removeEventListener('input', autoSaveFlow);
+            titleInput.addEventListener('input', autoSaveFlow);
+        }
+        if (descInput) {
+            descInput.value = flow.description;
+            descInput.removeEventListener('input', autoSaveFlow);
+            descInput.addEventListener('input', autoSaveFlow);
+        }
+        rebuildFlowTable();
+        updateFlowDuration();
+        updateFlowPoseCount();
+    }, 100);
+}
+
+// ==========================================
+// Phase 8: FAB Menu
+// ==========================================
+
+function toggleFabMenu() {
+    const menu = document.getElementById('fabMenu');
+    const backdrop = document.getElementById('fabBackdrop');
+    const btn = document.getElementById('fabBtn');
+    if (!menu) return;
+
+    const isOpen = menu.classList.contains('active');
+    menu.classList.toggle('active');
+    if (backdrop) backdrop.classList.toggle('active');
+    if (btn) btn.classList.toggle('open');
+}
+
+function closeFabMenu() {
+    const menu = document.getElementById('fabMenu');
+    const backdrop = document.getElementById('fabBackdrop');
+    const btn = document.getElementById('fabBtn');
+    if (menu) menu.classList.remove('active');
+    if (backdrop) backdrop.classList.remove('active');
+    if (btn) btn.classList.remove('open');
+}
+
+// ==========================================
+// Phase 9: Pose Detail View
+// ==========================================
+
+function openPoseDetail(poseName) {
+    const pose = asanas.find(a => a.name === poseName);
+    if (!pose) return;
+
+    const modal = document.getElementById('poseDetailModal');
+    if (!modal) return;
+
+    document.getElementById('poseDetailImage').src = pose.image || '';
+    document.getElementById('poseDetailName').textContent = pose.name;
+    document.getElementById('poseDetailSanskrit').textContent = pose.sanskrit || '';
+    const badge = document.getElementById('poseDetailDifficulty');
+    badge.textContent = pose.difficulty || 'Beginner';
+    badge.className = 'pose-detail-badge ' + (pose.difficulty || 'Beginner');
+
+    // Aliases
+    const aliasesEl = document.getElementById('poseDetailAliases');
+    if (aliasesEl) {
+        aliasesEl.innerHTML = pose.aliases && pose.aliases.length
+            ? `<strong>Also known as:</strong> ${pose.aliases.map(a => escapeHTML(a)).join(', ')}` : '';
+    }
+
+    const chakraList = pose.chakras && pose.chakras.length ? pose.chakras : (pose.chakra ? [pose.chakra] : []);
+    document.getElementById('poseDetailChakra').innerHTML = chakraList.length
+        ? `<strong>Chakras:</strong> ${chakraList.map(c => escapeHTML(c)).join(', ')}` : '';
+    document.getElementById('poseDetailTags').innerHTML = pose.tags && pose.tags.length
+        ? `<strong>Tags:</strong> ${pose.tags.map(t => escapeHTML(t)).join(', ')}` : '';
+    document.getElementById('poseDetailBreath').innerHTML = pose.breathCue && pose.breathCue !== '-'
+        ? `<strong>Breath:</strong> ${escapeHTML(pose.breathCue)}` : '';
+    document.getElementById('poseDetailDescription').textContent = pose.description || '';
+
+    // Alignment cues
+    const cuesEl = document.getElementById('poseDetailCues');
+    if (cuesEl) {
+        if (pose.cues && pose.cues.length > 0) {
+            cuesEl.innerHTML = `<h4>Alignment Cues</h4><ul>${pose.cues.map(c => `<li>${escapeHTML(c)}</li>`).join('')}</ul>`;
+        } else {
+            cuesEl.innerHTML = '';
+        }
+    }
+
+    // Transitions
+    const transEl = document.getElementById('poseDetailTransitions');
+    const transitions = pose.getTransitions ? pose.getTransitions() : (pose.transitionsAsana || []);
+    if (transitions.length > 0) {
+        transEl.innerHTML = `<h4>Suggested Transitions</h4>
+            <div class="transition-tags">${transitions.map(t => `<span class="transition-tag">${escapeHTML(t)}</span>`).join('')}</div>`;
+    } else {
+        transEl.innerHTML = '';
+    }
+
+    // Pose history/etymology
+    const poseHistEl = document.getElementById('poseDetailPoseHistory');
+    if (poseHistEl) {
+        poseHistEl.innerHTML = pose.history
+            ? `<strong>History:</strong> ${escapeHTML(pose.history)}` : '';
+    }
+
+    // Practice history
+    const sessions = getPracticeStats();
+    let practiceCount = 0;
+    let totalTime = 0;
+    sessions.forEach(s => {
+        (s.poses || []).forEach(p => {
+            if (p.name === poseName) {
+                practiceCount++;
+                totalTime += p.durationSeconds || 0;
+            }
+        });
+    });
+    const histEl = document.getElementById('poseDetailHistory');
+    if (practiceCount > 0) {
+        histEl.innerHTML = `<strong>Practice Stats:</strong> ${practiceCount} times, ${formatDuration(totalTime)} total`;
+    } else {
+        histEl.innerHTML = '<strong>Practice Stats:</strong> Not practiced yet';
+    }
+
+    modal.style.display = 'block';
+}
+
+function closePoseDetail() {
+    const modal = document.getElementById('poseDetailModal');
+    if (modal) modal.style.display = 'none';
+}
+
+// ==========================================
+// Phase 10: Onboarding
+// ==========================================
+
+let currentOnboardingSlide = 0;
+const TOTAL_ONBOARDING_SLIDES = 6;
+
+function showOnboarding() {
+    if (localStorage.getItem('onboardingComplete') === 'true') return;
+    const overlay = document.getElementById('onboardingOverlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+        currentOnboardingSlide = 0;
+        updateOnboardingSlide();
+    }
+}
+
+function nextOnboardingSlide() {
+    currentOnboardingSlide++;
+    if (currentOnboardingSlide >= TOTAL_ONBOARDING_SLIDES) {
+        dismissOnboarding();
+        return;
+    }
+    updateOnboardingSlide();
+}
+
+function updateOnboardingSlide() {
+    document.querySelectorAll('.onboarding-slide').forEach((slide, i) => {
+        slide.classList.toggle('active', i === currentOnboardingSlide);
+    });
+    document.querySelectorAll('.onboarding-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentOnboardingSlide);
+    });
+
+    const nextBtn = document.getElementById('onboardingNext');
+    const skipBtn = document.getElementById('onboardingSkip');
+    if (currentOnboardingSlide === TOTAL_ONBOARDING_SLIDES - 1) {
+        if (nextBtn) nextBtn.textContent = 'Get Started';
+        if (skipBtn) skipBtn.style.visibility = 'hidden';
+    } else {
+        if (nextBtn) nextBtn.textContent = 'Continue';
+        if (skipBtn) skipBtn.style.visibility = 'visible';
+    }
+}
+
+function dismissOnboarding() {
+    localStorage.setItem('onboardingComplete', 'true');
+    const overlay = document.getElementById('onboardingOverlay');
+    if (overlay) overlay.style.display = 'none';
+}
+
+// ==========================================
+// Phase 11: Practice Reminders
+// ==========================================
+
+let reminderTimeoutId = null;
+let reminderIntervalId = null;
+
+const REMINDER_MESSAGES = [
+    'Your mat is waiting. Time to flow.',
+    'Take a moment to move and breathe today.',
+    'A few minutes on the mat goes a long way.',
+    'Ready for today\'s practice?',
+    'Unroll your mat and find your flow.',
+    'Your body will thank you. Time to practice.'
+];
+
+function scheduleReminder() {
+    clearReminderTimers();
+    if (!reminderEnabled) return;
+
+    // Request notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+
+    const [hours, mins] = reminderTime.split(':').map(Number);
+    const now = new Date();
+    const target = new Date();
+    target.setHours(hours, mins, 0, 0);
+
+    // If target time already passed today, schedule for tomorrow
+    if (target <= now) target.setDate(target.getDate() + 1);
+
+    // Find next matching day
+    while (!reminderDays.includes(target.getDay())) {
+        target.setDate(target.getDate() + 1);
+    }
+
+    const msUntil = target.getTime() - now.getTime();
+
+    reminderTimeoutId = setTimeout(() => {
+        fireReminder();
+        // Schedule daily
+        reminderIntervalId = setInterval(() => {
+            const today = new Date().getDay();
+            if (reminderDays.includes(today)) fireReminder();
+        }, 24 * 60 * 60 * 1000);
+    }, msUntil);
+}
+
+function fireReminder() {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        const msg = REMINDER_MESSAGES[Math.floor(Math.random() * REMINDER_MESSAGES.length)];
+        new Notification('Flow Builder', { body: msg });
+    }
+}
+
+function clearReminderTimers() {
+    if (reminderTimeoutId) { clearTimeout(reminderTimeoutId); reminderTimeoutId = null; }
+    if (reminderIntervalId) { clearInterval(reminderIntervalId); reminderIntervalId = null; }
+}
+
+// ==========================================
+// Init: Onboarding + Reminders
+// ==========================================
+
+// Show onboarding on first visit
+document.addEventListener('DOMContentLoaded', function() {
+    showOnboarding();
+    if (reminderEnabled) scheduleReminder();
+    // Populate TTS voices when available
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = populateTTSVoices;
+    }
+
+    // Close modals when clicking the background overlay
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('modal') && !e.target.classList.contains('settings-modal-overlay')) return;
+        // Only close if the click is directly on the modal backdrop, not its content
+        const modalId = e.target.id;
+        const closeMap = {
+            'shareFlowModal': closeShareModal,
+            'importFlowModal': closeImportModal,
+            'groupNamingModal': closeGroupNamingModal,
+            'customPoseNamingModal': closeCustomPoseNamingModal,
+            'deleteFlowModal': closeDeleteFlowModal,
+            'endFlowModal': closeEndFlowModal,
+            'saveFlowTitleModal': closeSaveFlowTitleModal,
+            'groupSkipAlertModal': closeGroupSkipAlertModal,
+            'swapPoseModal': function() { document.getElementById('swapPoseModal').style.display = 'none'; },
+            'changeDurationModal': closeChangeDurationModal,
+            'changeSideModal': closeChangeSideModal,
+            'breathWikiModal': function() { document.getElementById('breathWikiModal').style.display = 'none'; },
+            'textToFlowModal': function() { document.getElementById('textToFlowModal').style.display = 'none'; },
+            'poseDetailModal': function() { document.getElementById('poseDetailModal').style.display = 'none'; },
+            'flowAnalysisModal': function() { document.getElementById('flowAnalysisModal').style.display = 'none'; },
+            'settingsModal': closeSettingsModal
+        };
+        if (closeMap[modalId]) {
+            closeMap[modalId]();
+        }
+    });
+});
 
 

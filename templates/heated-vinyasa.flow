@@ -8,7 +8,7 @@
       "sanskrit": "Balasana",
       "duration": 120,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Resting pose gently stretching hips, thighs, ankles, and back. Calms the mind and nervous system. Promotes release and surrender.",
       "tags": [
         "Floor",
@@ -16,9 +16,12 @@
         "Restorative",
         "Stretch",
         "Calming",
-        "Forward Fold (gentle)"
+        "Forward Fold"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Third Eye",
+        "Root"
+      ]
     },
     {
       "name": "table-top",
@@ -26,14 +29,17 @@
       "sanskrit": "Bharmanasana",
       "duration": 15,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A neutral position on hands and knees with a flat back. Foundation for cat-cow, bird dog, and transitions like Downward Dog.",
       "tags": [
         "Foundation",
         "Neutral",
         "Kneeling"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -41,25 +47,29 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 60,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "ragdoll-pose",
       "english": "Ragdoll Pose",
-      "sanskrit": "Uttanasana",
+      "sanskrit": "Baddha Hasta Uttanasana",
       "duration": 45,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Relaxed variation of Forward Fold with bent knees, soft spine, and loose arms. Releases tension in spine, shoulders, and hamstrings. Calms the nervous system.",
       "tags": [
         "Standing",
@@ -67,9 +77,12 @@
         "Restorative",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "stand-at-attention",
@@ -77,7 +90,7 @@
       "sanskrit": "Samasthiti",
       "duration": 60,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A fundamental standing pose with feet together, arms at sides, and active engagement of all muscles. Develops concentration, stability, and balanced posture.",
       "tags": [
         "Standing",
@@ -85,7 +98,10 @@
         "Grounding",
         "Alignment"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
       "name": "mountain-pose",
@@ -93,14 +109,17 @@
       "sanskrit": "Tadasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Establishes proper alignment, grounding, and body awareness. The foundation for all standing poses.",
       "tags": [
         "Standing",
         "Foundation",
         "Grounding"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
       "name": "forward-fold",
@@ -108,16 +127,19 @@
       "sanskrit": "Uttanasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -125,7 +147,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -133,7 +155,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "plank",
@@ -141,7 +166,7 @@
       "sanskrit": "Phalakasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -150,7 +175,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -158,7 +186,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 20,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -167,7 +195,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -175,17 +206,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -193,17 +228,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "forward-fold",
@@ -211,16 +250,19 @@
       "sanskrit": "Uttanasana",
       "duration": 17,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -228,7 +270,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 17,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -236,7 +278,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "mountain-pose",
@@ -244,14 +289,17 @@
       "sanskrit": "Tadasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Establishes proper alignment, grounding, and body awareness. The foundation for all standing poses.",
       "tags": [
         "Standing",
         "Foundation",
         "Grounding"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
       "name": "forward-fold",
@@ -259,16 +307,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -276,7 +327,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -284,7 +335,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "plank",
@@ -292,7 +346,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -301,7 +355,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -309,7 +366,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -318,7 +375,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -326,17 +386,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -344,17 +408,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -362,7 +430,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -370,7 +438,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "forward-fold",
@@ -378,16 +449,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "mountain-pose",
@@ -395,14 +469,17 @@
       "sanskrit": "Tadasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Establishes proper alignment, grounding, and body awareness. The foundation for all standing poses.",
       "tags": [
         "Standing",
         "Foundation",
         "Grounding"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
       "name": "forward-fold",
@@ -410,16 +487,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -427,7 +507,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -435,7 +515,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "plank",
@@ -443,7 +526,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -452,7 +535,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -460,7 +546,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -469,7 +555,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -477,17 +566,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -495,17 +588,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -513,7 +610,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -521,7 +618,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "forward-fold",
@@ -529,16 +629,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "chair-pose",
@@ -546,14 +649,17 @@
       "sanskrit": "Utkatasana",
       "duration": 10,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds heat and strength in the legs, glutes, and core. Challenges endurance and focus.",
       "tags": [
         "Standing",
         "Strength",
         "Heat Building"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "forward-fold",
@@ -561,16 +667,19 @@
       "sanskrit": "Uttanasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -578,7 +687,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -586,7 +695,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "plank",
@@ -594,7 +706,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -603,7 +715,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -611,7 +726,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -620,7 +735,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -628,17 +746,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -646,17 +768,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -667,13 +793,16 @@
       "side": "Right",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -690,11 +819,14 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 10,
       "difficulty": "Beginner",
@@ -706,7 +838,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "extended-side-angle",
@@ -722,7 +857,10 @@
         "Strength",
         "Hip Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "reverse-warrior",
@@ -736,9 +874,12 @@
         "Standing",
         "Side Stretch",
         "Strength",
-        "Heart Opener"
+        "Chest Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "plank",
@@ -746,7 +887,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -755,7 +896,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -763,7 +907,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -772,7 +916,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -780,17 +927,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -798,17 +949,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -819,13 +974,16 @@
       "side": "Left",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -842,11 +1000,14 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 10,
       "difficulty": "Beginner",
@@ -858,7 +1019,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "extended-side-angle",
@@ -874,7 +1038,10 @@
         "Strength",
         "Hip Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "reverse-warrior",
@@ -888,9 +1055,12 @@
         "Standing",
         "Side Stretch",
         "Strength",
-        "Heart Opener"
+        "Chest Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "plank",
@@ -898,7 +1068,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -907,7 +1077,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -915,7 +1088,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -924,7 +1097,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -932,17 +1108,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -950,17 +1130,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 13,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "forward-fold",
@@ -968,16 +1152,19 @@
       "sanskrit": "Uttanasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -985,7 +1172,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -993,7 +1180,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "forward-fold",
@@ -1001,16 +1191,19 @@
       "sanskrit": "Uttanasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "chair-pose",
@@ -1018,14 +1211,17 @@
       "sanskrit": "Utkatasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds heat and strength in the legs, glutes, and core. Challenges endurance and focus.",
       "tags": [
         "Standing",
         "Strength",
         "Heat Building"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "forward-fold",
@@ -1033,16 +1229,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -1050,7 +1249,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -1058,7 +1257,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "plank",
@@ -1066,7 +1268,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -1075,7 +1277,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -1083,7 +1288,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -1092,7 +1297,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -1100,17 +1308,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -1118,17 +1330,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -1139,13 +1355,16 @@
       "side": "Right",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -1162,11 +1381,14 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 7,
       "difficulty": "Beginner",
@@ -1178,7 +1400,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "extended-side-angle",
@@ -1194,7 +1419,10 @@
         "Strength",
         "Hip Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "reverse-warrior",
@@ -1208,9 +1436,12 @@
         "Standing",
         "Side Stretch",
         "Strength",
-        "Heart Opener"
+        "Chest Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "plank",
@@ -1218,7 +1449,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -1227,7 +1458,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -1235,7 +1469,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -1244,7 +1478,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -1252,17 +1489,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -1270,17 +1511,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -1291,13 +1536,16 @@
       "side": "Left",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -1314,11 +1562,14 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 7,
       "difficulty": "Beginner",
@@ -1330,7 +1581,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "extended-side-angle",
@@ -1346,7 +1600,10 @@
         "Strength",
         "Hip Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "reverse-warrior",
@@ -1360,9 +1617,12 @@
         "Standing",
         "Side Stretch",
         "Strength",
-        "Heart Opener"
+        "Chest Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "plank",
@@ -1370,7 +1630,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -1379,7 +1639,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -1387,7 +1650,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -1396,7 +1659,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -1404,17 +1670,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -1422,17 +1692,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "forward-fold",
@@ -1440,16 +1714,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -1457,7 +1734,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -1465,7 +1742,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "forward-fold",
@@ -1473,16 +1753,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "chair-pose",
@@ -1490,14 +1773,17 @@
       "sanskrit": "Utkatasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds heat and strength in the legs, glutes, and core. Challenges endurance and focus.",
       "tags": [
         "Standing",
         "Strength",
         "Heat Building"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "forward-fold",
@@ -1505,16 +1791,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -1522,7 +1811,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -1530,7 +1819,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "plank",
@@ -1538,7 +1830,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -1547,7 +1839,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -1555,7 +1850,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -1564,7 +1859,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -1572,17 +1870,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -1590,17 +1892,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -1611,13 +1917,16 @@
       "side": "Right",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -1634,11 +1943,14 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 7,
       "difficulty": "Beginner",
@@ -1650,7 +1962,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "extended-side-angle",
@@ -1666,7 +1981,10 @@
         "Strength",
         "Hip Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "reverse-warrior",
@@ -1680,9 +1998,12 @@
         "Standing",
         "Side Stretch",
         "Strength",
-        "Heart Opener"
+        "Chest Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "plank",
@@ -1690,7 +2011,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -1699,7 +2020,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -1707,7 +2031,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -1716,7 +2040,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -1724,17 +2051,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -1742,17 +2073,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -1763,13 +2098,16 @@
       "side": "Left",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -1786,11 +2124,14 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 7,
       "difficulty": "Beginner",
@@ -1802,7 +2143,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "extended-side-angle",
@@ -1818,7 +2162,10 @@
         "Strength",
         "Hip Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "reverse-warrior",
@@ -1832,9 +2179,12 @@
         "Standing",
         "Side Stretch",
         "Strength",
-        "Heart Opener"
+        "Chest Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "plank",
@@ -1842,7 +2192,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -1851,7 +2201,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -1859,7 +2212,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -1868,7 +2221,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -1876,17 +2232,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -1894,38 +2254,49 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
-      "name": "no-image",
-      "english": "Reclined Bound Angle Situps",
-      "sanskrit": "",
+      "name": "Reclined Bound Angle",
+      "english": "Reclined Bound Angle",
+      "sanskrit": "Supta Baddha Konasana",
       "duration": 30,
       "difficulty": "Beginner",
-      "side": "Center",
-      "description": "Custom pose",
+      "side": "Front",
+      "description": "Restorative supine pose opening hips, inner thighs, and chest gently. Promotes relaxation and stress relief.",
       "tags": [
-        "Custom"
+        "Supine",
+        "Restorative",
+        "Hip Opener",
+        "Chest Opener",
+        "Relaxation"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "no-image",
+      "name": "Bicycle Twists",
       "english": "Bicycle Twists",
       "sanskrit": "",
       "duration": 60,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Custom pose",
       "tags": [
         "Custom"
@@ -1938,7 +2309,7 @@
       "sanskrit": "Vishnu Mudrasana",
       "duration": 17,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A restorative pose lying on the back with arms and legs spread wide, like a star or cosmic being. Promotes complete surrender, deep relaxation, and a sense of expansion and connection to the universe.",
       "tags": [
         "Supine",
@@ -1947,7 +2318,10 @@
         "Surrender",
         "Expansion"
       ],
-      "chakra": "Crown"
+      "chakras": [
+        "Crown",
+        "Third Eye"
+      ]
     },
     {
       "name": "boat-pose",
@@ -1955,7 +2329,7 @@
       "sanskrit": "Navasana",
       "duration": 45,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strongly engages core muscles (abdominals, hip flexors) and strengthens the spine. Improves balance and concentration.",
       "tags": [
         "Seated",
@@ -1963,7 +2337,10 @@
         "Strength",
         "Balance"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Sacral"
+      ]
     },
     {
       "name": "plank",
@@ -1971,7 +2348,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -1980,7 +2357,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -1988,7 +2368,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -1997,7 +2377,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -2005,17 +2388,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -2023,17 +2410,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -2044,13 +2435,16 @@
       "side": "Right",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -2067,7 +2461,10 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "crescent-lunge",
@@ -2083,7 +2480,10 @@
         "Balance",
         "Hip Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "revolved-crescent-lunge",
@@ -2101,12 +2501,15 @@
         "Strength",
         "Detox"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Sacral"
+      ]
     },
     {
       "name": "runners-lunge",
       "english": "Runner's Lunge",
-      "sanskrit": "Utthan Pristhasana",
+      "sanskrit": "Ashwa Sanchalanasana",
       "duration": 30,
       "difficulty": "Beginner",
       "side": "Right",
@@ -2118,7 +2521,10 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "plank",
@@ -2126,7 +2532,7 @@
       "sanskrit": "Phalakasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -2135,7 +2541,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "side-plank",
@@ -2147,13 +2556,16 @@
       "description": "Strengthens wrists, arms, shoulders, core (obliques), and legs. Improves balance and coordination.",
       "tags": [
         "Floor",
-        "Arm Balance (foundational)",
+        "Arm Balance",
         "Core",
         "Strength",
         "Balance",
         "Obliques"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Sacral"
+      ]
     },
     {
       "name": "plank",
@@ -2161,7 +2573,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -2170,7 +2582,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -2178,7 +2593,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -2187,7 +2602,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -2195,17 +2613,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -2213,17 +2635,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -2234,13 +2660,16 @@
       "side": "Left",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -2257,7 +2686,10 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "crescent-lunge",
@@ -2273,7 +2705,10 @@
         "Balance",
         "Hip Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "revolved-crescent-lunge",
@@ -2291,12 +2726,15 @@
         "Strength",
         "Detox"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Sacral"
+      ]
     },
     {
       "name": "runners-lunge",
       "english": "Runner's Lunge",
-      "sanskrit": "Utthan Pristhasana",
+      "sanskrit": "Ashwa Sanchalanasana",
       "duration": 30,
       "difficulty": "Beginner",
       "side": "Left",
@@ -2308,7 +2746,10 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "plank",
@@ -2316,7 +2757,7 @@
       "sanskrit": "Phalakasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -2325,7 +2766,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "side-plank",
@@ -2337,13 +2781,16 @@
       "description": "Strengthens wrists, arms, shoulders, core (obliques), and legs. Improves balance and coordination.",
       "tags": [
         "Floor",
-        "Arm Balance (foundational)",
+        "Arm Balance",
         "Core",
         "Strength",
         "Balance",
         "Obliques"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Sacral"
+      ]
     },
     {
       "name": "plank",
@@ -2351,7 +2798,7 @@
       "sanskrit": "Phalakasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -2360,7 +2807,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -2368,7 +2818,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 5,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -2377,7 +2827,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -2385,17 +2838,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -2403,17 +2860,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "forward-fold",
@@ -2421,16 +2882,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -2438,7 +2902,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -2446,7 +2910,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "forward-fold",
@@ -2454,16 +2921,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "chair-pose",
@@ -2471,14 +2941,17 @@
       "sanskrit": "Utkatasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds heat and strength in the legs, glutes, and core. Challenges endurance and focus.",
       "tags": [
         "Standing",
         "Strength",
         "Heat Building"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "revolved-chair-pose",
@@ -2495,7 +2968,10 @@
         "Detox",
         "Balance"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Sacral"
+      ]
     },
     {
       "name": "forward-fold",
@@ -2503,16 +2979,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "gorilla-pose",
@@ -2520,7 +2999,7 @@
       "sanskrit": "Pada Hastasana",
       "duration": 30,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Standing forward fold with hands placed under the feet (palms up). Deeply stretches hamstrings, calves, and wrists.",
       "tags": [
         "Standing",
@@ -2528,7 +3007,10 @@
         "Stretch",
         "Wrist Stretch"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "chair-pose",
@@ -2536,14 +3018,17 @@
       "sanskrit": "Utkatasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds heat and strength in the legs, glutes, and core. Challenges endurance and focus.",
       "tags": [
         "Standing",
         "Strength",
         "Heat Building"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "revolved-chair-pose",
@@ -2560,7 +3045,10 @@
         "Detox",
         "Balance"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Sacral"
+      ]
     },
     {
       "name": "forward-fold",
@@ -2568,16 +3056,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "crow-pose",
@@ -2585,7 +3076,7 @@
       "sanskrit": "Bakasana",
       "duration": 90,
       "difficulty": "Advanced",
-      "side": "Center",
+      "side": "Front",
       "description": "Fundamental arm balance building strength in arms, wrists, and core. Improves focus, balance, and confidence.",
       "tags": [
         "Floor",
@@ -2595,7 +3086,10 @@
         "Focus",
         "Confidence"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Third Eye"
+      ]
     },
     {
       "name": "childs-pose",
@@ -2603,7 +3097,7 @@
       "sanskrit": "Balasana",
       "duration": 25,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Resting pose gently stretching hips, thighs, ankles, and back. Calms the mind and nervous system. Promotes release and surrender.",
       "tags": [
         "Floor",
@@ -2611,9 +3105,12 @@
         "Restorative",
         "Stretch",
         "Calming",
-        "Forward Fold (gentle)"
+        "Forward Fold"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Third Eye",
+        "Root"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -2621,17 +3118,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "forward-fold",
@@ -2639,16 +3140,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -2656,7 +3160,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -2664,7 +3168,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "forward-fold",
@@ -2672,16 +3179,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "chair-pose",
@@ -2689,14 +3199,17 @@
       "sanskrit": "Utkatasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds heat and strength in the legs, glutes, and core. Challenges endurance and focus.",
       "tags": [
         "Standing",
         "Strength",
         "Heat Building"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "eagle-pose",
@@ -2709,11 +3222,14 @@
       "tags": [
         "Standing",
         "Balance",
-        "Twist (subtle)",
+        "Twist",
         "Shoulder Opener",
         "Joint Health"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Root"
+      ]
     },
     {
       "name": "chair-pose",
@@ -2721,14 +3237,17 @@
       "sanskrit": "Utkatasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds heat and strength in the legs, glutes, and core. Challenges endurance and focus.",
       "tags": [
         "Standing",
         "Strength",
         "Heat Building"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "eagle-pose",
@@ -2741,11 +3260,14 @@
       "tags": [
         "Standing",
         "Balance",
-        "Twist (subtle)",
+        "Twist",
         "Shoulder Opener",
         "Joint Health"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Root"
+      ]
     },
     {
       "name": "mountain-pose",
@@ -2753,18 +3275,21 @@
       "sanskrit": "Tadasana",
       "duration": 8,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Establishes proper alignment, grounding, and body awareness. The foundation for all standing poses.",
       "tags": [
         "Standing",
         "Foundation",
         "Grounding"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
-      "name": "dancer-pose",
-      "english": "Dancer Pose",
+      "name": "Dancer's Pose",
+      "english": "Dancer's Pose",
       "sanskrit": "Natarajasana",
       "duration": 36,
       "difficulty": "Intermediate",
@@ -2777,7 +3302,11 @@
         "Chest Opener",
         "Stretch"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Sacral",
+        "Throat"
+      ]
     },
     {
       "name": "mountain-pose",
@@ -2785,18 +3314,21 @@
       "sanskrit": "Tadasana",
       "duration": 8,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Establishes proper alignment, grounding, and body awareness. The foundation for all standing poses.",
       "tags": [
         "Standing",
         "Foundation",
         "Grounding"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
-      "name": "dancer-pose",
-      "english": "Dancer Pose",
+      "name": "Dancer's Pose",
+      "english": "Dancer's Pose",
       "sanskrit": "Natarajasana",
       "duration": 36,
       "difficulty": "Intermediate",
@@ -2809,7 +3341,11 @@
         "Chest Opener",
         "Stretch"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Sacral",
+        "Throat"
+      ]
     },
     {
       "name": "stand-at-attention",
@@ -2817,7 +3353,7 @@
       "sanskrit": "Samasthiti",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A fundamental standing pose with feet together, arms at sides, and active engagement of all muscles. Develops concentration, stability, and balanced posture.",
       "tags": [
         "Standing",
@@ -2825,7 +3361,10 @@
         "Grounding",
         "Alignment"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
       "name": "tree-pose",
@@ -2839,9 +3378,12 @@
         "Standing",
         "Balance",
         "Focus",
-        "Hip Opener (gentle)"
+        "Hip Opener"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Heart"
+      ]
     },
     {
       "name": "stand-at-attention",
@@ -2849,7 +3391,7 @@
       "sanskrit": "Samasthiti",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A fundamental standing pose with feet together, arms at sides, and active engagement of all muscles. Develops concentration, stability, and balanced posture.",
       "tags": [
         "Standing",
@@ -2857,7 +3399,10 @@
         "Grounding",
         "Alignment"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
       "name": "tree-pose",
@@ -2871,9 +3416,12 @@
         "Standing",
         "Balance",
         "Focus",
-        "Hip Opener (gentle)"
+        "Hip Opener"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Heart"
+      ]
     },
     {
       "name": "stand-at-attention",
@@ -2881,7 +3429,7 @@
       "sanskrit": "Samasthiti",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A fundamental standing pose with feet together, arms at sides, and active engagement of all muscles. Develops concentration, stability, and balanced posture.",
       "tags": [
         "Standing",
@@ -2889,7 +3437,10 @@
         "Grounding",
         "Alignment"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
       "name": "mountain-pose",
@@ -2897,14 +3448,17 @@
       "sanskrit": "Tadasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Establishes proper alignment, grounding, and body awareness. The foundation for all standing poses.",
       "tags": [
         "Standing",
         "Foundation",
         "Grounding"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     },
     {
       "name": "forward-fold",
@@ -2912,16 +3466,19 @@
       "sanskrit": "Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stretches hamstrings, calves, and back. Calms the mind, relieves stress, and can improve digestion.",
       "tags": [
         "Standing",
         "Forward Fold",
         "Stretch",
         "Calming",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "half-forward-fold",
@@ -2929,7 +3486,7 @@
       "sanskrit": "Ardha Uttanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Lengthens the spine, stretches hamstrings lightly. Often used as a transition in Sun Salutations to prepare for stepping or jumping back.",
       "tags": [
         "Standing",
@@ -2937,7 +3494,10 @@
         "Stretch",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "plank",
@@ -2945,7 +3505,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -2954,7 +3514,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -2962,7 +3525,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -2971,7 +3534,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -2979,17 +3545,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -2997,17 +3567,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -3018,13 +3592,16 @@
       "side": "Right",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -3041,11 +3618,14 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "warrior-1",
-      "english": "Warrior 1",
+      "name": "Warrior I",
+      "english": "Warrior I",
       "sanskrit": "Virabhadrasana I",
       "duration": 45,
       "difficulty": "Beginner",
@@ -3057,11 +3637,14 @@
         "Hip Opener",
         "Chest Opener"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Solar Plexus"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 45,
       "difficulty": "Beginner",
@@ -3073,7 +3656,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "triangle-pose",
@@ -3089,7 +3675,10 @@
         "Hip Opener",
         "Chest Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "wide-legged-forward-fold",
@@ -3104,13 +3693,16 @@
         "Forward Fold",
         "Stretch",
         "Hip Opener",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 30,
       "difficulty": "Beginner",
@@ -3122,7 +3714,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "plank",
@@ -3130,7 +3725,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -3139,7 +3734,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -3147,7 +3745,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -3156,7 +3754,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -3164,17 +3765,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -3182,17 +3787,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -3203,13 +3812,16 @@
       "side": "Left",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "low-lunge",
@@ -3226,11 +3838,14 @@
         "Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
-      "name": "warrior-1",
-      "english": "Warrior 1",
+      "name": "Warrior I",
+      "english": "Warrior I",
       "sanskrit": "Virabhadrasana I",
       "duration": 45,
       "difficulty": "Beginner",
@@ -3242,11 +3857,14 @@
         "Hip Opener",
         "Chest Opener"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Solar Plexus"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 45,
       "difficulty": "Beginner",
@@ -3258,7 +3876,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "triangle-pose",
@@ -3274,7 +3895,10 @@
         "Hip Opener",
         "Chest Opener"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "wide-legged-forward-fold",
@@ -3289,13 +3913,16 @@
         "Forward Fold",
         "Stretch",
         "Hip Opener",
-        "Inversion (mild)"
+        "Inversion"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
-      "name": "warrior-2",
-      "english": "Warrior 2",
+      "name": "Warrior II",
+      "english": "Warrior II",
       "sanskrit": "Virabhadrasana II",
       "duration": 30,
       "difficulty": "Beginner",
@@ -3307,7 +3934,10 @@
         "Hip Opener",
         "Focus"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "plank",
@@ -3315,7 +3945,7 @@
       "sanskrit": "Phalakasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Builds full body strength, particularly core, shoulders, arms, and wrists. Improves posture and stability.",
       "tags": [
         "Floor",
@@ -3324,7 +3954,10 @@
         "Stability",
         "Arm Strength"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "low-plank",
@@ -3332,7 +3965,7 @@
       "sanskrit": "Chaturanga Dandasana",
       "duration": 7,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens arms (triceps), shoulders, wrists, and core. A key transitional pose in Vinyasa yoga (Sun Salutations).",
       "tags": [
         "Floor",
@@ -3341,7 +3974,10 @@
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Solar Plexus"
+      "chakras": [
+        "Solar Plexus",
+        "Root"
+      ]
     },
     {
       "name": "upward-facing-dog",
@@ -3349,17 +3985,21 @@
       "sanskrit": "Urdhva Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Stronger backbend than Cobra, opening chest and shoulders while strengthening arms, wrists, and spine. Thighs and knees lift off the floor.",
       "tags": [
-        "Prone (transition)",
+        "Prone",
         "Backbend",
         "Strength",
         "Chest Opener",
         "Arm Strength",
         "Transitional"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -3367,17 +4007,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -3388,13 +4032,16 @@
       "side": "Right",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "half-pigeon",
@@ -3411,7 +4058,10 @@
         "Glute Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "downward-facing-dog",
@@ -3419,17 +4069,21 @@
       "sanskrit": "Adho Mukha Svanasana",
       "duration": 20,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Full body stretch and strengthener. Lengthens spine, opens shoulders, stretches hamstrings and calves, builds arm strength. Mild inversion.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Stretch",
         "Strength",
         "Full Body",
-        "Resting (active)"
+        "Resting"
       ],
-      "chakra": "Third Eye"
+      "chakras": [
+        "Third Eye",
+        "Heart",
+        "Root"
+      ]
     },
     {
       "name": "three-legged-dog",
@@ -3440,13 +4094,16 @@
       "side": "Left",
       "description": "Variation of Downward Dog lifting one leg. Opens hips, strengthens shoulders and core, prepares for transitions.",
       "tags": [
-        "Standing (inverted)",
-        "Inversion (mild)",
+        "Inversion",
+        "Inversion",
         "Strength",
         "Hip Opener",
         "Transitional"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Third Eye"
+      ]
     },
     {
       "name": "half-pigeon",
@@ -3463,7 +4120,10 @@
         "Glute Stretch",
         "Psoas Stretch"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "cobra-pose",
@@ -3471,7 +4131,7 @@
       "sanskrit": "Bhujangasana",
       "duration": 30,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Gentle backbend strengthening the spine, arms, and glutes. Opens chest and shoulders. Foundational backbend.",
       "tags": [
         "Prone",
@@ -3480,7 +4140,11 @@
         "Chest Opener",
         "Spinal Health"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Solar Plexus",
+        "Throat"
+      ]
     },
     {
       "name": "bell-down-rest",
@@ -3496,7 +4160,10 @@
         "Relaxation",
         "Resting"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "bow-pose",
@@ -3504,7 +4171,7 @@
       "sanskrit": "Dhanurasana",
       "duration": 30,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Strengthens the entire back body, opens chest, shoulders, and hip flexors. Stimulates abdominal organs and improves posture.",
       "tags": [
         "Prone",
@@ -3513,7 +4180,11 @@
         "Chest Opener",
         "Shoulder Opener"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "bell-down-rest",
@@ -3529,7 +4200,10 @@
         "Relaxation",
         "Resting"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "hero-pose",
@@ -3537,16 +4211,19 @@
       "sanskrit": "Virasana",
       "duration": 9,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Kneeling pose stretching thighs, knees, and ankles. Improves posture and digestion. Can be used for meditation.",
       "tags": [
         "Seated",
         "Kneeling",
         "Stretch",
         "Posture",
-        "Meditation (alternative)"
+        "Meditation"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "camel-pose",
@@ -3554,7 +4231,7 @@
       "sanskrit": "Ustrasana",
       "duration": 30,
       "difficulty": "Intermediate",
-      "side": "Center",
+      "side": "Front",
       "description": "Deep backbend opening the entire front body (chest, abdomen, hip flexors, quads). Energizing and emotionally releasing.",
       "tags": [
         "Kneeling",
@@ -3563,7 +4240,11 @@
         "Hip Opener",
         "Energizing"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "hero-pose",
@@ -3571,16 +4252,19 @@
       "sanskrit": "Virasana",
       "duration": 29,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Kneeling pose stretching thighs, knees, and ankles. Improves posture and digestion. Can be used for meditation.",
       "tags": [
         "Seated",
         "Kneeling",
         "Stretch",
         "Posture",
-        "Meditation (alternative)"
+        "Meditation"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "cosmic-egg",
@@ -3588,7 +4272,7 @@
       "sanskrit": "Vishnu Mudrasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A restorative pose lying on the back with arms and legs spread wide, like a star or cosmic being. Promotes complete surrender, deep relaxation, and a sense of expansion and connection to the universe.",
       "tags": [
         "Supine",
@@ -3597,7 +4281,10 @@
         "Surrender",
         "Expansion"
       ],
-      "chakra": "Crown"
+      "chakras": [
+        "Crown",
+        "Third Eye"
+      ]
     },
     {
       "name": "bridge-pose",
@@ -3605,7 +4292,7 @@
       "sanskrit": "Setu Bandhasana",
       "duration": 45,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Gentle backbend opening chest and shoulders, strengthening glutes, hamstrings, and back. Calming yet energizing.",
       "tags": [
         "Supine",
@@ -3614,7 +4301,11 @@
         "Chest Opener",
         "Glute Strength"
       ],
-      "chakra": "Heart"
+      "chakras": [
+        "Heart",
+        "Throat",
+        "Sacral"
+      ]
     },
     {
       "name": "reclined-bound-angle",
@@ -3622,7 +4313,7 @@
       "sanskrit": "Supta Baddha Konasana",
       "duration": 30,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Restorative supine pose opening hips, inner thighs, and chest gently. Promotes relaxation and stress relief.",
       "tags": [
         "Supine",
@@ -3631,7 +4322,10 @@
         "Chest Opener",
         "Relaxation"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Heart"
+      ]
     },
     {
       "name": "cosmic-egg",
@@ -3639,7 +4333,7 @@
       "sanskrit": "Vishnu Mudrasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A restorative pose lying on the back with arms and legs spread wide, like a star or cosmic being. Promotes complete surrender, deep relaxation, and a sense of expansion and connection to the universe.",
       "tags": [
         "Supine",
@@ -3648,7 +4342,10 @@
         "Surrender",
         "Expansion"
       ],
-      "chakra": "Crown"
+      "chakras": [
+        "Crown",
+        "Third Eye"
+      ]
     },
     {
       "name": "seated-forward-fold",
@@ -3656,7 +4353,7 @@
       "sanskrit": "Paschimottanasana",
       "duration": 30,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Deeply stretches the entire back body (spine, hamstrings, calves). Calms the nervous system, promotes introspection.",
       "tags": [
         "Seated",
@@ -3664,7 +4361,10 @@
         "Stretch",
         "Calming"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "happy-baby",
@@ -3672,7 +4372,7 @@
       "sanskrit": "Ananda Balasana",
       "duration": 15,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Supine pose opening hips and inner groin. Gently releases lower back and sacrum. Calming and playful.",
       "tags": [
         "Supine",
@@ -3681,12 +4381,15 @@
         "Restorative",
         "Lower Back Release"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Root"
+      ]
     },
     {
       "name": "supine-twist",
       "english": "Supine Twist",
-      "sanskrit": "Supta Matsyendrasana",
+      "sanskrit": "Jathara Parivartanasana",
       "duration": 30,
       "difficulty": "Beginner",
       "side": "Right",
@@ -3697,12 +4400,15 @@
         "Relaxation",
         "Restorative"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "supine-twist",
       "english": "Supine Twist",
-      "sanskrit": "Supta Matsyendrasana",
+      "sanskrit": "Jathara Parivartanasana",
       "duration": 30,
       "difficulty": "Beginner",
       "side": "Left",
@@ -3713,7 +4419,10 @@
         "Relaxation",
         "Restorative"
       ],
-      "chakra": "Sacral"
+      "chakras": [
+        "Sacral",
+        "Solar Plexus"
+      ]
     },
     {
       "name": "cosmic-egg",
@@ -3721,7 +4430,7 @@
       "sanskrit": "Vishnu Mudrasana",
       "duration": 8,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A restorative pose lying on the back with arms and legs spread wide, like a star or cosmic being. Promotes complete surrender, deep relaxation, and a sense of expansion and connection to the universe.",
       "tags": [
         "Supine",
@@ -3730,7 +4439,10 @@
         "Surrender",
         "Expansion"
       ],
-      "chakra": "Crown"
+      "chakras": [
+        "Crown",
+        "Third Eye"
+      ]
     },
     {
       "name": "corpse-pose",
@@ -3738,7 +4450,7 @@
       "sanskrit": "Savasana",
       "duration": 270,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Final relaxation pose. Allows the body and mind to integrate the benefits of the practice. Promotes deep rest and rejuvenation.",
       "tags": [
         "Supine",
@@ -3748,7 +4460,10 @@
         "Integration",
         "Meditation"
       ],
-      "chakra": "Crown"
+      "chakras": [
+        "Crown",
+        "Third Eye"
+      ]
     },
     {
       "name": "fetal-pose",
@@ -3765,7 +4480,10 @@
         "Introspection",
         "Calming"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "fetal-pose",
@@ -3782,7 +4500,10 @@
         "Introspection",
         "Calming"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Sacral"
+      ]
     },
     {
       "name": "cosmic-egg",
@@ -3790,7 +4511,7 @@
       "sanskrit": "Vishnu Mudrasana",
       "duration": 5,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "A restorative pose lying on the back with arms and legs spread wide, like a star or cosmic being. Promotes complete surrender, deep relaxation, and a sense of expansion and connection to the universe.",
       "tags": [
         "Supine",
@@ -3799,7 +4520,10 @@
         "Surrender",
         "Expansion"
       ],
-      "chakra": "Crown"
+      "chakras": [
+        "Crown",
+        "Third Eye"
+      ]
     },
     {
       "name": "easy-pose",
@@ -3807,16 +4531,19 @@
       "sanskrit": "Sukhasana",
       "duration": 7,
       "difficulty": "Beginner",
-      "side": "Center",
+      "side": "Front",
       "description": "Comfortable cross-legged seated position for meditation, pranayama, or centering. Promotes calm and hip opening over time.",
       "tags": [
         "Seated",
         "Meditation",
-        "Hip Opener (gentle)",
+        "Hip Opener",
         "Grounding",
         "Foundation"
       ],
-      "chakra": "Root"
+      "chakras": [
+        "Root",
+        "Crown"
+      ]
     }
   ],
   "sections": [
