@@ -7194,3 +7194,9 @@ tr.drop-target-highlight {
 }
 .stats-type-tab:not(:last-child) { border-right: 1.5px solid #d2d2d7; }
 .stats-type-tab.active { background: #6d28d9; color: #fff; }
+
+.generated-icon {
+  vertical-align: middle;
+  margin-right: 2px;
+  flex-shrink: 0;
+}

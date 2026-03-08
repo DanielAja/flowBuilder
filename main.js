@@ -1747,6 +1747,8 @@ function changeScreen(screenId) {
     if (currentScreenId === 'buildScreen' && screenId !== 'buildScreen') {
         hideRecommendedPoses();
         cleanupBuildBarAutoHide();
+        // Hide floating regen button immediately when leaving build screen
+        hideFloatingRegenBtn(true);
     }
     
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
@@ -3232,7 +3234,7 @@ async function displayFlows() {
             const poseCount = flow.asanas ? flow.asanas.length : 0;
             flowItem.innerHTML = `
                 <div class="flow-info">
-                    <h4>${escapeHTML(flow.name)}</h4>
+                    <h4>${flow.hasGeneratedPoses ? '<svg class="generated-icon" width="13" height="13" viewBox="0 0 24 24" fill="#8b5cf6" stroke="none"><path d="M10.5 2l1.69 3.81L16 7.5l-3.81 1.69L10.5 13l-1.69-3.81L5 7.5l3.81-1.69zM18 10l1.13 2.54L21.67 13.67l-2.54 1.13L18 17.34l-1.13-2.54L14.33 13.67l2.54-1.13z"/></svg> ' : ''}${escapeHTML(flow.name)}</h4>
                     <p class="flow-description">(${displayFlowDuration(flow.time)}) ${escapeHTML(flow.description)}</p>
                     <div class="flow-timestamps">
                         <span class="timestamp"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2.5"/><path d="M8 22l2-8M16 22l-2-8M6 13l6-3 6 3"/><line x1="12" y1="10" x2="12" y2="16"/></svg> ${poseCount} poses</span>
@@ -5025,6 +5027,7 @@ function processFlowAsanasOptimized(flowToEdit) {
                     editingFlow.asanas[i].setDuration(asana.duration || 7);
                     editingFlow.asanas[i].setSide(asana.side || "Center");
                     editingFlow.asanas[i].selected = asana.selected || false;
+                    if (asana.generated) editingFlow.asanas[i].generated = true;
                 }
             }
             
@@ -9296,7 +9299,7 @@ function createAsanaRowHTML(asana, index, sectionName, sectionId, displayNumber,
                     ${poseImageOrIcon(asana, 'table-asana-img', 50, imgTransform)}
                     ${chakraCirclesHTML(asana)}
                 </div>
-                <span>${escapeHTML(typeof asana.getDisplayName === 'function' ?
+                <span>${asana.generated ? '<svg class="generated-icon" width="12" height="12" viewBox="0 0 24 24" fill="#8b5cf6" stroke="none"><path d="M10.5 2l1.69 3.81L16 7.5l-3.81 1.69L10.5 13l-1.69-3.81L5 7.5l3.81-1.69zM18 10l1.13 2.54L21.67 13.67l-2.54 1.13L18 17.34l-1.13-2.54L14.33 13.67l2.54-1.13z"/></svg>' : ''}${escapeHTML(typeof asana.getDisplayName === 'function' ?
                         asana.getDisplayName(useSanskritNames) :
                         (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name))}</span>
             </div>
@@ -9406,7 +9409,7 @@ function createAsanaCardElement(asana, index, displayNumber) {
                  onerror="this.onerror=null; this.src='images/webp/default-pose.webp';">
             ${chakraCirclesHTML(asana)}
         </div>
-        <div class="card-name">${typeof asana.getDisplayName === 'function' ?
+        <div class="card-name">${asana.generated ? '<svg class="generated-icon" width="10" height="10" viewBox="0 0 24 24" fill="#8b5cf6" stroke="none"><path d="M10.5 2l1.69 3.81L16 7.5l-3.81 1.69L10.5 13l-1.69-3.81L5 7.5l3.81-1.69zM18 10l1.13 2.54L21.67 13.67l-2.54 1.13L18 17.34l-1.13-2.54L14.33 13.67l2.54-1.13z"/></svg>' : ''}${typeof asana.getDisplayName === 'function' ?
                 asana.getDisplayName(useSanskritNames) :
                 (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name)}</div>
         <div class="card-duration">
@@ -9827,7 +9830,7 @@ function addAsanaRow(table, asana, index, sectionName, sectionId, displayNumber)
                     ${poseImageOrIcon(asana, 'table-asana-img', 50, imgTransform)}
                     ${chakraCirclesHTML(asana)}
                 </div>
-                <span>${escapeHTML(typeof asana.getDisplayName === 'function' ?
+                <span>${asana.generated ? '<svg class="generated-icon" width="12" height="12" viewBox="0 0 24 24" fill="#8b5cf6" stroke="none"><path d="M10.5 2l1.69 3.81L16 7.5l-3.81 1.69L10.5 13l-1.69-3.81L5 7.5l3.81-1.69zM18 10l1.13 2.54L21.67 13.67l-2.54 1.13L18 17.34l-1.13-2.54L14.33 13.67l2.54-1.13z"/></svg>' : ''}${escapeHTML(typeof asana.getDisplayName === 'function' ?
                         asana.getDisplayName(useSanskritNames) :
                         (useSanskritNames && asana.sanskrit ? asana.sanskrit : asana.name))}</span>
             </div>
@@ -14712,15 +14715,23 @@ function setGenHold(length) {
 }
 
 function generateFlow() {
-    const holdRanges = { short: [5, 10], medium: [10, 20], long: [20, 40] };
-    const holdRange = holdRanges[genHold] || holdRanges.medium;
+    const holdBaselines = { short: 5, medium: 7, long: 10 };
+    const holdBase = holdBaselines[genHold] || 7;
+    // Difficulty multipliers: beginner holds longer (learning), advanced shorter (flowing)
+    const difficultyMult = { 'Beginner': 1.3, 'Intermediate': 1.0, 'Advanced': 0.8 };
+    function holdForPose(pose) {
+        const mult = difficultyMult[pose.difficulty] || 1.0;
+        // Add slight randomness (±20%)
+        const jitter = 0.8 + Math.random() * 0.4;
+        return Math.round(holdBase * mult * jitter);
+    }
     const includeWarmup = document.getElementById('genWarmup')?.checked ?? true;
     const includeCooldown = document.getElementById('genCooldown')?.checked ?? true;
     const includeSavasana = document.getElementById('genSavasana')?.checked ?? true;
     const includeBreathCues = document.getElementById('genBreathCues')?.checked ?? true;
 
     const totalSeconds = genDuration * 60;
-    const avgHold = (holdRange[0] + holdRange[1]) / 2;
+    const avgHold = holdBase;
 
     // Filter poses by difficulty
     const difficultyLevels = {
@@ -14772,6 +14783,7 @@ function generateFlow() {
         if (includeBreathCues && pose.breathCue && pose.breathCue !== '-') {
             p.setBreathCue(pose.breathCue);
         }
+        p.generated = true;
         return p;
     }
 
@@ -14796,26 +14808,32 @@ function generateFlow() {
 
             if (isUnilateral) {
                 // Build a sequence of 3-7 unilateral poses on one side
-                const seqLen = 3 + Math.floor(Math.random() * 5); // 3-7
+                // Each unilateral pose costs 2x (Right + Left) + transition, so budget accordingly
+                const avgDur = holdBase;
+                const remaining = timeTarget - timeUsed;
+                const maxByTime = Math.max(1, Math.floor(remaining / (avgDur * 2.5))); // 2x sides + transition overhead
+                const seqLen = Math.min(3 + Math.floor(Math.random() * 5), maxByTime); // 3-7 capped by time
                 const rightSeq = [];
                 const durations = [];
                 let seqTime = 0;
 
                 // First pose is the one we already picked
-                const dur1 = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+                const dur1 = holdForPose(pose);
                 rightSeq.push(pose);
                 durations.push(dur1);
                 seqTime += dur1;
 
-                // Gather more unilateral poses for the sequence
+                // Gather more unilateral poses for the sequence, respecting time budget
                 let innerIdx = idx;
                 while (rightSeq.length < seqLen && innerIdx < shuffled.length * 3) {
+                    // Check if adding another pose pair would exceed budget
+                    if (timeUsed + seqTime * 2 + avgDur * 2 > timeTarget) break;
                     const next = shuffled[innerIdx % shuffled.length];
                     innerIdx++;
                     const nextSide = (next.side || 'Front').toLowerCase();
                     if (nextSide !== 'right' && nextSide !== 'left') continue;
                     if (rightSeq.length > 0 && rightSeq[rightSeq.length - 1].name === next.name) continue;
-                    const dur = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+                    const dur = holdForPose(next);
                     rightSeq.push(next);
                     durations.push(dur);
                     seqTime += dur;
@@ -14826,10 +14844,10 @@ function generateFlow() {
                 rightSeq.forEach((p, i) => poses.push(makePose(p, 'Right', durations[i])));
                 timeUsed += seqTime;
 
-                // Insert a bilateral transition pose (Front/Back) between sides
-                if (bilateralPool.length > 0) {
+                // Insert a bilateral transition pose (Front/Back) between sides if time allows
+                if (bilateralPool.length > 0 && timeUsed + seqTime + avgDur <= timeTarget) {
                     const transition = bilateralPool[Math.floor(Math.random() * bilateralPool.length)];
-                    const tDur = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+                    const tDur = holdForPose(transition);
                     poses.push(makePose(transition, transition.side, tDur));
                     timeUsed += tDur;
                 }
@@ -14839,7 +14857,7 @@ function generateFlow() {
                 timeUsed += seqTime;
             } else {
                 // Bilateral pose — add directly
-                const dur = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+                const dur = holdForPose(pose);
                 poses.push(makePose(pose, pose.side, dur));
                 timeUsed += dur;
             }
@@ -14898,6 +14916,7 @@ function generateFlow() {
                 savasanaAsana.sanskrit, savasanaAsana.chakra, savasanaAsana.breathCue
             );
             sav.setDuration(savasanaTime);
+            sav.generated = true;
             flow.asanas.push(sav);
             const secId = flow.addSection('Savasana');
             flow.addAsanaToSection(flow.asanas.length - 1, secId);
@@ -14907,8 +14926,10 @@ function generateFlow() {
     // Calculate total time
     flow.time = flow.asanas.reduce((sum, a) => sum + (a.duration || defaultPoseDuration), 0);
     flow.lastEdited = new Date().toISOString();
+    flow.hasGeneratedPoses = true;
 
     // Check if regenerating into an existing flow
+    const isNewFlow = !regenerateTargetFlowID;
     if (regenerateTargetFlowID) {
         const flows = getFlows();
         const idx = flows.findIndex(f => f.flowID === regenerateTargetFlowID);
@@ -14918,6 +14939,7 @@ function generateFlow() {
             flows[idx].sections = flow.sections;
             flows[idx].time = flow.time;
             flows[idx].lastEdited = flow.lastEdited;
+            flows[idx].hasGeneratedPoses = true;
             saveFlows(flows);
             editingFlow = new Flow();
             Object.assign(editingFlow, flows[idx]);
@@ -14936,24 +14958,140 @@ function generateFlow() {
     changeScreen('buildScreen');
     toggleViewMode('table', true);
 
+    // Update name/description fields — skip if regenerating (keep existing name)
+    const isRegen = !isNewFlow;
+    const titleInput = document.getElementById('title');
+    const descInput = document.getElementById('description');
+    if (!isRegen) {
+        if (titleInput) titleInput.value = editingFlow.name || '';
+        if (descInput) descInput.value = editingFlow.description || '';
+    }
+    if (titleInput) {
+        titleInput.removeEventListener('input', autoSaveFlow);
+        titleInput.addEventListener('input', autoSaveFlow);
+    }
+    if (descInput) {
+        descInput.removeEventListener('input', autoSaveFlow);
+        descInput.addEventListener('input', autoSaveFlow);
+    }
+
     // Populate the build screen
     setTimeout(() => {
-        const titleInput = document.getElementById('title');
-        if (titleInput) {
-            titleInput.value = editingFlow.name;
-            titleInput.removeEventListener('input', autoSaveFlow);
-            titleInput.addEventListener('input', autoSaveFlow);
-        }
-        const descInput = document.getElementById('description');
-        if (descInput) {
-            descInput.value = editingFlow.description;
-            descInput.removeEventListener('input', autoSaveFlow);
-            descInput.addEventListener('input', autoSaveFlow);
+        if (!isRegen) {
+            if (titleInput) titleInput.value = editingFlow.name || '';
+            if (descInput) descInput.value = editingFlow.description || '';
         }
         rebuildFlowTable();
         updateFlowDuration();
         updateFlowPoseCount();
+        showFloatingRegenBtn();
     }, 100);
+}
+
+// Floating Regenerate Button — fully JS-driven, no external CSS
+let floatingRegenTimer = null;
+let _floatingRegenBtn = null;
+
+function _getOrCreateRegenBtn() {
+    if (_floatingRegenBtn && _floatingRegenBtn.parentNode) return _floatingRegenBtn;
+    const btn = document.createElement('button');
+    btn.id = 'floatingRegenBtn';
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M7.5 5.6L10 7 8.6 4.5 10 2 7.5 3.4 5 2l1.4 2.5L5 7zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5zm-7.63 5.29a1 1 0 0 0-1.41 0L1.29 18.96a1 1 0 0 0 0 1.41l2.34 2.34a1 1 0 0 0 1.41 0L16.71 11.04a1 1 0 0 0 0-1.41z"/></svg> Regenerate';
+    Object.assign(btn.style, {
+        position: 'fixed',
+        top: '52px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: '99999',
+        display: 'none',
+        alignItems: 'center',
+        gap: '8px',
+        padding: '9px 22px',
+        border: 'none',
+        borderRadius: '999px',
+        fontSize: '14px',
+        fontWeight: '600',
+        letterSpacing: '0.01em',
+        cursor: 'pointer',
+        color: '#fff',
+        background: 'linear-gradient(135deg, #c084fc, #7c3aed, #5b21b6)',
+        boxShadow: '0 4px 14px rgba(124,58,237,0.4)',
+        whiteSpace: 'nowrap',
+        fontFamily: 'inherit',
+        WebkitTapHighlightColor: 'transparent'
+    });
+    btn.addEventListener('click', floatingRegenerate);
+
+    // Inject keyframes for pulse animation
+    if (!document.getElementById('regenPulseStyle')) {
+        const style = document.createElement('style');
+        style.id = 'regenPulseStyle';
+        style.textContent = `
+            @keyframes _regenPulse {
+                0%, 100% { box-shadow: 0 4px 14px rgba(124,58,237,0.4); transform: translateX(-50%) scale(1); }
+                50% { box-shadow: 0 6px 22px rgba(124,58,237,0.6); transform: translateX(-50%) scale(1.03); }
+            }
+            #floatingRegenBtn:hover {
+                filter: brightness(1.1);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    btn.style.animation = '_regenPulse 2.5s ease-in-out infinite';
+    btn.style.transition = 'filter 0.2s ease';
+
+    document.body.appendChild(btn);
+    _floatingRegenBtn = btn;
+    return btn;
+}
+
+function showFloatingRegenBtn() {
+    const btn = _getOrCreateRegenBtn();
+    const alreadyVisible = btn.style.display === 'flex' && btn.style.opacity === '1';
+    if (alreadyVisible) {
+        // Just reset the 30s timer, no animation
+        startFloatingRegenTimer();
+        return;
+    }
+    // Slide down entrance
+    btn.style.display = 'flex';
+    btn.style.transition = 'none';
+    btn.style.top = '-10px';
+    btn.style.opacity = '0';
+    requestAnimationFrame(() => {
+        btn.style.transition = 'top 0.3s ease-out, opacity 0.3s ease-out';
+        btn.style.top = '52px';
+        btn.style.opacity = '1';
+    });
+    startFloatingRegenTimer();
+}
+
+function hideFloatingRegenBtn(instant) {
+    clearTimeout(floatingRegenTimer);
+    const btn = _floatingRegenBtn;
+    if (!btn || btn.style.display === 'none') return;
+    if (instant) {
+        btn.style.display = 'none';
+        return;
+    }
+    btn.style.transition = 'top 0.4s ease-in, opacity 0.4s ease-in';
+    btn.style.top = '-40px';
+    btn.style.opacity = '0';
+    setTimeout(() => { btn.style.display = 'none'; }, 400);
+}
+
+function startFloatingRegenTimer() {
+    clearTimeout(floatingRegenTimer);
+    floatingRegenTimer = setTimeout(() => {
+        hideFloatingRegenBtn();
+    }, 30000);
+}
+
+function floatingRegenerate() {
+    if (!editingFlow || !editingFlow.flowID) return;
+    regenerateTargetFlowID = editingFlow.flowID;
+    generateFlow();
+    // generateFlow calls showFloatingRegenBtn at end, which resets timer
 }
 
 // Regenerate: open generator screen, replace current flow on generate
