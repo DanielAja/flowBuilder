@@ -14762,29 +14762,87 @@ function generateFlow() {
 
     const usedPoses = [];
 
+    function makePose(pose, side, dur) {
+        const p = new YogaAsana(
+            pose.name, side, pose.image, pose.description,
+            pose.difficulty, pose.tags, pose.transitionsAsana,
+            pose.sanskrit, pose.chakra, pose.breathCue
+        );
+        p.setDuration(dur);
+        if (includeBreathCues && pose.breathCue && pose.breathCue !== '-') {
+            p.setBreathCue(pose.breathCue);
+        }
+        return p;
+    }
+
     function pickPoses(pool, timeTarget) {
         const poses = [];
         let timeUsed = 0;
         const shuffled = [...pool].sort(() => Math.random() - 0.5);
+        const bilateralPool = pool.filter(a => {
+            const s = (a.side || 'Front').toLowerCase();
+            return s === 'front' || s === 'center' || s === 'both' || s === 'back';
+        });
         let idx = 0;
+
         while (timeUsed < timeTarget && idx < shuffled.length * 3) {
             const pose = shuffled[idx % shuffled.length];
             idx++;
             // Avoid immediate repeats
             if (poses.length > 0 && poses[poses.length - 1].name === pose.name) continue;
 
-            const dur = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
-            const newPose = new YogaAsana(
-                pose.name, pose.side, pose.image, pose.description,
-                pose.difficulty, pose.tags, pose.transitionsAsana,
-                pose.sanskrit, pose.chakra, pose.breathCue
-            );
-            newPose.setDuration(dur);
-            if (includeBreathCues && pose.breathCue && pose.breathCue !== '-') {
-                newPose.setBreathCue(pose.breathCue);
+            const side = (pose.side || 'Front').toLowerCase();
+            const isUnilateral = side === 'right' || side === 'left';
+
+            if (isUnilateral) {
+                // Build a sequence of 3-7 unilateral poses on one side
+                const seqLen = 3 + Math.floor(Math.random() * 5); // 3-7
+                const rightSeq = [];
+                const durations = [];
+                let seqTime = 0;
+
+                // First pose is the one we already picked
+                const dur1 = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+                rightSeq.push(pose);
+                durations.push(dur1);
+                seqTime += dur1;
+
+                // Gather more unilateral poses for the sequence
+                let innerIdx = idx;
+                while (rightSeq.length < seqLen && innerIdx < shuffled.length * 3) {
+                    const next = shuffled[innerIdx % shuffled.length];
+                    innerIdx++;
+                    const nextSide = (next.side || 'Front').toLowerCase();
+                    if (nextSide !== 'right' && nextSide !== 'left') continue;
+                    if (rightSeq.length > 0 && rightSeq[rightSeq.length - 1].name === next.name) continue;
+                    const dur = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+                    rightSeq.push(next);
+                    durations.push(dur);
+                    seqTime += dur;
+                }
+                idx = innerIdx;
+
+                // Add Right side sequence
+                rightSeq.forEach((p, i) => poses.push(makePose(p, 'Right', durations[i])));
+                timeUsed += seqTime;
+
+                // Insert a bilateral transition pose (Front/Back) between sides
+                if (bilateralPool.length > 0) {
+                    const transition = bilateralPool[Math.floor(Math.random() * bilateralPool.length)];
+                    const tDur = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+                    poses.push(makePose(transition, transition.side, tDur));
+                    timeUsed += tDur;
+                }
+
+                // Mirror the same sequence on the Left side
+                rightSeq.forEach((p, i) => poses.push(makePose(p, 'Left', durations[i])));
+                timeUsed += seqTime;
+            } else {
+                // Bilateral pose — add directly
+                const dur = Math.round(holdRange[0] + Math.random() * (holdRange[1] - holdRange[0]));
+                poses.push(makePose(pose, pose.side, dur));
+                timeUsed += dur;
             }
-            poses.push(newPose);
-            timeUsed += dur;
             if (timeUsed >= timeTarget) break;
         }
         return poses;
